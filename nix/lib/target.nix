@@ -11,7 +11,7 @@
     inherit id name level damageSpread swingSpeed minBaseDamage;
     mobType = "MobType${lib.string.toSentenceCase type}";
   };
-  mobs = {
+  target = {
     defaultRaidBoss = mkTarget {};
     smallTrash = mkTarget {
       level = 90;
@@ -24,4 +24,4 @@
     # todo add raid bosses
   };
 in
-  targets
+  target

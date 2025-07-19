@@ -15,8 +15,18 @@
     };
   };
 
-  outputs = inputs @ {flake-parts, ...}:
-    flake-parts.lib.mkFlake {inherit inputs;} {
+  outputs = inputs @ {
+    flake-parts,
+    self,
+    ...
+  }: let
+    # extend nixpkgs library with our sim library
+    lib = import ./nix/lib/extend.nix {inherit inputs self;};
+  in
+    flake-parts.lib.mkFlake {
+      inherit inputs;
+      specialArgs = {inherit lib;};
+    } {
       systems = import inputs.systems;
       imports = [./nix];
     };
