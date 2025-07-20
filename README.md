@@ -1,4 +1,6 @@
-WIP. This tool uses [wowsims](https://github.com/wowsims/mop).
+WIP. [wowsim-stats](https://ooks-io.github.io/wowsim-stats/)
+
+This tool uses [wowsims](https://github.com/wowsims/mop).
 
 Planned Features
 
@@ -31,7 +33,3 @@ Example: `nix run .#singleTargetRaidLong`
 
 This will output a json file inside `web/public/data` that is consumed by the
 web frontend.
-
-# How it works
-
-We use nix to generate the json schema that the wowsimcli uses as input.
