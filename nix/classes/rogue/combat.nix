@@ -36,14 +36,36 @@
       anticipation = "321213";
     };
 
-    p1 = {
-      singleTarget = mkCombat {
-        race = "human";
-        talents = combat.talents.anticipation;
-      };
-      aoe = mkCombat {
-        race = "human";
-        talents = combat.talents.anticipation;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+          multiTarget = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+          cleave = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+        };
+        dungeon = {
+          singleTarget = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+          multiTarget = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+          cleave = mkCombat {
+            race = "human";
+            talents = combat.talents.anticipation;
+          };
+        };
       };
     };
   };

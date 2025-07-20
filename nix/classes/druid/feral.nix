@@ -32,14 +32,36 @@
       primal = "321232";
     };
 
-    p1 = {
-      singleTarget = mkFeral {
-        race = "troll";
-        talents = feral.talents.primal;
-      };
-      aoe = mkFeral {
-        race = "troll";
-        talents = feral.talents.primal;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+          multiTarget = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+          cleave = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+        };
+        dungeon = {
+          singleTarget = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+          multiTarget = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+          cleave = mkFeral {
+            race = "troll";
+            talents = feral.talents.primal;
+          };
+        };
       };
     };
   };

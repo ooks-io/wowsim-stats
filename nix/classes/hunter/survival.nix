@@ -40,14 +40,36 @@
       serpent = "321232";
     };
 
-    p1 = {
-      singleTarget = mkSurvival {
-        race = "worgen";
-        talents = survival.talents.serpent;
-      };
-      aoe = mkSurvival {
-        race = "worgen";
-        talents = survival.talents.serpent;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+          multiTarget = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+          cleave = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+        };
+        dungeon = {
+          singleTarget = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+          multiTarget = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+          cleave = mkSurvival {
+            race = "worgen";
+            talents = survival.talents.serpent;
+          };
+        };
       };
     };
   };

@@ -37,14 +37,36 @@
       gorfiendsGrasp = "221111";
     };
 
-    p1 = {
-      singleTarget = mkUnholy {
-        race = "orc";
-        talents = unholy.talents.gorfiendsGrasp;
-      };
-      aoe = mkUnholy {
-        race = "orc";
-        talents = unholy.talents.gorfiendsGrasp;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+          multiTarget = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+          cleave = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+        };
+        dungeon = {
+          singleTarget = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+          multiTarget = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+          cleave = mkUnholy {
+            race = "orc";
+            talents = unholy.talents.gorfiendsGrasp;
+          };
+        };
       };
     };
   };

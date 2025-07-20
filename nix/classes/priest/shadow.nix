@@ -34,14 +34,36 @@
       halo = "223113";
     };
 
-    p1 = {
-      singleTarget = mkShadow {
-        race = "troll";
-        talents = shadow.talents.halo;
-      };
-      aoe = mkShadow {
-        race = "troll";
-        talents = shadow.talents.halo;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+          multiTarget = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+          cleave = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+        };
+        dungeon = {
+          singleTarget = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+          multiTarget = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+          cleave = mkShadow {
+            race = "troll";
+            talents = shadow.talents.halo;
+          };
+        };
       };
     };
   };

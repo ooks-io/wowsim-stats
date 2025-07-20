@@ -38,14 +38,36 @@
       mfd = "321232";
     };
 
-    p1 = {
-      singleTarget = mkSubtlety {
-        race = "human";
-        talents = subtlety.talents.mfd;
-      };
-      aoe = mkSubtlety {
-        race = "human";
-        talents = subtlety.talents.mfd;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+          multiTarget = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+          cleave = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+        };
+        dungeon = {
+          singleTarget = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+          multiTarget = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+          cleave = mkSubtlety {
+            race = "human";
+            talents = subtlety.talents.mfd;
+          };
+        };
       };
     };
   };

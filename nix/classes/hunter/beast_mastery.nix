@@ -40,14 +40,36 @@
       glaiveToss = "312211";
     };
 
-    p1 = {
-      singleTarget = mkBeastmastery {
-        race = "worgen";
-        talents = beastmastery.talents.glaiveToss;
-      };
-      aoe = mkBeastmastery {
-        race = "worgen";
-        talents = beastmastery.talents.glaiveToss;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+          multiTarget = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+          cleave = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+        };
+        dungeon = {
+          singleTarget = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+          multiTarget = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+          cleave = mkBeastmastery {
+            race = "worgen";
+            talents = beastmastery.talents.glaiveToss;
+          };
+        };
       };
     };
   };

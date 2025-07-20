@@ -40,14 +40,36 @@
       elementalBlast = "313133";
     };
 
-    p1 = {
-      singleTarget = mkEnhancement {
-        race = "troll";
-        talents = enhancement.talents.elementalBlast;
-      };
-      aoe = mkEnhancement {
-        race = "troll";
-        talents = enhancement.talents.elementalBlast;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+          multiTarget = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+          cleave = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+        };
+        dungeon = {
+          singleTarget = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+          multiTarget = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+          cleave = mkEnhancement {
+            race = "troll";
+            talents = enhancement.talents.elementalBlast;
+          };
+        };
       };
     };
   };

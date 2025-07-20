@@ -34,14 +34,36 @@
       archimondesDarkness = "221211";
     };
 
-    p1 = {
-      singleTarget = mkDestruction {
-        race = "orc";
-        talents = destruction.talents.archimondesDarkness;
-      };
-      aoe = mkDestruction {
-        race = "orc";
-        talents = destruction.talents.archimondesDarkness;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+          multiTarget = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+          cleave = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+        };
+        dungeon = {
+          singleTarget = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+          multiTarget = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+          cleave = mkDestruction {
+            race = "orc";
+            talents = destruction.talents.archimondesDarkness;
+          };
+        };
       };
     };
   };

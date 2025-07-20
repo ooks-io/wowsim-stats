@@ -39,14 +39,36 @@
       archimondesDarkness = "231211";
     };
 
-    p1 = {
-      singleTarget = mkDemonology {
-        race = "orc";
-        talents = demonology.talents.archimondesDarkness;
-      };
-      aoe = mkDemonology {
-        race = "orc";
-        talents = demonology.talents.archimondesDarkness;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+          multiTarget = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+          cleave = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+        };
+        dungeon = {
+          singleTarget = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+          multiTarget = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+          cleave = mkDemonology {
+            race = "orc";
+            talents = demonology.talents.archimondesDarkness;
+          };
+        };
       };
     };
   };

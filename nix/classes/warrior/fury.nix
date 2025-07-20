@@ -35,14 +35,36 @@
       avatar = "113131";
     };
 
-    p1 = {
-      singleTarget = mkFury {
-        race = "orc";
-        talents = fury.talents.stormBolt;
-      };
-      aoe = mkFury {
-        race = "orc";
-        talents = fury.talents.stormBolt;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+          multiTarget = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+          cleave = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+        };
+        dungeon = {
+          singleTarget = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+          multiTarget = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+          cleave = mkFury {
+            race = "orc";
+            talents = fury.talents.stormBolt;
+          };
+        };
       };
     };
   };

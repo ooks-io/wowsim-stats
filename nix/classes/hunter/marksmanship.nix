@@ -40,14 +40,36 @@
       glaiveToss = "312111";
     };
 
-    p1 = {
-      singleTarget = mkMarksmanship {
-        race = "worgen";
-        talents = marksmanship.talents.glaiveToss;
-      };
-      aoe = mkMarksmanship {
-        race = "worgen";
-        talents = marksmanship.talents.glaiveToss;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+          multiTarget = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+          cleave = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+        };
+        dungeon = {
+          singleTarget = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+          multiTarget = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+          cleave = mkMarksmanship {
+            race = "worgen";
+            talents = marksmanship.talents.glaiveToss;
+          };
+        };
       };
     };
   };

@@ -34,14 +34,36 @@
       bloodbath = "113332";
     };
 
-    p1 = {
-      singleTarget = mkArms {
-        race = "human";
-        talents = arms.talents.bloodbath;
-      };
-      aoe = mkArms {
-        race = "human";
-        talents = arms.talents.bloodbath;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+          multiTarget = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+          cleave = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+        };
+        dungeon = {
+          singleTarget = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+          multiTarget = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+          cleave = mkArms {
+            race = "human";
+            talents = arms.talents.bloodbath;
+          };
+        };
       };
     };
   };

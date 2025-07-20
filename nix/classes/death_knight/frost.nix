@@ -49,18 +49,48 @@
       };
     };
 
-    p1 = {
-      singleTarget = mkFrost {
-        race = "troll";
-        talents = frost.talents.obliterate;
-        glyphs = frost.glyphs.obliterate;
-        apl = "obliterate";
-      };
-      aoe = mkFrost {
-        race = "troll";
-        talents = frost.talents.obliterate;
-        glyphs = frost.glyphs.obliterate;
-        apl = "obliterate";
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+          multiTarget = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+          cleave = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+        };
+        dungeon = {
+          singleTarget = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+          multiTarget = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+          cleave = mkFrost {
+            race = "troll";
+            talents = frost.talents.obliterate;
+            glyphs = frost.glyphs.obliterate;
+            apl = "obliterate";
+          };
+        };
       };
     };
   };

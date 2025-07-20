@@ -38,14 +38,36 @@
       dreamOfCenarius = "113222";
     };
 
-    p1 = {
-      singleTarget = mkBalance {
-        race = "troll";
-        talents = balance.talents.dreamOfCenarius;
-      };
-      aoe = mkBalance {
-        race = "troll";
-        talents = balance.talents.dreamOfCenarius;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+          multiTarget = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+          cleave = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+        };
+        dungeon = {
+          singleTarget = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+          multiTarget = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+          cleave = mkBalance {
+            race = "troll";
+            talents = balance.talents.dreamOfCenarius;
+          };
+        };
       };
     };
   };
