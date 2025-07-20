@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
       
       - name: Generate simulation data
         run:  |
@@ -17,7 +18,7 @@ jobs:
 
       - name: Build website
         run: |
-          nix shell nixpkgs#node
+          nix shell nixpkgs#nodejs
           cd web
           npm ci
           npm run build
