@@ -9,19 +9,31 @@
     swingSpeed ? 2,
   }: {
     inherit id name level damageSpread swingSpeed minBaseDamage;
-    mobType = "MobType${lib.string.toSentenceCase type}";
+    mobType = "MobType${lib.strings.toSentenceCase type}";
+    # default stats
+    stats = [
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      0
+      650
+      0
+      0
+      0
+      0
+      24835
+      0
+      120016403
+      0
+      0
+    ];
   };
-  target = {
-    defaultRaidBoss = mkTarget {};
-    smallTrash = mkTarget {
-      level = 90;
-      minBaseDamage = 15000;
-    };
-    largeTrash = mkTarget {
-      level = 90;
-      minBaseDamage = 40000;
-    };
-    # todo add raid bosses
-  };
-in
-  target
+in {inherit mkTarget;}

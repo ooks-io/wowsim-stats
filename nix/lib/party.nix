@@ -1,12 +1,6 @@
-let
-  # TODO, dynamically set buffs/debuffs based on specs present
-  mkRaid = {
-    parties,
-    buffs,
-    debuffs,
-    targetDummies,
-  }: {
-    inherit parties buffs debuffs targetDummies;
+{lib, ...}: let
+  mkParty = players: {
+    players = players ++ (lib.genList (_: {}) (5 - (lib.length players)));
+    buffs = {};
   };
-in
-  mkRaid
+in {inherit mkParty;}

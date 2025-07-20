@@ -3,9 +3,25 @@
   inputs,
   ...
 }: let
-  inherit (lib.string) toSentenceCase;
+  inherit (lib.strings) toSentenceCase concatMapStrings toUpper substring;
+  inherit (builtins) filter isString split readFile fromJSON;
   inherit (inputs) wowsims;
-  inherit (builtins) readFile fromJSON;
+
+  # convert string to pascal case
+  # credit to: https://github.com/LeoLuxo/dots/blob/main/lib/strings.nix
+  toUpperCaseFirstLetter = string: let
+    head = toUpper (substring 0 1 string);
+    tail = substring 1 (-1) string;
+  in
+    head + tail;
+
+  splitWords = string:
+    filter isString (
+      split "[ _-]" string
+    );
+
+  toPascalCase = string: concatMapStrings toUpperCaseFirstLetter (splitWords string);
+
   mkPlayer = {
     name ? "Player",
     race,
@@ -13,7 +29,7 @@
     spec,
     gearset,
     consumables,
-    options,
+    options ? {},
     talents,
     glyphs,
     profession1,
@@ -35,12 +51,14 @@
 
     rotation = fromJSON (readFile "${wowsims}/ui/${class}/${spec}/apls/${apl}.apl.json");
   in {
-    inherit equipment name consumables glyphs profession1 profession2 rotation reactionTimeMs distanceFromTarget;
-    race = "Race${toSentenceCase race}";
-    class = "Class${toSentenceCase class}";
-    talentString = talents;
+    inherit equipment name consumables glyphs rotation reactionTimeMs distanceFromTarget;
+    race = toPascalCase "Race_${race}";
+    class = toPascalCase "Class_${class}";
+    profession1 = toSentenceCase profession1;
+    profession2 = toSentenceCase profession2;
+    talentsString = talents;
 
-    "${spec}${toSentenceCase class}" = {
+    "${lib.toCamelCase "${spec}-${class}"}" = {
       inherit options;
     };
 
@@ -48,5 +66,4 @@
     cooldowns = {};
     healingModel = {};
   };
-in
-  mkPlayer
+in {inherit mkPlayer;}
