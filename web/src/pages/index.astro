@@ -1,9 +1,49 @@
 ---
-import RankingsLayout from '../layouts/RankingsLayout.astro';
+import DynamicRankings from '../components/DynamicRankings.astro';
 ---
 
-<RankingsLayout 
-  title="Single Target DPS Rankings" 
-  dataFile="dps_p1_raid_single_long.json"
-  description="Simulation results for single target raid encounters in MoP"
-/>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>WoW MoP DPS Rankings</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #282828;
+        color: #ffffff;
+      }
+      
+      .page-header {
+        text-align: center;
+        padding: 30px 20px;
+        background-color: #3a3a3a;
+        border-bottom: 1px solid #4a4a4a;
+      }
+      
+      .page-title {
+        color: #ea6962;
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
+        font-weight: 700;
+      }
+      
+      .page-description {
+        color: #aaaaaa;
+        font-size: 1.1em;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-header">
+      <h1 class="page-title">WoW MoP DPS Rankings</h1>
+      <p class="page-description">Interactive simulation results for all encounters and target counts</p>
+    </div>
+    
+    <DynamicRankings client:load />
+  </body>
+</html>

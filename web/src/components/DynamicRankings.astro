@@ -1,0 +1,547 @@
+---
+// This component will be client-side rendered for interactivity
+---
+
+<div class="rankings-container">
+  <div id="metadata-container"></div>
+  
+  <div class="controls">
+    <h3 class="controls-title">Simulation Options</h3>
+    <div class="controls-grid">
+      <div class="control-group">
+        <label for="targetCount">Target Count:</label>
+        <select id="targetCount">
+          <option value="single">Single Target</option>
+          <option value="three">3 Targets</option>
+          <option value="cleave">Cleave (2)</option>
+          <option value="ten">10 Targets</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="encounterType">Encounter:</label>
+        <select id="encounterType">
+          <option value="raid">Raid</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="duration">Duration:</label>
+        <select id="duration">
+          <option value="long">Long</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="phase">Phase:</label>
+        <select id="phase">
+          <option value="p1">Phase 1</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading" class="loading hidden">Loading simulation data...</div>
+  <div id="error" class="error hidden"></div>
+  
+  <div id="chart-container"></div>
+</div>
+
+<style>
+  .rankings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .controls {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    border: 1px solid #4a4a4a;
+  }
+  
+  .controls-title {
+    color: #ea6962;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+  
+  .controls-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .control-group label {
+    font-size: 0.9em;
+    color: #a9a9a9;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .control-group select {
+    padding: 8px 12px;
+    background-color: #2a2a2a;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 0.9em;
+    min-width: 120px;
+  }
+  
+  .control-group select:focus {
+    outline: none;
+    border-color: #ea6962;
+  }
+  
+  .loading, .error {
+    text-align: center;
+    padding: 20px;
+    margin: 20px 0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    z-index: 1000;
+    min-width: 200px;
+  }
+  
+  .loading {
+    color: #a9a9a9;
+    border: 1px solid #4a4a4a;
+  }
+  
+  .error {
+    color: #ea6962;
+    background-color: #3a2a2a;
+    border: 1px solid #ea6962;
+  }
+  
+  /* Prevent layout shifts by maintaining minimum heights */
+  #metadata-container {
+    min-height: 120px;
+    transition: opacity 0.2s ease;
+  }
+  
+  #chart-container {
+    min-height: 400px;
+    transition: opacity 0.2s ease;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .controls-grid {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+</style>
+
+<script>
+  // WoW class colors for consistency
+  const classColors = {
+    death_knight: '#C41E3A',
+    druid: '#FF7C0A', 
+    hunter: '#AAD372',
+    mage: '#3FC7EB',
+    monk: '#00FF98',
+    paladin: '#F48CBA',
+    priest: '#FFFFFF',
+    rogue: '#FFF468',
+    shaman: '#0070DD',
+    warlock: '#8788EE',
+    warrior: '#C69B6D'
+  };
+
+  interface SimulationData {
+    metadata: {
+      name: string;
+      timestamp: string;
+      iterations: number;
+      specCount: number;
+      encounterDuration: number;
+      encounterVariation: number;
+      targetCount: number;
+      raidBuffs: Record<string, boolean | number>;
+    };
+    results: Record<string, Record<string, {
+      dps: number;
+      max: number;
+      min: number;
+      stdev: number;
+      loadout: any;
+    }>>;
+  }
+
+  class DynamicRankings {
+    private currentData: SimulationData | null = null;
+
+    constructor() {
+      this.bindEvents();
+      this.loadInitialData();
+    }
+
+    private bindEvents() {
+      const selects = document.querySelectorAll('#targetCount, #encounterType, #duration, #phase');
+      selects.forEach(select => {
+        select.addEventListener('change', () => this.loadData());
+      });
+    }
+
+    private async loadInitialData() {
+      await this.loadData();
+    }
+
+    private getFileName(): string {
+      const targetCount = (document.getElementById('targetCount') as HTMLSelectElement).value;
+      const encounterType = (document.getElementById('encounterType') as HTMLSelectElement).value;
+      const duration = (document.getElementById('duration') as HTMLSelectElement).value;
+      const phase = (document.getElementById('phase') as HTMLSelectElement).value;
+      
+      return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+    }
+
+    private async loadData() {
+      const loadingEl = document.getElementById('loading')!;
+      const errorEl = document.getElementById('error')!;
+      const metadataContainer = document.getElementById('metadata-container')!;
+      const chartContainer = document.getElementById('chart-container')!;
+
+      // Save current scroll position
+      const scrollY = window.scrollY;
+
+      // Fade out content and show loading
+      metadataContainer.style.opacity = '0.5';
+      chartContainer.style.opacity = '0.5';
+      loadingEl.classList.remove('hidden');
+      errorEl.classList.add('hidden');
+
+      try {
+        const fileName = this.getFileName();
+        const response = await fetch(`/data/${fileName}`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
+        }
+
+        this.currentData = await response.json();
+        
+        // Hide loading
+        loadingEl.classList.add('hidden');
+        
+        // Render components
+        this.renderMetadata();
+        this.renderChart();
+        
+        // Fade content back in
+        metadataContainer.style.opacity = '1';
+        chartContainer.style.opacity = '1';
+        
+        // Restore scroll position after content is rendered
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollY);
+        });
+        
+      } catch (error) {
+        console.error('Error loading data:', error);
+        loadingEl.classList.add('hidden');
+        errorEl.textContent = `Error loading simulation data: ${error.message}`;
+        errorEl.classList.remove('hidden');
+        
+        // Clear content on error and restore opacity
+        metadataContainer.innerHTML = '';
+        chartContainer.innerHTML = '';
+        metadataContainer.style.opacity = '1';
+        chartContainer.style.opacity = '1';
+      }
+    }
+
+    private renderMetadata() {
+      if (!this.currentData) return;
+
+      const container = document.getElementById('metadata-container')!;
+      const metadata = this.currentData.metadata;
+      
+      const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short'
+      });
+
+      const formatDuration = (seconds: number) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+      };
+
+      const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
+        const activeBuffs = Object.entries(buffs)
+          .filter(([_, value]) => value !== false && value !== 0)
+          .map(([key, value]) => {
+            const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+            return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
+          });
+        return activeBuffs.join(', ');
+      };
+
+      container.innerHTML = `
+        <div class="simulation-metadata">
+          <h3 class="metadata-title">Simulation Details</h3>
+          <div class="metadata-grid">
+            <div class="metadata-item">
+              <span class="metadata-label">Iterations</span>
+              <span class="metadata-value">${metadata.iterations.toLocaleString()}</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Specs Tested</span>
+              <span class="metadata-value">${metadata.specCount}</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Encounter Duration</span>
+              <span class="metadata-value">${formatDuration(metadata.encounterDuration)}</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Duration Variation</span>
+              <span class="metadata-value">±${metadata.encounterVariation}s</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Target Count</span>
+              <span class="metadata-value">${metadata.targetCount}</span>
+            </div>
+            <div class="metadata-item">
+              <span class="metadata-label">Date Simulated</span>
+              <span class="metadata-value">${simulationDate}</span>
+            </div>
+            <div class="metadata-item metadata-item-wide">
+              <span class="metadata-label">Active Raid Buffs</span>
+              <span class="metadata-value metadata-value-wrap">${formatRaidBuffs(metadata.raidBuffs)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    private renderChart() {
+      if (!this.currentData) return;
+
+      const container = document.getElementById('chart-container')!;
+      
+      // Transform data for chart
+      const chartItems: Array<{label: string, sublabel: string, value: number, category: string}> = [];
+      
+      for (const [className, classSpecs] of Object.entries(this.currentData.results)) {
+        for (const [specName, specData] of Object.entries(classSpecs)) {
+          chartItems.push({
+            label: specName,
+            sublabel: className,
+            value: specData.dps,
+            category: className
+          });
+        }
+      }
+
+      // Sort by DPS descending
+      chartItems.sort((a, b) => b.value - a.value);
+
+      // Create chart HTML
+      const maxDps = Math.max(...chartItems.map(item => item.value));
+      
+      container.innerHTML = `
+        <div class="chart-container">
+          <h2 class="chart-title">DPS Rankings</h2>
+          <div class="chart-bars">
+            ${chartItems.map((item, index) => `
+              <div class="chart-item">
+                <div class="chart-labels">
+                  <span class="chart-rank">#${index + 1}</span>
+                  <span class="chart-label">${item.label}</span>
+                  <span class="chart-sublabel">${item.sublabel}</span>
+                </div>
+                <div class="chart-bar-container">
+                  <div class="chart-bar" style="width: ${(item.value / maxDps) * 100}%; background-color: ${classColors[item.category] || '#666'}">
+                  </div>
+                  <span class="chart-value">${Math.round(item.value).toLocaleString()}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    new DynamicRankings();
+  });
+</script>
+
+<!-- Include metadata and chart styles -->
+<style is:global>
+  .simulation-metadata {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #4a4a4a;
+  }
+  
+  .metadata-title {
+    color: #ea6962;
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+  
+  .metadata-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .metadata-item-wide {
+    grid-column: 1 / -1;
+  }
+  
+  .metadata-label {
+    font-size: 0.85em;
+    color: #a9a9a9;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .metadata-value {
+    font-size: 1em;
+    color: #ffffff;
+    font-weight: 600;
+  }
+  
+  .metadata-value-wrap {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  .chart-container {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #4a4a4a;
+  }
+  
+  .chart-title {
+    color: #ea6962;
+    margin: 0 0 20px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+  }
+  
+  .chart-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .chart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 0;
+  }
+  
+  .chart-labels {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 200px;
+    flex-shrink: 0;
+  }
+  
+  .chart-rank {
+    font-size: 0.9em;
+    color: #a9a9a9;
+    font-weight: 600;
+    min-width: 30px;
+  }
+  
+  .chart-label {
+    font-weight: 600;
+    color: #ffffff;
+    text-transform: capitalize;
+  }
+  
+  .chart-sublabel {
+    font-size: 0.85em;
+    color: #a9a9a9;
+    text-transform: capitalize;
+  }
+  
+  .chart-bar-container {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 10px;
+  }
+  
+  .chart-bar {
+    height: 20px;
+    border-radius: 3px;
+    min-width: 2px;
+    transition: width 0.3s ease;
+  }
+  
+  .chart-value {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 0.9em;
+    min-width: 60px;
+    text-align: right;
+  }
+  
+  @media (max-width: 768px) {
+    .metadata-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .chart-labels {
+      min-width: 150px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+    
+    .chart-item {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .chart-bar-container {
+      width: 100%;
+    }
+  }
+</style>
