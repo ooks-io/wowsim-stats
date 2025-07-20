@@ -383,7 +383,7 @@ class DynamicRankings {
     try {
       const fileName = this.getFileName();
       console.log('Loading:', fileName);
-      const response = await fetch(`/data/${fileName}`);
+      const response = await fetch(`./data/${fileName}`);
       
       if (!response.ok) {
         throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
