@@ -14,8 +14,11 @@
     getAllClassSpecs = classes: 
       lib.flatten (lib.mapAttrsToList (className: classSpecs:
         lib.mapAttrsToList (specName: specConfigs:
-          if lib.hasAttr "p1" specConfigs && lib.hasAttr "singleTarget" specConfigs.p1
-          then { inherit className specName; config = specConfigs.p1.singleTarget; }
+          if lib.hasAttr "template" specConfigs 
+             && lib.hasAttr "p1" specConfigs.template
+             && lib.hasAttr "raid" specConfigs.template.p1
+             && lib.hasAttr "singleTarget" specConfigs.template.p1.raid
+          then { inherit className specName; config = specConfigs.template.p1.raid.singleTarget; }
           else null
         ) classSpecs
       ) classes);
