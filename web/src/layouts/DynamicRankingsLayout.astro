@@ -1,0 +1,541 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} - WoW MoP Rankings</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #282828;
+        color: #ffffff;
+      }
+      
+      .page-header {
+        text-align: center;
+        padding: 30px 20px;
+        background-color: #3a3a3a;
+        border-bottom: 1px solid #4a4a4a;
+      }
+      
+      .page-title {
+        color: #ea6962;
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
+        font-weight: 700;
+      }
+      
+      .page-description {
+        color: #aaaaaa;
+        font-size: 1.1em;
+        margin: 0;
+      }
+
+      .rankings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .controls {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: #3a3a3a;
+        border-radius: 8px;
+        border: 1px solid #4a4a4a;
+      }
+      
+      .controls-title {
+        color: #ea6962;
+        margin: 0 0 15px 0;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+      
+      .controls-grid {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .control-group label {
+        font-size: 0.9em;
+        color: #a9a9a9;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .control-group select {
+        padding: 8px 12px;
+        background-color: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 4px;
+        color: #ffffff;
+        font-size: 0.9em;
+        min-width: 120px;
+      }
+      
+      .control-group select:focus {
+        outline: none;
+        border-color: #ea6962;
+      }
+      
+      .loading, .error {
+        text-align: center;
+        padding: 20px;
+        margin: 20px 0;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        z-index: 1000;
+        min-width: 200px;
+      }
+      
+      .loading {
+        color: #a9a9a9;
+        border: 1px solid #4a4a4a;
+      }
+      
+      .error {
+        color: #ea6962;
+        background-color: #3a2a2a;
+        border: 1px solid #ea6962;
+      }
+      
+      #metadata-container {
+        min-height: 120px;
+        transition: opacity 0.2s ease;
+      }
+      
+      #chart-container {
+        min-height: 400px;
+        transition: opacity 0.2s ease;
+      }
+      
+      .hidden {
+        display: none;
+      }
+    </style>
+    <style is:global>
+      .simulation-metadata {
+        background-color: #3a3a3a;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid #4a4a4a;
+      }
+      
+      .metadata-title {
+        color: #ea6962;
+        margin: 0 0 15px 0;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+      
+      .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      
+      .metadata-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      
+      .metadata-item-wide {
+        grid-column: 1 / -1;
+      }
+      
+      .metadata-label {
+        font-size: 0.85em;
+        color: #a9a9a9;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .metadata-value {
+        font-size: 1em;
+        color: #ffffff;
+        font-weight: 600;
+      }
+      
+      .metadata-value-wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 1.4;
+      }
+
+      .chart-container {
+        background-color: #3a3a3a;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #4a4a4a;
+      }
+      
+      .chart-title {
+        color: #ea6962;
+        margin: 0 0 20px 0;
+        font-size: 1.4em;
+        font-weight: 600;
+      }
+      
+      .chart-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .chart-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 8px 0;
+      }
+      
+      .chart-labels {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 200px;
+        flex-shrink: 0;
+      }
+      
+      .chart-rank {
+        font-size: 0.9em;
+        color: #a9a9a9;
+        font-weight: 600;
+        min-width: 30px;
+      }
+      
+      .chart-label {
+        font-weight: 600;
+        color: #ffffff;
+        text-transform: capitalize;
+      }
+      
+      .chart-sublabel {
+        font-size: 0.85em;
+        color: #a9a9a9;
+        text-transform: capitalize;
+      }
+      
+      .chart-bar-container {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        gap: 10px;
+      }
+      
+      .chart-bar {
+        height: 20px;
+        border-radius: 3px;
+        min-width: 2px;
+        transition: width 0.3s ease;
+      }
+      
+      .chart-value {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 0.9em;
+        min-width: 60px;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-header">
+      <h1 class="page-title">{title}</h1>
+      {description && <p class="page-description">{description}</p>}
+    </div>
+    
+    <div class="rankings-container">
+      <div id="metadata-container"></div>
+      
+      <div class="controls">
+        <h3 class="controls-title">Simulation Options</h3>
+        <div class="controls-grid">
+          <div class="control-group">
+            <label for="targetCount">Target Count:</label>
+            <select id="targetCount">
+              <option value="single">Single Target</option>
+              <option value="three">3 Targets</option>
+              <option value="cleave">Cleave (2)</option>
+              <option value="ten">10 Targets</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="encounterType">Encounter:</label>
+            <select id="encounterType">
+              <option value="raid">Raid</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="duration">Duration:</label>
+            <select id="duration">
+              <option value="long">Long</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="phase">Phase:</label>
+            <select id="phase">
+              <option value="p1">Phase 1</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading hidden">Loading simulation data...</div>
+      <div id="error" class="error hidden"></div>
+      
+      <div id="chart-container"></div>
+    </div>
+
+    <script is:inline>
+console.log('Dynamic rankings script loaded!');
+
+// WoW class colors for consistency
+const classColors = {
+  death_knight: '#C41E3A',
+  druid: '#FF7C0A', 
+  hunter: '#AAD372',
+  mage: '#3FC7EB',
+  monk: '#00FF98',
+  paladin: '#F48CBA',
+  priest: '#FFFFFF',
+  rogue: '#FFF468',
+  shaman: '#0070DD',
+  warlock: '#8788EE',
+  warrior: '#C69B6D'
+};
+
+class DynamicRankings {
+  constructor() {
+    this.currentData = null;
+    this.bindEvents();
+    this.loadInitialData();
+  }
+
+  bindEvents() {
+    const selects = document.querySelectorAll('#targetCount, #encounterType, #duration, #phase');
+    selects.forEach(select => {
+      select.addEventListener('change', () => this.loadData());
+    });
+  }
+
+  async loadInitialData() {
+    await this.loadData();
+  }
+
+  getFileName() {
+    const targetCount = document.getElementById('targetCount').value;
+    const encounterType = document.getElementById('encounterType').value;
+    const duration = document.getElementById('duration').value;
+    const phase = document.getElementById('phase').value;
+    
+    return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+  }
+
+  async loadData() {
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const metadataContainer = document.getElementById('metadata-container');
+    const chartContainer = document.getElementById('chart-container');
+
+    if (!loadingEl || !errorEl || !metadataContainer || !chartContainer) {
+      console.error('Required elements not found');
+      return;
+    }
+
+    const scrollY = window.scrollY;
+
+    metadataContainer.style.opacity = '0.5';
+    chartContainer.style.opacity = '0.5';
+    loadingEl.classList.remove('hidden');
+    errorEl.classList.add('hidden');
+
+    try {
+      const fileName = this.getFileName();
+      console.log('Loading:', fileName);
+      const response = await fetch(`/data/${fileName}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
+      }
+
+      this.currentData = await response.json();
+      console.log('Data loaded successfully');
+      
+      loadingEl.classList.add('hidden');
+      
+      this.renderMetadata();
+      this.renderChart();
+      
+      metadataContainer.style.opacity = '1';
+      chartContainer.style.opacity = '1';
+      
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
+      
+    } catch (error) {
+      console.error('Error loading data:', error);
+      loadingEl.classList.add('hidden');
+      errorEl.textContent = `Error loading simulation data: ${error.message}`;
+      errorEl.classList.remove('hidden');
+      
+      metadataContainer.innerHTML = '';
+      chartContainer.innerHTML = '';
+      metadataContainer.style.opacity = '1';
+      chartContainer.style.opacity = '1';
+    }
+  }
+
+  renderMetadata() {
+    if (!this.currentData) return;
+
+    const container = document.getElementById('metadata-container');
+    const metadata = this.currentData.metadata;
+    
+    const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
+
+    const formatDuration = (seconds) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+    };
+
+    const formatRaidBuffs = (buffs) => {
+      const activeBuffs = Object.entries(buffs)
+        .filter(([_, value]) => value !== false && value !== 0)
+        .map(([key, value]) => {
+          const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+          return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
+        });
+      return activeBuffs.join(', ');
+    };
+
+    container.innerHTML = `
+      <div class="simulation-metadata">
+        <h3 class="metadata-title">Simulation Details</h3>
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">Iterations</span>
+            <span class="metadata-value">${metadata.iterations.toLocaleString()}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Specs Tested</span>
+            <span class="metadata-value">${metadata.specCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Encounter Duration</span>
+            <span class="metadata-value">${formatDuration(metadata.encounterDuration)}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Duration Variation</span>
+            <span class="metadata-value">±${metadata.encounterVariation}s</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Target Count</span>
+            <span class="metadata-value">${metadata.targetCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Date Simulated</span>
+            <span class="metadata-value">${simulationDate}</span>
+          </div>
+          <div class="metadata-item metadata-item-wide">
+            <span class="metadata-label">Active Raid Buffs</span>
+            <span class="metadata-value metadata-value-wrap">${formatRaidBuffs(metadata.raidBuffs)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderChart() {
+    if (!this.currentData) return;
+
+    const container = document.getElementById('chart-container');
+    
+    const chartItems = [];
+    
+    for (const [className, classSpecs] of Object.entries(this.currentData.results)) {
+      for (const [specName, specData] of Object.entries(classSpecs)) {
+        chartItems.push({
+          label: specName,
+          sublabel: className,
+          value: specData.dps,
+          category: className
+        });
+      }
+    }
+
+    chartItems.sort((a, b) => b.value - a.value);
+
+    const maxDps = Math.max(...chartItems.map(item => item.value));
+    
+    container.innerHTML = `
+      <div class="chart-container">
+        <h2 class="chart-title">DPS Rankings</h2>
+        <div class="chart-bars">
+          ${chartItems.map((item, index) => `
+            <div class="chart-item">
+              <div class="chart-labels">
+                <span class="chart-rank">#${index + 1}</span>
+                <span class="chart-label">${item.label}</span>
+                <span class="chart-sublabel">${item.sublabel}</span>
+              </div>
+              <div class="chart-bar-container">
+                <div class="chart-bar" style="width: ${(item.value / maxDps) * 100}%; background-color: ${classColors[item.category] || '#666'};">
+                </div>
+                <span class="chart-value">${Math.round(item.value).toLocaleString()}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing DynamicRankings...');
+  new DynamicRankings();
+});
+    </script>
+  </body>
+</html>
