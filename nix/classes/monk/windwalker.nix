@@ -1,23 +1,27 @@
 {
   lib,
-  components,
+  consumables,
   ...
 }: let
   inherit (lib.sim.player) mkPlayer;
-  inherit (components.consumables.preset) agility;
+  inherit (consumables.preset) agility;
 
   mkWindwalker = {
     race,
-    apl,
-    gearset,
+    apl ? "default",
+    gearset ? "p1_bis_dw",
     talents,
+    glyphs ? windwalker.glyphs.default,
     consumables ? agility,
+    profession1 ? "engineering",
+    profession2 ? "tailoring",
+    distanceFromTarget ? 5,
   }:
     mkPlayer {
       class = "monk";
       spec = "windwalker";
-      glyphs = windwalker.glyphs.default;
-      inherit race gearset talents apl consumables;
+      options = {};
+      inherit race gearset talents apl consumables glyphs profession1 profession2 distanceFromTarget;
     };
 
   windwalker = {
@@ -39,14 +43,10 @@
     p1 = {
       singleTarget = mkWindwalker {
         race = "orc";
-        apl = "default";
-        gearset = "dw_p1_bis";
         talents = windwalker.talents.xuen;
       };
       aoe = mkWindwalker {
         race = "orc";
-        apl = "default";
-        gearset = "dw_p1_bis";
         talents = windwalker.talents.rjw;
       };
     };
