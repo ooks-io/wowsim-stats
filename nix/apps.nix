@@ -63,21 +63,30 @@
         specs = "dps"; # shortcut to all DPS classes templates
         encounter = encounter.raid.long.singleTarget;
         iterations = 10000;
-        output = "singleTargetDPSraidp1long";
+        phase = "p1";
+        encounterType = "raid";
+        targetCount = "single";
+        duration = "long";
       };
 
       multiTargetRaidLong = mkMassSim {
         specs = "dps";
         encounter = encounter.raid.long.multiTarget;
         iterations = 10000;
-        output = "multiTargetDPSraidp1long";
+        phase = "p1";
+        encounterType = "raid";
+        targetCount = "multi";
+        duration = "long";
       };
 
       cleaveRaidLong = mkMassSim {
         specs = "dps";
         encounter = encounter.raid.long.cleave;
         iterations = 10000;
-        output = "cleaveDPSraidp1long";
+        phase = "p1";
+        encounterType = "raid";
+        targetCount = "cleave";
+        duration = "long";
       };
     };
   in {

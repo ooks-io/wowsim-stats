@@ -50,7 +50,10 @@
     specs ? "dps",
     encounter,
     iterations ? 10000,
-    output,
+    phase ? "p1",
+    encounterType ? "raid", 
+    targetCount ? "single",
+    duration ? "long",
   }: let
     # Get the list of specs based on the specs parameter
     specConfigs = if specs == "dps" then getAllDPSSpecs classes
@@ -123,13 +126,16 @@
       '';
     }) specConfigs);
     
+    # Generate structured output filename: <type>_<phase>_<encounter-type>_<target-count>_<duration>
+    structuredOutput = "${specs}_${phase}_${encounterType}_${targetCount}_${duration}";
+    
     # Aggregation script that combines all results
     aggregationScript = pkgs.writeShellApplication {
-      name = "${output}-aggregator";
+      name = "${structuredOutput}-aggregator";
       text = ''
         set -euo pipefail
         
-        echo "Aggregating mass simulation results for: ${output}"
+        echo "Aggregating mass simulation results for: ${structuredOutput}"
         echo "Specs simulated: ${toString (lib.length specConfigs)}"
         
         # Create base structure
@@ -154,7 +160,7 @@
         
         # Create final output with metadata including encounter information
         finalResult=$(echo "$result" | jq \
-          --arg output "${output}" \
+          --arg output "${structuredOutput}" \
           --arg timestamp "$(date -Iseconds)" \
           --arg iterations "${toString iterations}" \
           --arg specCount "${toString (lib.length specConfigs)}" \
@@ -173,11 +179,11 @@
           }')
         
         # Write to file and stdout
-        echo "$finalResult" | tee "${output}.json"
+        echo "$finalResult" | tee "${structuredOutput}.json"
         
         # Copy to web public directory for Astro
         mkdir -p web/public/data
-        cp "${output}.json" web/public/data/
+        cp "${structuredOutput}.json" web/public/data/
         
         echo ""
         echo "Top DPS Rankings:"
@@ -190,7 +196,7 @@
         ' | sort -k2 -nr | head -10
         
         echo ""
-        echo "Results written to: ${output}.json"
+        echo "Results written to: ${structuredOutput}.json"
       '';
       runtimeInputs = [ pkgs.jq pkgs.coreutils ];
     };
@@ -204,7 +210,8 @@
     
     # Metadata about this mass simulation
     metadata = {
-      inherit output iterations;
+      output = structuredOutput;
+      inherit iterations phase encounterType targetCount duration;
       specCount = lib.length specConfigs;
       specs = map (s: "${s.className}/${s.specName}") specConfigs;
     };

@@ -3,7 +3,6 @@
     ./shell.nix
     ./apps.nix
     ./checks.nix
-    ./test.nix
 
     # components
     ./classes
