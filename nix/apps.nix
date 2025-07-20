@@ -71,11 +71,11 @@
 
       multiTargetRaidLong = mkMassSim {
         specs = "dps";
-        encounter = encounter.raid.long.multiTarget;
+        encounter = encounter.raid.long.threeTarget;
         iterations = 10000;
         phase = "p1";
         encounterType = "raid";
-        targetCount = "multi";
+        targetCount = "three";
         duration = "long";
       };
 
@@ -86,6 +86,16 @@
         phase = "p1";
         encounterType = "raid";
         targetCount = "cleave";
+        duration = "long";
+      };
+
+      massMultiTargetRaidLong = mkMassSim {
+        specs = "dps";
+        encounter = encounter.raid.long.tenTarget;
+        iterations = 10000;
+        phase = "p1";
+        encounterType = "raid";
+        targetCount = "ten";
         duration = "long";
       };
     };
