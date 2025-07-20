@@ -1,6 +1,16 @@
 {
   imports = [
     ./shell.nix
-    ./components
+    ./apps.nix
+    ./checks.nix
+    ./test.nix
+
+    # components
+    ./classes
+    ./consumables
+    ./buffs
+    ./debuffs
+    ./target
+    ./encounter
   ];
 }
