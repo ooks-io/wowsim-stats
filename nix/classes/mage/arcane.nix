@@ -38,15 +38,40 @@
       netherTempest = "311112";
     };
 
-    p1 = {
-      singleTarget = mkArcane {
-        race = "troll";
-        talents = arcane.talents.livingBomb;
-      };
-      aoe = mkArcane {
-        race = "troll";
-        apl = "arcane_cleave";
-        talents = arcane.talents.netherTempest;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkArcane {
+            race = "troll";
+            talents = arcane.talents.livingBomb;
+          };
+          multiTarget = mkArcane {
+            race = "troll";
+            apl = "arcane_cleave";
+            talents = arcane.talents.netherTempest;
+          };
+          cleave = mkArcane {
+            race = "troll";
+            apl = "arcane_cleave";
+            talents = arcane.talents.netherTempest;
+          };
+        };
+        dungeon = {
+          singleTarget = mkArcane {
+            race = "troll";
+            talents = arcane.talents.livingBomb;
+          };
+          multiTarget = mkArcane {
+            race = "troll";
+            apl = "arcane_cleave";
+            talents = arcane.talents.netherTempest;
+          };
+          cleave = mkArcane {
+            race = "troll";
+            apl = "arcane_cleave";
+            talents = arcane.talents.netherTempest;
+          };
+        };
       };
     };
   };

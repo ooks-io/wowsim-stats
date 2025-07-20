@@ -34,14 +34,36 @@
       executionSentence = "221223";
     };
 
-    p1 = {
-      singleTarget = mkRetribution {
-        race = "human";
-        talents = retribution.talents.executionSentence;
-      };
-      aoe = mkRetribution {
-        race = "human";
-        talents = retribution.talents.executionSentence;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+          multiTarget = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+          cleave = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+        };
+        dungeon = {
+          singleTarget = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+          multiTarget = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+          cleave = mkRetribution {
+            race = "human";
+            talents = retribution.talents.executionSentence;
+          };
+        };
       };
     };
   };

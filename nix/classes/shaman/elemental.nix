@@ -38,21 +38,42 @@
       primalElementalist = "333322";
     };
 
-    p1 = {
-      singleTarget = mkElemental {
-        race = "troll";
-        talents = elemental.talents.unleashedFury;
-        apl = "default";
-      };
-      cleave = mkElemental {
-        race = "troll";
-        talents = elemental.talents.primalElementalist;
-        apl = "cleave";
-      };
-      aoe = mkElemental {
-        race = "troll";
-        talents = elemental.talents.primalElementalist;
-        apl = "aoe";
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkElemental {
+            race = "troll";
+            talents = elemental.talents.unleashedFury;
+            apl = "default";
+          };
+          multiTarget = mkElemental {
+            race = "troll";
+            talents = elemental.talents.primalElementalist;
+            apl = "aoe";
+          };
+          cleave = mkElemental {
+            race = "troll";
+            talents = elemental.talents.primalElementalist;
+            apl = "cleave";
+          };
+        };
+        dungeon = {
+          singleTarget = mkElemental {
+            race = "troll";
+            talents = elemental.talents.unleashedFury;
+            apl = "default";
+          };
+          multiTarget = mkElemental {
+            race = "troll";
+            talents = elemental.talents.primalElementalist;
+            apl = "aoe";
+          };
+          cleave = mkElemental {
+            race = "troll";
+            talents = elemental.talents.primalElementalist;
+            apl = "cleave";
+          };
+        };
       };
     };
   };

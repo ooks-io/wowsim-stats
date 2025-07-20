@@ -37,14 +37,36 @@
       archimondesDarkness = "231211";
     };
 
-    p1 = {
-      singleTarget = mkAffliction {
-        race = "orc";
-        talents = affliction.talents.archimondesDarkness;
-      };
-      aoe = mkAffliction {
-        race = "orc";
-        talents = affliction.talents.archimondesDarkness;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+          multiTarget = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+          cleave = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+        };
+        dungeon = {
+          singleTarget = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+          multiTarget = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+          cleave = mkAffliction {
+            race = "orc";
+            talents = affliction.talents.archimondesDarkness;
+          };
+        };
       };
     };
   };

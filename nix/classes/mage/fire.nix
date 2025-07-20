@@ -37,15 +37,40 @@
       netherTempest = "111112";
     };
 
-    p1 = {
-      singleTarget = mkFire {
-        race = "troll";
-        talents = fire.talents.livingBomb;
-      };
-      aoe = mkFire {
-        race = "troll";
-        talents = fire.talents.netherTempest;
-        apl = "fire_cleave";
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkFire {
+            race = "troll";
+            talents = fire.talents.livingBomb;
+          };
+          multiTarget = mkFire {
+            race = "troll";
+            talents = fire.talents.netherTempest;
+            apl = "fire_cleave";
+          };
+          cleave = mkFire {
+            race = "troll";
+            talents = fire.talents.netherTempest;
+            apl = "fire_cleave";
+          };
+        };
+        dungeon = {
+          singleTarget = mkFire {
+            race = "troll";
+            talents = fire.talents.livingBomb;
+          };
+          multiTarget = mkFire {
+            race = "troll";
+            talents = fire.talents.netherTempest;
+            apl = "fire_cleave";
+          };
+          cleave = mkFire {
+            race = "troll";
+            talents = fire.talents.netherTempest;
+            apl = "fire_cleave";
+          };
+        };
       };
     };
   };

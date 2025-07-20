@@ -39,15 +39,36 @@
       };
     };
 
-    # Phase 1 configurations
-    p1 = {
-      singleTarget = mkWindwalker {
-        race = "orc";
-        talents = windwalker.talents.xuen;
-      };
-      aoe = mkWindwalker {
-        race = "orc";
-        talents = windwalker.talents.rjw;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.xuen;
+          };
+          multiTarget = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.rjw;
+          };
+          cleave = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.rjw;
+          };
+        };
+        dungeon = {
+          singleTarget = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.xuen;
+          };
+          multiTarget = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.rjw;
+          };
+          cleave = mkWindwalker {
+            race = "orc";
+            talents = windwalker.talents.rjw;
+          };
+        };
       };
     };
   };

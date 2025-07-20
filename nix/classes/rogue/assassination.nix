@@ -36,14 +36,36 @@
       mfd = "321232";
     };
 
-    p1 = {
-      singleTarget = mkAssassination {
-        race = "human";
-        talents = assassination.talents.mfd;
-      };
-      aoe = mkAssassination {
-        race = "human";
-        talents = assassination.talents.mfd;
+    template = {
+      p1 = {
+        raid = {
+          singleTarget = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+          multiTarget = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+          cleave = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+        };
+        dungeon = {
+          singleTarget = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+          multiTarget = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+          cleave = mkAssassination {
+            race = "human";
+            talents = assassination.talents.mfd;
+          };
+        };
       };
     };
   };
