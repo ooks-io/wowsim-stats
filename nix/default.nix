@@ -1,8 +1,9 @@
 {
   imports = [
     ./shell.nix
-    ./apps.nix
+    ./apps
     ./checks.nix
+    ./pkgs
 
     # components
     ./classes
