@@ -654,9 +654,9 @@ class ComparisonRankings {
     const container = document.getElementById('chart-container');
     const sortBy = document.getElementById('sortBy').value;
     const comparisonType = document.getElementById('comparisonType').value;
-    
+
     const chartItems = [];
-    
+
     for (const [itemName, itemData] of Object.entries(this.currentData.results)) {
       chartItems.push({
         label: itemName.replace(/_/g, ' '),
@@ -669,51 +669,49 @@ class ComparisonRankings {
       });
     }
 
-    // Sort based on selected metric
-    if (sortBy === 'stdev') {
-      chartItems.sort((a, b) => a.value - b.value);
-    } else {
-      chartItems.sort((a, b) => b.value - a.value);
-    }
+    chartItems.sort((a, b) => {
+      return sortBy === 'stdev' ? a.value - b.value : b.value - a.value;
+    });
 
-    const maxDps = Math.max(...chartItems.map(item => item.value));
-    const minDps = Math.min(...chartItems.map(item => item.value));
-    
+    const maxValue = Math.max(...chartItems.map(item => item.value));
+    const softFloorFactor = 0.90;
+    const softFloor = maxValue * softFloorFactor;
+
     const comparisonLabel = comparisonType === 'race' ? 'Race' : 'Trinket';
     const chartTitles = {
       dps: `${comparisonLabel} DPS Rankings (Average)`,
       max: `${comparisonLabel} DPS Rankings (Maximum)`,
-      min: `${comparisonLabel} DPS Rankings (Minimum)`, 
+      min: `${comparisonLabel} DPS Rankings (Minimum)`,  
       stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`
     };
-    
+
     container.innerHTML = `
       <div class="chart-container">
         <h2 class="chart-title">${chartTitles[sortBy] || `${comparisonLabel} DPS Rankings`}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
-            const minBarWidth = 10;
-            const maxBarWidth = 100;
+            const chartRange = maxValue - softFloor;
+            const valueRelativeToFloor = Math.max(0, item.value - softFloor);
+            let barWidth = chartRange > 0 ? (valueRelativeToFloor / chartRange) * 100 : 100;
 
-            const valueRange = maxDps - minDps;
-            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
-            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
-            
+            const minWidth = 30; // Minimum % width to avoid tiny bars
+            const finalBarWidth = Math.max(minWidth, barWidth);
+
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
             const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
-            
+
             return `
-            <div class="chart-item">
-              <div class="chart-labels">
-                <span class="chart-rank">#${index + 1}</span>
-                <span class="chart-label">${item.label}</span>
+              <div class="chart-item">
+                <div class="chart-labels">
+                  <span class="chart-rank">#${index + 1}</span>
+                  <span class="chart-label">${item.label}</span>
+                </div>
+                <div class="chart-bar-container">
+                  <div class="chart-bar" style="width: ${finalBarWidth}%; background-color: ${itemColors[item.category] || itemColors.trinket || '#666'};"></div>
+                  <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                </div>
               </div>
-              <div class="chart-bar-container">
-                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${itemColors[item.category] || itemColors.trinket || '#666'};"></div>
-                <span class="chart-value" title="${tooltip}">${displayValue}</span>
-              </div>
-            </div>
             `;
           }).join('')}
         </div>
