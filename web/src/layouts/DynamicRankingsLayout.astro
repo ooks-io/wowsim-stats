@@ -320,6 +320,16 @@ const { title, description } = Astro.props;
               <option value="p1">Phase 1</option>
             </select>
           </div>
+          
+          <div class="control-group">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy">
+              <option value="dps">Average DPS</option>
+              <option value="max">Max DPS</option>
+              <option value="min">Min DPS</option>
+              <option value="stdev">Consistency (Low StdDev)</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -359,6 +369,12 @@ class DynamicRankings {
     selects.forEach(select => {
       select.addEventListener('change', () => this.loadData());
     });
+    
+    // Sort by only re-renders chart without reloading data
+    const sortBySelect = document.getElementById('sortBy');
+    if (sortBySelect) {
+      sortBySelect.addEventListener('change', () => this.renderChart());
+    }
   }
 
   async loadInitialData() {
@@ -501,6 +517,7 @@ class DynamicRankings {
     if (!this.currentData) return;
 
     const container = document.getElementById('chart-container');
+    const sortBy = document.getElementById('sortBy').value;
     
     const chartItems = [];
     
@@ -509,20 +526,37 @@ class DynamicRankings {
         chartItems.push({
           label: specName,
           sublabel: className,
-          value: specData.dps,
+          dps: specData.dps,
+          max: specData.max,
+          min: specData.min,
+          stdev: specData.stdev,
+          value: specData[sortBy] || specData.dps,
           category: className
         });
       }
     }
 
-    chartItems.sort((a, b) => b.value - a.value);
+    // Sort based on selected metric (stdev is ascending, others descending)
+    if (sortBy === 'stdev') {
+      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+    } else {
+      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
+    }
 
     const maxDps = Math.max(...chartItems.map(item => item.value));
     const minDps = Math.min(...chartItems.map(item => item.value));
     
+    // Chart title based on sort metric
+    const chartTitles = {
+      dps: 'DPS Rankings (Average)',
+      max: 'DPS Rankings (Maximum)',
+      min: 'DPS Rankings (Minimum)', 
+      stdev: 'DPS Consistency Rankings (Low StdDev = More Consistent)'
+    };
+    
     container.innerHTML = `
       <div class="chart-container">
-        <h2 class="chart-title">DPS Rankings</h2>
+        <h2 class="chart-title">${chartTitles[sortBy] || 'DPS Rankings'}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
             // Use power scaling to amplify visual differences (cube the ratio for more dramatic effect)
@@ -530,11 +564,16 @@ class DynamicRankings {
             const maxBarWidth = 100; // Maximum bar width percentage
 
             // Calculate the range for better distribution
-            const dpsRange = maxDps - minDps;
-            const normalizedValue = dpsRange > 0 ? (item.value - minDps) / dpsRange : 1;
+            const valueRange = maxDps - minDps;
+            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
 
             // Use linear scaling with a minimum width to ensure visibility
             const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
+            
+            // Format the display value
+            const displayValue = Math.round(item.value).toLocaleString();
+            const avgDps = Math.round(item.dps).toLocaleString();
+            const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
             
             return `
             <div class="chart-item">
@@ -546,7 +585,7 @@ class DynamicRankings {
               <div class="chart-bar-container">
                 <div class="chart-bar" style="width: ${barWidth}%; background-color: ${classColors[item.category] || '#666'};">
                 </div>
-                <span class="chart-value">${Math.round(item.value).toLocaleString()}</span>
+                <span class="chart-value" title="${tooltip}">${displayValue}</span>
               </div>
             </div>
             `;
