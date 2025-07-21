@@ -3,29 +3,18 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) intellect;
 
-  mkDemonology = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? intellect,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 25,
-  }:
-    mkPlayer {
-      class = "warlock";
-      spec = "demonology";
-      options = {
-        classOptions = {
-          summon = "Felguard";
-        };
-      };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
+  demonology = {
+    defaultRace = "troll";
+
+    talents = {
+      archimondesDarkness = "231211";
+    };
+
+    glyphs = {
+      default = {
         major1 = 42470; # soulstone
         major2 = 45785; # life tap
         major3 = 42465; # imp swarm
@@ -33,45 +22,60 @@
       };
     };
 
-  demonology = {
-    # Talent configurations
-    talents = {
-      archimondesDarkness = "231211";
-    };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "gnome"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+      ];
+      class = "warlock";
+      spec = "demonology";
+      consumables = intellect;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 25;
+      options = {
+        classOptions = {
+          summon = "Felguard";
+        };
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-          multiTarget = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-          cleave = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-        };
-        dungeon = {
-          singleTarget = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-          multiTarget = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-          cleave = mkDemonology {
-            race = "orc";
-            talents = demonology.talents.archimondesDarkness;
-          };
-        };
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = demonology.talents.archimondesDarkness;
+        glyphs = demonology.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = demonology.talents.archimondesDarkness;
+        glyphs = demonology.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = demonology.talents.archimondesDarkness;
+        glyphs = demonology.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = demonology.talents.archimondesDarkness;
+        glyphs = demonology.glyphs.default;
       };
     };
   };
 in
   demonology
-

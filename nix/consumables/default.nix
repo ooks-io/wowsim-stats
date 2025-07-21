@@ -61,6 +61,7 @@ let
       stamina = consumables.food.chunTianSpringRolls;
     };
 
+    # consumable loadouts to be with player definition
     preset = {
       agility = {
         prepotId = consumables.potion.agility;

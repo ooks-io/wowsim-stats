@@ -3,22 +3,42 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkSubtlety = {
-    race,
-    apl ? "subtlety",
-    gearset ? "p1_subtlety_t14",
-    talents,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
+  subtlety = {
+    defaultRace = "human";
+
+    talents = {
+      mfd = "321232";
+    };
+
+    glyphs = {
+      default = {
+        major1 = 42970; # Hemorraghing Veins
+      };
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "rogue";
       spec = "subtlety";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "jewelcrafting";
+      distanceFromTarget = 5;
       options = {
         classOptions = {
           lethalPoison = "DeadlyPoison";
@@ -26,48 +46,35 @@
           vanishBreakTime = 0.1;
         };
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 42970; # Hemorraghing Veins
+
+      singleTarget = {
+        apl = "subtlety";
+        p1.gearset = "p1_subtlety_t14";
+        preRaid.gearset = "preraid_subtlety";
+        talents = subtlety.talents.mfd;
+        glyphs = subtlety.glyphs.default;
       };
-    };
 
-  subtlety = {
-    # Talent configurations
-    talents = {
-      mfd = "321232";
-    };
+      multiTarget = {
+        apl = "subtlety";
+        p1.gearset = "p1_subtlety_t14";
+        preRaid.gearset = "preraid_subtlety";
+        talents = subtlety.talents.mfd;
+        glyphs = subtlety.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-          multiTarget = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-          cleave = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-        };
-        dungeon = {
-          singleTarget = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-          multiTarget = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-          cleave = mkSubtlety {
-            race = "human";
-            talents = subtlety.talents.mfd;
-          };
-        };
+      cleave = {
+        apl = "subtlety";
+        p1.gearset = "p1_subtlety_t14";
+        preRaid.gearset = "preraid_subtlety";
+        talents = subtlety.talents.mfd;
+        glyphs = subtlety.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_subtlety_t14";
+        talents = subtlety.talents.mfd;
+        glyphs = subtlety.glyphs.default;
       };
     };
   };

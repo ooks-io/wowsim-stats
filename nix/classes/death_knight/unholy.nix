@@ -3,25 +3,18 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) strength;
 
-  mkUnholy = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? strength,
-    profession1 ? "engineering",
-    profession2 ? "blacksmithing",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
-      class = "death_knight";
-      spec = "unholy";
-      options = {};
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
+  unholy = {
+    defaultRace = "orc";
+
+    talents = {
+      gorfiendsGrasp = "221111";
+    };
+
+    glyphs = {
+      default = {
         major1 = 43533;
         major2 = 43548;
         major3 = 104047;
@@ -31,42 +24,58 @@
       };
     };
 
-  unholy = {
-    # Talent configurations
-    talents = {
-      gorfiendsGrasp = "221111";
-    };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "goblin"
+      ];
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-          multiTarget = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-          cleave = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-        };
-        dungeon = {
-          singleTarget = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-          multiTarget = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-          cleave = mkUnholy {
-            race = "orc";
-            talents = unholy.talents.gorfiendsGrasp;
-          };
-        };
+      class = "death_knight";
+      spec = "unholy";
+      consumables = strength;
+      profession1 = "engineering";
+      profession2 = "blacksmithing";
+      distanceFromTarget = 5;
+      options = {};
+
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = unholy.talents.gorfiendsGrasp;
+        glyphs = unholy.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = unholy.talents.gorfiendsGrasp;
+        glyphs = unholy.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = unholy.talents.gorfiendsGrasp;
+        glyphs = unholy.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = unholy.talents.gorfiendsGrasp;
+        glyphs = unholy.glyphs.default;
       };
     };
   };

@@ -3,32 +3,14 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) strength;
 
-  mkFrost = {
-    race,
-    apl ? "obliterate",
-    gearset ? "p1.2h-obliterate",
-    talents,
-    consumables ? strength,
-    profession1 ? "engineering",
-    profession2 ? "alchemy",
-    distanceFromTarget ? 5,
-    glyphs,
-  }:
-    mkPlayer {
-      class = "death_knight";
-      spec = "frost";
-      options = {};
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget glyphs;
-    };
-
   frost = {
-    # Talent configurations
     talents = {
       obliterate = "221111";
     };
+    defaultRace = "troll";
 
     glyphs = {
       obliterate = {
@@ -49,48 +31,57 @@
       };
     };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-          multiTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-          cleave = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-        };
-        dungeon = {
-          singleTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-          multiTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-          cleave = mkFrost {
-            race = "troll";
-            talents = frost.talents.obliterate;
-            glyphs = frost.glyphs.obliterate;
-            apl = "obliterate";
-          };
-        };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "goblin"
+      ];
+      class = "death_knight";
+      spec = "frost";
+      consumables = strength;
+      profession1 = "engineering";
+      profession2 = "alchemy";
+      distanceFromTarget = 5;
+      options = {};
+
+      singleTarget = {
+        apl = "obliterate";
+        p1.gearset = "p1.2h-obliterate";
+        preRaid.gearset = "prebis";
+        talents = frost.talents.obliterate;
+        glyphs = frost.glyphs.obliterate;
+      };
+
+      multiTarget = {
+        apl = "obliterate";
+        p1.gearset = "p1.2h-obliterate";
+        preRaid.gearset = "prebis";
+        talents = frost.talents.obliterate;
+        glyphs = frost.glyphs.obliterate;
+      };
+
+      cleave = {
+        apl = "obliterate";
+        p1.gearset = "p1.2h-obliterate";
+        preRaid.gearset = "prebis";
+        talents = frost.talents.obliterate;
+        glyphs = frost.glyphs.obliterate;
+      };
+
+      challengeMode = {
+        gearset = "p1.2h-obliterate";
+        talents = frost.talents.obliterate;
+        glyphs = frost.glyphs.obliterate;
       };
     };
   };

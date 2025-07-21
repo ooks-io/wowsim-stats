@@ -3,25 +3,19 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) intellect;
 
-  mkFrost = {
-    race,
-    apl ? "frost",
-    gearset ? "p1_bis",
-    talents,
-    consumables ? intellect,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 25,
-  }:
-    mkPlayer {
-      class = "mage";
-      spec = "frost";
-      options = {};
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
+  frost = {
+    defaultRace = "troll";
+
+    talents = {
+      livingBomb = "311122";
+      netherTempest = "311112";
+    };
+
+    glyphs = {
+      default = {
         major1 = 42745; # splitting ice
         major2 = 42753; # icy veins
         major3 = 45736; # water elemental
@@ -31,50 +25,59 @@
       };
     };
 
-  frost = {
-    # Talent configurations
-    talents = {
-      livingBomb = "311122";
-      netherTempest = "311112";
-    };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
+      class = "mage";
+      spec = "frost";
+      consumables = intellect;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 25;
+      options = {};
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.livingBomb;
-          };
-          multiTarget = mkFrost {
-            race = "troll";
-            apl = "frost_aoe";
-            talents = frost.talents.netherTempest;
-          };
-          cleave = mkFrost {
-            apl = "frost_cleave";
-            race = "troll";
-            talents = frost.talents.netherTempest;
-          };
-        };
-        dungeon = {
-          singleTarget = mkFrost {
-            race = "troll";
-            talents = frost.talents.livingBomb;
-          };
-          multiTarget = mkFrost {
-            race = "troll";
-            apl = "frost_aoe";
-            talents = frost.talents.netherTempest;
-          };
-          cleave = mkFrost {
-            apl = "frost_cleave";
-            race = "troll";
-            talents = frost.talents.netherTempest;
-          };
-        };
+      singleTarget = {
+        apl = "frost";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis_rich";
+        talents = frost.talents.livingBomb;
+        glyphs = frost.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "frost_aoe";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis_rich";
+        talents = frost.talents.netherTempest;
+        glyphs = frost.glyphs.default;
+      };
+
+      cleave = {
+        apl = "frost_cleave";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis_rich";
+        talents = frost.talents.netherTempest;
+        glyphs = frost.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_bis";
+        talents = frost.talents.netherTempest;
+        glyphs = frost.glyphs.default;
       };
     };
   };
 in
   frost
-

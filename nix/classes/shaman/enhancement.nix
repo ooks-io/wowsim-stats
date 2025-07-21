@@ -3,22 +3,40 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkEnhancement = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
+  enhancement = {
+    defaultRace = "orc";
+
+    talents = {
+      elementalBlast = "313133";
+    };
+
+    glyphs = {
+      default = {
+        major1 = 71155; # lightning shield
+        major2 = 41529; # fire elemental totem
+        major3 = 41530; # fire nova
+      };
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "dwarf"
+        "draenei"
+        "orc"
+        "tauren"
+        "troll"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "shaman";
       spec = "enhancement";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 5;
       options = {
         classOptions = {
           shield = "LightningShield";
@@ -28,50 +46,35 @@
         syncType = "Auto";
         imbueOh = "FlametongueWeapon";
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 71155; # lightning shield
-        major2 = 41529; # fire elemental totem
-        major3 = 41530; # fire nova
+
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = enhancement.talents.elementalBlast;
+        glyphs = enhancement.glyphs.default;
       };
-    };
 
-  enhancement = {
-    # Talent configurations
-    talents = {
-      elementalBlast = "313133";
-    };
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = enhancement.talents.elementalBlast;
+        glyphs = enhancement.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-          multiTarget = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-          cleave = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-        };
-        dungeon = {
-          singleTarget = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-          multiTarget = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-          cleave = mkEnhancement {
-            race = "troll";
-            talents = enhancement.talents.elementalBlast;
-          };
-        };
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = enhancement.talents.elementalBlast;
+        glyphs = enhancement.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = enhancement.talents.elementalBlast;
+        glyphs = enhancement.glyphs.default;
       };
     };
   };

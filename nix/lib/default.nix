@@ -10,4 +10,5 @@
   raid = import ./raid.nix {inherit lib;};
   simulation = import ./simulation.nix {inherit lib;};
   party = import ./party.nix {inherit lib;};
+  classes = import ./classes.nix {inherit lib;};
 }
