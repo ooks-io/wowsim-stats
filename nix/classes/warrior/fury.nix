@@ -3,68 +3,77 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) strength;
 
-  mkFury = {
-    race,
-    apl ? "default",
-    gearset ? "p1_fury_tg",
-    talents,
-    consumables ? strength,
-    profession1 ? "engineering",
-    profession2 ? "blacksmithing",
-    distanceFromTarget ? 15,
-  }:
-    mkPlayer {
-      class = "warrior";
-      spec = "fury";
-      options = {};
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
+  fury = {
+    defaultRace = "worgen";
+
+    talents = {
+      stormBolt = "113133";
+      avatar = "113131";
+    };
+
+    glyphs = {
+      default = {
         major1 = 67482;
         major2 = 45792;
         major3 = 43399;
       };
     };
 
-  fury = {
-    # Talent configurations
-    talents = {
-      stormBolt = "113133";
-      avatar = "113131";
-    };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
+      class = "warrior";
+      spec = "fury";
+      consumables = strength;
+      profession1 = "engineering";
+      profession2 = "blacksmithing";
+      distanceFromTarget = 15;
+      options = {};
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-          multiTarget = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-          cleave = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-        };
-        dungeon = {
-          singleTarget = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-          multiTarget = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-          cleave = mkFury {
-            race = "orc";
-            talents = fury.talents.stormBolt;
-          };
-        };
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1_fury_tg";
+        preRaid.gearset = "preraid_fury_tg";
+        talents = fury.talents.stormBolt;
+        glyphs = fury.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1_fury_tg";
+        preRaid.gearset = "preraid_fury_tg";
+        talents = fury.talents.stormBolt;
+        glyphs = fury.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1_fury_tg";
+        preRaid.gearset = "preraid_fury_tg";
+        talents = fury.talents.stormBolt;
+        glyphs = fury.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_fury_tg";
+        talents = fury.talents.stormBolt;
+        glyphs = fury.glyphs.default;
       };
     };
   };

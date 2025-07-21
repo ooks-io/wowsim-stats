@@ -3,70 +3,74 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) intellect;
 
-  mkDestruction = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? intellect,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 25,
-  }:
-    mkPlayer {
+  destruction = {
+    defaultRace = "orc";
+
+    talents = {
+      archimondesDarkness = "221211";
+    };
+
+    glyphs = {
+      default = {};
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "gnome"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+      ];
       class = "warlock";
       spec = "destruction";
+      consumables = intellect;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 25;
       options = {
         classOptions = {
           summon = "Imp";
         };
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {};
-    };
 
-  destruction = {
-    # Talent configurations
-    talents = {
-      archimondesDarkness = "221211";
-    };
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = destruction.talents.archimondesDarkness;
+        glyphs = destruction.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-          multiTarget = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-          cleave = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-        };
-        dungeon = {
-          singleTarget = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-          multiTarget = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-          cleave = mkDestruction {
-            race = "orc";
-            talents = destruction.talents.archimondesDarkness;
-          };
-        };
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = destruction.talents.archimondesDarkness;
+        glyphs = destruction.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = destruction.talents.archimondesDarkness;
+        glyphs = destruction.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = destruction.talents.archimondesDarkness;
+        glyphs = destruction.glyphs.default;
       };
     };
   };
 in
   destruction
-

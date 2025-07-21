@@ -3,22 +3,45 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkSurvival = {
-    race,
-    apl ? "sv",
-    gearset ? "p1",
-    talents,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
-    distanceFromTarget ? 25,
-  }:
-    mkPlayer {
+  survival = {
+    defaultRace = "worgen";
+
+    talents = {
+      serpent = "321232";
+    };
+
+    glyphs = {
+      default = {
+        major1 = 42909; # animal bond
+        major2 = 42903; # deterrence
+        major3 = 42899; # liberation
+      };
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "hunter";
       spec = "survival";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "jewelcrafting";
+      distanceFromTarget = 25;
       options = {
         classOptions = {
           petType = "Wolf";
@@ -26,50 +49,35 @@
           useHunterMark = true;
         };
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 42909; # animal bond
-        major2 = 42903; # deterrence
-        major3 = 42899; # liberation
+
+      singleTarget = {
+        apl = "sv";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = survival.talents.serpent;
+        glyphs = survival.glyphs.default;
       };
-    };
 
-  survival = {
-    # talent configurations
-    talents = {
-      serpent = "321232";
-    };
+      multiTarget = {
+        apl = "sv";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = survival.talents.serpent;
+        glyphs = survival.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-          multiTarget = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-          cleave = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-        };
-        dungeon = {
-          singleTarget = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-          multiTarget = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-          cleave = mkSurvival {
-            race = "worgen";
-            talents = survival.talents.serpent;
-          };
-        };
+      cleave = {
+        apl = "sv";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = survival.talents.serpent;
+        glyphs = survival.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = survival.talents.serpent;
+        glyphs = survival.glyphs.default;
       };
     };
   };

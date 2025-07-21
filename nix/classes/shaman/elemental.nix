@@ -3,77 +3,74 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) intellect;
 
-  mkElemental = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? intellect,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 20,
-  }:
-    mkPlayer {
+  elemental = {
+    defaultRace = "troll";
+
+    talents = {
+      unleashedFury = "333121";
+      primalElementalist = "333322";
+    };
+
+    glyphs = {
+      default = {
+        major1 = 41539; # flame shock
+      };
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "dwarf"
+        "draenei"
+        "orc"
+        "tauren"
+        "troll"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "shaman";
       spec = "elemental";
+      consumables = intellect;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 20;
       options = {
         classOptions = {
           shield = "LightningShield";
           feleAutocast = {};
         };
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 41539; # flame shock
+
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = elemental.talents.unleashedFury;
+        glyphs = elemental.glyphs.default;
       };
-    };
 
-  elemental = {
-    # Talent configurations
-    talents = {
-      unleashedFury = "333121";
-      primalElementalist = "333322";
-    };
+      multiTarget = {
+        apl = "aoe";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = elemental.talents.primalElementalist;
+        glyphs = elemental.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkElemental {
-            race = "troll";
-            talents = elemental.talents.unleashedFury;
-            apl = "default";
-          };
-          multiTarget = mkElemental {
-            race = "troll";
-            talents = elemental.talents.primalElementalist;
-            apl = "aoe";
-          };
-          cleave = mkElemental {
-            race = "troll";
-            talents = elemental.talents.primalElementalist;
-            apl = "cleave";
-          };
-        };
-        dungeon = {
-          singleTarget = mkElemental {
-            race = "troll";
-            talents = elemental.talents.unleashedFury;
-            apl = "default";
-          };
-          multiTarget = mkElemental {
-            race = "troll";
-            talents = elemental.talents.primalElementalist;
-            apl = "aoe";
-          };
-          cleave = mkElemental {
-            race = "troll";
-            talents = elemental.talents.primalElementalist;
-            apl = "cleave";
-          };
-        };
+      cleave = {
+        apl = "cleave";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = elemental.talents.primalElementalist;
+        glyphs = elemental.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = elemental.talents.unleashedFury;
+        glyphs = elemental.glyphs.default;
       };
     };
   };

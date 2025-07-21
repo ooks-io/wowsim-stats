@@ -3,23 +3,40 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkCombat = {
-    race,
-    apl ? "combat",
-    gearset ? "p1_combat_t14",
-    talents,
-    glyphs ? {},
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
+  combat = {
+    defaultRace = "human";
+
+    talents = {
+      anticipation = "321213";
+    };
+
+    glyphs = {
+      default = {};
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "rogue";
       spec = "combat";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "jewelcrafting";
+      distanceFromTarget = 5;
       options = {
         classOptions = {
           lethalPoison = "DeadlyPoison";
@@ -27,45 +44,35 @@
           vanishBreakTime = 0.1;
         };
       };
-      inherit race gearset talents apl consumables glyphs profession1 profession2 distanceFromTarget;
-    };
 
-  combat = {
-    # Talent configurations
-    talents = {
-      anticipation = "321213";
-    };
+      singleTarget = {
+        apl = "combat";
+        p1.gearset = "p1_combat_t14";
+        preRaid.gearset = "preraid_combat";
+        talents = combat.talents.anticipation;
+        glyphs = combat.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-          multiTarget = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-          cleave = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-        };
-        dungeon = {
-          singleTarget = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-          multiTarget = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-          cleave = mkCombat {
-            race = "human";
-            talents = combat.talents.anticipation;
-          };
-        };
+      multiTarget = {
+        apl = "combat";
+        p1.gearset = "p1_combat_t14";
+        preRaid.gearset = "preraid_combat";
+        talents = combat.talents.anticipation;
+        glyphs = combat.glyphs.default;
+      };
+
+      cleave = {
+        apl = "combat";
+        p1.gearset = "p1_combat_t14";
+        preRaid.gearset = "preraid_combat";
+        talents = combat.talents.anticipation;
+        glyphs = combat.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_combat_t14";
+        talents = combat.talents.anticipation;
+        glyphs = combat.glyphs.default;
       };
     };
   };

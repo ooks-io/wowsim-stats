@@ -4,7 +4,7 @@
   ...
 }: let
   inherit (lib.sim.encounter) mkEncounter;
-  inherit (lib) genList;
+  inherit (lib) mapAttrs genList;
 
   # Target count configurations
   targetConfigs = {
@@ -18,19 +18,32 @@
 
   # Duration configurations
   durations = {
-    long = {duration = 300; durationVariation = 60;};
-    short = {duration = 120; durationVariation = 30;};
-    burst = {duration = 30; durationVariation = 10;};
+    long = {
+      duration = 300;
+      durationVariation = 60;
+    };
+    short = {
+      duration = 120;
+      durationVariation = 30;
+    };
+    burst = {
+      duration = 30;
+      durationVariation = 10;
+    };
   };
 
   # Generate encounters for a duration type
   mkDurationEncounters = durationConfig:
-    lib.mapAttrs (name: targets: 
-      mkEncounter (durationConfig // {inherit targets;})
-    ) targetConfigs;
+    mapAttrs (
+      name: targets:
+        mkEncounter (durationConfig // {inherit targets;})
+    )
+    targetConfigs;
+
+  raid = mapAttrs (_: mkDurationEncounters) durations;
 
   encounter = {
-    raid = lib.mapAttrs (_: mkDurationEncounters) durations;
+    inherit raid;
   };
 in {
   flake.encounter = encounter;

@@ -3,67 +3,68 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) strength;
 
-  mkRetribution = {
-    race,
-    apl ? "default",
-    gearset ? "p1",
-    talents,
-    consumables ? strength,
-    profession1 ? "engineering",
-    profession2 ? "blacksmithing",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
-      class = "paladin";
-      spec = "retribution";
-      options = {classOptions = {};};
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
+  retribution = {
+    defaultRace = "human";
+
+    talents = {
+      executionSentence = "221223";
+    };
+
+    glyphs = {
+      default = {
         major1 = 41097; # templar's verdict
         major2 = 41092; # double jeopardy
         major3 = 83107; # mass exorcism
       };
     };
 
-  retribution = {
-    # Talent configurations
-    talents = {
-      executionSentence = "221223";
-    };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "draenei"
+        "tauren"
+        "blood_elf"
+      ];
+      class = "paladin";
+      spec = "retribution";
+      consumables = strength;
+      profession1 = "engineering";
+      profession2 = "blacksmithing";
+      distanceFromTarget = 5;
+      options = {classOptions = {};};
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-          multiTarget = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-          cleave = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-        };
-        dungeon = {
-          singleTarget = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-          multiTarget = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-          cleave = mkRetribution {
-            race = "human";
-            talents = retribution.talents.executionSentence;
-          };
-        };
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = retribution.talents.executionSentence;
+        glyphs = retribution.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = retribution.talents.executionSentence;
+        glyphs = retribution.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
+        talents = retribution.talents.executionSentence;
+        glyphs = retribution.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = retribution.talents.executionSentence;
+        glyphs = retribution.glyphs.default;
       };
     };
   };

@@ -3,23 +3,40 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkAssassination = {
-    race,
-    apl ? "assassination",
-    gearset ? "p1_assassination_t14",
-    talents,
-    glyphs ? {},
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
+  assassination = {
+    defaultRace = "human";
+
+    talents = {
+      mfd = "321232";
+    };
+
+    glyphs = {
+      default = {};
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "worgen"
+        "orc"
+        "undead"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "rogue";
       spec = "assassination";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "jewelcrafting";
+      distanceFromTarget = 5;
       options = {
         classOptions = {
           lethalPoison = "DeadlyPoison";
@@ -27,45 +44,35 @@
           vanishBreakTime = 0.1;
         };
       };
-      inherit race gearset talents apl consumables glyphs profession1 profession2 distanceFromTarget;
-    };
 
-  assassination = {
-    # Talent configurations
-    talents = {
-      mfd = "321232";
-    };
+      singleTarget = {
+        apl = "assassination";
+        p1.gearset = "p1_assassination_t14";
+        preRaid.gearset = "preraid_assassination";
+        talents = assassination.talents.mfd;
+        glyphs = assassination.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-          multiTarget = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-          cleave = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-        };
-        dungeon = {
-          singleTarget = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-          multiTarget = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-          cleave = mkAssassination {
-            race = "human";
-            talents = assassination.talents.mfd;
-          };
-        };
+      multiTarget = {
+        apl = "assassination";
+        p1.gearset = "p1_assassination_t14";
+        preRaid.gearset = "preraid_assassination";
+        talents = assassination.talents.mfd;
+        glyphs = assassination.glyphs.default;
+      };
+
+      cleave = {
+        apl = "assassination";
+        p1.gearset = "p1_assassination_t14";
+        preRaid.gearset = "preraid_assassination";
+        talents = assassination.talents.mfd;
+        glyphs = assassination.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_assassination_t14";
+        talents = assassination.talents.mfd;
+        glyphs = assassination.glyphs.default;
       };
     };
   };

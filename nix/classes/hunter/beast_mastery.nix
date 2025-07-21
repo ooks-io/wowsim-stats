@@ -3,22 +3,45 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkBeastmastery = {
-    race,
-    apl ? "bm",
-    gearset ? "p1",
-    talents,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "leatherworking",
-    distanceFromTarget ? 25,
-  }:
-    mkPlayer {
+  beast_mastery = {
+    defaultRace = "worgen";
+
+    talents = {
+      glaiveToss = "312211";
+    };
+
+    glyphs = {
+      default = {
+        major1 = 42909; # animal bond
+        major2 = 42903; # deterrence
+        major3 = 42911; # pathfinding
+      };
+    };
+
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "draenei"
+        "worgen"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "goblin"
+        "alliance_pandaren"
+      ];
       class = "hunter";
       spec = "beast_mastery";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "leatherworking";
+      distanceFromTarget = 25;
       options = {
         classOptions = {
           petType = "Wolf";
@@ -26,52 +49,37 @@
           useHunterMark = true;
         };
       };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 42909; # animal bond
-        major2 = 42903; # deterrence
-        major3 = 42911; # pathfinding
+
+      singleTarget = {
+        apl = "bm";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = beast_mastery.talents.glaiveToss;
+        glyphs = beast_mastery.glyphs.default;
       };
-    };
 
-  beastmastery = {
-    # Talent configurations
-    talents = {
-      glaiveToss = "312211";
-    };
+      multiTarget = {
+        apl = "bm";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = beast_mastery.talents.glaiveToss;
+        glyphs = beast_mastery.glyphs.default;
+      };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-          multiTarget = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-          cleave = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-        };
-        dungeon = {
-          singleTarget = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-          multiTarget = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-          cleave = mkBeastmastery {
-            race = "worgen";
-            talents = beastmastery.talents.glaiveToss;
-          };
-        };
+      cleave = {
+        apl = "bm";
+        p1.gearset = "p1";
+        preRaid.gearset = "prebis";
+        talents = beast_mastery.talents.glaiveToss;
+        glyphs = beast_mastery.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1";
+        talents = beast_mastery.talents.glaiveToss;
+        glyphs = beast_mastery.glyphs.default;
       };
     };
   };
 in
-  beastmastery
+  beast_mastery

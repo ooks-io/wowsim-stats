@@ -3,29 +3,12 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkWindwalker = {
-    race,
-    apl ? "default",
-    gearset ? "p1_bis_dw",
-    talents,
-    glyphs ? windwalker.glyphs.default,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "tailoring",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
-      class = "monk";
-      spec = "windwalker";
-      options = {};
-      inherit race gearset talents apl consumables glyphs profession1 profession2 distanceFromTarget;
-    };
-
   windwalker = {
-    # Talent configurations
+    defaultRace = "orc";
+
     talents = {
       xuen = "213322"; # Single target build with Xuen
       rjw = "233321"; # AoE build with RJW
@@ -39,36 +22,56 @@
       };
     };
 
-    template = {
-      p1 = {
-        raid = {
-          singleTarget = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.xuen;
-          };
-          multiTarget = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.rjw;
-          };
-          cleave = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.rjw;
-          };
-        };
-        dungeon = {
-          singleTarget = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.xuen;
-          };
-          multiTarget = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.rjw;
-          };
-          cleave = mkWindwalker {
-            race = "orc";
-            talents = windwalker.talents.rjw;
-          };
-        };
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "alliance_pandaren"
+      ];
+      class = "monk";
+      spec = "windwalker";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 5;
+      options = {};
+
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis_dw";
+        talents = windwalker.talents.xuen;
+        glyphs = windwalker.glyphs.default;
+      };
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis_dw";
+        talents = windwalker.talents.rjw;
+        glyphs = windwalker.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis_dw";
+        talents = windwalker.talents.rjw;
+        glyphs = windwalker.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_bis_dw";
+        talents = windwalker.talents.xuen;
+        glyphs = windwalker.glyphs.default;
       };
     };
   };
