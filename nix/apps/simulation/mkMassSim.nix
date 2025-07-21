@@ -10,7 +10,7 @@
 }: let
   inherit (lib.sim.simulation) mkSim;
 
-  getAllDPSSpecs = classes: let
+  getAllDPSSpecs = classes: template: let
     dpsSpecs = {
       death_knight = ["frost" "unholy"];
       druid = ["balance" "feral"];
@@ -36,10 +36,10 @@
                   && lib.hasAttr "template" classes.${className}.${specName}
                   && lib.hasAttr "p1" classes.${className}.${specName}.template
                   && lib.hasAttr "raid" classes.${className}.${specName}.template.p1
-                  && lib.hasAttr "singleTarget" classes.${className}.${specName}.template.p1.raid
+                  && lib.hasAttr template classes.${className}.${specName}.template.p1.raid
                 then {
                   inherit className specName;
-                  config = classes.${className}.${specName}.template.p1.raid.singleTarget;
+                  config = classes.${className}.${specName}.template.p1.raid.${template};
                 }
                 else null
             )
@@ -58,11 +58,12 @@
     encounterType ? "raid",
     targetCount ? "single",
     duration ? "long",
+    template ? "singleTarget",
   }: let
     # Get the list of specs based on the specs parameter
     specConfigs =
       if specs == "dps"
-      then getAllDPSSpecs classes
+      then getAllDPSSpecs classes template
       else if builtins.isList specs
       then specs
       else throw "specs must be 'dps' or a list of spec configurations";
