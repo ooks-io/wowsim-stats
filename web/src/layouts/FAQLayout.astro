@@ -1,0 +1,252 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} - WoW MoP Rankings</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #282828;
+        color: #ffffff;
+      }
+      
+      .page-header {
+        text-align: center;
+        padding: 30px 20px;
+        background-color: #3a3a3a;
+        border-bottom: 1px solid #4a4a4a;
+      }
+      
+      .page-title {
+        color: var(--highlight-color);
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
+        font-weight: 700;
+      }
+      
+      .page-description {
+        color: #aaaaaa;
+        font-size: 1.1em;
+        margin: 0;
+      }
+
+      .page-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .navigation {
+        margin-bottom: 30px;
+        padding: 15px 0;
+        text-align: center;
+        border-bottom: 1px solid #4a4a4a;
+      }
+
+      .nav-link {
+        display: inline-block;
+        margin: 0 10px;
+        padding: 10px 15px;
+        background-color: #3a3a3a;
+        border: 1px solid #4a4a4a;
+        border-radius: 4px;
+        color: #ffffff;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+      }
+
+      .nav-link:hover {
+        background-color: #4a4a4a;
+        text-decoration: none;
+      }
+
+      .faq-section {
+        background-color: #3a3a3a;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 1px solid #4a4a4a;
+      }
+
+      .faq-category-title {
+        color: var(--highlight-color);
+        margin: 0 0 20px 0;
+        font-size: 1.4em;
+        font-weight: 600;
+        border-bottom: 2px solid var(--highlight-color);
+        padding-bottom: 8px;
+      }
+
+      .faq-item {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #4a4a4a;
+      }
+
+      .faq-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+
+      .faq-question {
+        color: var(--highlight-color);
+        font-size: 1.1em;
+        font-weight: 600;
+        margin: 0 0 10px 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .faq-question::before {
+        content: "▶";
+        font-size: 0.8em;
+        transition: transform 0.2s ease;
+        color: #a9a9a9;
+      }
+
+      .faq-question.expanded::before {
+        transform: rotate(90deg);
+      }
+
+      .faq-answer {
+        color: #ffffff;
+        line-height: 1.6;
+        margin-left: 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .faq-answer.expanded {
+        max-height: 500px;
+      }
+
+      .faq-answer p {
+        margin: 0 0 12px 0;
+      }
+
+      .faq-answer p:last-child {
+        margin-bottom: 0;
+      }
+
+      .faq-answer ul {
+        margin: 8px 0;
+        padding-left: 20px;
+      }
+
+      .faq-answer li {
+        margin-bottom: 5px;
+      }
+
+      .faq-answer code {
+        background-color: #2a2a2a;
+        color: var(--highlight-color);
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+      }
+
+      .faq-answer a {
+        color: var(--highlight-color);
+        text-decoration: none;
+      }
+
+      .faq-answer a:hover {
+        text-decoration: underline;
+      }
+
+      .highlight {
+        background-color: #4a3838;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid var(--highlight-color);
+        margin: 15px 0;
+      }
+
+      .highlight .highlight-title {
+        color: var(--highlight-color);
+        font-weight: 600;
+        margin: 0 0 8px 0;
+      }
+
+      @media (max-width: 768px) {
+        .page-title {
+          font-size: 2em;
+        }
+        
+        .page-container {
+          padding: 15px;
+        }
+        
+        .faq-section {
+          padding: 20px;
+        }
+
+        .nav-link {
+          display: block;
+          margin: 5px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-header">
+      <h1 class="page-title">{title}</h1>
+      {description && <p class="page-description">{description}</p>}
+    </div>
+    
+    <div class="page-container">
+      <div class="navigation">
+        <a href="/" class="nav-link">← Back to Rankings</a>
+      </div>
+      
+      <slot />
+    </div>
+
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', function() {
+        const questions = document.querySelectorAll('.faq-question');
+        
+        questions.forEach(question => {
+          question.addEventListener('click', function() {
+            const answer = this.nextElementSibling;
+            const isExpanded = answer.classList.contains('expanded');
+            
+            // Close all other answers
+            document.querySelectorAll('.faq-answer.expanded').forEach(openAnswer => {
+              if (openAnswer !== answer) {
+                openAnswer.classList.remove('expanded');
+                openAnswer.previousElementSibling.classList.remove('expanded');
+              }
+            });
+            
+            // Toggle current answer
+            if (isExpanded) {
+              answer.classList.remove('expanded');
+              this.classList.remove('expanded');
+            } else {
+              answer.classList.add('expanded');
+              this.classList.add('expanded');
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

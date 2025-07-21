@@ -1,4 +1,7 @@
 ---
+import Navigation from '../components/Navigation.astro';
+import Warning from '../components/Warning.astro';
+
 export interface Props {
   title: string;
   description?: string;
@@ -13,6 +16,7 @@ const { title, description } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <title>{title} - WoW MoP Rankings</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -30,7 +34,7 @@ const { title, description } = Astro.props;
       }
       
       .page-title {
-        color: #ea6962;
+        color: #d8a657;
         margin: 0 0 10px 0;
         font-size: 2.5em;
         font-weight: 700;
@@ -57,7 +61,7 @@ const { title, description } = Astro.props;
       }
       
       .controls-title {
-        color: #ea6962;
+        color: #d8a657;
         margin: 0 0 15px 0;
         font-size: 1.2em;
         font-weight: 600;
@@ -95,7 +99,7 @@ const { title, description } = Astro.props;
       
       .control-group select:focus {
         outline: none;
-        border-color: #ea6962;
+        border-color: #d8a657;
       }
       
       .loading, .error {
@@ -118,9 +122,9 @@ const { title, description } = Astro.props;
       }
       
       .error {
-        color: #ea6962;
+        color: var(--highlight-color);
         background-color: #3a2a2a;
-        border: 1px solid #ea6962;
+        border: 1px solid var(--highlight-color);
       }
       
       #metadata-container {
@@ -147,7 +151,7 @@ const { title, description } = Astro.props;
       }
       
       .metadata-title {
-        color: #ea6962;
+        color: var(--highlight-color);
         margin: 0 0 15px 0;
         font-size: 1.2em;
         font-weight: 600;
@@ -197,7 +201,7 @@ const { title, description } = Astro.props;
       }
       
       .chart-title {
-        color: #ea6962;
+        color: var(--highlight-color);
         margin: 0 0 20px 0;
         font-size: 1.4em;
         font-weight: 600;
@@ -210,7 +214,8 @@ const { title, description } = Astro.props;
       }
       
       .chart-item {
-        display: flex;
+        display: grid;
+        grid-template-columns: 180px 1fr;
         align-items: center;
         gap: 15px;
         padding: 8px 0;
@@ -220,8 +225,8 @@ const { title, description } = Astro.props;
         display: flex;
         align-items: center;
         gap: 10px;
-        min-width: 200px;
-        max-width: 250px;
+        min-width: 120px;
+        max-width: 180px;
         flex-shrink: 0;
         overflow: hidden;
       }
@@ -258,6 +263,7 @@ const { title, description } = Astro.props;
         align-items: center;
         flex: 1;
         gap: 10px;
+        min-width: 0;
       }
       
       .chart-bar {
@@ -277,12 +283,18 @@ const { title, description } = Astro.props;
     </style>
   </head>
   <body>
+    <Navigation />
     <div class="page-header">
       <h1 class="page-title">{title}</h1>
       {description && <p class="page-description">{description}</p>}
     </div>
     
     <div class="rankings-container">
+      <Warning title="Static Simulation Results">
+        <p>These rankings display <strong>static simulation results</strong> generated at a specific point in time, not live simulations. The data represents a snapshot of spec performance based on preset configurations. Take all results with a grain of salt, many classes simulation's are currently incomplete</p>
+        <p>For live, interactive simulations where you can customize gear and settings, visit <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims.com/mop</a>.</p>
+      </Warning>
+      
       <div id="metadata-container"></div>
       
       <div class="controls">
@@ -411,7 +423,7 @@ class DynamicRankings {
     try {
       const fileName = this.getFileName();
       console.log('Loading:', fileName);
-      const response = await fetch(`./data/${fileName}`);
+      const response = await fetch(`./data/rankings/${fileName}`);
       
       if (!response.ok) {
         throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
@@ -580,7 +592,6 @@ class DynamicRankings {
               <div class="chart-labels">
                 <span class="chart-rank">#${index + 1}</span>
                 <span class="chart-label">${item.label}</span>
-                <span class="chart-sublabel">${item.sublabel}</span>
               </div>
               <div class="chart-bar-container">
                 <div class="chart-bar" style="width: ${barWidth}%; background-color: ${classColors[item.category] || '#666'};">

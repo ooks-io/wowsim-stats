@@ -1,0 +1,134 @@
+---
+import Navigation from '../components/Navigation.astro';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>FAQ - WoW MoP Rankings</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <Navigation />
+    
+    <div class="page-header">
+      <h1 class="page-title">Frequently Asked Questions</h1>
+      <p class="page-description">Common questions about WoW MoP simulation rankings</p>
+    </div>
+    
+    <div class="page-container">
+            <div class="card">
+        
+        <div class="faq-item">
+          <h3 class="faq-question">What features are planned for the future?</h3>
+          <ul class="faq-answer">
+            <li><strong>Tanks:</strong> Tank DPS at different vengeance levels</li>
+            <li><strong>Trinket comparisons:</strong> Detailed trinket performance analysis across different specs</li>
+            <li><strong>Race comparisons:</strong> Performance differences between races for each spec</li>
+            <li><strong>Raid compositions:</strong> Optimal raid setups and synergy analysis</li>
+            <li><strong>Challenge modes:</strong> Specialized simulations for challenge mode scenarios</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title-large">Understanding the Data</h2>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">What do the different sorting options mean?</h3>
+          <p class="faq-answer">
+            <strong>Average DPS:</strong> Mean damage across all iterations<br>
+            <strong>Max DPS:</strong> Highest damage achieved in any iteration<br>
+            <strong>Min DPS:</strong> Lowest damage achieved in any iteration<br>
+            <strong>Consistency:</strong> Specs with lower standard deviation are more predictable
+          </p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Why does <em>x</em> class perform poorly?</h3>
+          <p class="faq-answer">Wowsims is still being actively developed, and as such the quality of each spec varies widely. This is particularly noticeable in multi-target encounters where classes APLs have not been fleshed out enough yet.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Should I reroll based on these rankings?</h3>
+          <p class="faq-answer">These are theoretical maximums under ideal conditions. So no, take these rankings with a grain of salt.</p>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="card-title-large">General Questions</h2>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">What simulations are being run?</h3>
+          <p class="faq-answer">We simulate all DPS specs using the wowsims cli. Simulations include various encounter types (single target, multi-target, cleave) and durations (long 5min, short 2min, burst 30s).</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">Are these live simulations or static results?</h3>
+          <p class="faq-answer">This website displays static simulation results that were generated at a specific point in time, not live simulations. The data represents a snapshot of spec performance based on the wowsims engine and configurations available when the simulations were last run. For live, interactive simulations where you can customize gear and settings, visit <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims.com/mop</a>.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">How often are rankings updated?</h3>
+          <p class="faq-answer">As of writing the website is still actively being developed, so all simulations are being manually run. In the future, simulation runs will be triggered by upstream wowsims releases.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">What gear and talents are used?</h3>
+          <p class="faq-answer">Each spec pulls gearsets/talents from the wowsims presets.</p>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2 class="card-title-large">Technical Details</h2>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">How many iterations are run per simulation?</h3>
+          <p class="faq-answer">Currently we are running 10,000 iterations for each category, we may use more or less in the future.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">What raid buffs and debuffs are active?</h3>
+          <p class="faq-answer">For raid simulations we use all standard raid buffs are active including Bloodlust, various class buffs, and multiple Stormlash Totems. Full details are shown in the simulation metadata on each ranking page.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h3 class="faq-question">How is the simulation being run?</h3>
+          <p class="faq-answer">We use the wowsims CLI, which accepts JSON configuration files containing all simulation parameters (gear, talents, encounter settings, etc.). While these files can be manually generated from the wowsims WebUI, we use Nix to programmatically create configurations for all specs and encounter types. The Nix build system then orchestrates running thousands of simulations in parallel, aggregates the results into JSON files, and generates the static website you're viewing. This approach ensures reproducible builds and allows us to efficiently simulate entire spec rankings across multiple scenarios.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  .faq-item {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #4a4a4a;
+  }
+  
+  .faq-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  
+  .faq-question {
+    color: var(--highlight-color);
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+  }
+  
+  .faq-answer {
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin: 0;
+  }
+  
+  .faq-answer strong {
+    color: var(--highlight-color);
+  }
+</style>

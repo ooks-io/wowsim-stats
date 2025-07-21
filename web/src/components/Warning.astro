@@ -1,0 +1,79 @@
+---
+export interface Props {
+  title?: string;
+  children: any;
+}
+
+const { title = "Important Notice" } = Astro.props;
+---
+
+<div class="warning">
+  <div class="warning-header">
+    <svg class="warning-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 9V13M12 17H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h3 class="warning-title">{title}</h3>
+  </div>
+  <div class="warning-content">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .warning {
+    background-color: #3a2a2a;
+    border: 1px solid #ea6962;
+    border-left: 4px solid #ea6962;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .warning-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .warning-icon {
+    width: 20px;
+    height: 20px;
+    color: #ea6962;
+    flex-shrink: 0;
+  }
+  
+  .warning-title {
+    color: #ea6962;
+    margin: 0;
+    font-size: 1em;
+    font-weight: 600;
+  }
+  
+  .warning-content {
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-left: 30px;
+  }
+  
+  .warning-content p {
+    margin: 0 0 8px 0;
+  }
+  
+  .warning-content p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .warning-content a {
+    color: #ea6962;
+    text-decoration: none;
+  }
+  
+  .warning-content a:hover {
+    text-decoration: underline;
+  }
+  
+  .warning-content strong {
+    color: #ea6962;
+  }
+</style>
