@@ -16,7 +16,7 @@
     shaman = import ./shaman {inherit lib consumables;};
     warlock = import ./warlock {inherit lib consumables;};
     druid = import ./druid {inherit lib consumables;};
-    deathknight = import ./death_knight {inherit lib consumables;};
+    death_knight = import ./death_knight {inherit lib consumables;};
   };
 in {
   flake.classes = classes;
