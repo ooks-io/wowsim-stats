@@ -13,7 +13,7 @@
     talents,
     consumables ? agility,
     profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
+    profession2 ? "tailoring",
     distanceFromTarget ? 5,
   }:
     mkPlayer {
@@ -25,6 +25,8 @@
           feleAutocast = {};
           imbueMh = "WindfuryWeapon";
         };
+        syncType = "Auto";
+        imbueOh = "FlametongueWeapon";
       };
       inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
       glyphs = {
