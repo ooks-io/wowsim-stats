@@ -221,7 +221,9 @@ const { title, description } = Astro.props;
         align-items: center;
         gap: 10px;
         min-width: 200px;
+        max-width: 250px;
         flex-shrink: 0;
+        overflow: hidden;
       }
       
       .chart-rank {
@@ -235,12 +237,20 @@ const { title, description } = Astro.props;
         font-weight: 600;
         color: #ffffff;
         text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
       }
       
       .chart-sublabel {
         font-size: 0.85em;
         color: #a9a9a9;
         text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
       }
       
       .chart-bar-container {
