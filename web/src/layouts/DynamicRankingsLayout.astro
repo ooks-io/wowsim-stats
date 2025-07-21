@@ -514,8 +514,15 @@ class DynamicRankings {
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
             // Use power scaling to amplify visual differences (cube the ratio for more dramatic effect)
-            const linearRatio = item.value / maxDps;
-            const barWidth = Math.pow(linearRatio, 1.5) * 100;
+            const minBarWidth = 10; // Minimum bar width percentage
+            const maxBarWidth = 100; // Maximum bar width percentage
+
+            // Calculate the range for better distribution
+            const dpsRange = maxDps - minDps;
+            const normalizedValue = dpsRange > 0 ? (item.value - minDps) / dpsRange : 1;
+
+            // Use linear scaling with a minimum width to ensure visibility
+            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
             
             return `
             <div class="chart-item">
