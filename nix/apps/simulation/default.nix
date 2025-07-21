@@ -55,6 +55,92 @@
       duration = "long";
       template = "multiTarget";
     };
+    dps-p1-raid-single-short = mkMassSim {
+      specs = "dps"; # shortcut to all DPS classes templates
+      encounter = encounter.raid.short.singleTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "single";
+      duration = "short";
+      template = "singleTarget";
+    };
+
+    dps-p1-raid-three-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.threeTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "three";
+      duration = "short";
+      template = "multiTarget";
+    };
+
+    dps-p1-raid-cleave-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.cleave;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "cleave";
+      duration = "short";
+      template = "cleave";
+    };
+
+    dps-p1-raid-ten-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.tenTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "ten";
+      duration = "short";
+      template = "multiTarget";
+    };
+    dps-p1-raid-single-burst = mkMassSim {
+      specs = "dps"; # burstcut to all DPS classes templates
+      encounter = encounter.raid.burst.singleTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "single";
+      duration = "burst";
+      template = "singleTarget";
+    };
+
+    dps-p1-raid-three-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.threeTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "three";
+      duration = "burst";
+      template = "multiTarget";
+    };
+
+    dps-p1-raid-cleave-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.cleave;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "cleave";
+      duration = "burst";
+      template = "cleave";
+    };
+
+    dps-p1-raid-ten-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.tenTarget;
+      iterations = 10000;
+      phase = "p1";
+      encounterType = "raid";
+      targetCount = "ten";
+      duration = "burst";
+      template = "multiTarget";
+    };
   };
 
   # Script that runs all simulations
