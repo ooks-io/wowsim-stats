@@ -9,7 +9,8 @@
   ...
 }: let
   # Mass simulations using mkMassSim
-  mkMassSim = (import ./mkMassSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;}).mkMassSim;
+  massSimFunctions = import ./mkMassSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;};
+  inherit (massSimFunctions) mkMassSim mkRaceComparison;
 
   massSimulations = {
     dps-p1-raid-single-long = mkMassSim {
@@ -143,12 +144,146 @@
     };
   };
 
+  # Race comparison simulations for all DPS specs
+  raceComparisonSpecs = [
+    {
+      class = "death_knight";
+      spec = "frost";
+      template = "singleTarget";
+    }
+    {
+      class = "death_knight";
+      spec = "unholy";
+      template = "singleTarget";
+    }
+    {
+      class = "druid";
+      spec = "balance";
+      template = "singleTarget";
+    }
+    # { class = "druid"; spec = "feral"; template = "singleTarget"; }
+    {
+      class = "hunter";
+      spec = "beast_mastery";
+      template = "singleTarget";
+    }
+    {
+      class = "hunter";
+      spec = "marksmanship";
+      template = "singleTarget";
+    }
+    {
+      class = "hunter";
+      spec = "survival";
+      template = "singleTarget";
+    }
+    {
+      class = "mage";
+      spec = "arcane";
+      template = "singleTarget";
+    }
+    {
+      class = "mage";
+      spec = "fire";
+      template = "singleTarget";
+    }
+    {
+      class = "mage";
+      spec = "frost";
+      template = "singleTarget";
+    }
+    {
+      class = "monk";
+      spec = "windwalker";
+      template = "singleTarget";
+    }
+    {
+      class = "paladin";
+      spec = "retribution";
+      template = "singleTarget";
+    }
+    {
+      class = "priest";
+      spec = "shadow";
+      template = "singleTarget";
+    }
+    {
+      class = "rogue";
+      spec = "assassination";
+      template = "singleTarget";
+    }
+    {
+      class = "rogue";
+      spec = "combat";
+      template = "singleTarget";
+    }
+    {
+      class = "rogue";
+      spec = "subtlety";
+      template = "singleTarget";
+    }
+    {
+      class = "shaman";
+      spec = "elemental";
+      template = "singleTarget";
+    }
+    {
+      class = "shaman";
+      spec = "enhancement";
+      template = "singleTarget";
+    }
+    {
+      class = "warlock";
+      spec = "affliction";
+      template = "singleTarget";
+    }
+    {
+      class = "warlock";
+      spec = "demonology";
+      template = "singleTarget";
+    }
+    {
+      class = "warlock";
+      spec = "destruction";
+      template = "singleTarget";
+    }
+    {
+      class = "warrior";
+      spec = "arms";
+      template = "singleTarget";
+    }
+    {
+      class = "warrior";
+      spec = "fury";
+      template = "singleTarget";
+    }
+  ];
+
+  # Generate race comparison simulations for single target long encounters
+  raceComparisons = lib.listToAttrs (map (specConfig: {
+      name = "race-${specConfig.class}-${specConfig.spec}-p1-raid-single-long";
+      value = mkRaceComparison {
+        class = specConfig.class;
+        spec = specConfig.spec;
+        encounter = encounter.raid.long.singleTarget;
+        iterations = 10000;
+        phase = "p1";
+        encounterType = "raid";
+        targetCount = "single";
+        duration = "long";
+        template = specConfig.template;
+      };
+    })
+    raceComparisonSpecs);
+
   # Script that runs all simulations
   allSimulationsScript = pkgs.writeShellApplication {
     name = "all-simulations";
     text = ''
       echo "Running all WoW simulations..."
 
+      echo ""
+      echo "=== DPS Rankings ==="
       ${lib.concatMapStringsSep "\n" (name: ''
         echo ""
         echo "Running ${name}..."
@@ -156,11 +291,23 @@
       '') (lib.attrNames massSimulations)}
 
       echo ""
+      echo "=== Race Comparisons ==="
+      ${lib.concatMapStringsSep "\n" (name: ''
+        echo ""
+        echo "Running ${name}..."
+        ${raceComparisons.${name}.script}/bin/${raceComparisons.${name}.metadata.output}-aggregator
+      '') (lib.attrNames raceComparisons)}
+
+      echo ""
       echo "All simulations completed successfully!"
-      echo "Generated files:"
-      ls -la web/public/data/*.json 2>/dev/null || echo "No JSON files found"
+      echo ""
+      echo "Generated DPS rankings:"
+      ls -la web/public/data/rankings/*.json 2>/dev/null || echo "No ranking files found"
+      echo ""
+      echo "Generated race comparisons:"
+      find web/public/data/comparison -name "*.json" 2>/dev/null || echo "No comparison files found"
     '';
-    runtimeInputs = [pkgs.coreutils];
+    runtimeInputs = [pkgs.coreutils pkgs.findutils];
   };
 
   # Convert mass simulations to apps and add the all-simulations app
@@ -170,8 +317,17 @@
       program = "${massSim.script}/bin/${massSim.metadata.output}-aggregator";
     })
     massSimulations;
+
+  # Convert race comparisons to apps
+  raceComparisonApps =
+    lib.mapAttrs (name: raceComp: {
+      type = "app";
+      program = "${raceComp.script}/bin/${raceComp.metadata.output}-aggregator";
+    })
+    raceComparisons;
 in
   simulationApps
+  // raceComparisonApps
   // {
     allSimulations = {
       type = "app";

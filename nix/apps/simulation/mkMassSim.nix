@@ -10,6 +10,12 @@
 }: let
   inherit (lib.sim.simulation) mkSim;
 
+  # Extract playable races from class definitions
+  getPlayableRaces = className: 
+    if lib.hasAttr className classes && lib.hasAttr "playableRaces" classes.${className}
+    then classes.${className}.playableRaces
+    else throw "playableRaces not defined for class ${className}. Please add playableRaces = [...] to nix/classes/${className}/default.nix";
+
   getAllDPSSpecs = classes: template: let
     dpsSpecs = {
       death_knight = ["frost" "unholy"];
@@ -48,6 +54,233 @@
       dpsSpecs);
   in
     validSpecs;
+
+  # Get race configurations for a specific class/spec combination
+  getRaceConfigs = classes: className: specName: template: phase: encounterType: let
+    availableRaces = getPlayableRaces className;
+    baseSpec = classes.${className}.${specName};
+    baseConfig = 
+      if lib.hasAttr "template" baseSpec 
+        && lib.hasAttr phase baseSpec.template
+        && lib.hasAttr encounterType baseSpec.template.${phase}
+        && lib.hasAttr template baseSpec.template.${phase}.${encounterType}
+      then baseSpec.template.${phase}.${encounterType}.${template}
+      else throw "Template ${template} not found for ${className}/${specName} at ${phase}.${encounterType}";
+  in
+    map (raceName: {
+      inherit className specName raceName;
+      # Use base config but override the race field
+      config = baseConfig // {
+        race = raceName;
+      };
+    }) availableRaces;
+
+  # Race comparison function
+  mkRaceComparison = {
+    class,
+    spec,
+    encounter,
+    iterations ? 10000,
+    phase ? "p1", 
+    encounterType ? "raid",
+    targetCount ? "single",
+    duration ? "long",
+    template ? "singleTarget",
+  }: let
+    # Get race configurations for this class/spec
+    raceConfigs = getRaceConfigs classes class spec template phase encounterType;
+    
+    # Create individual simulation derivations for each race
+    simDerivations = lib.listToAttrs (map (raceConfig: {
+        name = "${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}";
+        value = let
+          simInput = mkSim {
+            inherit iterations;
+            player = raceConfig.config;
+            buffs = buffs.full;
+            debuffs = debuffs.full;
+            inherit encounter;
+          };
+        in
+          pkgs.runCommand "race-sim-${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}" {
+            buildInputs = [pkgs.jq];
+            nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
+          } ''
+            # Generate input JSON file
+            cat > input.json << 'EOF'
+            ${simInput}
+            EOF
+
+            # Run simulation
+            echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
+            if wowsimcli sim --infile input.json --outfile output.json; then
+              # Extract DPS statistics
+              avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
+              maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
+              minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
+              stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+
+              # Create loadout info
+              loadout=$(echo '${builtins.toJSON raceConfig.config}' | jq '{
+                consumables,
+                talentsString,
+                glyphs,
+                equipment,
+                race,
+                class,
+                profession1,
+                profession2
+              }')
+
+              # Create final result
+              jq -n \
+                --arg raceName "${raceConfig.raceName}" \
+                --arg avgDps "$avgDps" \
+                --arg maxDps "$maxDps" \
+                --arg minDps "$minDps" \
+                --arg stdevDps "$stdevDps" \
+                --argjson loadout "$loadout" \
+                '{
+                  race: $raceName,
+                  dps: ($avgDps | tonumber),
+                  max: ($maxDps | tonumber),
+                  min: ($minDps | tonumber),
+                  stdev: ($stdevDps | tonumber),
+                  loadout: $loadout
+                }' > $out
+            else
+              echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
+              exit 1
+            fi
+          '';
+      })
+      raceConfigs);
+
+    # Generate output filename: race_<phase>_<encounter-type>_<target-count>_<duration>
+    structuredOutput = "race_${phase}_${encounterType}_${targetCount}_${duration}";
+
+    # Aggregation script for race comparison
+    aggregationScript = pkgs.writeShellApplication {
+      name = "${structuredOutput}-aggregator";
+      text = ''
+        set -euo pipefail
+
+        echo "Aggregating race comparison results for: ${class}/${spec}"
+        echo "Races simulated: ${toString (lib.length raceConfigs)}"
+
+        # Create base structure
+        result=$(jq -n '{}')
+
+        ${lib.concatMapStringsSep "\n" (raceConfig: ''
+            # Add ${raceConfig.raceName} results
+            raceData=$(cat ${simDerivations."${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}"})
+
+            result=$(echo "$result" | jq \
+              --argjson race "$raceData" \
+              --arg raceName "${raceConfig.raceName}" \
+              '.[$raceName] = {
+                dps: $race.dps,
+                max: $race.max,
+                min: $race.min,
+                stdev: $race.stdev,
+                loadout: $race.loadout
+              }')
+          '')
+          raceConfigs}
+
+        # Create final output with metadata
+        finalResult=$(echo "$result" | jq \
+          --arg class "${class}" \
+          --arg spec "${spec}" \
+          --arg encounter "${phase}_${encounterType}_${targetCount}_${duration}" \
+          --arg timestamp "$(date -Iseconds)" \
+          --arg iterations "${toString iterations}" \
+          --arg encounterDuration "${toString encounter.duration}" \
+          --arg encounterVariation "${toString encounter.durationVariation}" \
+          --arg targetCount "${toString (lib.length encounter.targets)}" \
+          --argjson raidBuffs '${builtins.toJSON buffs.full}' \
+          '{
+            metadata: {
+              spec: $spec,
+              class: $class,
+              encounter: $encounter,
+              timestamp: $timestamp,
+              iterations: ($iterations | tonumber),
+              encounterDuration: ($encounterDuration | tonumber),
+              encounterVariation: ($encounterVariation | tonumber),
+              targetCount: ($targetCount | tonumber),
+              raidBuffs: $raidBuffs
+            },
+            results: .
+          }')
+
+        echo "$finalResult" | tee "${structuredOutput}.json"
+
+        # Copy to web public directory with new structure
+        repo_root=""
+        current_dir="$PWD"
+        while [[ "$current_dir" != "/" ]]; do
+          if [[ -f "$current_dir/flake.nix" ]]; then
+            repo_root="$current_dir"
+            break
+          fi
+          current_dir="$(dirname "$current_dir")"
+        done
+
+        if [[ -z "$repo_root" ]]; then
+          echo "Warning: Could not find repo root (flake.nix), using current directory"
+          repo_root="$PWD"
+        fi
+
+        # Create directory structure: /comparison/<class>/<spec>/
+        comparison_dir="$repo_root/web/public/data/comparison/${class}/${spec}"
+        mkdir -p "$comparison_dir"
+
+        # Copy race comparison file
+        cp "${structuredOutput}.json" "$comparison_dir/"
+        echo "Copied to: $comparison_dir/${structuredOutput}.json"
+
+        echo ""
+        echo "Race DPS Rankings for ${class}/${spec}:"
+        echo "======================================="
+        echo "$finalResult" | jq -r '
+          .results | to_entries[] |
+          select(.value.dps != null and .value.dps > 0) |
+          "\(.key): \(.value.dps | floor) DPS"
+        ' | sort -k2 -nr
+        
+        # Show any failed races
+        failed_races=$(echo "$finalResult" | jq -r '
+          .results | to_entries[] |
+          select(.value.dps == null or .value.dps <= 0) |
+          .key
+        ')
+        
+        if [[ -n "$failed_races" ]]; then
+          echo ""
+          echo "Failed races (no valid DPS data):"
+          echo "$failed_races"
+        fi
+
+        echo ""
+        echo "Results written to: $comparison_dir/${structuredOutput}.json"
+      '';
+      runtimeInputs = [pkgs.jq pkgs.coreutils];
+    };
+  in {
+    # Individual race simulation derivations (for debugging)
+    simulations = simDerivations;
+
+    # Main aggregation script
+    script = aggregationScript;
+
+    metadata = {
+      output = structuredOutput;
+      inherit class spec iterations phase encounterType targetCount duration;
+      raceCount = lib.length raceConfigs;
+      races = map (r: r.raceName) raceConfigs;
+    };
+  };
 
   # Main mkMassSim function
   mkMassSim = {
@@ -213,10 +446,12 @@
         fi
 
         web_data_dir="$repo_root/web/public/data"
-        archive_dir="$web_data_dir/archive"
-        existing_file="$web_data_dir/${structuredOutput}.json"
+        rankings_dir="$web_data_dir/rankings"
+        archive_dir="$rankings_dir/archive"
+        existing_file="$rankings_dir/${structuredOutput}.json"
 
         mkdir -p "$web_data_dir"
+        mkdir -p "$rankings_dir"
         mkdir -p "$archive_dir"
 
         # Archive existing file if it exists
@@ -281,8 +516,8 @@
           fi
         fi
 
-        cp "${structuredOutput}.json" "$web_data_dir/"
-        echo "Copied to: $web_data_dir/${structuredOutput}.json"
+        cp "${structuredOutput}.json" "$rankings_dir/"
+        echo "Copied to: $rankings_dir/${structuredOutput}.json"
 
         echo ""
         echo "Top DPS Rankings:"
@@ -314,5 +549,5 @@
     };
   };
 in {
-  inherit mkMassSim getAllDPSSpecs;
+  inherit mkMassSim getAllDPSSpecs mkRaceComparison getRaceConfigs getPlayableRaces;
 }

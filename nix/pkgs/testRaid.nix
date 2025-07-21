@@ -12,18 +12,17 @@
   # quickly sim a single spec for testing purposes
   inherit (lib.sim.simulation) mkSim;
 
-  class = "shaman";
-  spec = "elemental";
+  class = "monk";
+  spec = "windwalker";
   encounterType = "raid";
-  targetCount = "cleave";
 
   raid = mkSim {
     requestId = "raidSimAsync-f2cf5e22118a43c7";
     iterations = 10000;
-    player = classes.${class}.${spec}.template.p1.${encounterType}.multiTarget;
+    player = classes.${class}.${spec}.template.p1.${encounterType}.singleTarget;
     buffs = buffs.full;
     debuffs = debuffs.full;
-    encounter = encounter.${encounterType}.long.threeTarget;
+    encounter = encounter.${encounterType}.long.singleTarget;
   };
   testRaid = writeShellApplication {
     name = "testRaid";
