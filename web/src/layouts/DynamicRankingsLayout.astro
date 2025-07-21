@@ -506,12 +506,18 @@ class DynamicRankings {
     chartItems.sort((a, b) => b.value - a.value);
 
     const maxDps = Math.max(...chartItems.map(item => item.value));
+    const minDps = Math.min(...chartItems.map(item => item.value));
     
     container.innerHTML = `
       <div class="chart-container">
         <h2 class="chart-title">DPS Rankings</h2>
         <div class="chart-bars">
-          ${chartItems.map((item, index) => `
+          ${chartItems.map((item, index) => {
+            // Use power scaling to amplify visual differences (cube the ratio for more dramatic effect)
+            const linearRatio = item.value / maxDps;
+            const barWidth = Math.pow(linearRatio, 1.5) * 100;
+            
+            return `
             <div class="chart-item">
               <div class="chart-labels">
                 <span class="chart-rank">#${index + 1}</span>
@@ -519,12 +525,13 @@ class DynamicRankings {
                 <span class="chart-sublabel">${item.sublabel}</span>
               </div>
               <div class="chart-bar-container">
-                <div class="chart-bar" style="width: ${(item.value / maxDps) * 100}%; background-color: ${classColors[item.category] || '#666'};">
+                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${classColors[item.category] || '#666'};">
                 </div>
                 <span class="chart-value">${Math.round(item.value).toLocaleString()}</span>
               </div>
             </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
       </div>
     `;

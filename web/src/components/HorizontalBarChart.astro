@@ -23,6 +23,7 @@ const {
 // Sort items by value descending
 const sortedItems = [...items].sort((a, b) => b.value - a.value);
 const maxValue = sortedItems[0]?.value || 1;
+const maxSqrt = Math.sqrt(maxValue);
 
 // Default WoW class colors
 const defaultColors = {
@@ -46,7 +47,9 @@ const colors = { ...defaultColors, ...categoryColors };
   {title && <h2 class="chart-title">{title}</h2>}
   <div class="chart">
     {sortedItems.map((item, index) => {
-      const barWidth = (item.value / maxValue) * 100;
+      // Use power scaling to amplify visual differences (cube the ratio for more dramatic effect)
+      const linearRatio = item.value / maxValue;
+      const barWidth = Math.pow(linearRatio, 3) * 100;
       const formattedValue = valueFormatter(item.value);
       const color = colors[item.category] || '#007bff';
       
