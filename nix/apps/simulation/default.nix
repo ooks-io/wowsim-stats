@@ -20,6 +20,7 @@
       encounterType = "raid";
       targetCount = "single";
       duration = "long";
+      template = "singleTarget";
     };
 
     dps-p1-raid-three-long = mkMassSim {
@@ -30,6 +31,7 @@
       encounterType = "raid";
       targetCount = "three";
       duration = "long";
+      template = "multiTarget";
     };
 
     dps-p1-raid-cleave-long = mkMassSim {
@@ -40,6 +42,7 @@
       encounterType = "raid";
       targetCount = "cleave";
       duration = "long";
+      template = "cleave";
     };
 
     dps-p1-raid-ten-long = mkMassSim {
@@ -50,6 +53,7 @@
       encounterType = "raid";
       targetCount = "ten";
       duration = "long";
+      template = "multiTarget";
     };
   };
 
