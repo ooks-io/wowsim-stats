@@ -1,0 +1,133 @@
+/* Global styles for WoW MoP Rankings */
+
+/* CSS Variables */
+:root {
+  --highlight-color: #d8a657;
+  --bg-primary: #282828;
+  --bg-secondary: #3a3a3a;
+  --border-color: #4a4a4a;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --text-muted: #a9a9a9;
+}
+
+/* Base styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Common layout components */
+.page-header {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-title {
+  color: var(--highlight-color);
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+  font-weight: 700;
+}
+
+.page-description {
+  color: var(--text-secondary);
+  font-size: 1.1em;
+  margin: 0;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Card/panel styles */
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-color);
+}
+
+.card-title {
+  color: var(--highlight-color);
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.card-title-large {
+  color: var(--highlight-color);
+  margin: 0 0 20px 0;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+/* Text styles */
+.text-accent {
+  color: var(--highlight-color);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* Links */
+a {
+  color: var(--highlight-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Navigation */
+.nav-link {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--border-color);
+  text-decoration: none;
+}
+
+/* Utility classes for navigation */
+.nav-active {
+  background-color: var(--highlight-color) !important;
+  border-color: var(--highlight-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2em;
+  }
+  
+  .page-container {
+    padding: 15px;
+  }
+  
+  .card {
+    padding: 15px;
+  }
+}
