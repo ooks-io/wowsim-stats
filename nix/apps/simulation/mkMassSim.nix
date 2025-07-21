@@ -39,14 +39,21 @@
                 if
                   lib.hasAttr className classes
                   && lib.hasAttr specName classes.${className}
+                  && lib.hasAttr "defaultRace" classes.${className}.${specName}
                   && lib.hasAttr "template" classes.${className}.${specName}
-                  && lib.hasAttr "p1" classes.${className}.${specName}.template
-                  && lib.hasAttr "raid" classes.${className}.${specName}.template.p1
-                  && lib.hasAttr template classes.${className}.${specName}.template.p1.raid
-                then {
-                  inherit className specName;
-                  config = classes.${className}.${specName}.template.p1.raid.${template};
-                }
+                then let
+                  defaultRace = classes.${className}.${specName}.defaultRace;
+                  spec = classes.${className}.${specName};
+                in
+                  if lib.hasAttr defaultRace spec.template
+                    && lib.hasAttr "p1" spec.template.${defaultRace}
+                    && lib.hasAttr "raid" spec.template.${defaultRace}.p1
+                    && lib.hasAttr template spec.template.${defaultRace}.p1.raid
+                  then {
+                    inherit className specName;
+                    config = spec.template.${defaultRace}.p1.raid.${template};
+                  }
+                  else null
                 else null
             )
             specNames)
@@ -59,20 +66,18 @@
   getRaceConfigs = classes: className: specName: template: phase: encounterType: let
     availableRaces = getPlayableRaces className;
     baseSpec = classes.${className}.${specName};
-    baseConfig = 
-      if lib.hasAttr "template" baseSpec 
-        && lib.hasAttr phase baseSpec.template
-        && lib.hasAttr encounterType baseSpec.template.${phase}
-        && lib.hasAttr template baseSpec.template.${phase}.${encounterType}
-      then baseSpec.template.${phase}.${encounterType}.${template}
-      else throw "Template ${template} not found for ${className}/${specName} at ${phase}.${encounterType}";
   in
     map (raceName: {
       inherit className specName raceName;
-      # Use base config but override the race field
-      config = baseConfig // {
-        race = raceName;
-      };
+      # Access the race-specific config from the new template structure
+      config = 
+        if lib.hasAttr "template" baseSpec 
+          && lib.hasAttr raceName baseSpec.template
+          && lib.hasAttr phase baseSpec.template.${raceName}
+          && lib.hasAttr encounterType baseSpec.template.${raceName}.${phase}
+          && lib.hasAttr template baseSpec.template.${raceName}.${phase}.${encounterType}
+        then baseSpec.template.${raceName}.${phase}.${encounterType}.${template}
+        else throw "Template ${template} not found for ${className}/${specName}/${raceName} at ${phase}.${encounterType}";
     }) availableRaces;
 
   # Race comparison function
