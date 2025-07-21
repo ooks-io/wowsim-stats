@@ -1,0 +1,608 @@
+---
+import Navigation from '../components/Navigation.astro';
+import Warning from '../components/Warning.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+  class: string;
+  spec: string;
+}
+
+const { title, description, class: className, spec } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} - WoW MoP Rankings</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+      }
+      
+      .page-header {
+        text-align: center;
+        padding: 30px 20px;
+        background-color: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .page-title {
+        color: var(--highlight-color);
+        margin: 0 0 10px 0;
+        font-size: 2.5em;
+        font-weight: 700;
+      }
+      
+      .page-description {
+        color: var(--text-secondary);
+        font-size: 1.1em;
+        margin: 0;
+      }
+
+      .rankings-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .controls {
+        margin-bottom: 30px;
+        padding: 20px;
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+      }
+      
+      .controls-title {
+        color: var(--highlight-color);
+        margin: 0 0 15px 0;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+      
+      .controls-grid {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      
+      .control-group label {
+        font-size: 0.9em;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .control-group select {
+        padding: 8px 12px;
+        background-color: #2a2a2a;
+        border: 1px solid #555;
+        border-radius: 4px;
+        color: var(--text-primary);
+        font-size: 0.9em;
+        min-width: 120px;
+      }
+      
+      .control-group select:focus {
+        outline: none;
+        border-color: var(--highlight-color);
+      }
+      
+      .loading, .error {
+        text-align: center;
+        padding: 20px;
+        margin: 20px 0;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #2a2a2a;
+        border-radius: 8px;
+        z-index: 1000;
+        min-width: 200px;
+      }
+      
+      .loading {
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+      }
+      
+      .error {
+        color: var(--highlight-color);
+        background-color: #3a2a2a;
+        border: 1px solid var(--highlight-color);
+      }
+      
+      #metadata-container {
+        min-height: 120px;
+        transition: opacity 0.2s ease;
+      }
+      
+      #chart-container {
+        min-height: 400px;
+        transition: opacity 0.2s ease;
+      }
+      
+      .hidden {
+        display: none;
+      }
+    </style>
+    <style is:global>
+      .simulation-metadata {
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid var(--border-color);
+      }
+      
+      .metadata-title {
+        color: var(--highlight-color);
+        margin: 0 0 15px 0;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+      
+      .metadata-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+      
+      .metadata-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      
+      .metadata-item-wide {
+        grid-column: 1 / -1;
+      }
+      
+      .metadata-label {
+        font-size: 0.85em;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .metadata-value {
+        font-size: 1em;
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+      
+      .metadata-value-wrap {
+        white-space: normal;
+        word-wrap: break-word;
+        line-height: 1.4;
+      }
+
+      .chart-container {
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid var(--border-color);
+      }
+      
+      .chart-title {
+        color: var(--highlight-color);
+        margin: 0 0 20px 0;
+        font-size: 1.4em;
+        font-weight: 600;
+      }
+      
+      .chart-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .chart-item {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+        gap: 15px;
+        padding: 8px 0;
+      }
+      
+      .chart-labels {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 120px;
+        max-width: 180px;
+        flex-shrink: 0;
+        overflow: hidden;
+      }
+      
+      .chart-rank {
+        font-size: 0.9em;
+        color: var(--text-muted);
+        font-weight: 600;
+        min-width: 30px;
+      }
+      
+      .chart-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+      
+      .chart-bar-container {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        gap: 10px;
+        min-width: 0;
+      }
+      
+      .chart-bar {
+        height: 20px;
+        border-radius: 3px;
+        min-width: 2px;
+        transition: width 0.3s ease;
+      }
+      
+      .chart-value {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.9em;
+        min-width: 60px;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <Navigation />
+    <div class="page-header">
+      <h1 class="page-title">{title}</h1>
+      {description && <p class="page-description">{description}</p>}
+    </div>
+    
+    <div class="rankings-container">
+      <Warning title="Race Comparison Results">
+        <p>These rankings compare <strong>race performance</strong> for {className} {spec} using static simulation results. Results show performance differences between races using identical gear and configurations.</p>
+        <p>For live, interactive simulations visit <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims.com/mop</a>.</p>
+      </Warning>
+      
+      <div id="metadata-container"></div>
+      
+      <div class="controls">
+        <h3 class="controls-title">Simulation Options</h3>
+        <div class="controls-grid">
+          <div class="control-group">
+            <label for="targetCount">Target Count:</label>
+            <select id="targetCount">
+              <option value="single">Single Target</option>
+              <option value="three">3 Targets</option>
+              <option value="cleave">Cleave (2)</option>
+              <option value="ten">10 Targets</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="encounterType">Encounter:</label>
+            <select id="encounterType">
+              <option value="raid">Raid</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="duration">Duration:</label>
+            <select id="duration">
+              <option value="long">Long (5 min)</option>
+              <option value="short">Short (2 min)</option>
+              <option value="burst">Burst (30s)</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="phase">Phase:</label>
+            <select id="phase">
+              <option value="p1">Phase 1</option>
+            </select>
+          </div>
+          
+          <div class="control-group">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy">
+              <option value="dps">Average DPS</option>
+              <option value="max">Max DPS</option>
+              <option value="min">Min DPS</option>
+              <option value="stdev">Consistency (Low StdDev)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="loading hidden">Loading race comparison data...</div>
+      <div id="error" class="error hidden"></div>
+      
+      <div id="chart-container"></div>
+    </div>
+
+    <script is:inline type="text/javascript" define:vars={{ className, spec }}>
+console.log('Race comparison script loaded for:', className, spec);
+
+// Race colors (can be different from class colors)
+const raceColors = {
+  human: '#3FC7EB',
+  orc: '#C41E3A', 
+  dwarf: '#FF7C0A',
+  night_elf: '#A330C9',
+  undead: '#00FF98',
+  tauren: '#8788EE',
+  gnome: '#F48CBA',
+  troll: '#FFF468',
+  blood_elf: '#0070DD',
+  draenei: '#C69B6D',
+  goblin: '#AAD372',
+  worgen: '#FFFFFF',
+  pandaren: '#00FF98'
+};
+
+class RaceComparison {
+  constructor() {
+    this.currentData = null;
+    this.className = className;
+    this.spec = spec;
+    this.bindEvents();
+    this.loadInitialData();
+  }
+
+  bindEvents() {
+    const selects = document.querySelectorAll('#targetCount, #encounterType, #duration, #phase');
+    selects.forEach(select => {
+      select.addEventListener('change', () => this.loadData());
+    });
+    
+    const sortBySelect = document.getElementById('sortBy');
+    if (sortBySelect) {
+      sortBySelect.addEventListener('change', () => this.renderChart());
+    }
+  }
+
+  async loadInitialData() {
+    await this.loadData();
+  }
+
+  getFileName() {
+    const targetCount = document.getElementById('targetCount').value;
+    const encounterType = document.getElementById('encounterType').value;
+    const duration = document.getElementById('duration').value;
+    const phase = document.getElementById('phase').value;
+    
+    return `race_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+  }
+
+  async loadData() {
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const metadataContainer = document.getElementById('metadata-container');
+    const chartContainer = document.getElementById('chart-container');
+
+    if (!loadingEl || !errorEl || !metadataContainer || !chartContainer) {
+      console.error('Required elements not found');
+      return;
+    }
+
+    const scrollY = window.scrollY;
+
+    metadataContainer.style.opacity = '0.5';
+    chartContainer.style.opacity = '0.5';
+    loadingEl.classList.remove('hidden');
+    errorEl.classList.add('hidden');
+
+    try {
+      const fileName = this.getFileName();
+      console.log('Loading:', fileName);
+      const response = await fetch(`./data/comparison/${this.className}/${this.spec}/${fileName}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
+      }
+
+      this.currentData = await response.json();
+      console.log('Race comparison data loaded successfully');
+      
+      loadingEl.classList.add('hidden');
+      
+      this.renderMetadata();
+      this.renderChart();
+      
+      metadataContainer.style.opacity = '1';
+      chartContainer.style.opacity = '1';
+      
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollY);
+      });
+      
+    } catch (error) {
+      console.error('Error loading race comparison data:', error);
+      loadingEl.classList.add('hidden');
+      errorEl.textContent = `Error loading race comparison data: ${error.message}`;
+      errorEl.classList.remove('hidden');
+      
+      metadataContainer.innerHTML = '';
+      chartContainer.innerHTML = '';
+      metadataContainer.style.opacity = '1';
+      chartContainer.style.opacity = '1';
+    }
+  }
+
+  renderMetadata() {
+    if (!this.currentData) return;
+
+    const container = document.getElementById('metadata-container');
+    const metadata = this.currentData.metadata;
+    
+    const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
+
+    const formatDuration = (seconds) => {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+    };
+
+    const formatRaidBuffs = (buffs) => {
+      const activeBuffs = Object.entries(buffs)
+        .filter(([_, value]) => value !== false && value !== 0)
+        .map(([key, value]) => {
+          const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+          return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
+        });
+      return activeBuffs.join(', ');
+    };
+
+    const raceCount = Object.keys(this.currentData.results).length;
+
+    container.innerHTML = `
+      <div class="simulation-metadata">
+        <h3 class="metadata-title">Race Comparison Details</h3>
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">Class/Spec</span>
+            <span class="metadata-value">${metadata.class} ${metadata.spec}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Iterations</span>
+            <span class="metadata-value">${metadata.iterations.toLocaleString()}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Races Tested</span>
+            <span class="metadata-value">${raceCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Encounter Duration</span>
+            <span class="metadata-value">${formatDuration(metadata.encounterDuration)}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Duration Variation</span>
+            <span class="metadata-value">±${metadata.encounterVariation}s</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Target Count</span>
+            <span class="metadata-value">${metadata.targetCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Date Simulated</span>
+            <span class="metadata-value">${simulationDate}</span>
+          </div>
+          <div class="metadata-item metadata-item-wide">
+            <span class="metadata-label">Active Raid Buffs</span>
+            <span class="metadata-value metadata-value-wrap">${formatRaidBuffs(metadata.raidBuffs)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderChart() {
+    if (!this.currentData) return;
+
+    const container = document.getElementById('chart-container');
+    const sortBy = document.getElementById('sortBy').value;
+    
+    const chartItems = [];
+    
+    for (const [raceName, raceData] of Object.entries(this.currentData.results)) {
+      chartItems.push({
+        label: raceName.replace(/_/g, ' '),
+        dps: raceData.dps,
+        max: raceData.max,
+        min: raceData.min,
+        stdev: raceData.stdev,
+        value: raceData[sortBy] || raceData.dps,
+        category: raceName
+      });
+    }
+
+    // Sort based on selected metric
+    if (sortBy === 'stdev') {
+      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+    } else {
+      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
+    }
+
+    const maxDps = Math.max(...chartItems.map(item => item.value));
+    const minDps = Math.min(...chartItems.map(item => item.value));
+    
+    const chartTitles = {
+      dps: 'Race DPS Rankings (Average)',
+      max: 'Race DPS Rankings (Maximum)',
+      min: 'Race DPS Rankings (Minimum)', 
+      stdev: 'Race DPS Consistency Rankings (Low StdDev = More Consistent)'
+    };
+    
+    container.innerHTML = `
+      <div class="chart-container">
+        <h2 class="chart-title">${chartTitles[sortBy] || 'Race DPS Rankings'}</h2>
+        <div class="chart-bars">
+          ${chartItems.map((item, index) => {
+            const minBarWidth = 10;
+            const maxBarWidth = 100;
+
+            const valueRange = maxDps - minDps;
+            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
+            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
+            
+            const displayValue = Math.round(item.value).toLocaleString();
+            const avgDps = Math.round(item.dps).toLocaleString();
+            const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
+            
+            return `
+            <div class="chart-item">
+              <div class="chart-labels">
+                <span class="chart-rank">#${index + 1}</span>
+                <span class="chart-label">${item.label}</span>
+              </div>
+              <div class="chart-bar-container">
+                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${raceColors[item.category] || '#666'};"></div>
+                <span class="chart-value" title="${tooltip}">${displayValue}</span>
+              </div>
+            </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, initializing RaceComparison...');
+  new RaceComparison();
+});
+    </script>
+  </body>
+</html>
