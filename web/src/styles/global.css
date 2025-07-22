@@ -1,17 +1,13 @@
-/* Global styles for WoW MoP Rankings */
-
-/* CSS Variables */
 :root {
   --highlight-color: #d8a657;
   --bg-primary: #282828;
-  --bg-secondary: #3a3a3a;
+  --bg-secondary: #32302f;
   --border-color: #4a4a4a;
   --text-primary: #ffffff;
   --text-secondary: #aaaaaa;
   --text-muted: #a9a9a9;
 }
 
-/* Base styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -20,7 +16,6 @@ body {
   color: var(--text-primary);
 }
 
-/* Common layout components */
 .page-header {
   text-align: center;
   padding: 30px 20px;
@@ -47,7 +42,6 @@ body {
   padding: 20px;
 }
 
-/* Card/panel styles */
 .card {
   background-color: var(--bg-secondary);
   border-radius: 8px;
@@ -122,11 +116,11 @@ a:hover {
   .page-title {
     font-size: 2em;
   }
-  
+
   .page-container {
     padding: 15px;
   }
-  
+
   .card {
     padding: 15px;
   }
