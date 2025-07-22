@@ -34,8 +34,8 @@
   brewmaster = {
     # Talent configurations
     talents = {
-      xuen = "213322"; # Single target build with Xuen
-      rjw = "233321"; # AoE build with RJW
+      xuen = "213322";
+      rjw = "233321";
     };
 
     glyphs = {

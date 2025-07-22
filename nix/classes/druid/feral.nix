@@ -22,12 +22,11 @@
       options = {};
       inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
       glyphs = {
-        major1 = 54812; # Rip
+        major1 = 54812;
       };
     };
 
   feral = {
-    # Talent configurations
     talents = {
       primal = "321232";
     };
@@ -67,4 +66,3 @@
   };
 in
   feral
-

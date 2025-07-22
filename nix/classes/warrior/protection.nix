@@ -26,17 +26,11 @@
       };
       inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
       glyphs = {
-        major1 = 58375; # shield slam
-        major2 = 58388; # revenge
-        major3 = 58387; # devastate
       };
     };
 
   protection = {
-    # Talent configurations
     talents = {
-      shockwave = "132112";
-      dragonRoar = "132122";
     };
 
     p1 = {
@@ -52,4 +46,3 @@
   };
 in
   protection
-

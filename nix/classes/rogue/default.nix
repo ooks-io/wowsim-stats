@@ -20,4 +20,3 @@
   combat = import ./combat.nix {inherit lib consumables;};
   subtlety = import ./subtlety.nix {inherit lib consumables;};
 }
-

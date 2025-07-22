@@ -18,4 +18,3 @@
   demonology = import ./demonology.nix {inherit lib consumables;};
   destruction = import ./destruction.nix {inherit lib consumables;};
 }
-

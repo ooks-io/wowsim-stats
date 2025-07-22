@@ -8,14 +8,17 @@
   inputs,
   ...
 }: let
+  # TODO: this is cursed, consolidate the functions.
   inherit (lib.sim.simulation) mkSim;
 
-  # Extract playable races from class definitions
-  getPlayableRaces = className: 
+  # extract playable races from class definitions
+  getPlayableRaces = className:
     if lib.hasAttr className classes && lib.hasAttr "playableRaces" classes.${className}
     then classes.${className}.playableRaces
     else throw "playableRaces not defined for class ${className}. Please add playableRaces = [...] to nix/classes/${className}/default.nix";
 
+  # categorize specs by role
+  # TODO: tanks
   getAllDPSSpecs = classes: template: let
     dpsSpecs = {
       death_knight = ["frost" "unholy"];
@@ -31,7 +34,7 @@
       warrior = ["arms" "fury"];
     };
 
-    # Extract specs that exist in classes and have the template structure
+    # extract specs that exist in classes and have the template structure
     validSpecs = lib.flatten (lib.mapAttrsToList (
         className: specNames:
           lib.filter (spec: spec != null) (map (
@@ -45,7 +48,8 @@
                   defaultRace = classes.${className}.${specName}.defaultRace;
                   spec = classes.${className}.${specName};
                 in
-                  if lib.hasAttr defaultRace spec.template
+                  if
+                    lib.hasAttr defaultRace spec.template
                     && lib.hasAttr "p1" spec.template.${defaultRace}
                     && lib.hasAttr "raid" spec.template.${defaultRace}.p1
                     && lib.hasAttr template spec.template.${defaultRace}.p1.raid
@@ -62,40 +66,38 @@
   in
     validSpecs;
 
-  # Get race configurations for a specific class/spec combination
   getRaceConfigs = classes: className: specName: template: phase: encounterType: let
     availableRaces = getPlayableRaces className;
     baseSpec = classes.${className}.${specName};
   in
     map (raceName: {
       inherit className specName raceName;
-      # Access the race-specific config from the new template structure
-      config = 
-        if lib.hasAttr "template" baseSpec 
+      config =
+        if
+          lib.hasAttr "template" baseSpec
           && lib.hasAttr raceName baseSpec.template
           && lib.hasAttr phase baseSpec.template.${raceName}
           && lib.hasAttr encounterType baseSpec.template.${raceName}.${phase}
           && lib.hasAttr template baseSpec.template.${raceName}.${phase}.${encounterType}
         then baseSpec.template.${raceName}.${phase}.${encounterType}.${template}
         else throw "Template ${template} not found for ${className}/${specName}/${raceName} at ${phase}.${encounterType}";
-    }) availableRaces;
+    })
+    availableRaces;
 
-  # Race comparison function
   mkRaceComparison = {
     class,
     spec,
     encounter,
     iterations ? 10000,
-    phase ? "p1", 
+    phase ? "p1",
     encounterType ? "raid",
     targetCount ? "single",
     duration ? "long",
     template ? "singleTarget",
   }: let
-    # Get race configurations for this class/spec
     raceConfigs = getRaceConfigs classes class spec template phase encounterType;
-    
-    # Create individual simulation derivations for each race
+
+    # create individual simulation derivations for each race
     simDerivations = lib.listToAttrs (map (raceConfig: {
         name = "${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}";
         value = let
@@ -111,21 +113,19 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-            # Generate input JSON file
             cat > input.json << 'EOF'
             ${simInput}
             EOF
 
-            # Run simulation
             echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
             if wowsimcli sim --infile input.json --outfile output.json; then
-              # Extract DPS statistics
+              # extract dps statistics
               avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
               maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-              # Create loadout info
+              # construct loadout info
               loadout=$(echo '${builtins.toJSON raceConfig.config}' | jq '{
                 consumables,
                 talentsString,
@@ -137,7 +137,7 @@
                 profession2
               }')
 
-              # Create final result
+              # create final result
               jq -n \
                 --arg raceName "${raceConfig.raceName}" \
                 --arg avgDps "$avgDps" \
@@ -161,10 +161,8 @@
       })
       raceConfigs);
 
-    # Generate output filename: <class>_<spec>_race_<phase>_<encounter-type>_<target-count>_<duration>
     structuredOutput = "${class}_${spec}_race_${phase}_${encounterType}_${targetCount}_${duration}";
 
-    # Aggregation script for race comparison
     aggregationScript = pkgs.writeShellApplication {
       name = "${structuredOutput}-aggregator";
       text = ''
@@ -173,11 +171,10 @@
         echo "Aggregating race comparison results for: ${class}/${spec}"
         echo "Races simulated: ${toString (lib.length raceConfigs)}"
 
-        # Create base structure
         result=$(jq -n '{}')
 
         ${lib.concatMapStringsSep "\n" (raceConfig: ''
-            # Add ${raceConfig.raceName} results
+            # ${raceConfig.raceName} results
             raceData=$(cat ${simDerivations."${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}"})
 
             result=$(echo "$result" | jq \
@@ -193,7 +190,6 @@
           '')
           raceConfigs}
 
-        # Create final output with metadata
         finalResult=$(echo "$result" | jq \
           --arg class "${class}" \
           --arg spec "${spec}" \
@@ -219,9 +215,8 @@
             results: .
           }')
 
-        echo "$finalResult" | tee "${structuredOutput}.json"
+        echo "$finalResult" | jq -c '.' | tee "${structuredOutput}.json"
 
-        # Copy to web public directory with new structure
         repo_root=""
         current_dir="$PWD"
         while [[ "$current_dir" != "/" ]]; do
@@ -237,11 +232,10 @@
           repo_root="$PWD"
         fi
 
-        # Create directory structure: /comparison/<class>/<spec>/
         comparison_dir="$repo_root/web/public/data/comparison/${class}/${spec}"
         mkdir -p "$comparison_dir"
 
-        # Copy race comparison file
+        # copy race comparison file
         cp "${structuredOutput}.json" "$comparison_dir/"
         echo "Copied to: $comparison_dir/${structuredOutput}.json"
 
@@ -253,14 +247,14 @@
           select(.value.dps != null and .value.dps > 0) |
           "\(.key): \(.value.dps | floor) DPS"
         ' | sort -k2 -nr
-        
+
         # Show any failed races
         failed_races=$(echo "$finalResult" | jq -r '
           .results | to_entries[] |
           select(.value.dps == null or .value.dps <= 0) |
           .key
         ')
-        
+
         if [[ -n "$failed_races" ]]; then
           echo ""
           echo "Failed races (no valid DPS data):"
@@ -273,10 +267,8 @@
       runtimeInputs = [pkgs.jq pkgs.coreutils];
     };
   in {
-    # Individual race simulation derivations (for debugging)
     simulations = simDerivations;
 
-    # Main aggregation script
     script = aggregationScript;
 
     metadata = {
@@ -287,7 +279,6 @@
     };
   };
 
-  # Main mkMassSim function
   mkMassSim = {
     specs ? "dps",
     encounter,
@@ -298,7 +289,7 @@
     duration ? "long",
     template ? "singleTarget",
   }: let
-    # Get the list of specs based on the specs parameter
+    # get the list of specs based on the specs parameter
     specConfigs =
       if specs == "dps"
       then getAllDPSSpecs classes template
@@ -306,7 +297,7 @@
       then specs
       else throw "specs must be 'dps' or a list of spec configurations";
 
-    # Create individual simulation derivations for each spec
+    # create individual simulation derivations for each spec
     simDerivations = lib.listToAttrs (map (spec: {
         name = "${spec.className}-${spec.specName}";
         value = let
@@ -327,16 +318,16 @@
             ${simInput}
             EOF
 
-            # Run simulation
             echo "Running ${spec.className}/${spec.specName} simulation..."
             if wowsimcli sim --infile input.json --outfile output.json; then
-              # Extract DPS statistics
+
               avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
               maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-              # Create loadout without rotation (only keep consumables, talents, glyphs, gear)
+              # create loadout without rotation (only keep consumables, talents, glyphs, gear)
+              # TODO: should we output the apl?
               loadout=$(echo '${builtins.toJSON spec.config}' | jq '{
                 consumables,
                 talentsString,
@@ -348,7 +339,7 @@
                 profession2
               }')
 
-              # Create final result with all DPS statistics
+              # create final result with all DPS statistics
               jq -n \
                 --arg className "${spec.className}" \
                 --arg specName "${spec.specName}" \
@@ -431,10 +422,10 @@
             results: .
           }')
 
-        echo "$finalResult" | tee "${structuredOutput}.json"
+        echo "$finalResult" | jq -c '.' | tee "${structuredOutput}.json"
 
         # copy to web public directory for web frontend
-        # Find the repo root by looking for flake.nix
+        # find the repo root by looking for flake.nix
         repo_root=""
         current_dir="$PWD"
         while [[ "$current_dir" != "/" ]]; do
@@ -459,14 +450,12 @@
         mkdir -p "$rankings_dir"
         mkdir -p "$archive_dir"
 
-        # Archive existing file if it exists
         if [[ -f "$existing_file" ]]; then
           timestamp=$(date +"%Y%m%d_%H%M%S")
           archived_name="${structuredOutput}_$timestamp.json"
           cp "$existing_file" "$archive_dir/$archived_name"
           echo "Archived existing file: $archived_name"
 
-          # Generate changelog by comparing with archived version
           echo "Generating changelog..."
           changes=$(echo "$finalResult" | jq --slurpfile archived "$existing_file" '
             .results as $current |
@@ -497,7 +486,6 @@
             echo "Found $change_count DPS changes:"
             echo "$changes" | jq -r '.[] | "  \(.class)/\(.spec): \(if .absolute_change > 0 then "+" else "" end)\(.absolute_change) DPS (\(if .percent_change > 0 then "+" else "" end)\(.percent_change)%)"'
 
-            # Update or create changelog
             changelog_file="$web_data_dir/changelog.json"
             if [[ -f "$changelog_file" ]]; then
               current_changelog=$(cat "$changelog_file")
