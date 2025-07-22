@@ -1,0 +1,964 @@
+{
+  "metadata": {
+    "spec": "enhancement",
+    "class": "shaman",
+    "encounter": "p1_raid_three_short",
+    "timestamp": "2025-07-22T19:04:24+10:00",
+    "iterations": 10000,
+    "encounterDuration": 120,
+    "encounterVariation": 30,
+    "targetCount": 3,
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 3,
+      "stormlashTotemCount": 5,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "dwarf": {
+      "dps": 210900.8458654664,
+      "max": 272429.852485278,
+      "min": 171443.14516294474,
+      "stdev": 13275.924931622838,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "draenei": {
+      "dps": 212624.87819905888,
+      "max": 262938.29541723727,
+      "min": 174560.54414637384,
+      "stdev": 13209.409212116729,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceDraenei",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "orc": {
+      "dps": 218152.55688367606,
+      "max": 272668.96595562936,
+      "min": 178520.71486341557,
+      "stdev": 13674.043461729296,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "tauren": {
+      "dps": 210899.92744594745,
+      "max": 272429.852485278,
+      "min": 171443.14516294474,
+      "stdev": 13276.028519471647,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceTauren",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "troll": {
+      "dps": 221476.77495807887,
+      "max": 270245.864971589,
+      "min": 180723.89959775493,
+      "stdev": 13849.166149452776,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "goblin": {
+      "dps": 213600.52482998362,
+      "max": 272278.0555414649,
+      "min": 175904.3081354258,
+      "stdev": 13519.317207480746,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceGoblin",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    },
+    "alliance_pandaren": {
+      "dps": 213115.37308337496,
+      "max": 275531.87700158404,
+      "min": 173596.16939769645,
+      "stdev": 13406.693848609937,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "313133",
+        "glyphs": {
+          "major1": 71155,
+          "major2": 41529,
+          "major3": 41530
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87136,
+              "reforging": 158
+            },
+            {
+              "id": 89917,
+              "reforging": 151
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76626
+              ],
+              "id": 90505,
+              "reforging": 147
+            },
+            {
+              "enchant": 4894,
+              "id": 86963,
+              "reforging": 144
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87134,
+              "reforging": 146
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 87014,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87135,
+              "reforging": 147,
+              "tinker": 4898
+            },
+            {
+              "gems": [
+                76670,
+                76680,
+                76692
+              ],
+              "id": 89951,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692
+              ],
+              "id": 87137,
+              "reforging": 154
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86985,
+              "reforging": 147
+            },
+            {
+              "id": 86974,
+              "reforging": 158
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 86988,
+              "reforging": 147
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 86988,
+              "reforging": 161
+            }
+          ]
+        },
+        "race": "RaceAlliancePandaren",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring"
+      }
+    }
+  }
+}

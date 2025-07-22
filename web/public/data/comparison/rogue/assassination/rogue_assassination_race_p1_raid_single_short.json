@@ -1,0 +1,1412 @@
+{
+  "metadata": {
+    "spec": "assassination",
+    "class": "rogue",
+    "encounter": "p1_raid_single_short",
+    "timestamp": "2025-07-22T19:04:21+10:00",
+    "iterations": 10000,
+    "encounterDuration": 120,
+    "encounterVariation": 30,
+    "targetCount": 1,
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 3,
+      "stormlashTotemCount": 5,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "human": {
+      "dps": 191105.17995371015,
+      "max": 237603.5618304482,
+      "min": 160384.3391660778,
+      "stdev": 9719.105757843528,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceHuman",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "dwarf": {
+      "dps": 191088.60186111327,
+      "max": 237520.79394306976,
+      "min": 160376.02340166515,
+      "stdev": 9718.474396057754,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "night_elf": {
+      "dps": 191125.1960068558,
+      "max": 237618.93500564023,
+      "min": 160395.100743553,
+      "stdev": 9719.180545721116,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceNightElf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "gnome": {
+      "dps": 191106.99806829946,
+      "max": 237600.766707686,
+      "min": 160382.3825156278,
+      "stdev": 9717.45533881537,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceGnome",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "worgen": {
+      "dps": 192995.8758418401,
+      "max": 233004.40145414407,
+      "min": 162751.05945888328,
+      "stdev": 9803.357003666451,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceWorgen",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "orc": {
+      "dps": 194838.49010776283,
+      "max": 242382.22789205908,
+      "min": 163160.56938644152,
+      "stdev": 9946.625287558169,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "undead": {
+      "dps": 192570.16328894964,
+      "max": 237104.9309952989,
+      "min": 163162.47774717928,
+      "stdev": 9965.388674414267,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceUndead",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "troll": {
+      "dps": 195009.24096410634,
+      "max": 244475.0967434742,
+      "min": 165582.74561152264,
+      "stdev": 10020.58721398478,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "blood_elf": {
+      "dps": 192274.0159660861,
+      "max": 240644.3470230296,
+      "min": 159804.37937632122,
+      "stdev": 9718.601445116807,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceBloodElf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "goblin": {
+      "dps": 192028.05873788884,
+      "max": 242205.71741425802,
+      "min": 159022.3238123804,
+      "stdev": 9932.088260257706,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceGoblin",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    },
+    "alliance_pandaren": {
+      "dps": 193381.61439458377,
+      "max": 234299.48749933418,
+      "min": 161966.75721270533,
+      "stdev": 9816.001285603026,
+      "loadout": {
+        "consumables": {
+          "flaskId": 76084,
+          "foodId": 74648,
+          "potId": 76089,
+          "prepotId": 76089
+        },
+        "talentsString": "321232",
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                76884,
+                76680
+              ],
+              "id": 87126,
+              "reforging": 160
+            },
+            {
+              "id": 89917
+            },
+            {
+              "enchant": 4804,
+              "gems": [
+                76680
+              ],
+              "id": 87128,
+              "reforging": 161
+            },
+            {
+              "enchant": 4421,
+              "id": 86963,
+              "reforging": 145
+            },
+            {
+              "enchant": 4419,
+              "gems": [
+                76670,
+                76670
+              ],
+              "id": 87124,
+              "reforging": 145
+            },
+            {
+              "enchant": 4416,
+              "gems": [
+                0
+              ],
+              "id": 86954,
+              "reforging": 147
+            },
+            {
+              "enchant": 4433,
+              "gems": [
+                0
+              ],
+              "id": 87125,
+              "reforging": 140
+            },
+            {
+              "gems": [
+                76680,
+                76692
+              ],
+              "id": 87180,
+              "reforging": 147
+            },
+            {
+              "enchant": 4822,
+              "gems": [
+                76692,
+                76680
+              ],
+              "id": 90504,
+              "reforging": 139
+            },
+            {
+              "enchant": 4428,
+              "gems": [
+                76670
+              ],
+              "id": 86984,
+              "reforging": 158
+            },
+            {
+              "id": 86974,
+              "reforging": 160
+            },
+            {
+              "id": 90503,
+              "reforging": 147
+            },
+            {
+              "id": 87057
+            },
+            {
+              "id": 87167
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                89873
+              ],
+              "id": 87166
+            },
+            {
+              "enchant": 4444,
+              "gems": [
+                0
+              ],
+              "id": 87166
+            }
+          ]
+        },
+        "race": "RaceAlliancePandaren",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting"
+      }
+    }
+  }
+}
