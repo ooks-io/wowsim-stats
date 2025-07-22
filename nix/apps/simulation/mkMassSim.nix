@@ -161,8 +161,8 @@
       })
       raceConfigs);
 
-    # Generate output filename: race_<phase>_<encounter-type>_<target-count>_<duration>
-    structuredOutput = "race_${phase}_${encounterType}_${targetCount}_${duration}";
+    # Generate output filename: <class>_<spec>_race_<phase>_<encounter-type>_<target-count>_<duration>
+    structuredOutput = "${class}_${spec}_race_${phase}_${encounterType}_${targetCount}_${duration}";
 
     # Aggregation script for race comparison
     aggregationScript = pkgs.writeShellApplication {
