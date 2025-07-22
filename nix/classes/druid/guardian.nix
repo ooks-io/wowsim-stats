@@ -26,17 +26,15 @@
       };
       inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
       glyphs = {
-        major1 = 94390; # frenzied regeneration
-        major2 = 40897; # maul
-        major3 = 54818; # survival instincts
+        major1 = 94390;
+        major2 = 40897;
+        major3 = 54818;
       };
     };
 
   guardian = {
-    # Talent configurations
+    # talent configurations
     talents = {
-      incarnation = "312122";
-      heartOfTheWild = "312112";
     };
 
     p1 = {

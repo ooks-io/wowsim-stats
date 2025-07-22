@@ -1,5 +1,4 @@
 let
-  # Base encounter template
   mkEncounter = {
     duration ? 300,
     durationVariation ? 60,
@@ -15,5 +14,4 @@ let
     executeProportion45 = 0.45;
     executeProportion90 = 0.9;
   };
-  # Duration-based encounter templates
 in {inherit mkEncounter;}

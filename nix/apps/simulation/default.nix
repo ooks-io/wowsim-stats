@@ -8,10 +8,10 @@
   inputs,
   ...
 }: let
-  # Mass simulations using mkMassSim
   massSimFunctions = import ./mkMassSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;};
   inherit (massSimFunctions) mkMassSim mkRaceComparison;
 
+  # TODO: abstract this.
   massSimulations = {
     dps-p1-raid-single-long = mkMassSim {
       specs = "dps"; # shortcut to all DPS classes templates
@@ -57,7 +57,7 @@
       template = "multiTarget";
     };
     dps-p1-raid-single-short = mkMassSim {
-      specs = "dps"; # shortcut to all DPS classes templates
+      specs = "dps";
       encounter = encounter.raid.short.singleTarget;
       iterations = 10000;
       phase = "p1";
@@ -100,7 +100,7 @@
       template = "multiTarget";
     };
     dps-p1-raid-single-burst = mkMassSim {
-      specs = "dps"; # burstcut to all DPS classes templates
+      specs = "dps";
       encounter = encounter.raid.burst.singleTarget;
       iterations = 10000;
       phase = "p1";
@@ -144,139 +144,199 @@
     };
   };
 
-  # Race comparison simulations for all DPS specs
+  # for all race combinations
+  raceScenarios = [
+    {
+      targetCount = "single";
+      duration = "long";
+      encounter = encounter.raid.long.singleTarget;
+      template = "singleTarget";
+    }
+    {
+      targetCount = "single";
+      duration = "short";
+      encounter = encounter.raid.short.singleTarget;
+      template = "singleTarget";
+    }
+    {
+      targetCount = "single";
+      duration = "burst";
+      encounter = encounter.raid.burst.singleTarget;
+      template = "singleTarget";
+    }
+
+    {
+      targetCount = "three";
+      duration = "long";
+      encounter = encounter.raid.long.threeTarget;
+      template = "multiTarget";
+    }
+    {
+      targetCount = "three";
+      duration = "short";
+      encounter = encounter.raid.short.threeTarget;
+      template = "multiTarget";
+    }
+    {
+      targetCount = "three";
+      duration = "burst";
+      encounter = encounter.raid.burst.threeTarget;
+      template = "multiTarget";
+    }
+
+    {
+      targetCount = "cleave";
+      duration = "long";
+      encounter = encounter.raid.long.cleave;
+      template = "cleave";
+    }
+    {
+      targetCount = "cleave";
+      duration = "short";
+      encounter = encounter.raid.short.cleave;
+      template = "cleave";
+    }
+    {
+      targetCount = "cleave";
+      duration = "burst";
+      encounter = encounter.raid.burst.cleave;
+      template = "cleave";
+    }
+
+    {
+      targetCount = "ten";
+      duration = "long";
+      encounter = encounter.raid.long.tenTarget;
+      template = "multiTarget";
+    }
+    {
+      targetCount = "ten";
+      duration = "short";
+      encounter = encounter.raid.short.tenTarget;
+      template = "multiTarget";
+    }
+    {
+      targetCount = "ten";
+      duration = "burst";
+      encounter = encounter.raid.burst.tenTarget;
+      template = "multiTarget";
+    }
+  ];
+
   raceComparisonSpecs = [
     {
       class = "death_knight";
       spec = "frost";
-      template = "singleTarget";
     }
     {
       class = "death_knight";
       spec = "unholy";
-      template = "singleTarget";
     }
     {
       class = "druid";
       spec = "balance";
-      template = "singleTarget";
     }
-    # { class = "druid"; spec = "feral"; template = "singleTarget"; }
+    # { class = "druid"; spec = "feral"; }
     {
       class = "hunter";
       spec = "beast_mastery";
-      template = "singleTarget";
     }
     {
       class = "hunter";
       spec = "marksmanship";
-      template = "singleTarget";
     }
     {
       class = "hunter";
       spec = "survival";
-      template = "singleTarget";
     }
     {
       class = "mage";
       spec = "arcane";
-      template = "singleTarget";
     }
     {
       class = "mage";
       spec = "fire";
-      template = "singleTarget";
     }
     {
       class = "mage";
       spec = "frost";
-      template = "singleTarget";
     }
     {
       class = "monk";
       spec = "windwalker";
-      template = "singleTarget";
     }
     {
       class = "paladin";
       spec = "retribution";
-      template = "singleTarget";
     }
     {
       class = "priest";
       spec = "shadow";
-      template = "singleTarget";
     }
     {
       class = "rogue";
       spec = "assassination";
-      template = "singleTarget";
     }
     {
       class = "rogue";
       spec = "combat";
-      template = "singleTarget";
     }
     {
       class = "rogue";
       spec = "subtlety";
-      template = "singleTarget";
     }
     {
       class = "shaman";
       spec = "elemental";
-      template = "singleTarget";
     }
     {
       class = "shaman";
       spec = "enhancement";
-      template = "singleTarget";
     }
     {
       class = "warlock";
       spec = "affliction";
-      template = "singleTarget";
     }
     {
       class = "warlock";
       spec = "demonology";
-      template = "singleTarget";
     }
     {
       class = "warlock";
       spec = "destruction";
-      template = "singleTarget";
     }
     {
       class = "warrior";
       spec = "arms";
-      template = "singleTarget";
     }
     {
       class = "warrior";
       spec = "fury";
-      template = "singleTarget";
     }
   ];
 
-  # Generate race comparison simulations for single target long encounters
-  raceComparisons = lib.listToAttrs (map (specConfig: {
-      name = "race-${specConfig.class}-${specConfig.spec}-p1-raid-single-long";
-      value = mkRaceComparison {
-        class = specConfig.class;
-        spec = specConfig.spec;
-        encounter = encounter.raid.long.singleTarget;
-        iterations = 10000;
-        phase = "p1";
-        encounterType = "raid";
-        targetCount = "single";
-        duration = "long";
-        template = specConfig.template;
-      };
-    })
-    raceComparisonSpecs);
+  # generate all race comparison combinations (specs × scenarios)
+  raceComparisons = lib.listToAttrs (lib.flatten (map (
+      specConfig:
+        map (scenario: {
+          name = "race-${specConfig.class}-${specConfig.spec}-p1-raid-${scenario.targetCount}-${scenario.duration}";
+          value = mkRaceComparison {
+            class = specConfig.class;
+            spec = specConfig.spec;
+            encounter = scenario.encounter;
+            iterations = 10000;
+            phase = "p1";
+            encounterType = "raid";
+            targetCount = scenario.targetCount;
+            duration = scenario.duration;
+            template = scenario.template;
+          };
+        })
+        raceScenarios
+    )
+    raceComparisonSpecs));
 
-  # Script that runs all simulations
+  # script that runs all simulations
   allSimulationsScript = pkgs.writeShellApplication {
     name = "all-simulations";
     text = ''
@@ -310,7 +370,7 @@
     runtimeInputs = [pkgs.coreutils pkgs.findutils];
   };
 
-  # Convert mass simulations to apps and add the all-simulations app
+  # nix app
   simulationApps =
     lib.mapAttrs (name: massSim: {
       type = "app";
@@ -318,7 +378,6 @@
     })
     massSimulations;
 
-  # Convert race comparisons to apps
   raceComparisonApps =
     lib.mapAttrs (name: raceComp: {
       type = "app";

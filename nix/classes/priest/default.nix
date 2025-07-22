@@ -19,4 +19,3 @@
   ];
   shadow = import ./shadow.nix {inherit lib consumables;};
 }
-

@@ -6,7 +6,6 @@
   inherit (lib.sim.encounter) mkEncounter;
   inherit (lib) mapAttrs genList;
 
-  # Target count configurations
   targetConfigs = {
     singleTarget = [target.defaultRaidBoss];
     cleave = [target.defaultRaidBoss target.defaultRaidBoss];
@@ -16,7 +15,6 @@
     twentyTarget = genList (_: target.defaultRaidBoss) 20;
   };
 
-  # Duration configurations
   durations = {
     long = {
       duration = 300;
@@ -32,7 +30,6 @@
     };
   };
 
-  # Generate encounters for a duration type
   mkDurationEncounters = durationConfig:
     mapAttrs (
       name: targets:

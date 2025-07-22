@@ -21,4 +21,3 @@
   fire = import ./fire.nix {inherit lib consumables;};
   frost = import ./frost.nix {inherit lib consumables;};
 }
-
