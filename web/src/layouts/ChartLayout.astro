@@ -5,12 +5,15 @@ import Warning from '../components/Warning.astro';
 export interface Props {
   title: string;
   description?: string;
-  class?: string;          // Optional: pre-set class for dedicated race pages
-  spec?: string;           // Optional: pre-set spec for dedicated race pages
-  comparisonType?: 'race' | 'trinket' | 'both'; // Optional: limit comparison types
+  mode: 'rankings' | 'comparison';
+  // For comparison mode
+  class?: string;
+  spec?: string;
+  comparisonType?: 'race' | 'trinket' | 'both';
 }
 
-const { title, description, class: fixedClass, spec: fixedSpec, comparisonType = 'both' } = Astro.props;
+const { title, description, mode, class: fixedClass, spec: fixedSpec, comparisonType = 'both' } = Astro.props;
+const isRankingsMode = mode === 'rankings';
 const isFixedClassSpec = fixedClass && fixedSpec;
 ---
 
@@ -284,8 +287,10 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     </div>
     
     <div class="rankings-container">
-      <Warning title={isFixedClassSpec ? "Race Comparison Results" : "Comparison Results"}>
-        {isFixedClassSpec ? (
+      <Warning title={isRankingsMode ? "DPS Rankings" : (isFixedClassSpec ? "Race Comparison Results" : "Comparison Results")}>
+        {isRankingsMode ? (
+          <p>These rankings show <strong>DPS performance</strong> across all specializations using static simulation results with identical encounter conditions and optimal rotations.</p>
+        ) : isFixedClassSpec ? (
           <p>These rankings compare <strong>race performance</strong> for {fixedClass} {fixedSpec} using static simulation results. Results show performance differences between races using identical gear and configurations.</p>
         ) : (
           <p>Compare <strong>race performance</strong> across different specs and classes using static simulation results. Select a class and specialization to view performance differences.</p>
@@ -296,9 +301,11 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       <div id="metadata-container"></div>
       
       <div class="controls">
-        <h3 class="controls-title">{isFixedClassSpec ? "Simulation Options" : "Comparison Options"}</h3>
+        <h3 class="controls-title">
+          {isRankingsMode ? "Simulation Options" : (isFixedClassSpec ? "Simulation Options" : "Comparison Options")}
+        </h3>
         <div class="controls-grid">
-          {comparisonType === 'both' && !isFixedClassSpec && (
+          {!isRankingsMode && comparisonType === 'both' && !isFixedClassSpec && (
             <div class="control-group">
               <label for="comparisonType">Compare:</label>
               <select id="comparisonType">
@@ -308,7 +315,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
             </div>
           )}
           
-          {!isFixedClassSpec && (
+          {!isRankingsMode && !isFixedClassSpec && (
             <>
               <div class="control-group">
                 <label for="class">Class:</label>
@@ -382,16 +389,46 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         </div>
       </div>
 
-      <div id="loading" class="loading hidden">Loading comparison data...</div>
+      <div id="loading" class="loading hidden">
+        {isRankingsMode ? "Loading rankings data..." : "Loading comparison data..."}
+      </div>
       <div id="error" class="error hidden"></div>
       
       <div id="chart-container"></div>
     </div>
 
-    <script is:inline type="text/javascript" define:vars={{ fixedClass, fixedSpec, comparisonType }}>
-console.log('Unified comparison script loaded with:', { fixedClass, fixedSpec, comparisonType });
+    <script is:inline type="text/javascript" define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}>
+console.log('Unified chart script loaded with:', { mode, fixedClass, fixedSpec, comparisonType });
 
-// Spec options for each class
+// Shared utility functions
+const formatDuration = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
+};
+
+const formatRaidBuffs = (buffs) => {
+  const activeBuffs = Object.entries(buffs)
+    .filter(([_, value]) => value !== false && value !== 0)
+    .map(([key, value]) => {
+      const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+      return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
+    });
+  return activeBuffs.join(', ');
+};
+
+const formatSimulationDate = (timestamp) => {
+  return new Date(timestamp).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short'
+  });
+};
+
+// Class specs for comparison mode
 const classSpecs = {
   death_knight: [
     { value: 'frost', label: 'Frost' },
@@ -440,7 +477,22 @@ const classSpecs = {
   ]
 };
 
-// Race colors for race comparisons
+// Class colors for rankings mode
+const classColors = {
+  death_knight: '#C41E3A',
+  druid: '#FF7C0A',
+  hunter: '#AAD372',
+  mage: '#3FC7EB',
+  monk: '#00FF98',
+  paladin: '#F48CBA',
+  priest: '#FFFFFF',
+  rogue: '#FFF468',
+  shaman: '#0070DD',
+  warlock: '#8788EE',
+  warrior: '#C69B6D'
+};
+
+// Race colors for comparison mode
 const raceColors = {
   human: '#3FC7EB',
   orc: '#C41E3A', 
@@ -458,9 +510,10 @@ const raceColors = {
   alliance_pandaren: '#00FF98'
 };
 
-class UnifiedComparison {
+class UnifiedChart {
   constructor() {
     this.currentData = null;
+    this.isRankingsMode = mode === 'rankings';
     this.isFixedClassSpec = fixedClass && fixedSpec;
     
     this.initializeControls();
@@ -469,17 +522,19 @@ class UnifiedComparison {
   }
 
   initializeControls() {
-    // Set fixed values if provided
-    if (this.isFixedClassSpec) {
-      // For fixed class/spec, we don't need to set the dropdowns since they're hidden
+    if (this.isRankingsMode) {
+      // Rankings mode - no special initialization needed
+      console.log('Rankings mode initialized');
+    } else if (this.isFixedClassSpec) {
+      // Fixed class/spec comparison mode
       console.log('Fixed class/spec mode:', fixedClass, fixedSpec);
     } else {
-      // Dynamic mode - set up initial state
+      // Dynamic comparison mode - set up spec options
       this.updateSpecOptions();
     }
 
     // Set comparison type if fixed
-    if (comparisonType !== 'both') {
+    if (!this.isRankingsMode && comparisonType !== 'both') {
       const comparisonSelect = document.getElementById('comparisonType');
       if (comparisonSelect) {
         comparisonSelect.value = comparisonType;
@@ -488,8 +543,8 @@ class UnifiedComparison {
   }
 
   bindEvents() {
-    if (!this.isFixedClassSpec) {
-      // Class change updates spec options
+    if (!this.isRankingsMode && !this.isFixedClassSpec) {
+      // Class change updates spec options (comparison mode only)
       const classSelect = document.getElementById('class');
       if (classSelect) {
         classSelect.addEventListener('change', () => {
@@ -498,7 +553,7 @@ class UnifiedComparison {
         });
       }
 
-      // Data loading triggers for dynamic controls
+      // Data loading triggers for dynamic comparison controls
       const dataSelects = document.querySelectorAll('#spec, #comparisonType');
       dataSelects.forEach(select => {
         select.addEventListener('change', () => this.loadData());
@@ -519,7 +574,7 @@ class UnifiedComparison {
   }
 
   updateSpecOptions() {
-    if (this.isFixedClassSpec) return;
+    if (this.isRankingsMode || this.isFixedClassSpec) return;
     
     const classSelect = document.getElementById('class');
     const specSelect = document.getElementById('spec');
@@ -546,17 +601,20 @@ class UnifiedComparison {
 
   getCurrentClass() {
     if (this.isFixedClassSpec) return fixedClass;
+    if (this.isRankingsMode) return null;
     const classSelect = document.getElementById('class');
     return classSelect ? classSelect.value : '';
   }
 
   getCurrentSpec() {
     if (this.isFixedClassSpec) return fixedSpec;
+    if (this.isRankingsMode) return null;
     const specSelect = document.getElementById('spec');
     return specSelect ? specSelect.value : '';
   }
 
   getCurrentComparisonType() {
+    if (this.isRankingsMode) return null;
     if (comparisonType !== 'both') return comparisonType;
     const comparisonSelect = document.getElementById('comparisonType');
     return comparisonSelect ? comparisonSelect.value : 'race';
@@ -567,29 +625,46 @@ class UnifiedComparison {
     const encounterType = document.getElementById('encounterType').value;
     const duration = document.getElementById('duration').value;
     const phase = document.getElementById('phase').value;
-    const currentClass = this.getCurrentClass();
-    const currentSpec = this.getCurrentSpec();
-    const currentComparisonType = this.getCurrentComparisonType();
     
-    // Use new filename format: class_spec_comparisontype_phase_encountertype_targetcount_duration.json
-    return `${currentClass}_${currentSpec}_${currentComparisonType}_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+    if (this.isRankingsMode) {
+      // Rankings filename: dps_phase_encountertype_targetcount_duration.json
+      return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+    } else {
+      // Comparison filename: class_spec_comparisontype_phase_encountertype_targetcount_duration.json
+      const currentClass = this.getCurrentClass();
+      const currentSpec = this.getCurrentSpec();
+      const currentComparisonType = this.getCurrentComparisonType();
+      return `${currentClass}_${currentSpec}_${currentComparisonType}_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+    }
+  }
+
+  getDataPath() {
+    if (this.isRankingsMode) {
+      return `./data/rankings/`;
+    } else {
+      const currentClass = this.getCurrentClass();
+      const currentSpec = this.getCurrentSpec();
+      return `./data/comparison/${currentClass}/${currentSpec}/`;
+    }
   }
 
   async loadInitialData() {
-    if (this.isFixedClassSpec) {
-      // For fixed class/spec, load immediately
+    if (this.isRankingsMode || this.isFixedClassSpec) {
+      // For rankings mode or fixed class/spec, load immediately
       await this.loadData();
     }
-    // For dynamic mode, wait for user to select class/spec
+    // For dynamic comparison mode, wait for user to select class/spec
   }
 
   async loadData() {
-    const currentClass = this.getCurrentClass();
-    const currentSpec = this.getCurrentSpec();
-    
-    if (!currentClass || !currentSpec) {
-      console.log('Class or spec not selected');
-      return;
+    if (!this.isRankingsMode) {
+      const currentClass = this.getCurrentClass();
+      const currentSpec = this.getCurrentSpec();
+      
+      if (!currentClass || !currentSpec) {
+        console.log('Class or spec not selected');
+        return;
+      }
     }
 
     const loadingEl = document.getElementById('loading');
@@ -611,15 +686,18 @@ class UnifiedComparison {
 
     try {
       const fileName = this.getFileName();
-      console.log('Loading:', fileName);
-      const response = await fetch(`./data/comparison/${currentClass}/${currentSpec}/${fileName}`);
+      const dataPath = this.getDataPath();
+      const fullPath = `${dataPath}${fileName}`;
+      
+      console.log('Loading:', fullPath);
+      const response = await fetch(fullPath);
       
       if (!response.ok) {
         throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
       }
 
       this.currentData = await response.json();
-      console.log('Comparison data loaded successfully');
+      console.log('Data loaded successfully');
       
       loadingEl.classList.add('hidden');
       
@@ -634,9 +712,9 @@ class UnifiedComparison {
       });
       
     } catch (error) {
-      console.error('Error loading comparison data:', error);
+      console.error('Error loading data:', error);
       loadingEl.classList.add('hidden');
-      errorEl.textContent = `Error loading comparison data: ${error.message}`;
+      errorEl.textContent = `Error loading data: ${error.message}`;
       errorEl.classList.remove('hidden');
       
       metadataContainer.innerHTML = '';
@@ -659,34 +737,62 @@ class UnifiedComparison {
 
     const container = document.getElementById('metadata-container');
     const metadata = this.currentData.metadata;
+    
+    if (this.isRankingsMode) {
+      this.renderRankingsMetadata(container, metadata);
+    } else {
+      this.renderComparisonMetadata(container, metadata);
+    }
+  }
+
+  renderRankingsMetadata(container, metadata) {
+    const simulationDate = formatSimulationDate(metadata.timestamp);
+
+    container.innerHTML = `
+      <div class="simulation-metadata">
+        <h3 class="metadata-title">DPS Rankings Details</h3>
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">Simulation Type</span>
+            <span class="metadata-value">DPS Rankings</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Iterations</span>
+            <span class="metadata-value">${metadata.iterations.toLocaleString()}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Specs Tested</span>
+            <span class="metadata-value">${metadata.specCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Encounter Duration</span>
+            <span class="metadata-value">${formatDuration(metadata.encounterDuration)}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Duration Variation</span>
+            <span class="metadata-value">±${metadata.encounterVariation}s</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Target Count</span>
+            <span class="metadata-value">${metadata.targetCount}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Date Simulated</span>
+            <span class="metadata-value">${simulationDate}</span>
+          </div>
+          <div class="metadata-item metadata-item-wide">
+            <span class="metadata-label">Active Raid Buffs</span>
+            <span class="metadata-value metadata-value-wrap">${formatRaidBuffs(metadata.raidBuffs)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderComparisonMetadata(container, metadata) {
     const currentComparisonType = this.getCurrentComparisonType();
     const comparisonLabel = currentComparisonType === 'race' ? 'Race' : 'Trinket';
-    
-    const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short'
-    });
-
-    const formatDuration = (seconds) => {
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
-      return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
-    };
-
-    const formatRaidBuffs = (buffs) => {
-      const activeBuffs = Object.entries(buffs)
-        .filter(([_, value]) => value !== false && value !== 0)
-        .map(([key, value]) => {
-          const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-          return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
-        });
-      return activeBuffs.join(', ');
-    };
-
+    const simulationDate = formatSimulationDate(metadata.timestamp);
     const itemCount = Object.keys(this.currentData.results).length;
 
     container.innerHTML = `
@@ -739,6 +845,88 @@ class UnifiedComparison {
 
     const container = document.getElementById('chart-container');
     const sortBy = document.getElementById('sortBy').value;
+    
+    if (this.isRankingsMode) {
+      this.renderRankingsChart(container, sortBy);
+    } else {
+      this.renderComparisonChart(container, sortBy);
+    }
+  }
+
+  renderRankingsChart(container, sortBy) {
+    const chartItems = [];
+    
+    // Convert rankings data structure
+    for (const [className, classData] of Object.entries(this.currentData.results)) {
+      for (const [specName, specData] of Object.entries(classData)) {
+        chartItems.push({
+          label: `${className.replace(/_/g, ' ')} ${specName}`,
+          dps: specData.dps,
+          max: specData.max,
+          min: specData.min,
+          stdev: specData.stdev,
+          value: specData[sortBy] || specData.dps,
+          category: className,
+          className: className,
+          specName: specName
+        });
+      }
+    }
+
+    // Sort based on selected metric
+    if (sortBy === 'stdev') {
+      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+    } else {
+      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
+    }
+
+    const maxDps = Math.max(...chartItems.map(item => item.value));
+    const minDps = Math.min(...chartItems.map(item => item.value));
+    
+    const chartTitles = {
+      dps: 'DPS Rankings (Average)',
+      max: 'DPS Rankings (Maximum)',
+      min: 'DPS Rankings (Minimum)', 
+      stdev: 'DPS Consistency Rankings (Low StdDev = More Consistent)'
+    };
+    
+    container.innerHTML = `
+      <div class="chart-container">
+        <h2 class="chart-title">${chartTitles[sortBy] || 'DPS Rankings'}</h2>
+        <div class="chart-bars">
+          ${chartItems.map((item, index) => {
+            const minBarWidth = 10;
+            const maxBarWidth = 100;
+
+            const valueRange = maxDps - minDps;
+            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
+            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
+            
+            const displayValue = Math.round(item.value).toLocaleString();
+            const avgDps = Math.round(item.dps).toLocaleString();
+            const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
+            
+            const barColor = classColors[item.className] || '#666';
+            
+            return `
+            <div class="chart-item">
+              <div class="chart-labels">
+                <span class="chart-rank">#${index + 1}</span>
+                <span class="chart-label">${item.label}</span>
+              </div>
+              <div class="chart-bar-container">
+                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                <span class="chart-value" title="${tooltip}">${displayValue}</span>
+              </div>
+            </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  renderComparisonChart(container, sortBy) {
     const currentComparisonType = this.getCurrentComparisonType();
     const comparisonLabel = currentComparisonType === 'race' ? 'Race' : 'Trinket';
     
@@ -790,9 +978,9 @@ class UnifiedComparison {
             const avgDps = Math.round(item.dps).toLocaleString();
             const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
             
-            // Use race colors for race comparisons, default color for others
+            // Use class color for race comparisons (since we're comparing races within a class)
             const barColor = currentComparisonType === 'race' ? 
-              (raceColors[item.category] || '#666') : '#666';
+              (classColors[this.getCurrentClass()] || '#666') : '#666';
             
             return `
             <div class="chart-item">
@@ -815,8 +1003,8 @@ class UnifiedComparison {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing UnifiedComparison...');
-  new UnifiedComparison();
+  console.log('DOM loaded, initializing UnifiedChart...');
+  new UnifiedChart();
 });
     </script>
   </body>
