@@ -895,12 +895,32 @@ class UnifiedChart {
         <h2 class="chart-title">${chartTitles[sortBy] || 'DPS Rankings'}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
-            const minBarWidth = 10;
+            // Dynamic scaling based on data spread
+            const minBarWidth = 15;
             const maxBarWidth = 100;
-
+            
+            // Calculate how spread out the data is
             const valueRange = maxDps - minDps;
-            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
-            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
+            const averageValue = (maxDps + minDps) / 2;
+            const coefficientOfVariation = valueRange / averageValue;
+            
+            // Dynamic scaling weight based on data spread
+            // If data is close together (low variation), emphasize differences more
+            // If data is spread out (high variation), use more zero-based scaling
+            const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
+            const zeroWeight = 1 - rangeWeight;
+            
+            // Calculate both scaling approaches
+            const zeroBasedPercentage = item.value / maxDps;
+            const rangeBasedPercentage = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
+            
+            // Blend the two approaches
+            const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
+            
+            // Apply minimum visibility threshold
+            const minThreshold = minBarWidth / maxBarWidth;
+            const finalPercentage = Math.max(hybridPercentage, minThreshold);
+            const barWidth = finalPercentage * maxBarWidth;
             
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
@@ -967,12 +987,32 @@ class UnifiedChart {
         <h2 class="chart-title">${chartTitles[sortBy] || `${comparisonLabel} DPS Rankings`}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
-            const minBarWidth = 10;
+            // Dynamic scaling based on data spread
+            const minBarWidth = 15;
             const maxBarWidth = 100;
-
+            
+            // Calculate how spread out the data is
             const valueRange = maxDps - minDps;
-            const normalizedValue = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
-            const barWidth = minBarWidth + (normalizedValue * (maxBarWidth - minBarWidth));
+            const averageValue = (maxDps + minDps) / 2;
+            const coefficientOfVariation = valueRange / averageValue;
+            
+            // Dynamic scaling weight based on data spread
+            // If data is close together (low variation), emphasize differences more
+            // If data is spread out (high variation), use more zero-based scaling
+            const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
+            const zeroWeight = 1 - rangeWeight;
+            
+            // Calculate both scaling approaches
+            const zeroBasedPercentage = item.value / maxDps;
+            const rangeBasedPercentage = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
+            
+            // Blend the two approaches
+            const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
+            
+            // Apply minimum visibility threshold
+            const minThreshold = minBarWidth / maxBarWidth;
+            const finalPercentage = Math.max(hybridPercentage, minThreshold);
+            const barWidth = finalPercentage * maxBarWidth;
             
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
