@@ -263,19 +263,30 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         min-width: 0;
       }
       
-      .chart-bar {
+      .chart-bar-track {
+        flex: 1;
         height: 20px;
+        background-color: rgba(255,255,255,0.1);
+        border-radius: 3px;
+        position: relative;
+        min-width: 0;
+      }
+      
+      .chart-bar {
+        height: 100%;
         border-radius: 3px;
         min-width: 2px;
         transition: width 0.3s ease;
+        position: relative;
       }
       
       .chart-value {
         font-weight: 600;
         color: var(--text-primary);
         font-size: 0.9em;
-        min-width: 60px;
+        width: 70px;
         text-align: right;
+        flex-shrink: 0;
       }
     </style>
   </head>
@@ -640,11 +651,11 @@ class UnifiedChart {
 
   getDataPath() {
     if (this.isRankingsMode) {
-      return `./data/rankings/`;
+      return `/data/rankings/`;
     } else {
       const currentClass = this.getCurrentClass();
       const currentSpec = this.getCurrentSpec();
-      return `./data/comparison/${currentClass}/${currentSpec}/`;
+      return `/data/comparison/${currentClass}/${currentSpec}/`;
     }
   }
 
@@ -935,7 +946,9 @@ class UnifiedChart {
                 <span class="chart-label">${item.label}</span>
               </div>
               <div class="chart-bar-container">
-                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                <div class="chart-bar-track">
+                  <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                </div>
                 <span class="chart-value" title="${tooltip}">${displayValue}</span>
               </div>
             </div>
@@ -1029,7 +1042,9 @@ class UnifiedChart {
                 <span class="chart-label">${item.label}</span>
               </div>
               <div class="chart-bar-container">
-                <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                <div class="chart-bar-track">
+                  <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                </div>
                 <span class="chart-value" title="${tooltip}">${displayValue}</span>
               </div>
             </div>
