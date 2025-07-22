@@ -6,7 +6,6 @@ export interface Props {
   title: string;
   description?: string;
   mode: 'rankings' | 'comparison';
-  // For comparison mode
   class?: string;
   spec?: string;
   comparisonType?: 'race' | 'trinket' | 'both';
@@ -21,7 +20,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} - WoW MoP Rankings</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
     <style>
@@ -147,6 +146,12 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       .hidden {
         display: none;
       }
+
+      @media (max-width: 768px) {
+        .rankings-container {
+        padding: 10px;
+      }
+    }
     </style>
     <style is:global>
       .simulation-metadata {
@@ -503,24 +508,6 @@ const classColors = {
   warrior: '#C69B6D'
 };
 
-// Race colors for comparison mode
-const raceColors = {
-  human: '#3FC7EB',
-  orc: '#C41E3A', 
-  dwarf: '#FF7C0A',
-  night_elf: '#A330C9',
-  undead: '#00FF98',
-  tauren: '#8788EE',
-  gnome: '#F48CBA',
-  troll: '#FFF468',
-  blood_elf: '#0070DD',
-  draenei: '#C69B6D',
-  goblin: '#AAD372',
-  worgen: '#FFFFFF',
-  pandaren: '#00FF98',
-  alliance_pandaren: '#00FF98'
-};
-
 class UnifiedChart {
   constructor() {
     this.currentData = null;
@@ -534,17 +521,16 @@ class UnifiedChart {
 
   initializeControls() {
     if (this.isRankingsMode) {
-      // Rankings mode - no special initialization needed
+
       console.log('Rankings mode initialized');
+
     } else if (this.isFixedClassSpec) {
-      // Fixed class/spec comparison mode
       console.log('Fixed class/spec mode:', fixedClass, fixedSpec);
+
     } else {
-      // Dynamic comparison mode - set up spec options
       this.updateSpecOptions();
     }
 
-    // Set comparison type if fixed
     if (!this.isRankingsMode && comparisonType !== 'both') {
       const comparisonSelect = document.getElementById('comparisonType');
       if (comparisonSelect) {
@@ -555,7 +541,8 @@ class UnifiedChart {
 
   bindEvents() {
     if (!this.isRankingsMode && !this.isFixedClassSpec) {
-      // Class change updates spec options (comparison mode only)
+
+      // class change updates spec options - comparison mode only
       const classSelect = document.getElementById('class');
       if (classSelect) {
         classSelect.addEventListener('change', () => {
@@ -564,20 +551,18 @@ class UnifiedChart {
         });
       }
 
-      // Data loading triggers for dynamic comparison controls
       const dataSelects = document.querySelectorAll('#spec, #comparisonType');
       dataSelects.forEach(select => {
         select.addEventListener('change', () => this.loadData());
       });
     }
     
-    // Common controls that trigger data loading
     const commonSelects = document.querySelectorAll('#targetCount, #encounterType, #duration, #phase');
     commonSelects.forEach(select => {
       select.addEventListener('change', () => this.loadData());
     });
     
-    // Sort by only re-renders chart
+    // sort by only re-renders chart
     const sortBySelect = document.getElementById('sortBy');
     if (sortBySelect) {
       sortBySelect.addEventListener('change', () => this.renderChart());
@@ -594,7 +579,7 @@ class UnifiedChart {
     
     const selectedClass = classSelect.value;
     
-    // Clear existing options
+    // clear existing options
     specSelect.innerHTML = '<option value="">Select Specialization</option>';
     
     if (selectedClass && classSpecs[selectedClass]) {
@@ -638,10 +623,8 @@ class UnifiedChart {
     const phase = document.getElementById('phase').value;
     
     if (this.isRankingsMode) {
-      // Rankings filename: dps_phase_encountertype_targetcount_duration.json
       return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
     } else {
-      // Comparison filename: class_spec_comparisontype_phase_encountertype_targetcount_duration.json
       const currentClass = this.getCurrentClass();
       const currentSpec = this.getCurrentSpec();
       const currentComparisonType = this.getCurrentComparisonType();
@@ -661,10 +644,9 @@ class UnifiedChart {
 
   async loadInitialData() {
     if (this.isRankingsMode || this.isFixedClassSpec) {
-      // For rankings mode or fixed class/spec, load immediately
       await this.loadData();
     }
-    // For dynamic comparison mode, wait for user to select class/spec
+    // for dynamic comparison mode, wait for user to select class/spec
   }
 
   async loadData() {
@@ -741,6 +723,45 @@ class UnifiedChart {
     const chartContainer = document.getElementById('chart-container');
     if (metadataContainer) metadataContainer.innerHTML = '';
     if (chartContainer) chartContainer.innerHTML = '';
+  }
+
+  calculateBarWidth(itemValue, maxValue, minValue) {
+    // Dynamic scaling based on data spread
+    const minBarWidth = 15;
+    const maxBarWidth = 100;
+    
+    // Calculate how spread out the data is
+    const valueRange = maxValue - minValue;
+    const averageValue = (maxValue + minValue) / 2;
+    const coefficientOfVariation = valueRange / averageValue;
+    
+    // Dynamic scaling weight based on data spread
+    // If data is close together (low variation), emphasize differences more
+    // If data is spread out (high variation), use more zero-based scaling
+    const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
+    const zeroWeight = 1 - rangeWeight;
+    
+    // Calculate both scaling approaches
+    const zeroBasedPercentage = itemValue / maxValue;
+    const rangeBasedPercentage = valueRange > 0 ? (itemValue - minValue) / valueRange : 1;
+    
+    // Blend the two approaches
+    const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
+    
+    // Apply minimum visibility threshold
+    const minThreshold = minBarWidth / maxBarWidth;
+    const finalPercentage = Math.max(hybridPercentage, minThreshold);
+    return finalPercentage * maxBarWidth;
+  }
+
+  sortChartItems(chartItems, sortBy) {
+    // Sort based on selected metric
+    if (sortBy === 'stdev') {
+      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+    } else {
+      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
+    }
+    return chartItems;
   }
 
   renderMetadata() {
@@ -866,8 +887,8 @@ class UnifiedChart {
 
   renderRankingsChart(container, sortBy) {
     const chartItems = [];
+    // convert rankings data structure
     
-    // Convert rankings data structure
     for (const [className, classData] of Object.entries(this.currentData.results)) {
       for (const [specName, specData] of Object.entries(classData)) {
         chartItems.push({
@@ -884,12 +905,7 @@ class UnifiedChart {
       }
     }
 
-    // Sort based on selected metric
-    if (sortBy === 'stdev') {
-      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
-    } else {
-      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
-    }
+    this.sortChartItems(chartItems, sortBy);
 
     const maxDps = Math.max(...chartItems.map(item => item.value));
     const minDps = Math.min(...chartItems.map(item => item.value));
@@ -906,32 +922,7 @@ class UnifiedChart {
         <h2 class="chart-title">${chartTitles[sortBy] || 'DPS Rankings'}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
-            // Dynamic scaling based on data spread
-            const minBarWidth = 15;
-            const maxBarWidth = 100;
-            
-            // Calculate how spread out the data is
-            const valueRange = maxDps - minDps;
-            const averageValue = (maxDps + minDps) / 2;
-            const coefficientOfVariation = valueRange / averageValue;
-            
-            // Dynamic scaling weight based on data spread
-            // If data is close together (low variation), emphasize differences more
-            // If data is spread out (high variation), use more zero-based scaling
-            const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
-            const zeroWeight = 1 - rangeWeight;
-            
-            // Calculate both scaling approaches
-            const zeroBasedPercentage = item.value / maxDps;
-            const rangeBasedPercentage = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
-            
-            // Blend the two approaches
-            const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
-            
-            // Apply minimum visibility threshold
-            const minThreshold = minBarWidth / maxBarWidth;
-            const finalPercentage = Math.max(hybridPercentage, minThreshold);
-            const barWidth = finalPercentage * maxBarWidth;
+            const barWidth = this.calculateBarWidth(item.value, maxDps, minDps);
             
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
@@ -978,12 +969,7 @@ class UnifiedChart {
       });
     }
 
-    // Sort based on selected metric
-    if (sortBy === 'stdev') {
-      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
-    } else {
-      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
-    }
+    this.sortChartItems(chartItems, sortBy);
 
     const maxDps = Math.max(...chartItems.map(item => item.value));
     const minDps = Math.min(...chartItems.map(item => item.value));
@@ -994,44 +980,19 @@ class UnifiedChart {
       min: `${comparisonLabel} DPS Rankings (Minimum)`, 
       stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`
     };
-    
+
+    // TODO: abstract
     container.innerHTML = `
       <div class="chart-container">
         <h2 class="chart-title">${chartTitles[sortBy] || `${comparisonLabel} DPS Rankings`}</h2>
         <div class="chart-bars">
           ${chartItems.map((item, index) => {
-            // Dynamic scaling based on data spread
-            const minBarWidth = 15;
-            const maxBarWidth = 100;
-            
-            // Calculate how spread out the data is
-            const valueRange = maxDps - minDps;
-            const averageValue = (maxDps + minDps) / 2;
-            const coefficientOfVariation = valueRange / averageValue;
-            
-            // Dynamic scaling weight based on data spread
-            // If data is close together (low variation), emphasize differences more
-            // If data is spread out (high variation), use more zero-based scaling
-            const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
-            const zeroWeight = 1 - rangeWeight;
-            
-            // Calculate both scaling approaches
-            const zeroBasedPercentage = item.value / maxDps;
-            const rangeBasedPercentage = valueRange > 0 ? (item.value - minDps) / valueRange : 1;
-            
-            // Blend the two approaches
-            const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
-            
-            // Apply minimum visibility threshold
-            const minThreshold = minBarWidth / maxBarWidth;
-            const finalPercentage = Math.max(hybridPercentage, minThreshold);
-            const barWidth = finalPercentage * maxBarWidth;
+            const barWidth = this.calculateBarWidth(item.value, maxDps, minDps);
             
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
             const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
             
-            // Use class color for race comparisons (since we're comparing races within a class)
             const barColor = currentComparisonType === 'race' ? 
               (classColors[this.getCurrentClass()] || '#666') : '#666';
             

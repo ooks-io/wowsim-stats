@@ -14,7 +14,6 @@ export interface Props {
 
 const { metadata } = Astro.props;
 
-// Format the timestamp nicely
 const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
   year: 'numeric',
   month: 'long',
@@ -24,14 +23,12 @@ const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
   timeZoneName: 'short'
 });
 
-// Format duration if available (assuming it's in seconds)
 const formatDuration = (seconds: number) => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
 };
 
-// Format raid buffs for display
 const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
   const activeBuffs = Object.entries(buffs)
     .filter(([_, value]) => value !== false && value !== 0)
