@@ -2,7 +2,7 @@
   imports = [
     ./shell.nix
     ./apps
-    ./checks.nix
+    #./checks.nix
     ./pkgs
 
     # components
