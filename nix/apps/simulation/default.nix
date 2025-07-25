@@ -142,6 +142,135 @@
       duration = "burst";
       template = "multiTarget";
     };
+    dps-preRaid-raid-single-long = mkMassSim {
+      specs = "dps"; # shortcut to all DPS classes templates
+      encounter = encounter.raid.long.singleTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "single";
+      duration = "long";
+      template = "singleTarget";
+    };
+
+    dps-preRaid-raid-three-long = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.long.threeTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "three";
+      duration = "long";
+      template = "multiTarget";
+    };
+
+    dps-preRaid-raid-cleave-long = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.long.cleave;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "cleave";
+      duration = "long";
+      template = "cleave";
+    };
+
+    dps-preRaid-raid-ten-long = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.long.tenTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "ten";
+      duration = "long";
+      template = "multiTarget";
+    };
+    dps-preRaid-raid-single-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.singleTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "single";
+      duration = "short";
+      template = "singleTarget";
+    };
+
+    dps-preRaid-raid-three-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.threeTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "three";
+      duration = "short";
+      template = "multiTarget";
+    };
+
+    dps-preRaid-raid-cleave-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.cleave;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "cleave";
+      duration = "short";
+      template = "cleave";
+    };
+
+    dps-preRaid-raid-ten-short = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.short.tenTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "ten";
+      duration = "short";
+      template = "multiTarget";
+    };
+    dps-preRaid-raid-single-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.singleTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "single";
+      duration = "burst";
+      template = "singleTarget";
+    };
+
+    dps-preRaid-raid-three-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.threeTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "three";
+      duration = "burst";
+      template = "multiTarget";
+    };
+
+    dps-preRaid-raid-cleave-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.cleave;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "cleave";
+      duration = "burst";
+      template = "cleave";
+    };
+
+    dps-preRaid-raid-ten-burst = mkMassSim {
+      specs = "dps";
+      encounter = encounter.raid.burst.tenTarget;
+      iterations = 10000;
+      phase = "preRaid";
+      encounterType = "raid";
+      targetCount = "ten";
+      duration = "burst";
+      template = "multiTarget";
+    };
   };
 
   # for all race combinations

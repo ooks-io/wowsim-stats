@@ -19,7 +19,7 @@
 
   # categorize specs by role
   # TODO: tanks
-  getAllDPSSpecs = classes: template: let
+  getAllDPSSpecs = classes: template: phase: let
     dpsSpecs = {
       death_knight = ["frost" "unholy"];
       druid = ["balance" "feral"];
@@ -50,12 +50,12 @@
                 in
                   if
                     lib.hasAttr defaultRace spec.template
-                    && lib.hasAttr "p1" spec.template.${defaultRace}
-                    && lib.hasAttr "raid" spec.template.${defaultRace}.p1
-                    && lib.hasAttr template spec.template.${defaultRace}.p1.raid
+                    && lib.hasAttr phase spec.template.${defaultRace}
+                    && lib.hasAttr "raid" spec.template.${defaultRace}.${phase}
+                    && lib.hasAttr template spec.template.${defaultRace}.${phase}.raid
                   then {
                     inherit className specName;
-                    config = spec.template.${defaultRace}.p1.raid.${template};
+                    config = spec.template.${defaultRace}.${phase}.raid.${template};
                   }
                   else null
                 else null
@@ -292,7 +292,7 @@
     # get the list of specs based on the specs parameter
     specConfigs =
       if specs == "dps"
-      then getAllDPSSpecs classes template
+      then getAllDPSSpecs classes template phase
       else if builtins.isList specs
       then specs
       else throw "specs must be 'dps' or a list of spec configurations";
