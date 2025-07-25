@@ -274,6 +274,7 @@
   };
 
   # for all race combinations
+  # we will only run race benchmarks for p1 geartsets for now
   raceScenarios = [
     {
       targetCount = "single";
