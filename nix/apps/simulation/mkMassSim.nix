@@ -455,58 +455,6 @@
           archived_name="${structuredOutput}_$timestamp.json"
           cp "$existing_file" "$archive_dir/$archived_name"
           echo "Archived existing file: $archived_name"
-
-          echo "Generating changelog..."
-          changes=$(echo "$finalResult" | jq --slurpfile archived "$existing_file" '
-            .results as $current |
-            $archived[0].results as $previous |
-            [
-              $current | to_entries[] | . as $class_entry |
-              $class_entry.value | to_entries[] | . as $spec_entry |
-              {
-                class: $class_entry.key,
-                spec: $spec_entry.key,
-                current_dps: $spec_entry.value.dps,
-                previous_dps: ($previous[$class_entry.key][$spec_entry.key].dps // null)
-              } |
-              select(.previous_dps != null and .current_dps != .previous_dps) |
-              {
-                class: .class,
-                spec: .spec,
-                current_dps: (.current_dps | round),
-                previous_dps: (.previous_dps | round),
-                absolute_change: ((.current_dps - .previous_dps) | round),
-                percent_change: (((.current_dps - .previous_dps) / .previous_dps * 100) | (. * 100 | round) / 100)
-              }
-            ]
-          ')
-
-          change_count=$(echo "$changes" | jq length)
-          if [[ "$change_count" -gt 0 ]]; then
-            echo "Found $change_count DPS changes:"
-            echo "$changes" | jq -r '.[] | "  \(.class)/\(.spec): \(if .absolute_change > 0 then "+" else "" end)\(.absolute_change) DPS (\(if .percent_change > 0 then "+" else "" end)\(.percent_change)%)"'
-
-            changelog_file="$web_data_dir/changelog.json"
-            if [[ -f "$changelog_file" ]]; then
-              current_changelog=$(cat "$changelog_file")
-            else
-              current_changelog='{}'
-            fi
-
-            updated_changelog=$(echo "$current_changelog" | jq \
-              --arg sim "${structuredOutput}" \
-              --arg timestamp "$(date -Iseconds)" \
-              --argjson changes "$changes" '
-              .[$sim] = (.[$sim] // []) + [{
-                timestamp: $timestamp,
-                changes: $changes
-              }]')
-
-            echo "$updated_changelog" > "$changelog_file"
-            echo "Updated changelog: $changelog_file"
-          else
-            echo "No DPS changes detected."
-          fi
         fi
 
         cp "${structuredOutput}.json" "$rankings_dir/"
