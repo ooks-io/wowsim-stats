@@ -21,7 +21,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} - WoW MoP Rankings</title>
+    <title>{title}</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
     <style>
       body {
@@ -303,15 +303,26 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     </div>
     
     <div class="rankings-container">
-      <Warning title={isRankingsMode ? "DPS Rankings" : (isFixedClassSpec ? "Race Comparison Results" : "Comparison Results")}>
-        {isRankingsMode ? (
-          <p>These rankings show <strong>DPS performance</strong> across all specializations using static simulation results with identical encounter conditions and optimal rotations.</p>
-        ) : isFixedClassSpec ? (
-          <p>These rankings compare <strong>race performance</strong> for {fixedClass} {fixedSpec} using static simulation results. Results show performance differences between races using identical gear and configurations.</p>
-        ) : (
-          <p>Compare <strong>race performance</strong> across different specs and classes using static simulation results. Select a class and specialization to view performance differences.</p>
-        )}
-        <p>For live, interactive simulations visit <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims.com/mop</a>.</p>
+      <Warning title="Warning">
+        <p>
+          These benchmarks are built with <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims</a> which is currently still in <strong>alpha</strong> with bug fixes and updates coming daily.</p>
+        <p>
+          Beyond that, there are a number of issues with using simulation rankings to guide your decisions: 
+        </p>
+        <ul>
+          <li>
+            <strong>Simulation Bias</strong>: Certain specs are favoured in stationary, target dummy scenarios, e.g., Arcane & Boomkin
+          </li>
+          <li>
+            <strong>Fight Length Impact</strong>: In a 5:00 encounter, a 3:00 burst spec will be unfavoured compared to a 3:30 fight
+          </li>
+          <li>
+            <strong>Incomplete APLs/spec implementation</strong>: Not all specs have been optimized for every type of encounters (short duration, high target count)
+          </li>
+        </ul>
+        <p>
+          Simulation rankings, such as these, should never be used as anything more than a novelty/something interesting to look at.
+        </p>
       </Warning>
       
       <div id="metadata-container"></div>
@@ -452,8 +463,8 @@ const classSpecs = {
     { value: 'unholy', label: 'Unholy' }
   ],
   druid: [
-    { value: 'balance', label: 'Balance' },
-    { value: 'feral', label: 'Feral' }
+    { value: 'balance', label: 'Balance' }
+    //{ value: 'feral', label: 'Feral' }
   ],
   hunter: [
     { value: 'beast_mastery', label: 'Beast Mastery' },
