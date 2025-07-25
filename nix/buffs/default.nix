@@ -9,8 +9,8 @@ let
       blessingOfMight = true;
       legacyOfTheEmperor = true;
       bloodlust = true;
-      stormlashTotemCount = 5;
-      skullBannerCount = 3;
+      stormlashTotemCount = 4;
+      skullBannerCount = 2;
     };
     caster = {
       serpentsSwiftness = true;
