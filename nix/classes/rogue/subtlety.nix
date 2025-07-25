@@ -7,10 +7,10 @@
   inherit (consumables.preset) agility;
 
   subtlety = {
-    defaultRace = "human";
+    defaultRace = "troll";
 
     talents = {
-      mfd = "321232";
+      anticipation = "321233";
     };
 
     glyphs = {
@@ -37,7 +37,7 @@
       spec = "subtlety";
       consumables = agility;
       profession1 = "engineering";
-      profession2 = "jewelcrafting";
+      profession2 = "alchemy";
       distanceFromTarget = 5;
       options = {
         classOptions = {
@@ -51,7 +51,7 @@
         apl = "subtlety";
         p1.gearset = "p1_subtlety_t14";
         preRaid.gearset = "preraid_subtlety";
-        talents = subtlety.talents.mfd;
+        talents = subtlety.talents.anticipation;
         glyphs = subtlety.glyphs.default;
       };
 
@@ -59,7 +59,7 @@
         apl = "subtlety";
         p1.gearset = "p1_subtlety_t14";
         preRaid.gearset = "preraid_subtlety";
-        talents = subtlety.talents.mfd;
+        talents = subtlety.talents.anticipation;
         glyphs = subtlety.glyphs.default;
       };
 
@@ -67,13 +67,13 @@
         apl = "subtlety";
         p1.gearset = "p1_subtlety_t14";
         preRaid.gearset = "preraid_subtlety";
-        talents = subtlety.talents.mfd;
+        talents = subtlety.talents.anticipation;
         glyphs = subtlety.glyphs.default;
       };
 
       challengeMode = {
         gearset = "p1_subtlety_t14";
-        talents = subtlety.talents.mfd;
+        talents = subtlety.talents.anticipation;
         glyphs = subtlety.glyphs.default;
       };
     };
