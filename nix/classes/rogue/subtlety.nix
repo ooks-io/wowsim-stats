@@ -45,6 +45,7 @@
           startingOverkillDuration = 20;
           vanishBreakTime = 0.1;
         };
+        honorAmongThievesCritRate = 400;
       };
 
       singleTarget = {
