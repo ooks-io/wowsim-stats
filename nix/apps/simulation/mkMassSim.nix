@@ -10,6 +10,7 @@
 }: let
   # TODO: this is cursed, consolidate the functions.
   inherit (lib.sim.simulation) mkSim;
+  inherit (lib.sim) itemDatabase;
 
   # extract playable races from class definitions
   getPlayableRaces = className:
@@ -101,6 +102,11 @@
     simDerivations = lib.listToAttrs (map (raceConfig: {
         name = "${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}";
         value = let
+          # Pre-enrich the equipment, consumables, and glyphs for this race config
+          enrichedEquipment = itemDatabase.enrichEquipment raceConfig.config.equipment;
+          enrichedConsumables = itemDatabase.enrichConsumables raceConfig.config.consumables;
+          enrichedGlyphs = itemDatabase.enrichGlyphs raceConfig.config.glyphs;
+
           simInput = mkSim {
             inherit iterations;
             player = raceConfig.config;
@@ -113,9 +119,22 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-            cat > input.json << 'EOF'
-            ${simInput}
-            EOF
+            # Write enriched JSON data to files using cat with EOF to handle any quotes safely
+            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+${builtins.toJSON enrichedEquipment}
+EQUIPMENT_EOF
+            
+            cat > consumables.json << 'CONSUMABLES_EOF'
+${builtins.toJSON enrichedConsumables}
+CONSUMABLES_EOF
+            
+            cat > glyphs.json << 'GLYPHS_EOF'
+${builtins.toJSON enrichedGlyphs}
+GLYPHS_EOF
+            
+            cat > input.json << 'INPUT_EOF'
+${simInput}
+INPUT_EOF
 
             echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
             if wowsimcli sim --infile input.json --outfile output.json; then
@@ -125,33 +144,37 @@
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-              # construct loadout info
-              loadout=$(echo '${builtins.toJSON raceConfig.config}' | jq '{
-                consumables,
-                talentsString,
-                glyphs,
-                equipment,
-                race,
-                class,
-                profession1,
-                profession2
-              }')
-
-              # create final result
+              # create final result with enriched data
               jq -n \
                 --arg raceName "${raceConfig.raceName}" \
                 --arg avgDps "$avgDps" \
                 --arg maxDps "$maxDps" \
                 --arg minDps "$minDps" \
                 --arg stdevDps "$stdevDps" \
-                --argjson loadout "$loadout" \
+                --slurpfile equipment enriched_equipment.json \
+                --slurpfile consumables consumables.json \
+                --arg talentsString "${raceConfig.config.talentsString}" \
+                --slurpfile glyphs glyphs.json \
+                --arg race "${raceConfig.config.race}" \
+                --arg class "${raceConfig.config.class}" \
+                --arg profession1 "${raceConfig.config.profession1}" \
+                --arg profession2 "${raceConfig.config.profession2}" \
                 '{
                   race: $raceName,
                   dps: ($avgDps | tonumber),
                   max: ($maxDps | tonumber),
                   min: ($minDps | tonumber),
                   stdev: ($stdevDps | tonumber),
-                  loadout: $loadout
+                  loadout: {
+                    consumables: $consumables[0],
+                    talentsString: $talentsString,
+                    glyphs: $glyphs[0],
+                    equipment: $equipment[0],
+                    race: $race,
+                    class: $class,
+                    profession1: $profession1,
+                    profession2: $profession2
+                  }
                 }' > $out
             else
               echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
@@ -301,6 +324,11 @@
     simDerivations = lib.listToAttrs (map (spec: {
         name = "${spec.className}-${spec.specName}";
         value = let
+          # Pre-enrich the equipment, consumables, and glyphs for this spec
+          enrichedEquipment = itemDatabase.enrichEquipment spec.config.equipment;
+          enrichedConsumables = itemDatabase.enrichConsumables spec.config.consumables;
+          enrichedGlyphs = itemDatabase.enrichGlyphs spec.config.glyphs;
+          
           simInput = mkSim {
             inherit iterations;
             player = spec.config;
@@ -313,10 +341,22 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-            # Generate input JSON file using HERE document approach (same as test-composition)
-            cat > input.json << 'EOF'
-            ${simInput}
-            EOF
+            # Write enriched JSON data to files using cat with EOF to handle any quotes safely
+            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+${builtins.toJSON enrichedEquipment}
+EQUIPMENT_EOF
+            
+            cat > consumables.json << 'CONSUMABLES_EOF'
+${builtins.toJSON enrichedConsumables}
+CONSUMABLES_EOF
+            
+            cat > glyphs.json << 'GLYPHS_EOF'
+${builtins.toJSON enrichedGlyphs}
+GLYPHS_EOF
+            
+            cat > input.json << 'INPUT_EOF'
+${simInput}
+INPUT_EOF
 
             echo "Running ${spec.className}/${spec.specName} simulation..."
             if wowsimcli sim --infile input.json --outfile output.json; then
@@ -326,20 +366,7 @@
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-              # create loadout without rotation (only keep consumables, talents, glyphs, gear)
-              # TODO: should we output the apl?
-              loadout=$(echo '${builtins.toJSON spec.config}' | jq '{
-                consumables,
-                talentsString,
-                glyphs,
-                equipment,
-                race,
-                class,
-                profession1,
-                profession2
-              }')
-
-              # create final result with all DPS statistics
+              # create final result with all DPS statistics and enriched data
               jq -n \
                 --arg className "${spec.className}" \
                 --arg specName "${spec.specName}" \
@@ -347,7 +374,14 @@
                 --arg maxDps "$maxDps" \
                 --arg minDps "$minDps" \
                 --arg stdevDps "$stdevDps" \
-                --argjson loadout "$loadout" \
+                --slurpfile equipment enriched_equipment.json \
+                --slurpfile consumables consumables.json \
+                --arg talentsString "${spec.config.talentsString}" \
+                --slurpfile glyphs glyphs.json \
+                --arg race "${spec.config.race}" \
+                --arg class "${spec.config.class}" \
+                --arg profession1 "${spec.config.profession1}" \
+                --arg profession2 "${spec.config.profession2}" \
                 '{
                   className: $className,
                   specName: $specName,
@@ -355,7 +389,16 @@
                   max: ($maxDps | tonumber),
                   min: ($minDps | tonumber),
                   stdev: ($stdevDps | tonumber),
-                  loadout: $loadout
+                  loadout: {
+                    consumables: $consumables[0],
+                    talentsString: $talentsString,
+                    glyphs: $glyphs[0],
+                    equipment: $equipment[0],
+                    race: $race,
+                    class: $class,
+                    profession1: $profession1,
+                    profession2: $profession2
+                  }
                 }' > $out
             else
               echo "Simulation failed for ${spec.className}/${spec.specName}"
