@@ -11,4 +11,5 @@
   simulation = import ./simulation.nix {inherit lib;};
   party = import ./party.nix {inherit lib;};
   classes = import ./classes.nix {inherit lib;};
+  itemDatabase = import ./itemDatabase.nix {inherit inputs lib;};
 }
