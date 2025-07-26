@@ -51,7 +51,7 @@
       singleTarget = {
         apl = "frost";
         p1.gearset = "p1_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        preRaid.gearset = "p1_prebis";
         talents = frost.talents.livingBomb;
         glyphs = frost.glyphs.default;
       };
@@ -59,7 +59,7 @@
       multiTarget = {
         apl = "frost_aoe";
         p1.gearset = "p1_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        preRaid.gearset = "p1_prebis";
         talents = frost.talents.netherTempest;
         glyphs = frost.glyphs.default;
       };
@@ -67,7 +67,7 @@
       cleave = {
         apl = "frost_cleave";
         p1.gearset = "p1_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        preRaid.gearset = "p1_prebis";
         talents = frost.talents.netherTempest;
         glyphs = frost.glyphs.default;
       };

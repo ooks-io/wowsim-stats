@@ -1,6 +1,7 @@
 ---
 import Navigation from '../components/Navigation.astro';
 import Warning from '../components/Warning.astro';
+import ItemDatabase from '../components/ItemDatabase.astro';
 
 export interface Props {
   title: string;
@@ -231,6 +232,13 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         align-items: center;
         gap: 15px;
         padding: 8px 0;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .chart-item:hover {
+        background-color: rgba(255,255,255,0.05);
       }
       
       .chart-labels {
@@ -292,6 +300,203 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         width: 70px;
         text-align: right;
         flex-shrink: 0;
+      }
+
+      /* Expandable chart item styles */
+      .chart-item-wrapper {
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+      }
+
+      .chart-item-header {
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+      }
+
+      .chart-item-header:hover {
+        background-color: rgba(255,255,255,0.05);
+      }
+
+      .chart-item-expanded .chart-item-header {
+        background-color: rgba(255,255,255,0.08);
+      }
+
+      .chart-item-content {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .chart-expand-icon {
+        margin-left: 8px;
+        font-size: 0.8em;
+        color: var(--text-muted);
+        transition: transform 0.2s ease;
+      }
+
+      .chart-item-expanded .chart-expand-icon {
+        transform: rotate(90deg);
+      }
+
+      .chart-dropdown {
+        grid-column: 1 / -1;
+        margin-top: 12px;
+        padding: 16px;
+        background-color: rgba(255,255,255,0.03);
+        border-radius: 6px;
+        border: 1px solid rgba(255,255,255,0.1);
+        display: none;
+      }
+
+      .chart-item-expanded .chart-dropdown {
+        display: block;
+        animation: dropdown-expand 0.2s ease-out;
+      }
+
+      @keyframes dropdown-expand {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .loadout-section {
+        margin-bottom: 20px;
+      }
+
+      .loadout-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .loadout-title {
+        color: var(--highlight-color);
+        font-size: 1em;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .loadout-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+
+      .loadout-item {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .loadout-label {
+        font-size: 0.8em;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .loadout-value {
+        font-size: 0.9em;
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      .loadout-talents {
+        font-family: 'Courier New', monospace;
+        font-size: 1.1em;
+        letter-spacing: 2px;
+        color: var(--highlight-color);
+      }
+
+      .loadout-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+      }
+
+      .loadout-button {
+        padding: 6px 12px;
+        background-color: var(--bg-primary);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 4px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 0.85em;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .loadout-button:hover {
+        background-color: rgba(255,255,255,0.1);
+        border-color: var(--highlight-color);
+      }
+
+      .equipment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 8px;
+      }
+
+      .equipment-slot {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 8px;
+        background-color: rgba(255,255,255,0.05);
+        border-radius: 3px;
+        font-size: 0.85em;
+        gap: 12px;
+      }
+
+      .equipment-slot-name {
+        color: var(--text-muted);
+        font-weight: 500;
+        min-width: 80px;
+      }
+
+      .equipment-item-link {
+        color: #ffd100;
+        text-decoration: none;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        transition: color 0.2s ease;
+      }
+
+      .equipment-item-link:hover {
+        color: #ffed4e;
+        text-decoration: underline;
+      }
+
+      .equipment-item-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .equipment-detail {
+        color: var(--text-muted);
+        font-size: 0.8em;
+        line-height: 1.2;
+      }
+
+      .equipment-item {
+        color: var(--text-primary);
+        text-align: right;
+        font-family: 'Courier New', monospace;
       }
     </style>
   </head>
@@ -454,6 +659,230 @@ const formatSimulationDate = (timestamp) => {
     minute: '2-digit',
     timeZoneName: 'short'
   });
+};
+
+// Loadout formatting functions
+const formatLoadout = (loadout) => {
+  if (!loadout) return null;
+  
+  const sections = [];
+  
+  // Character Info
+  if (loadout.race || loadout.class || loadout.profession1 || loadout.profession2) {
+    const items = [];
+    if (loadout.race) items.push({ label: 'Race', value: formatRace(loadout.race) });
+    if (loadout.class) items.push({ label: 'Class', value: formatClass(loadout.class) });
+    if (loadout.profession1) items.push({ label: 'Profession 1', value: loadout.profession1 });
+    if (loadout.profession2) items.push({ label: 'Profession 2', value: loadout.profession2 });
+    sections.push({ title: 'Character', items });
+  }
+  
+  // Talents & Glyphs
+  if (loadout.talentsString || loadout.glyphs) {
+    const items = [];
+    if (loadout.talentsString) {
+      items.push({ label: 'Talents', value: loadout.talentsString, isSpecial: 'talents' });
+    }
+    if (loadout.glyphs) {
+      const glyphText = formatGlyphs(loadout.glyphs);
+      if (glyphText) items.push({ label: 'Glyphs', value: glyphText });
+    }
+    sections.push({ title: 'Talents & Glyphs', items });
+  }
+  
+  // Consumables
+  if (loadout.consumables) {
+    const items = formatConsumables(loadout.consumables);
+    if (items.length > 0) sections.push({ title: 'Consumables', items });
+  }
+  
+  // Equipment Summary
+  if (loadout.equipment && loadout.equipment.items) {
+    const equipmentSummary = formatEquipmentSummary(loadout.equipment.items);
+    if (equipmentSummary.length > 0) {
+      sections.push({ title: 'Equipment', items: equipmentSummary, isEquipment: true });
+    }
+  }
+  
+  return sections;
+};
+
+const formatRace = (race) => {
+  return race.replace('Race', '').replace(/([A-Z])/g, ' $1').trim();
+};
+
+const formatClass = (className) => {
+  return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
+};
+
+const formatGlyphs = (glyphs) => {
+  const glyphList = [];
+  ['major1', 'major2', 'major3', 'minor1', 'minor2', 'minor3'].forEach(slot => {
+    if (glyphs[slot]) glyphList.push(`${slot}: ${glyphs[slot]}`);
+  });
+  return glyphList.length > 0 ? glyphList.join(', ') : null;
+};
+
+const formatConsumables = (consumables) => {
+  const items = [];
+  if (consumables.flaskId) {
+    items.push({ 
+      label: 'Flask', 
+      value: consumables.flaskId,
+      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.flaskId}`,
+      isItem: true
+    });
+  }
+  if (consumables.foodId) {
+    items.push({ 
+      label: 'Food', 
+      value: consumables.foodId,
+      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.foodId}`,
+      isItem: true
+    });
+  }
+  if (consumables.potId) {
+    items.push({ 
+      label: 'Potion', 
+      value: consumables.potId,
+      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.potId}`,
+      isItem: true
+    });
+  }
+  if (consumables.prepotId) {
+    items.push({ 
+      label: 'Pre-Potion', 
+      value: consumables.prepotId,
+      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.prepotId}`,
+      isItem: true
+    });
+  }
+  return items;
+};
+
+const formatEquipmentSummary = (items) => {
+  const slotNames = [
+    'Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrists', 
+    'Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 
+    'Trinket 1', 'Trinket 2', 'Main Hand', 'Off Hand'
+  ];
+  
+  const equipment = [];
+  items.forEach((item, index) => {
+    if (item && item.id) {
+      const itemInfo = window.ItemDatabase ? window.ItemDatabase.formatEquipmentItem(item) : {
+        itemId: item.id,
+        itemName: `Item ${item.id}`,
+        itemDetails: [],
+        wowheadUrl: `https://www.wowhead.com/mop-classic/item=${item.id}`
+      };
+      
+      if (itemInfo) {
+        equipment.push({
+          slot: slotNames[index] || `Slot ${index + 1}`,
+          ...itemInfo
+        });
+      }
+    }
+  });
+  return equipment;
+};
+
+const generateRawJsonUrl = (chartData) => {
+  // Generate URL to the raw JSON file used for this simulation
+  const fileName = chartData.fileName || 'unknown.json';
+  const dataPath = chartData.dataPath || '/data/';
+  return `${dataPath}${fileName}`;
+};
+
+// Generate loadout dropdown HTML
+const generateLoadoutDropdown = (loadout, chartData) => {
+  const sections = formatLoadout(loadout);
+  if (!sections || sections.length === 0) return '';
+  
+  const sectionsHtml = sections.map(section => {
+    if (section.isEquipment) {
+      // Special handling for equipment
+      const equipmentHtml = section.items.map(eq => {
+        const detailsHtml = eq.itemDetails && eq.itemDetails.length > 0 
+          ? eq.itemDetails.map(detail => `<div class="equipment-detail">${detail}</div>`).join('')
+          : '';
+        
+        return `
+          <div class="equipment-slot">
+            <span class="equipment-slot-name">${eq.slot}:</span>
+            <div class="equipment-item-info">
+              <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link">${eq.itemName}</a>
+              ${detailsHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="loadout-section">
+          <h4 class="loadout-title">${section.title}</h4>
+          <div class="equipment-grid">
+            ${equipmentHtml}
+          </div>
+        </div>
+      `;
+    } else {
+      // Regular sections
+      const itemsHtml = section.items.map(item => {
+        const valueClass = item.isSpecial === 'talents' ? 'loadout-value loadout-talents' : 'loadout-value';
+        const valueContent = item.isItem && item.wowheadUrl 
+          ? `<a href="${item.wowheadUrl}" target="_blank" class="equipment-item-link">Item ${item.value}</a>`
+          : `<span class="${valueClass}">${item.value}</span>`;
+        
+        return `
+          <div class="loadout-item">
+            <span class="loadout-label">${item.label}</span>
+            ${valueContent}
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="loadout-section">
+          <h4 class="loadout-title">${section.title}</h4>
+          <div class="loadout-grid">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+    }
+  }).join('');
+  
+  const rawJsonUrl = generateRawJsonUrl(chartData);
+  
+  return `
+    <div class="chart-dropdown">
+      ${sectionsHtml}
+      <div class="loadout-actions">
+        <a href="${rawJsonUrl}" target="_blank" class="loadout-button">View Raw JSON</a>
+        <button class="loadout-button" onclick="alert('WowSims link coming soon!')">Open in WowSims</button>
+      </div>
+    </div>
+  `;
+};
+
+// Chart interaction handlers - global function for onclick handlers
+window.toggleChartItem = (element) => {
+  const wrapper = element.closest('.chart-item-wrapper');
+  if (!wrapper) return;
+  
+  const isExpanded = wrapper.classList.contains('chart-item-expanded');
+  
+  // Close all other expanded items
+  document.querySelectorAll('.chart-item-expanded').forEach(item => {
+    if (item !== wrapper) {
+      item.classList.remove('chart-item-expanded');
+    }
+  });
+  
+  // Toggle current item
+  wrapper.classList.toggle('chart-item-expanded', !isExpanded);
 };
 
 // Class specs for comparison mode
@@ -912,7 +1341,8 @@ class UnifiedChart {
           value: specData[sortBy] || specData.dps,
           category: className,
           className: className,
-          specName: specName
+          specName: specName,
+          loadout: specData.loadout || null
         });
       }
     }
@@ -941,19 +1371,24 @@ class UnifiedChart {
             const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
             
             const barColor = classColors[item.className] || '#666';
+            const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
             
             return `
-            <div class="chart-item">
-              <div class="chart-labels">
-                <span class="chart-rank">#${index + 1}</span>
-                <span class="chart-label">${item.label}</span>
-              </div>
-              <div class="chart-bar-container">
-                <div class="chart-bar-track">
-                  <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+            <div class="chart-item-wrapper">
+              <div class="chart-item" onclick="toggleChartItem(this.parentElement)">
+                <div class="chart-labels">
+                  <span class="chart-rank">#${index + 1}</span>
+                  <span class="chart-label">${item.label}</span>
+                  ${item.loadout ? '<span class="chart-expand-indicator">▼</span>' : ''}
                 </div>
-                <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                <div class="chart-bar-container">
+                  <div class="chart-bar-track">
+                    <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                  </div>
+                  <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                </div>
               </div>
+              ${dropdownContent}
             </div>
             `;
           }).join('')}
@@ -977,7 +1412,8 @@ class UnifiedChart {
         stdev: itemData.stdev,
         value: itemData[sortBy] || itemData.dps,
         category: itemName,
-        rawName: itemName
+        rawName: itemName,
+        loadout: itemData.loadout || null
       });
     }
 
@@ -1007,19 +1443,24 @@ class UnifiedChart {
             
             const barColor = currentComparisonType === 'race' ? 
               (classColors[this.getCurrentClass()] || '#666') : '#666';
+            const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
             
             return `
-            <div class="chart-item">
-              <div class="chart-labels">
-                <span class="chart-rank">#${index + 1}</span>
-                <span class="chart-label">${item.label}</span>
-              </div>
-              <div class="chart-bar-container">
-                <div class="chart-bar-track">
-                  <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+            <div class="chart-item-wrapper">
+              <div class="chart-item" onclick="toggleChartItem(this.parentElement)">
+                <div class="chart-labels">
+                  <span class="chart-rank">#${index + 1}</span>
+                  <span class="chart-label">${item.label}</span>
+                  ${item.loadout ? '<span class="chart-expand-indicator">▼</span>' : ''}
                 </div>
-                <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                <div class="chart-bar-container">
+                  <div class="chart-bar-track">
+                    <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
+                  </div>
+                  <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                </div>
               </div>
+              ${dropdownContent}
             </div>
             `;
           }).join('')}
@@ -1035,5 +1476,8 @@ document.addEventListener('DOMContentLoaded', () => {
   new UnifiedChart();
 });
     </script>
+    
+    <!-- ItemDatabase component for reforge data and item utilities -->
+    <ItemDatabase />
   </body>
 </html>
