@@ -28,9 +28,6 @@
       };
       inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
       glyphs = {
-        major1 = 58677; # vampiric blood
-        major2 = 58676; # bone shield
-        major3 = 58647; # death strike
       };
     };
 

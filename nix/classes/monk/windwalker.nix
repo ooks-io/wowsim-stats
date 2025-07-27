@@ -16,9 +16,9 @@
 
     glyphs = {
       default = {
-        major1 = 85697;
-        major2 = 87900;
-        minor1 = 90715;
+        major1 = 85697; # spinning crane kick
+        major2 = 87900; # touch of karma
+        minor1 = 90715; # blackout kick
       };
     };
 
