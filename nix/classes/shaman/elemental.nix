@@ -16,7 +16,7 @@
 
     glyphs = {
       default = {
-        major1 = 41539; # flame shock
+        major1 = 41539; # spiritwalker's grace
       };
     };
 

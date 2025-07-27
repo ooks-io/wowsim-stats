@@ -23,7 +23,7 @@
       };
       masterfrost = {
         major1 = 43533; # anti-magic shell
-        major2 = 58657; # pestilence
+        major2 = 43548; # pestilence
         major3 = 104047; # loud horn
         minor1 = 43550; # army of the dead
         minor2 = 45806; # tranquil grip
