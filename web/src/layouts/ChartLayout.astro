@@ -345,7 +345,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         grid-column: 1 / -1;
         margin-top: 12px;
         padding: 16px;
-        background-color: rgba(255,255,255,0.03);
+        background-color: var(--bg-selection); 
         border-radius: 6px;
         border: 1px solid rgba(255,255,255,0.1);
         display: none;
@@ -488,7 +488,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       .equipment-detail {
-        color: var(--text-muted);
+        color: #1eff00;
         font-size: 0.8em;
         line-height: 1.2;
       }
@@ -763,10 +763,13 @@ const formatLoadout = (loadout) => {
   }
   
   // Talents & Glyphs
-  if (loadout.talentsString || loadout.glyphs) {
+  if (loadout.talents || loadout.glyphs) {
     const items = [];
-    if (loadout.talentsString) {
-      items.push({ label: 'Talents', value: loadout.talentsString, isSpecial: 'talents' });
+    if (loadout.talents) {
+      const talentItems = formatTalents(loadout.talents);
+      if (talentItems && talentItems.length > 0) {
+        items.push(...talentItems);
+      }
     }
     if (loadout.glyphs) {
       const glyphItems = formatGlyphs(loadout.glyphs);
@@ -801,6 +804,30 @@ const formatRace = (race) => {
 
 const formatClass = (className) => {
   return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
+};
+
+const formatTalents = (talents) => {
+  const talentItems = [];
+  if (talents && talents.talents && Array.isArray(talents.talents)) {
+    talents.talents.forEach(talent => {
+      const iconUrl = talent.icon 
+        ? `https://wow.zamimg.com/images/wow/icons/large/${talent.icon}.jpg`
+        : null;
+      const spellId = talent.spellId;
+      const wowheadUrl = spellId 
+        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
+        : null;
+      
+      talentItems.push({
+        label: `Tier ${talent.tier}`,
+        value: talent.name,
+        iconUrl: iconUrl,
+        wowheadUrl: wowheadUrl,
+        isTalent: true
+      });
+    });
+  }
+  return talentItems;
 };
 
 const formatGlyphs = (glyphs) => {
@@ -959,7 +986,7 @@ const generateLoadoutDropdown = (loadout, chartData) => {
         const valueClass = item.isSpecial === 'talents' ? 'loadout-value loadout-talents' : 'loadout-value';
         
         let valueContent;
-        if ((item.isItem || item.isGlyph) && item.wowheadUrl) {
+        if ((item.isItem || item.isGlyph || item.isTalent) && item.wowheadUrl) {
           const iconHtml = item.iconUrl 
             ? `<img src="${item.iconUrl}" alt="${item.value}" class="consumable-icon" loading="lazy" />`
             : '';
