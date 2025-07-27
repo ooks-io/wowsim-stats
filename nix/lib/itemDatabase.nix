@@ -4,6 +4,8 @@
   ...
 }: let
   wowsimsDb = lib.importJSON "${inputs.wowsims}/assets/database/db.json";
+  glyphDb = import ./database/glyphs.nix;
+  talentDb = import ./database/talents.nix;
 
   itemsById = lib.listToAttrs (map (item: {
       name = toString item.id;
@@ -17,6 +19,12 @@
     })
     wowsimsDb.gems);
 
+  consumablesById = lib.listToAttrs (map (consumable: {
+      name = toString consumable.id;
+      value = consumable;
+    })
+    wowsimsDb.consumables);
+
   glyphsById = lib.listToAttrs (lib.imap0 (index: glyph: {
       name = toString index;
       value = glyph;
@@ -29,50 +37,7 @@
     })
     wowsimsDb.enchants);
 
-  reforgeData = {
-    "113" = {
-      "i1" = 6;
-      "s1" = "spi";
-      "i2" = 13;
-      "s2" = "dodgertng";
-    };
-    "138" = {
-      "i1" = 31;
-      "s1" = "hitrtng";
-      "i2" = 36;
-      "s2" = "hastertng";
-    };
-    "158" = {
-      "i1" = 37;
-      "s1" = "exprtng";
-      "i2" = 31;
-      "s2" = "hitrtng";
-    };
-    "159" = {
-      "i1" = 37;
-      "s1" = "exprtng";
-      "i2" = 32;
-      "s2" = "critstrkrtng";
-    };
-    "166" = {
-      "i1" = 49;
-      "s1" = "mastrtng";
-      "i2" = 32;
-      "s2" = "critstrkrtng";
-    };
-    "167" = {
-      "i1" = 49;
-      "s1" = "mastrtng";
-      "i2" = 36;
-      "s2" = "hastertng";
-    };
-    "168" = {
-      "i1" = 49;
-      "s1" = "mastrtng";
-      "i2" = 37;
-      "s2" = "exprtng";
-    };
-  };
+  reforgeData = lib.importJSON "${inputs.wowsims}/assets/db_inputs/wowhead_reforge_stats.json";
 
   # stat name mappings (for reforging)
   statNames = {
@@ -103,7 +68,7 @@
   };
   # Helper functions for item database operations
   helpers = {
-    # get item data by ID  
+    # get item data by ID
     getItem = id: let
       idStr = toString id;
     in
@@ -117,6 +82,14 @@
     in
       if gemsById ? ${idStr}
       then gemsById.${idStr}
+      else null;
+
+    # get consumable data by ID
+    getConsumable = id: let
+      idStr = toString id;
+    in
+      if consumablesById ? ${idStr}
+      then consumablesById.${idStr}
       else null;
 
     # get enchant data by effect ID
@@ -135,13 +108,47 @@
       then reforgeData.${idStr}
       else null;
 
-    # get glyph data by ID
+    # get glyph data by ID (from wowsims database)
     getGlyph = glyphId: let
       idStr = toString glyphId;
     in
       if glyphsById ? ${idStr}
       then glyphsById.${idStr}
       else null;
+
+    # get glyph data from our custom glyph database
+    getGlyphData = className: glyphId: let
+      idStr = toString glyphId;
+      classGlyphs = glyphDb.${className} or {};
+    in
+      if classGlyphs ? ${idStr}
+      then classGlyphs.${idStr}
+      else null;
+
+    # get talent data from talent database
+    getTalentData = className: tier: choice: let
+      tierStr = toString tier;
+      choiceStr = toString choice;
+      classTalents = talentDb.${className} or {};
+      tierTalents = classTalents.${tierStr} or {};
+    in
+      if tierTalents ? ${choiceStr}
+      then tierTalents.${choiceStr}
+      else null;
+
+    # parse talent string into individual choices
+    parseTalentString = talentString: let
+      # Convert string to list of characters, then to list of numbers
+      chars = lib.stringToCharacters talentString;
+      # Convert each character to a number (tier choice 1-3)
+      choices = map (char: 
+        let num = lib.toInt char;
+        in if num >= 1 && num <= 3 then num else 0
+      ) chars;
+      # Create list of {tier, choice} objects, filtering out invalid choices (0)
+      indexedChoices = lib.imap1 (tier: choice: {inherit tier choice;}) choices;
+      validChoices = lib.filter (choice: choice.choice != 0) indexedChoices;
+    in validChoices;
 
     # parse gem stats into readable format
     parseGemStats = gem:
@@ -172,14 +179,19 @@
           stats = helpers.parseGemStats gem;
         in {
           inherit (gem) id name;
-          icon = if gem ? icon then gem.icon else null;
-          color = if gem ? color then gem.color else null;
-          quality = if gem ? quality then gem.quality else null;
+          icon =
+            if gem ? icon
+            then gem.icon
+            else null;
+          color =
+            if gem ? color
+            then gem.color
+            else null;
+          quality =
+            if gem ? quality
+            then gem.quality
+            else null;
           stats = stats;
-          description =
-            if stats != []
-            then "${gem.name} -- ${lib.concatStringsSep ", " stats}"
-            else gem.name;
         }
         else null
       else null;
@@ -217,40 +229,61 @@
 
     # enrich a single equipment item
     enrichItem = item:
-      if !(item ? id) then item
+      if !(item ? id)
+      then item
       else let
         itemData = helpers.getItem item.id;
-        enrichedGems = if item ? gems 
+        enrichedGems =
+          if item ? gems
           then lib.filter (gem: gem != null) (map helpers.enrichGem item.gems)
           else [];
-        enrichedEnchant = if item ? enchant 
+        enrichedEnchant =
+          if item ? enchant
           then helpers.enrichEnchant item.enchant
           else null;
-        enrichedReforge = if item ? reforging 
+        enrichedReforge =
+          if item ? reforging
           then helpers.enrichReforge item.reforging
           else null;
-        
+
         # Extract item stats from scalingOptions if available
-        itemStats = if itemData != null && itemData ? scalingOptions && itemData.scalingOptions ? "0"
+        itemStats =
+          if itemData != null && itemData ? scalingOptions && itemData.scalingOptions ? "0"
           then itemData.scalingOptions."0"
           else null;
       in
-        item // {
-          name = if itemData != null then itemData.name else "Item ${toString item.id}";
-          icon = if itemData != null && itemData ? icon then itemData.icon else null;
-          quality = if itemData != null && itemData ? quality then itemData.quality else null;
-          type = if itemData != null && itemData ? type then itemData.type else null;
-        } // lib.optionalAttrs (itemStats != null) {
+        item
+        // {
+          name =
+            if itemData != null
+            then itemData.name
+            else "Item ${toString item.id}";
+          icon =
+            if itemData != null && itemData ? icon
+            then itemData.icon
+            else null;
+          quality =
+            if itemData != null && itemData ? quality
+            then itemData.quality
+            else null;
+          type =
+            if itemData != null && itemData ? type
+            then itemData.type
+            else null;
+        }
+        // lib.optionalAttrs (itemStats != null) {
           stats = itemStats;
-        } // lib.optionalAttrs (enrichedGems != []) {
+        }
+        // lib.optionalAttrs (enrichedGems != []) {
           gems = enrichedGems;
-        } // lib.optionalAttrs (enrichedEnchant != null) {
+        }
+        // lib.optionalAttrs (enrichedEnchant != null) {
           enchant = enrichedEnchant;
-        } // lib.optionalAttrs (enrichedReforge != null) {
+        }
+        // lib.optionalAttrs (enrichedReforge != null) {
           reforging = enrichedReforge;
         };
   };
-
 in {
   # get item data by ID
   getItem = helpers.getItem;
@@ -311,9 +344,14 @@ in {
   # get glyph name by ID
   getGlyphName = glyphId: let
     glyph = helpers.getGlyph glyphId;
-    item = if glyph != null then helpers.getItem glyph.itemId else null;
+    item =
+      if glyph != null
+      then helpers.getItem glyph.itemId
+      else null;
   in
-    if item != null then item.name else "Unknown Glyph ${toString glyphId}";
+    if item != null
+    then item.name
+    else "Unknown Glyph ${toString glyphId}";
 
   # enrich equipment item with name and other data
   enrichEquipmentItem = helpers.enrichItem;
@@ -330,108 +368,138 @@ in {
 
   # enrich consumables with item names and icons
   enrichConsumables = consumables:
-    if consumables == null then null
+    if consumables == null
+    then null
     else let
-      getItemDataSafe = id: let item = helpers.getItem id; in
-        if item != null then {
-          name = item.name;
-          icon = if item ? icon then item.icon else null;
-          quality = if item ? quality then item.quality else null;
-        } else {
-          name = "Item ${toString id}";
+      getConsumableDataSafe = id: let
+        consumable = helpers.getConsumable id;
+      in
+        if consumable != null
+        then {
+          name = consumable.name;
+          icon =
+            if consumable ? icon
+            then consumable.icon
+            else null;
+        }
+        else {
+          name = "Consumable ${toString id}";
           icon = null;
-          quality = null;
         };
     in
-      consumables // lib.optionalAttrs (consumables ? flaskId && consumables.flaskId != 0) (
-        let flaskData = getItemDataSafe consumables.flaskId; in {
+      consumables
+      // lib.optionalAttrs (consumables ? flaskId && consumables.flaskId != 0) (
+        let
+          flaskData = getConsumableDataSafe consumables.flaskId;
+        in {
           flaskName = flaskData.name;
           flaskIcon = flaskData.icon;
-          flaskQuality = flaskData.quality;
         }
-      ) // lib.optionalAttrs (consumables ? foodId && consumables.foodId != 0) (
-        let foodData = getItemDataSafe consumables.foodId; in {
+      )
+      // lib.optionalAttrs (consumables ? foodId && consumables.foodId != 0) (
+        let
+          foodData = getConsumableDataSafe consumables.foodId;
+        in {
           foodName = foodData.name;
           foodIcon = foodData.icon;
-          foodQuality = foodData.quality;
         }
-      ) // lib.optionalAttrs (consumables ? potId && consumables.potId != 0) (
-        let potData = getItemDataSafe consumables.potId; in {
+      )
+      // lib.optionalAttrs (consumables ? potId && consumables.potId != 0) (
+        let
+          potData = getConsumableDataSafe consumables.potId;
+        in {
           potName = potData.name;
           potIcon = potData.icon;
-          potQuality = potData.quality;
         }
-      ) // lib.optionalAttrs (consumables ? prepotId && consumables.prepotId != 0) (
-        let prepotData = getItemDataSafe consumables.prepotId; in {
+      )
+      // lib.optionalAttrs (consumables ? prepotId && consumables.prepotId != 0) (
+        let
+          prepotData = getConsumableDataSafe consumables.prepotId;
+        in {
           prepotName = prepotData.name;
           prepotIcon = prepotData.icon;
-          prepotQuality = prepotData.quality;
         }
       );
 
-  # enrich glyphs with item names and icons
-  enrichGlyphs = glyphs:
+  # enrich glyphs with names and icons from glyph database
+  enrichGlyphs = className: glyphs:
     if glyphs == null then null
     else let
       getGlyphDataSafe = glyphId: let 
-        glyph = helpers.getGlyph glyphId;
-        item = if glyph != null then helpers.getItem glyph.itemId else null;
+        glyphData = helpers.getGlyphData className glyphId;
       in
-        if item != null then {
-          name = item.name;
-          icon = if item ? icon then item.icon else null;
-          quality = if item ? quality then item.quality else null;
-          spellId = if glyph != null then glyph.spellId else null;
+        if glyphData != null then {
+          name = glyphData.name;
+          icon = if glyphData ? icon then glyphData.icon else null;
+          spellId = if glyphData ? spellId then glyphData.spellId else null;
         } else {
           name = "Glyph ${toString glyphId}";
           icon = null;
-          quality = null;
           spellId = null;
         };
     in
-      glyphs // lib.optionalAttrs (glyphs ? major1 && glyphs.major1 != 0) (
+      glyphs
+      // lib.optionalAttrs (glyphs ? major1 && glyphs.major1 != 0) (
         let glyphData = getGlyphDataSafe glyphs.major1; in {
           major1Name = glyphData.name;
           major1Icon = glyphData.icon;
-          major1Quality = glyphData.quality;
           major1SpellId = glyphData.spellId;
         }
       ) // lib.optionalAttrs (glyphs ? major2 && glyphs.major2 != 0) (
         let glyphData = getGlyphDataSafe glyphs.major2; in {
           major2Name = glyphData.name;
           major2Icon = glyphData.icon;
-          major2Quality = glyphData.quality;
           major2SpellId = glyphData.spellId;
         }
       ) // lib.optionalAttrs (glyphs ? major3 && glyphs.major3 != 0) (
         let glyphData = getGlyphDataSafe glyphs.major3; in {
           major3Name = glyphData.name;
           major3Icon = glyphData.icon;
-          major3Quality = glyphData.quality;
           major3SpellId = glyphData.spellId;
         }
       ) // lib.optionalAttrs (glyphs ? minor1 && glyphs.minor1 != 0) (
         let glyphData = getGlyphDataSafe glyphs.minor1; in {
           minor1Name = glyphData.name;
           minor1Icon = glyphData.icon;
-          minor1Quality = glyphData.quality;
           minor1SpellId = glyphData.spellId;
         }
       ) // lib.optionalAttrs (glyphs ? minor2 && glyphs.minor2 != 0) (
         let glyphData = getGlyphDataSafe glyphs.minor2; in {
           minor2Name = glyphData.name;
           minor2Icon = glyphData.icon;
-          minor2Quality = glyphData.quality;
           minor2SpellId = glyphData.spellId;
         }
       ) // lib.optionalAttrs (glyphs ? minor3 && glyphs.minor3 != 0) (
         let glyphData = getGlyphDataSafe glyphs.minor3; in {
           minor3Name = glyphData.name;
           minor3Icon = glyphData.icon;
-          minor3Quality = glyphData.quality;
           minor3SpellId = glyphData.spellId;
         }
       );
+
+  # enrich talents with names and icons from talent database
+  enrichTalents = className: talentString:
+    if talentString == null || talentString == ""
+    then null
+    else let
+      # Parse talent string into tier/choice pairs
+      talentChoices = helpers.parseTalentString talentString;
+      
+      # Get talent data for each choice and create enriched talent objects
+      enrichedTalents = map (choice: let
+        talentData = helpers.getTalentData className choice.tier choice.choice;
+      in {
+        tier = choice.tier;
+        choice = choice.choice;
+        name = if talentData != null then talentData.name else "Unknown Talent";
+        spellId = if talentData != null then talentData.spellId else null;
+        icon = if talentData != null then talentData.icon else null;
+      }) talentChoices;
+      
+    in {
+      talentString = talentString;
+      talents = enrichedTalents;
+    };
 
   # enrich a full loadout
   enrichLoadout = loadout:
@@ -439,7 +507,7 @@ in {
     then
       loadout
       // {
-        equipment = 
+        equipment =
           if loadout.equipment ? items
           then
             loadout.equipment
@@ -464,15 +532,16 @@ in {
               then
                 result
                 // {
-                  loadout = 
+                  loadout =
                     if result.loadout ? equipment && result.loadout.equipment ? items
                     then
                       result.loadout
                       // {
-                        equipment = result.loadout.equipment
-                        // {
-                          items = map helpers.enrichItem result.loadout.equipment.items;
-                        };
+                        equipment =
+                          result.loadout.equipment
+                          // {
+                            items = map helpers.enrichItem result.loadout.equipment.items;
+                          };
                         # TODO: Add consumables, gems, enchants enrichment
                       }
                     else result.loadout;
@@ -483,4 +552,3 @@ in {
       }
     else simData;
 }
-
