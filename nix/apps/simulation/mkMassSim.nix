@@ -102,10 +102,11 @@
     simDerivations = lib.listToAttrs (map (raceConfig: {
         name = "${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}";
         value = let
-          # Pre-enrich the equipment, consumables, and glyphs for this race config
+          # Pre-enrich the equipment, consumables, glyphs, and talents for this race config
           enrichedEquipment = itemDatabase.enrichEquipment raceConfig.config.equipment;
           enrichedConsumables = itemDatabase.enrichConsumables raceConfig.config.consumables;
-          enrichedGlyphs = itemDatabase.enrichGlyphs raceConfig.config.glyphs;
+          enrichedGlyphs = itemDatabase.enrichGlyphs raceConfig.config.class raceConfig.config.glyphs;
+          enrichedTalents = itemDatabase.enrichTalents raceConfig.config.class raceConfig.config.talentsString;
 
           simInput = mkSim {
             inherit iterations;
@@ -132,6 +133,10 @@ CONSUMABLES_EOF
 ${builtins.toJSON enrichedGlyphs}
 GLYPHS_EOF
             
+            cat > talents.json << 'TALENTS_EOF'
+${builtins.toJSON enrichedTalents}
+TALENTS_EOF
+            
             cat > input.json << 'INPUT_EOF'
 ${simInput}
 INPUT_EOF
@@ -154,6 +159,7 @@ INPUT_EOF
                 --slurpfile equipment enriched_equipment.json \
                 --slurpfile consumables consumables.json \
                 --arg talentsString "${raceConfig.config.talentsString}" \
+                --slurpfile talents talents.json \
                 --slurpfile glyphs glyphs.json \
                 --arg race "${raceConfig.config.race}" \
                 --arg class "${raceConfig.config.class}" \
@@ -168,6 +174,7 @@ INPUT_EOF
                   loadout: {
                     consumables: $consumables[0],
                     talentsString: $talentsString,
+                    talents: $talents[0],
                     glyphs: $glyphs[0],
                     equipment: $equipment[0],
                     race: $race,
@@ -324,10 +331,11 @@ INPUT_EOF
     simDerivations = lib.listToAttrs (map (spec: {
         name = "${spec.className}-${spec.specName}";
         value = let
-          # Pre-enrich the equipment, consumables, and glyphs for this spec
+          # Pre-enrich the equipment, consumables, glyphs, and talents for this spec
           enrichedEquipment = itemDatabase.enrichEquipment spec.config.equipment;
           enrichedConsumables = itemDatabase.enrichConsumables spec.config.consumables;
-          enrichedGlyphs = itemDatabase.enrichGlyphs spec.config.glyphs;
+          enrichedGlyphs = itemDatabase.enrichGlyphs spec.config.class spec.config.glyphs;
+          enrichedTalents = itemDatabase.enrichTalents spec.config.class spec.config.talentsString;
           
           simInput = mkSim {
             inherit iterations;
@@ -354,6 +362,10 @@ CONSUMABLES_EOF
 ${builtins.toJSON enrichedGlyphs}
 GLYPHS_EOF
             
+            cat > talents.json << 'TALENTS_EOF'
+${builtins.toJSON enrichedTalents}
+TALENTS_EOF
+            
             cat > input.json << 'INPUT_EOF'
 ${simInput}
 INPUT_EOF
@@ -377,6 +389,7 @@ INPUT_EOF
                 --slurpfile equipment enriched_equipment.json \
                 --slurpfile consumables consumables.json \
                 --arg talentsString "${spec.config.talentsString}" \
+                --slurpfile talents talents.json \
                 --slurpfile glyphs glyphs.json \
                 --arg race "${spec.config.race}" \
                 --arg class "${spec.config.class}" \
@@ -392,6 +405,7 @@ INPUT_EOF
                   loadout: {
                     consumables: $consumables[0],
                     talentsString: $talentsString,
+                    talents: $talents[0],
                     glyphs: $glyphs[0],
                     equipment: $equipment[0],
                     race: $race,
