@@ -14,7 +14,9 @@
     };
 
     glyphs = {
-      default = {};
+      default = {
+        major1 = 45761; # vendetta
+      };
     };
 
     template = mkClassTemplate {
