@@ -498,6 +498,91 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         text-align: right;
         font-family: 'Courier New', monospace;
       }
+
+      /* Item icons and quality styles */
+      .equipment-icon,
+      .consumable-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        margin-right: 8px;
+        vertical-align: middle;
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+
+      .equipment-item-header,
+      .consumable-item-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* WoW item quality colors */
+      .quality-0 { color: #9d9d9d; } /* Poor (Gray) */
+      .quality-1 { color: #ffffff; } /* Common (White) */
+      .quality-2 { color: #1eff00; } /* Uncommon (Green) */
+      .quality-3 { color: #0070dd; } /* Rare (Blue) */
+      .quality-4 { color: #a335ee; } /* Epic (Purple) */
+      .quality-5 { color: #ff8000; } /* Legendary (Orange) */
+      .quality-6 { color: #e6cc80; } /* Artifact (Light Orange) */
+      .quality-7 { color: #00ccff; } /* Heirloom (Light Blue) */
+
+      .equipment-item-link.quality-0,
+      .equipment-item-link.quality-1,
+      .equipment-item-link.quality-2,
+      .equipment-item-link.quality-3,
+      .equipment-item-link.quality-4,
+      .equipment-item-link.quality-5,
+      .equipment-item-link.quality-6,
+      .equipment-item-link.quality-7 {
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .equipment-item-link.quality-0:hover,
+      .equipment-item-link.quality-1:hover,
+      .equipment-item-link.quality-2:hover,
+      .equipment-item-link.quality-3:hover,
+      .equipment-item-link.quality-4:hover,
+      .equipment-item-link.quality-5:hover,
+      .equipment-item-link.quality-6:hover,
+      .equipment-item-link.quality-7:hover {
+        text-shadow: 0 0 4px currentColor;
+        transform: translateY(-1px);
+      }
+
+      /* Glyph-specific styling */
+      .consumable-item-header img {
+        flex-shrink: 0;
+      }
+
+      /* Better spacing for talents and glyphs section */
+      .loadout-section .loadout-grid {
+        gap: 16px;
+      }
+
+      .loadout-section .loadout-item {
+        padding: 8px;
+        background-color: rgba(255,255,255,0.02);
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.05);
+      }
+
+      /* Loadout notice styling */
+      .loadout-notice {
+        background-color: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 4px;
+        padding: 12px;
+        margin-bottom: 16px;
+        color: #ffc107;
+        font-size: 0.9em;
+        line-height: 1.4;
+      }
+
+      .loadout-notice strong {
+        color: #ffca28;
+      }
     </style>
   </head>
   <body>
@@ -684,8 +769,11 @@ const formatLoadout = (loadout) => {
       items.push({ label: 'Talents', value: loadout.talentsString, isSpecial: 'talents' });
     }
     if (loadout.glyphs) {
-      const glyphText = formatGlyphs(loadout.glyphs);
-      if (glyphText) items.push({ label: 'Glyphs', value: glyphText });
+      const glyphItems = formatGlyphs(loadout.glyphs);
+      if (glyphItems && glyphItems.length > 0) {
+        // Add glyphs as structured items instead of text
+        items.push(...glyphItems);
+      }
     }
     sections.push({ title: 'Talents & Glyphs', items });
   }
@@ -716,11 +804,32 @@ const formatClass = (className) => {
 };
 
 const formatGlyphs = (glyphs) => {
-  const glyphList = [];
+  const glyphItems = [];
   ['major1', 'major2', 'major3', 'minor1', 'minor2', 'minor3'].forEach(slot => {
-    if (glyphs[slot]) glyphList.push(`${slot}: ${glyphs[slot]}`);
+    if (glyphs[slot]) {
+      const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
+      const iconUrl = glyphs[`${slot}Icon`] 
+        ? `https://wow.zamimg.com/images/wow/icons/large/${glyphs[`${slot}Icon`]}.jpg`
+        : null;
+      const quality = glyphs[`${slot}Quality`];
+      const spellId = glyphs[`${slot}SpellId`];
+      
+      // Use spellId for wowhead link if available, otherwise fall back to item lookup
+      const wowheadUrl = spellId 
+        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
+        : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
+      
+      glyphItems.push({
+        label: slot.charAt(0).toUpperCase() + slot.slice(1), // Capitalize slot name
+        value: glyphName,
+        iconUrl: iconUrl,
+        quality: quality,
+        wowheadUrl: wowheadUrl,
+        isGlyph: true
+      });
+    }
   });
-  return glyphList.length > 0 ? glyphList.join(', ') : null;
+  return glyphItems;
 };
 
 const formatConsumables = (consumables) => {
@@ -728,32 +837,40 @@ const formatConsumables = (consumables) => {
   if (consumables.flaskId) {
     items.push({ 
       label: 'Flask', 
-      value: consumables.flaskId,
+      value: consumables.flaskName || `Item ${consumables.flaskId}`,
       wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.flaskId}`,
+      iconUrl: consumables.flaskIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.flaskIcon}.jpg` : null,
+      quality: consumables.flaskQuality,
       isItem: true
     });
   }
   if (consumables.foodId) {
     items.push({ 
       label: 'Food', 
-      value: consumables.foodId,
+      value: consumables.foodName || `Item ${consumables.foodId}`,
       wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.foodId}`,
+      iconUrl: consumables.foodIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.foodIcon}.jpg` : null,
+      quality: consumables.foodQuality,
       isItem: true
     });
   }
   if (consumables.potId) {
     items.push({ 
       label: 'Potion', 
-      value: consumables.potId,
+      value: consumables.potName || `Item ${consumables.potId}`,
       wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.potId}`,
+      iconUrl: consumables.potIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.potIcon}.jpg` : null,
+      quality: consumables.potQuality,
       isItem: true
     });
   }
   if (consumables.prepotId) {
     items.push({ 
       label: 'Pre-Potion', 
-      value: consumables.prepotId,
+      value: consumables.prepotName || `Item ${consumables.prepotId}`,
       wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.prepotId}`,
+      iconUrl: consumables.prepotIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.prepotIcon}.jpg` : null,
+      quality: consumables.prepotQuality,
       isItem: true
     });
   }
@@ -808,11 +925,20 @@ const generateLoadoutDropdown = (loadout, chartData) => {
           ? eq.itemDetails.map(detail => `<div class="equipment-detail">${detail}</div>`).join('')
           : '';
         
+        const iconHtml = eq.iconUrl 
+          ? `<img src="${eq.iconUrl}" alt="${eq.itemName}" class="equipment-icon" loading="lazy" />`
+          : '';
+        
+        const qualityClass = eq.quality ? `quality-${eq.quality}` : '';
+        
         return `
           <div class="equipment-slot">
             <span class="equipment-slot-name">${eq.slot}:</span>
             <div class="equipment-item-info">
-              <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link">${eq.itemName}</a>
+              <div class="equipment-item-header">
+                ${iconHtml}
+                <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${eq.itemName}</a>
+              </div>
               ${detailsHtml}
             </div>
           </div>
@@ -831,9 +957,22 @@ const generateLoadoutDropdown = (loadout, chartData) => {
       // Regular sections
       const itemsHtml = section.items.map(item => {
         const valueClass = item.isSpecial === 'talents' ? 'loadout-value loadout-talents' : 'loadout-value';
-        const valueContent = item.isItem && item.wowheadUrl 
-          ? `<a href="${item.wowheadUrl}" target="_blank" class="equipment-item-link">Item ${item.value}</a>`
-          : `<span class="${valueClass}">${item.value}</span>`;
+        
+        let valueContent;
+        if ((item.isItem || item.isGlyph) && item.wowheadUrl) {
+          const iconHtml = item.iconUrl 
+            ? `<img src="${item.iconUrl}" alt="${item.value}" class="consumable-icon" loading="lazy" />`
+            : '';
+          const qualityClass = item.quality ? `quality-${item.quality}` : '';
+          valueContent = `
+            <div class="consumable-item-header">
+              ${iconHtml}
+              <a href="${item.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${item.value}</a>
+            </div>
+          `;
+        } else {
+          valueContent = `<span class="${valueClass}">${item.value}</span>`;
+        }
         
         return `
           <div class="loadout-item">
@@ -858,6 +997,9 @@ const generateLoadoutDropdown = (loadout, chartData) => {
   
   return `
     <div class="chart-dropdown">
+      <div class="loadout-notice">
+        <strong>Note:</strong> Loadout details are a work in progress. Some glyphs may show as IDs instead of names.
+      </div>
       ${sectionsHtml}
       <div class="loadout-actions">
         <a href="${rawJsonUrl}" target="_blank" class="loadout-button">View Raw JSON</a>
@@ -1333,7 +1475,7 @@ class UnifiedChart {
     for (const [className, classData] of Object.entries(this.currentData.results)) {
       for (const [specName, specData] of Object.entries(classData)) {
         chartItems.push({
-          label: `${className.replace(/_/g, ' ')} ${specName}`,
+          label: specName,
           dps: specData.dps,
           max: specData.max,
           min: specData.min,
@@ -1379,7 +1521,7 @@ class UnifiedChart {
                 <div class="chart-labels">
                   <span class="chart-rank">#${index + 1}</span>
                   <span class="chart-label">${item.label}</span>
-                  ${item.loadout ? '<span class="chart-expand-indicator">▼</span>' : ''}
+                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ''}
                 </div>
                 <div class="chart-bar-container">
                   <div class="chart-bar-track">
@@ -1451,7 +1593,7 @@ class UnifiedChart {
                 <div class="chart-labels">
                   <span class="chart-rank">#${index + 1}</span>
                   <span class="chart-label">${item.label}</span>
-                  ${item.loadout ? '<span class="chart-expand-indicator">▼</span>' : ''}
+                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ''}
                 </div>
                 <div class="chart-bar-container">
                   <div class="chart-bar-track">
