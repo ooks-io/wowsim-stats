@@ -93,49 +93,76 @@ window.ItemDatabase = {
     return `https://www.wowhead.com/mop-classic/item=${itemId}`;
   },
 
-  // Format equipment item with all details
+  // Format equipment item with all details - uses enriched data from backend
   formatEquipmentItem: (item) => {
     if (!item || !item.id) return null;
     
-    const itemName = `Item ${item.id}`; // TODO: Replace with actual item names
+    // Use enriched name if available, otherwise fallback to ID
+    const itemName = item.name || `Item ${item.id}`;
     const wowheadUrl = window.ItemDatabase.getWowheadUrl(item.id);
+    const iconUrl = item.icon ? `https://wow.zamimg.com/images/wow/icons/large/${item.icon}.jpg` : null;
     
-    // Build details array
+    // Build details array from enriched data
     const details = [];
     
-    // Reforging
-    if (item.reforging) {
+    // Item stats from scalingOptions
+    if (item.stats) {
+      const stats = [];
+      if (item.stats.ilvl) stats.push(`Item Level: ${item.stats.ilvl}`);
+      if (item.stats.weaponDamageMin && item.stats.weaponDamageMax) {
+        stats.push(`Damage: ${item.stats.weaponDamageMin}-${item.stats.weaponDamageMax}`);
+      }
+      if (stats.length > 0) details.push(...stats);
+    }
+    
+    // Enriched reforging information
+    if (item.reforging && item.reforging.description) {
+      details.push(`Reforge: ${item.reforging.description}`);
+    } else if (item.reforging && typeof item.reforging === 'number') {
+      // Fallback to manual reforge lookup if not enriched
       const reforge = reforgeData[item.reforging.toString()];
       if (reforge) {
         const fromStat = statNames[reforge.s1] || reforge.s1;
         const toStat = statNames[reforge.s2] || reforge.s2;
-        details.push(`${fromStat} → ${toStat}`);
+        details.push(`Reforge: ${fromStat} → ${toStat}`);
       }
     }
     
-    // Gems
+    // Enriched gems information
     if (item.gems && item.gems.length > 0) {
-      const activeGems = item.gems.filter(g => g && g !== 0);
-      activeGems.forEach(gemId => {
-        details.push(`Gem ${gemId}`); // TODO: Replace with actual gem names and stats
+      item.gems.forEach(gem => {
+        if (gem && gem.description) {
+          // Use enriched gem description (includes name and stats)
+          details.push(gem.description);
+        } else if (gem && gem.name) {
+          // Use enriched gem name if available
+          details.push(gem.name);
+        } else if (gem && typeof gem === 'number') {
+          // Fallback for non-enriched gem IDs
+          details.push(`Gem ${gem}`);
+        }
       });
     }
     
-    // Enchant
-    if (item.enchant) {
-      details.push(`Enchant ${item.enchant}`); // TODO: Replace with actual enchant names
+    // Enriched enchant information
+    if (item.enchant && item.enchant.name) {
+      details.push(`Enchant: ${item.enchant.name}`);
+    } else if (item.enchant && typeof item.enchant === 'number') {
+      details.push(`Enchant ${item.enchant}`);
     }
     
-    // Tinker
+    // Tinker (not enriched yet, but prepared for future)
     if (item.tinker) {
-      details.push(`Tinker ${item.tinker}`); // TODO: Replace with actual tinker names
+      details.push(`Tinker ${item.tinker}`);
     }
     
     return {
       itemId: item.id,
       itemName: itemName,
       itemDetails: details,
-      wowheadUrl: wowheadUrl
+      wowheadUrl: wowheadUrl,
+      iconUrl: iconUrl,
+      quality: item.quality || null
     };
   },
 
