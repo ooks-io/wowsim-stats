@@ -3,10 +3,10 @@
 Powered by [wowsims](https://github.com/wowsims/mop) and
 [nix](https://nixos.org/guides/how-nix-works/).
 
-## The how and why
+## About
 
-The wowsimcli tool consumes simulation inputs as RaidSimRequest in the protojson
-format. These input files can be exported from the
+The wowsimcli tool consumes simulation inputs as RaidSimRequests in the
+protojson format. These input files can be exported from the
 [WowSims Web UI](https://wowsims.com). The core of this project is a workflow
 that automates simulation at scale. We use nix to programmatically compose the
 required protojson input files. A script then orchestrates the entire process:
@@ -16,8 +16,8 @@ required protojson input files. A script then orchestrates the entire process:
    files for every specialisation.
 2. **Execute Simulations**: The script invokes wowsimcli for each generated
    file, running the simulation and producing a raw JSON output.
-3. **Aggregate Data**: The script collects the output from all the individual
-   runs and aggregates the data into a single, clean JSON file.
+3. **Aggregate Data**: A script collects the output from all the individual runs
+   and aggregates the data into a single, clean JSON file.
 
 This approach allows us to easily generate thousands of simulation combinations
 while also leveraging the powerful caching and parallelization features of the

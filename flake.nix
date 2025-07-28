@@ -13,6 +13,10 @@
         systems.follows = "systems";
       };
     };
+    wowsims-upstream = {
+      url = "github:wowsims/mop";
+      flake = false;
+    };
   };
 
   outputs = inputs @ {

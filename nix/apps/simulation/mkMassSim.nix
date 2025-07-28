@@ -95,6 +95,7 @@
     targetCount ? "single",
     duration ? "long",
     template ? "singleTarget",
+    wowsimsCommit ? inputs.wowsims-upstream.shortRev,
   }: let
     raceConfigs = getRaceConfigs classes class spec template phase encounterType;
 
@@ -243,6 +244,7 @@
           --arg encounterDuration "${toString encounter.duration}" \
           --arg encounterVariation "${toString encounter.durationVariation}" \
           --arg targetCount "${toString (lib.length encounter.targets)}" \
+          --arg wowsimsCommit "${wowsimsCommit}" \
           --argjson raidBuffs '${builtins.toJSON buffs.full}' \
           '{
             metadata: {
@@ -254,6 +256,7 @@
               encounterDuration: ($encounterDuration | tonumber),
               encounterVariation: ($encounterVariation | tonumber),
               targetCount: ($targetCount | tonumber),
+              wowsimsCommit: $wowsimsCommit,
               raidBuffs: $raidBuffs
             },
             results: .
@@ -332,6 +335,7 @@
     targetCount ? "single",
     duration ? "long",
     template ? "singleTarget",
+    wowsimsCommit ? inputs.wowsims-upstream.shortRev,
   }: let
     # get the list of specs based on the specs parameter
     specConfigs =
@@ -492,6 +496,7 @@
           --arg encounterDuration "${toString encounter.duration}" \
           --arg encounterVariation "${toString encounter.durationVariation}" \
           --arg targetCount "${toString (lib.length encounter.targets)}" \
+          --arg wowsimsCommit "${wowsimsCommit}" \
           --argjson raidBuffs '${builtins.toJSON buffs.full}' \
           '{
             metadata: {
@@ -502,6 +507,7 @@
               encounterDuration: ($encounterDuration | tonumber),
               encounterVariation: ($encounterVariation | tonumber),
               targetCount: ($targetCount | tonumber),
+              wowsimsCommit: $wowsimsCommit,
               raidBuffs: $raidBuffs
             },
             results: .
