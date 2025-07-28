@@ -102,53 +102,49 @@ window.ItemDatabase = {
     const wowheadUrl = window.ItemDatabase.getWowheadUrl(item.id);
     const iconUrl = item.icon ? `https://wow.zamimg.com/images/wow/icons/large/${item.icon}.jpg` : null;
     
-    // Build details array from enriched data
+    // Build details array with specific layout structure
     const details = [];
     
-    // Item stats from scalingOptions
-    if (item.stats) {
-      const stats = [];
-      if (item.stats.ilvl) stats.push(`Item Level: ${item.stats.ilvl}`);
-      if (item.stats.weaponDamageMin && item.stats.weaponDamageMax) {
-        stats.push(`Damage: ${item.stats.weaponDamageMin}-${item.stats.weaponDamageMax}`);
-      }
-      if (stats.length > 0) details.push(...stats);
+    // Item Level (white text)
+    if (item.stats && item.stats.ilvl) {
+      details.push(`<div class="item-level">Item Level ${item.stats.ilvl}</div>`);
     }
     
-    // Enriched reforging information
+    // Slot (determine from item type - this might need enhancement)
+    // For now, we'll skip slot since it's shown in the header already
+    
+    // Reforged (green text)
     if (item.reforging && item.reforging.description) {
-      details.push(`Reforge: ${item.reforging.description}`);
+      details.push(`<div class="item-reforge">Reforged ${item.reforging.description}</div>`);
     } else if (item.reforging && typeof item.reforging === 'number') {
       // Fallback to manual reforge lookup if not enriched
       const reforge = reforgeData[item.reforging.toString()];
       if (reforge) {
         const fromStat = statNames[reforge.s1] || reforge.s1;
         const toStat = statNames[reforge.s2] || reforge.s2;
-        details.push(`Reforge: ${fromStat} → ${toStat}`);
+        details.push(`<div class="item-reforge">Reforged ${fromStat} → ${toStat}</div>`);
       }
     }
     
-    // Enriched gems information
+    // Gems - each gem on separate line with icon and white stats
     if (item.gems && item.gems.length > 0) {
       item.gems.forEach(gem => {
-        if (gem && gem.description) {
-          // Use enriched gem description (includes name and stats)
-          details.push(gem.description);
-        } else if (gem && gem.name) {
-          // Use enriched gem name if available
-          details.push(gem.name);
+        if (gem && gem.name) {
+          const gemIcon = gem.icon ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${gem.icon}.jpg" alt="${gem.name}" class="gem-icon-inline" />` : '';
+          const gemStats = gem.stats && gem.stats.length > 0 ? gem.stats.join(', ') : gem.name;
+          details.push(`<div class="gem-line">${gemIcon}<span class="gem-stats-white">${gemStats}</span></div>`);
         } else if (gem && typeof gem === 'number') {
           // Fallback for non-enriched gem IDs
-          details.push(`Gem ${gem}`);
+          details.push(`<div class="gem-line">Gem ${gem}</div>`);
         }
       });
     }
     
-    // Enriched enchant information
+    // Enchant (green text)
     if (item.enchant && item.enchant.name) {
-      details.push(`Enchant: ${item.enchant.name}`);
+      details.push(`<div class="item-enchant">${item.enchant.name}</div>`);
     } else if (item.enchant && typeof item.enchant === 'number') {
-      details.push(`Enchant ${item.enchant}`);
+      details.push(`<div class="item-enchant">Enchant ${item.enchant}</div>`);
     }
     
     // Tinker (not enriched yet, but prepared for future)

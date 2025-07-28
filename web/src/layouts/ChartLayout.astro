@@ -444,6 +444,23 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         border-color: var(--highlight-color);
       }
 
+      .wowsim-button {
+        background-color: var(--bg-primary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+        margin-bottom: 12px;
+        display: block;
+        max-width: 200px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .wowsim-button:hover {
+        background-color: var(--bg-selection);
+        border-color: var(--highlight-color);
+        color: var(--highlight-color);
+      }
+
       .equipment-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -451,46 +468,193 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       .equipment-slot {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
         padding: 8px;
-        background-color: rgba(255,255,255,0.05);
-        border-radius: 3px;
-        font-size: 0.85em;
-        gap: 12px;
+        background-color: rgba(255,255,255,0.02);
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.05);
+        margin-bottom: 8px;
+      }
+
+      .equipment-slot-header {
+        margin-bottom: 6px;
       }
 
       .equipment-slot-name {
         color: var(--text-muted);
         font-weight: 500;
-        min-width: 80px;
+        font-size: 0.8em;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .equipment-item-tooltip {
+        color: #fff;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .equipment-item-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
       }
 
       .equipment-item-link {
-        color: #ffd100;
+        color: #fff;
         text-decoration: none;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9em;
+        font-weight: bold;
+        font-size: 14px;
+        display: block;
+        margin-bottom: 4px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         transition: color 0.2s ease;
       }
 
       .equipment-item-link:hover {
-        color: #ffed4e;
         text-decoration: underline;
       }
 
       .equipment-item-info {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
+      }
+
+      .equipment-item-details {
+        margin-top: 4px;
+      }
+
+      .item-tooltip-details {
+        margin-top: 8px;
       }
 
       .equipment-detail {
-        color: #1eff00;
-        font-size: 0.8em;
-        line-height: 1.2;
+        color: #40ff40;
+        font-size: 12px;
+        margin-bottom: 2px;
+        line-height: 1.3;
+        font-weight: 500;
+      }
+
+      .equipment-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        flex-shrink: 0;
+        border: 1px solid #444;
+      }
+
+      .item-level {
+        color: #fff;
+        font-weight: 500;
+        margin: 2px 0;
+      }
+
+      .item-reforge {
+        color: #40ff40;
+        font-weight: 500;
+        margin: 2px 0;
+      }
+
+      .gem-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 2px 0;
+      }
+
+      .gem-icon-inline {
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .gem-stats-white {
+        color: #fff;
+        font-weight: 500;
+      }
+
+      .item-enchant {
+        color: #40ff40;
+        font-weight: 500;
+        margin: 2px 0;
+      }
+
+      .talents-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .talent-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .talent-icon-inline {
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .talent-name {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      .talent-link {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        text-decoration: none;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        transition: color 0.2s ease;
+      }
+
+      .talent-link:hover {
+        text-decoration: underline;
+      }
+
+      .glyphs-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .glyph-line {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .glyph-icon-inline {
+        width: 16px;
+        height: 16px;
+        border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .glyph-name {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      }
+
+      .glyph-link {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        text-decoration: none;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        transition: color 0.2s ease;
+      }
+
+      .glyph-link:hover {
+        text-decoration: underline;
       }
 
       .equipment-item {
@@ -536,20 +700,8 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       .equipment-item-link.quality-6,
       .equipment-item-link.quality-7 {
         text-decoration: none;
-        transition: all 0.2s ease;
       }
 
-      .equipment-item-link.quality-0:hover,
-      .equipment-item-link.quality-1:hover,
-      .equipment-item-link.quality-2:hover,
-      .equipment-item-link.quality-3:hover,
-      .equipment-item-link.quality-4:hover,
-      .equipment-item-link.quality-5:hover,
-      .equipment-item-link.quality-6:hover,
-      .equipment-item-link.quality-7:hover {
-        text-shadow: 0 0 4px currentColor;
-        transform: translateY(-1px);
-      }
 
       /* Glyph-specific styling */
       .consumable-item-header img {
@@ -753,10 +905,9 @@ const formatLoadout = (loadout) => {
   const sections = [];
   
   // Character Info
-  if (loadout.race || loadout.class || loadout.profession1 || loadout.profession2) {
+  if (loadout.race || loadout.profession1 || loadout.profession2) {
     const items = [];
     if (loadout.race) items.push({ label: 'Race', value: formatRace(loadout.race) });
-    if (loadout.class) items.push({ label: 'Class', value: formatClass(loadout.class) });
     if (loadout.profession1) items.push({ label: 'Profession 1', value: loadout.profession1 });
     if (loadout.profession2) items.push({ label: 'Profession 2', value: loadout.profession2 });
     sections.push({ title: 'Character', items });
@@ -807,56 +958,101 @@ const formatClass = (className) => {
 };
 
 const formatTalents = (talents) => {
-  const talentItems = [];
-  if (talents && talents.talents && Array.isArray(talents.talents)) {
-    talents.talents.forEach(talent => {
-      const iconUrl = talent.icon 
-        ? `https://wow.zamimg.com/images/wow/icons/large/${talent.icon}.jpg`
-        : null;
-      const spellId = talent.spellId;
-      const wowheadUrl = spellId 
-        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
-        : null;
-      
-      talentItems.push({
-        label: `Tier ${talent.tier}`,
-        value: talent.name,
-        iconUrl: iconUrl,
-        wowheadUrl: wowheadUrl,
-        isTalent: true
-      });
-    });
+  if (!talents || !talents.talents || !Array.isArray(talents.talents)) {
+    return [];
   }
-  return talentItems;
+  
+  // Create a single talents item with all talents listed
+  const talentList = talents.talents.map(talent => {
+    const iconUrl = talent.icon 
+      ? `https://wow.zamimg.com/images/wow/icons/small/${talent.icon}.jpg`
+      : null;
+    const iconHtml = iconUrl 
+      ? `<img src="${iconUrl}" alt="${talent.name}" class="talent-icon-inline" loading="lazy" />`
+      : '';
+    const wowheadUrl = talent.spellId 
+      ? `https://www.wowhead.com/mop-classic/spell=${talent.spellId}`
+      : null;
+    const nameHtml = wowheadUrl 
+      ? `<a href="${wowheadUrl}" target="_blank" class="talent-link">${talent.name}</a>`
+      : `<span class="talent-name">${talent.name}</span>`;
+    return `<div class="talent-line">${iconHtml}${nameHtml}</div>`;
+  }).join('');
+  
+  return [{
+    label: 'Talents',
+    value: `<div class="talents-list">${talentList}</div>`,
+    isTalentList: true
+  }];
 };
 
 const formatGlyphs = (glyphs) => {
-  const glyphItems = [];
-  ['major1', 'major2', 'major3', 'minor1', 'minor2', 'minor3'].forEach(slot => {
+  const glyphContainers = [];
+  
+  // Major Glyphs
+  const majorGlyphs = [];
+  ['major1', 'major2', 'major3'].forEach(slot => {
     if (glyphs[slot]) {
       const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
       const iconUrl = glyphs[`${slot}Icon`] 
-        ? `https://wow.zamimg.com/images/wow/icons/large/${glyphs[`${slot}Icon`]}.jpg`
+        ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
         : null;
-      const quality = glyphs[`${slot}Quality`];
       const spellId = glyphs[`${slot}SpellId`];
-      
-      // Use spellId for wowhead link if available, otherwise fall back to item lookup
       const wowheadUrl = spellId 
         ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
         : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
       
-      glyphItems.push({
-        label: slot.charAt(0).toUpperCase() + slot.slice(1), // Capitalize slot name
-        value: glyphName,
-        iconUrl: iconUrl,
-        quality: quality,
-        wowheadUrl: wowheadUrl,
-        isGlyph: true
-      });
+      const iconHtml = iconUrl 
+        ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
+        : '';
+      const nameHtml = wowheadUrl 
+        ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
+        : `<span class="glyph-name">${glyphName}</span>`;
+      majorGlyphs.push(`<div class="glyph-line">${iconHtml}${nameHtml}</div>`);
     }
   });
-  return glyphItems;
+  
+  // Minor Glyphs
+  const minorGlyphs = [];
+  ['minor1', 'minor2', 'minor3'].forEach(slot => {
+    if (glyphs[slot]) {
+      const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
+      const iconUrl = glyphs[`${slot}Icon`] 
+        ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
+        : null;
+      const spellId = glyphs[`${slot}SpellId`];
+      const wowheadUrl = spellId 
+        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
+        : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
+      
+      const iconHtml = iconUrl 
+        ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
+        : '';
+      const nameHtml = wowheadUrl 
+        ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
+        : `<span class="glyph-name">${glyphName}</span>`;
+      minorGlyphs.push(`<div class="glyph-line">${iconHtml}${nameHtml}</div>`);
+    }
+  });
+  
+  // Add containers if glyphs exist
+  if (majorGlyphs.length > 0) {
+    glyphContainers.push({
+      label: 'Major Glyphs',
+      value: `<div class="glyphs-list">${majorGlyphs.join('')}</div>`,
+      isGlyphList: true
+    });
+  }
+  
+  if (minorGlyphs.length > 0) {
+    glyphContainers.push({
+      label: 'Minor Glyphs', 
+      value: `<div class="glyphs-list">${minorGlyphs.join('')}</div>`,
+      isGlyphList: true
+    });
+  }
+  
+  return glyphContainers;
 };
 
 const formatConsumables = (consumables) => {
@@ -932,12 +1128,6 @@ const formatEquipmentSummary = (items) => {
   return equipment;
 };
 
-const generateRawJsonUrl = (chartData) => {
-  // Generate URL to the raw JSON file used for this simulation
-  const fileName = chartData.fileName || 'unknown.json';
-  const dataPath = chartData.dataPath || '/data/';
-  return `${dataPath}${fileName}`;
-};
 
 // Generate loadout dropdown HTML
 const generateLoadoutDropdown = (loadout, chartData) => {
@@ -948,25 +1138,32 @@ const generateLoadoutDropdown = (loadout, chartData) => {
     if (section.isEquipment) {
       // Special handling for equipment
       const equipmentHtml = section.items.map(eq => {
-        const detailsHtml = eq.itemDetails && eq.itemDetails.length > 0 
-          ? eq.itemDetails.map(detail => `<div class="equipment-detail">${detail}</div>`).join('')
-          : '';
-        
         const iconHtml = eq.iconUrl 
           ? `<img src="${eq.iconUrl}" alt="${eq.itemName}" class="equipment-icon" loading="lazy" />`
           : '';
         
         const qualityClass = eq.quality ? `quality-${eq.quality}` : '';
         
+        // Enhanced tooltip-style details
+        const detailsHtml = eq.itemDetails && eq.itemDetails.length > 0 
+          ? `<div class="item-tooltip-details">
+               ${eq.itemDetails.map(detail => `<div class="equipment-detail">${detail}</div>`).join('')}
+             </div>`
+          : '';
+        
         return `
           <div class="equipment-slot">
-            <span class="equipment-slot-name">${eq.slot}:</span>
-            <div class="equipment-item-info">
+            <div class="equipment-slot-header">
+              <span class="equipment-slot-name">${eq.slot}</span>
+            </div>
+            <div class="equipment-item-tooltip">
               <div class="equipment-item-header">
                 ${iconHtml}
                 <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${eq.itemName}</a>
               </div>
-              ${detailsHtml}
+              <div class="equipment-item-details">
+                ${detailsHtml}
+              </div>
             </div>
           </div>
         `;
@@ -986,7 +1183,10 @@ const generateLoadoutDropdown = (loadout, chartData) => {
         const valueClass = item.isSpecial === 'talents' ? 'loadout-value loadout-talents' : 'loadout-value';
         
         let valueContent;
-        if ((item.isItem || item.isGlyph || item.isTalent) && item.wowheadUrl) {
+        if (item.isTalentList || item.isGlyphList) {
+          // Special handling for talent and glyph lists
+          valueContent = item.value;
+        } else if ((item.isItem || item.isGlyph || item.isTalent) && item.wowheadUrl) {
           const iconHtml = item.iconUrl 
             ? `<img src="${item.iconUrl}" alt="${item.value}" class="consumable-icon" loading="lazy" />`
             : '';
@@ -1020,18 +1220,18 @@ const generateLoadoutDropdown = (loadout, chartData) => {
     }
   }).join('');
   
-  const rawJsonUrl = generateRawJsonUrl(chartData);
+  // Create WowSim button if simLink is available
+  const wowSimButton = loadout.simLink 
+    ? `<a href="${loadout.simLink}" target="_blank" class="loadout-button wowsim-button">Open in WoWSims</a>`
+    : '';
   
   return `
     <div class="chart-dropdown">
+      ${wowSimButton}
       <div class="loadout-notice">
-        <strong>Note:</strong> Loadout details are a work in progress. Some glyphs may show as IDs instead of names.
+        <strong>Note:</strong> Profile details are a work in progress.
       </div>
       ${sectionsHtml}
-      <div class="loadout-actions">
-        <a href="${rawJsonUrl}" target="_blank" class="loadout-button">View Raw JSON</a>
-        <button class="loadout-button" onclick="alert('WowSims link coming soon!')">Open in WowSims</button>
-      </div>
     </div>
   `;
 };
