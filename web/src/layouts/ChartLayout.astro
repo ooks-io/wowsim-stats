@@ -1,6 +1,6 @@
 ---
 import Navigation from '../components/Navigation.astro';
-import Warning from '../components/Warning.astro';
+import Callout from '../components/Callout.astro';
 import ItemDatabase from '../components/ItemDatabase.astro';
 
 export interface Props {
@@ -206,6 +206,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         line-height: 1.4;
       }
 
+
       .chart-container {
         background-color: var(--bg-secondary);
         border-radius: 8px;
@@ -335,6 +336,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         font-size: 0.8em;
         color: var(--text-muted);
         transition: transform 0.2s ease;
+        user-select: none;
       }
 
       .chart-item-expanded .chart-expand-icon {
@@ -745,7 +747,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     </div>
     
     <div class="rankings-container">
-      <Warning title="Warning">
+      <Callout type="warning">
         <p>
           These benchmarks are built with <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims</a> which is currently still in <strong>alpha</strong> with bug fixes and updates coming daily.</p>
         <p>
@@ -765,7 +767,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         <p>
           Simulation rankings, such as these, should never be used as anything more than a novelty/something interesting to look at.
         </p>
-      </Warning>
+      </Callout>
       
       <div id="metadata-container"></div>
       
@@ -1624,6 +1626,15 @@ class UnifiedChart {
           </div>
           <div class="metadata-item metadata-item-wide">
             <span class="metadata-label">Active Raid Buffs</span>
+            <div class="callout-note">
+              <div class="callout-note-header">
+                <svg class="callout-note-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="callout-note-title">Note</span>
+              </div>
+              <p class="callout-note-content">Warrior and Shaman simulations are counted within the Skull Banner/Stormlash Totem totals, not as additional buffs.</p>
+            </div>
             <span class="metadata-value metadata-value-wrap">${formatRaidBuffs(metadata.raidBuffs)}</span>
           </div>
         </div>
