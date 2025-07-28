@@ -108,10 +108,18 @@
           enrichedGlyphs = itemDatabase.enrichGlyphs raceConfig.config.class raceConfig.config.glyphs;
           enrichedTalents = itemDatabase.enrichTalents raceConfig.config.class raceConfig.config.talentsString;
 
+          # warrior and shaman should be included in the their respective buff count, not in addition to
+          classSpecificBuffs =
+            if raceConfig.config.class == "ClassWarrior"
+            then buffs.full // {skullBannerCount = 1;}
+            else if raceConfig.config.class == "ClassShaman"
+            then buffs.full // {stormlashTotemCount = 3;}
+            else buffs.full;
+
           simInput = mkSim {
             inherit iterations;
             player = raceConfig.config;
-            buffs = buffs.full;
+            buffs = classSpecificBuffs;
             debuffs = debuffs.full;
             inherit encounter;
           };
@@ -120,79 +128,79 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-            # Write enriched JSON data to files using cat with EOF to handle any quotes safely
-            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
-${builtins.toJSON enrichedEquipment}
-EQUIPMENT_EOF
-            
-            cat > consumables.json << 'CONSUMABLES_EOF'
-${builtins.toJSON enrichedConsumables}
-CONSUMABLES_EOF
-            
-            cat > glyphs.json << 'GLYPHS_EOF'
-${builtins.toJSON enrichedGlyphs}
-GLYPHS_EOF
-            
-            cat > talents.json << 'TALENTS_EOF'
-${builtins.toJSON enrichedTalents}
-TALENTS_EOF
-            
-            cat > input.json << 'INPUT_EOF'
-${simInput}
-INPUT_EOF
+                        # Write enriched JSON data to files using cat with EOF to handle any quotes safely
+                        cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+            ${builtins.toJSON enrichedEquipment}
+            EQUIPMENT_EOF
 
-            echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
-            if wowsimcli sim --infile input.json --outfile output.json; then
-              # extract dps statistics
-              avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
-              maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
-              minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
-              stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+                        cat > consumables.json << 'CONSUMABLES_EOF'
+            ${builtins.toJSON enrichedConsumables}
+            CONSUMABLES_EOF
 
-              # Generate wowsim link from input file
-              echo "Generating wowsim link..."
-              simLink=$(wowsimcli encodelink input.json || echo "")
+                        cat > glyphs.json << 'GLYPHS_EOF'
+            ${builtins.toJSON enrichedGlyphs}
+            GLYPHS_EOF
 
-              # create final result with enriched data
-              jq -n \
-                --arg raceName "${raceConfig.raceName}" \
-                --arg avgDps "$avgDps" \
-                --arg maxDps "$maxDps" \
-                --arg minDps "$minDps" \
-                --arg stdevDps "$stdevDps" \
-                --arg simLink "$simLink" \
-                --slurpfile equipment enriched_equipment.json \
-                --slurpfile consumables consumables.json \
-                --arg talentsString "${raceConfig.config.talentsString}" \
-                --slurpfile talents talents.json \
-                --slurpfile glyphs glyphs.json \
-                --arg race "${raceConfig.config.race}" \
-                --arg class "${raceConfig.config.class}" \
-                --arg profession1 "${raceConfig.config.profession1}" \
-                --arg profession2 "${raceConfig.config.profession2}" \
-                '{
-                  race: $raceName,
-                  dps: ($avgDps | tonumber),
-                  max: ($maxDps | tonumber),
-                  min: ($minDps | tonumber),
-                  stdev: ($stdevDps | tonumber),
-                  loadout: {
-                    consumables: $consumables[0],
-                    talentsString: $talentsString,
-                    talents: $talents[0],
-                    glyphs: $glyphs[0],
-                    equipment: $equipment[0],
-                    race: $race,
-                    class: $class,
-                    profession1: $profession1,
-                    profession2: $profession2,
-                    simLink: $simLink
-                  }
-                }' > $out
-            else
-              echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
-              exit 1
-            fi
+                        cat > talents.json << 'TALENTS_EOF'
+            ${builtins.toJSON enrichedTalents}
+            TALENTS_EOF
+
+                        cat > input.json << 'INPUT_EOF'
+            ${simInput}
+            INPUT_EOF
+
+                        echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
+                        if wowsimcli sim --infile input.json --outfile output.json; then
+                          # extract dps statistics
+                          avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
+                          maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
+                          minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
+                          stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+
+                          # Generate wowsim link from input file
+                          echo "Generating wowsim link..."
+                          simLink=$(wowsimcli encodelink input.json || echo "")
+
+                          # create final result with enriched data
+                          jq -n \
+                            --arg raceName "${raceConfig.raceName}" \
+                            --arg avgDps "$avgDps" \
+                            --arg maxDps "$maxDps" \
+                            --arg minDps "$minDps" \
+                            --arg stdevDps "$stdevDps" \
+                            --arg simLink "$simLink" \
+                            --slurpfile equipment enriched_equipment.json \
+                            --slurpfile consumables consumables.json \
+                            --arg talentsString "${raceConfig.config.talentsString}" \
+                            --slurpfile talents talents.json \
+                            --slurpfile glyphs glyphs.json \
+                            --arg race "${raceConfig.config.race}" \
+                            --arg class "${raceConfig.config.class}" \
+                            --arg profession1 "${raceConfig.config.profession1}" \
+                            --arg profession2 "${raceConfig.config.profession2}" \
+                            '{
+                              race: $raceName,
+                              dps: ($avgDps | tonumber),
+                              max: ($maxDps | tonumber),
+                              min: ($minDps | tonumber),
+                              stdev: ($stdevDps | tonumber),
+                              loadout: {
+                                consumables: $consumables[0],
+                                talentsString: $talentsString,
+                                talents: $talents[0],
+                                glyphs: $glyphs[0],
+                                equipment: $equipment[0],
+                                race: $race,
+                                class: $class,
+                                profession1: $profession1,
+                                profession2: $profession2,
+                                simLink: $simLink
+                              }
+                            }' > $out
+                        else
+                          echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
+                          exit 1
+                        fi
           '';
       })
       raceConfigs);
@@ -342,11 +350,19 @@ INPUT_EOF
           enrichedConsumables = itemDatabase.enrichConsumables spec.config.consumables;
           enrichedGlyphs = itemDatabase.enrichGlyphs spec.config.class spec.config.glyphs;
           enrichedTalents = itemDatabase.enrichTalents spec.config.class spec.config.talentsString;
-          
+
+          # Create class-specific buff adjustments
+          classSpecificBuffs =
+            if spec.config.class == "ClassWarrior"
+            then buffs.full // {skullBannerCount = 1;}
+            else if spec.config.class == "ClassShaman"
+            then buffs.full // {stormlashTotemCount = 3;}
+            else buffs.full;
+
           simInput = mkSim {
             inherit iterations;
             player = spec.config;
-            buffs = buffs.full;
+            buffs = classSpecificBuffs;
             debuffs = debuffs.full;
             inherit encounter;
           };
@@ -355,81 +371,81 @@ INPUT_EOF
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-            # Write enriched JSON data to files using cat with EOF to handle any quotes safely
-            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
-${builtins.toJSON enrichedEquipment}
-EQUIPMENT_EOF
-            
-            cat > consumables.json << 'CONSUMABLES_EOF'
-${builtins.toJSON enrichedConsumables}
-CONSUMABLES_EOF
-            
-            cat > glyphs.json << 'GLYPHS_EOF'
-${builtins.toJSON enrichedGlyphs}
-GLYPHS_EOF
-            
-            cat > talents.json << 'TALENTS_EOF'
-${builtins.toJSON enrichedTalents}
-TALENTS_EOF
-            
-            cat > input.json << 'INPUT_EOF'
-${simInput}
-INPUT_EOF
+                        # Write enriched JSON data to files using cat with EOF to handle any quotes safely
+                        cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+            ${builtins.toJSON enrichedEquipment}
+            EQUIPMENT_EOF
 
-            echo "Running ${spec.className}/${spec.specName} simulation..."
-            if wowsimcli sim --infile input.json --outfile output.json; then
+                        cat > consumables.json << 'CONSUMABLES_EOF'
+            ${builtins.toJSON enrichedConsumables}
+            CONSUMABLES_EOF
 
-              avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
-              maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
-              minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
-              stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+                        cat > glyphs.json << 'GLYPHS_EOF'
+            ${builtins.toJSON enrichedGlyphs}
+            GLYPHS_EOF
 
-              # Generate wowsim link from input file
-              echo "Generating wowsim link..."
-              simLink=$(wowsimcli encodelink input.json || echo "")
+                        cat > talents.json << 'TALENTS_EOF'
+            ${builtins.toJSON enrichedTalents}
+            TALENTS_EOF
 
-              # create final result with all DPS statistics and enriched data
-              jq -n \
-                --arg className "${spec.className}" \
-                --arg specName "${spec.specName}" \
-                --arg avgDps "$avgDps" \
-                --arg maxDps "$maxDps" \
-                --arg minDps "$minDps" \
-                --arg stdevDps "$stdevDps" \
-                --arg simLink "$simLink" \
-                --slurpfile equipment enriched_equipment.json \
-                --slurpfile consumables consumables.json \
-                --arg talentsString "${spec.config.talentsString}" \
-                --slurpfile talents talents.json \
-                --slurpfile glyphs glyphs.json \
-                --arg race "${spec.config.race}" \
-                --arg class "${spec.config.class}" \
-                --arg profession1 "${spec.config.profession1}" \
-                --arg profession2 "${spec.config.profession2}" \
-                '{
-                  className: $className,
-                  specName: $specName,
-                  dps: ($avgDps | tonumber),
-                  max: ($maxDps | tonumber),
-                  min: ($minDps | tonumber),
-                  stdev: ($stdevDps | tonumber),
-                  loadout: {
-                    consumables: $consumables[0],
-                    talentsString: $talentsString,
-                    talents: $talents[0],
-                    glyphs: $glyphs[0],
-                    equipment: $equipment[0],
-                    race: $race,
-                    class: $class,
-                    profession1: $profession1,
-                    profession2: $profession2,
-                    simLink: $simLink
-                  }
-                }' > $out
-            else
-              echo "Simulation failed for ${spec.className}/${spec.specName}"
-              exit 1
-            fi
+                        cat > input.json << 'INPUT_EOF'
+            ${simInput}
+            INPUT_EOF
+
+                        echo "Running ${spec.className}/${spec.specName} simulation..."
+                        if wowsimcli sim --infile input.json --outfile output.json; then
+
+                          avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
+                          maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
+                          minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
+                          stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+
+                          # Generate wowsim link from input file
+                          echo "Generating wowsim link..."
+                          simLink=$(wowsimcli encodelink input.json || echo "")
+
+                          # create final result with all DPS statistics and enriched data
+                          jq -n \
+                            --arg className "${spec.className}" \
+                            --arg specName "${spec.specName}" \
+                            --arg avgDps "$avgDps" \
+                            --arg maxDps "$maxDps" \
+                            --arg minDps "$minDps" \
+                            --arg stdevDps "$stdevDps" \
+                            --arg simLink "$simLink" \
+                            --slurpfile equipment enriched_equipment.json \
+                            --slurpfile consumables consumables.json \
+                            --arg talentsString "${spec.config.talentsString}" \
+                            --slurpfile talents talents.json \
+                            --slurpfile glyphs glyphs.json \
+                            --arg race "${spec.config.race}" \
+                            --arg class "${spec.config.class}" \
+                            --arg profession1 "${spec.config.profession1}" \
+                            --arg profession2 "${spec.config.profession2}" \
+                            '{
+                              className: $className,
+                              specName: $specName,
+                              dps: ($avgDps | tonumber),
+                              max: ($maxDps | tonumber),
+                              min: ($minDps | tonumber),
+                              stdev: ($stdevDps | tonumber),
+                              loadout: {
+                                consumables: $consumables[0],
+                                talentsString: $talentsString,
+                                talents: $talents[0],
+                                glyphs: $glyphs[0],
+                                equipment: $equipment[0],
+                                race: $race,
+                                class: $class,
+                                profession1: $profession1,
+                                profession2: $profession2,
+                                simLink: $simLink
+                              }
+                            }' > $out
+                        else
+                          echo "Simulation failed for ${spec.className}/${spec.specName}"
+                          exit 1
+                        fi
           '';
       })
       specConfigs);

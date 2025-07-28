@@ -7,6 +7,8 @@
   --text-primary: #ffffff;
   --text-secondary: #aaaaaa;
   --text-muted: #a9a9a9;
+  --blue-color: #7daea3;
+  --note-color: #7daea3;
 }
 
 body {
@@ -110,6 +112,45 @@ a:hover {
   background-color: var(--highlight-color) !important;
   border-color: var(--highlight-color) !important;
   color: var(--text-primary) !important;
+}
+
+/* Global callout styles for use in JavaScript-generated content */
+.callout-note {
+  background-color: rgba(125, 174, 163, 0.1);
+  border: 1px solid var(--note-color);
+  border-left: 3px solid var(--note-color);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+
+.callout-note-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.callout-note-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--note-color);
+  flex-shrink: 0;
+}
+
+.callout-note-title {
+  color: var(--note-color);
+  margin: 0;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.callout-note-content {
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-left: 22px;
+  margin-bottom: 0;
+  font-size: 0.9em;
 }
 
 /* Responsive design */
