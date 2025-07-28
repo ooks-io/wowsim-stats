@@ -149,6 +149,10 @@ INPUT_EOF
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
+              # Generate wowsim link from input file
+              echo "Generating wowsim link..."
+              simLink=$(wowsimcli encodelink input.json || echo "")
+
               # create final result with enriched data
               jq -n \
                 --arg raceName "${raceConfig.raceName}" \
@@ -156,6 +160,7 @@ INPUT_EOF
                 --arg maxDps "$maxDps" \
                 --arg minDps "$minDps" \
                 --arg stdevDps "$stdevDps" \
+                --arg simLink "$simLink" \
                 --slurpfile equipment enriched_equipment.json \
                 --slurpfile consumables consumables.json \
                 --arg talentsString "${raceConfig.config.talentsString}" \
@@ -180,7 +185,8 @@ INPUT_EOF
                     race: $race,
                     class: $class,
                     profession1: $profession1,
-                    profession2: $profession2
+                    profession2: $profession2,
+                    simLink: $simLink
                   }
                 }' > $out
             else
@@ -378,6 +384,10 @@ INPUT_EOF
               minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
               stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
+              # Generate wowsim link from input file
+              echo "Generating wowsim link..."
+              simLink=$(wowsimcli encodelink input.json || echo "")
+
               # create final result with all DPS statistics and enriched data
               jq -n \
                 --arg className "${spec.className}" \
@@ -386,6 +396,7 @@ INPUT_EOF
                 --arg maxDps "$maxDps" \
                 --arg minDps "$minDps" \
                 --arg stdevDps "$stdevDps" \
+                --arg simLink "$simLink" \
                 --slurpfile equipment enriched_equipment.json \
                 --slurpfile consumables consumables.json \
                 --arg talentsString "${spec.config.talentsString}" \
@@ -411,7 +422,8 @@ INPUT_EOF
                     race: $race,
                     class: $class,
                     profession1: $profession1,
-                    profession2: $profession2
+                    profession2: $profession2,
+                    simLink: $simLink
                   }
                 }' > $out
             else
