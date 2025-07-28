@@ -122,13 +122,9 @@ a:hover {
   border-radius: 4px;
   padding: 10px 12px;
   margin: 8px 0;
-}
-
-.callout-note-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
+  gap: 8px;
 }
 
 .callout-note-icon {
@@ -138,19 +134,12 @@ a:hover {
   flex-shrink: 0;
 }
 
-.callout-note-title {
-  color: var(--note-color);
-  margin: 0;
-  font-size: 0.9em;
-  font-weight: 600;
-}
-
 .callout-note-content {
   color: var(--text-primary);
   line-height: 1.4;
-  margin-left: 22px;
-  margin-bottom: 0;
+  margin: 0;
   font-size: 0.9em;
+  flex: 1;
 }
 
 /* Responsive design */
