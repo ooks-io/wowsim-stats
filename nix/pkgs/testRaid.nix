@@ -12,17 +12,17 @@
   # quickly sim a single spec for testing purposes
   inherit (lib.sim.simulation) mkSim;
 
-  class = "warlock";
-  spec = "demonology";
+  class = "rogue";
+  spec = "subtlety";
   encounterType = "raid";
 
   raid = mkSim {
-    requestId = "raidSimAsync-f2cf5e22118a43c7";
-    iterations = 10000;
-    player = classes.${class}.${spec}.template.troll.p1.${encounterType}.multiTarget;
+    requestId = "raidSimAsync-c8e6f5783f4f390b";
+    iterations = 1000;
+    player = classes.${class}.${spec}.template.troll.p1.${encounterType}.singleTarget;
     buffs = buffs.full;
     debuffs = debuffs.full;
-    encounter = encounter.${encounterType}.long.threeTarget;
+    encounter = encounter.${encounterType}.long.singleTarget;
   };
   testRaid = writeShellApplication {
     name = "testRaid";

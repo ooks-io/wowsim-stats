@@ -54,7 +54,8 @@
         "flake-parts": "flake-parts",
         "nixpkgs": "nixpkgs",
         "systems": "systems",
-        "wowsims": "wowsims"
+        "wowsims": "wowsims",
+        "wowsims-upstream": "wowsims-upstream"
       }
     },
     "systems": {
@@ -85,16 +86,32 @@
         ]
       },
       "locked": {
-        "lastModified": 1753671630,
-        "narHash": "sha256-9OpwCEsKtpxJRh4yHzAWhn5VT/V4SrG5msd3Bpy3laU=",
+        "lastModified": 1753685245,
+        "narHash": "sha256-nFSuXwbWYevQlZc/P9qRGWT1JfiYbbuOIxx08PtS1Ug=",
         "owner": "ooks-io",
         "repo": "mop",
-        "rev": "8daa9465df31c88738cc677cb5147eeb4f85e217",
+        "rev": "6156bf245b8a1663badb5c1663372ada3f8757c2",
         "type": "github"
       },
       "original": {
         "owner": "ooks-io",
         "ref": "nix",
+        "repo": "mop",
+        "type": "github"
+      }
+    },
+    "wowsims-upstream": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1753683048,
+        "narHash": "sha256-nIeQRXq++k0nvTo11s948s5C5Ur/Hrh7aR8ENK+P6d8=",
+        "owner": "wowsims",
+        "repo": "mop",
+        "rev": "06153aa432c961a62ca8255eed5eb1ee1e7114ca",
+        "type": "github"
+      },
+      "original": {
+        "owner": "wowsims",
         "repo": "mop",
         "type": "github"
       }
