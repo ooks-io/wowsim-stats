@@ -1,19 +1,26 @@
 ---
-import Navigation from '../components/Navigation.astro';
-import Callout from '../components/Callout.astro';
-import ItemDatabase from '../components/ItemDatabase.astro';
+import Navigation from "../components/Navigation.astro";
+import Callout from "../components/Callout.astro";
+import ItemDatabase from "../components/ItemDatabase.astro";
 
 export interface Props {
   title: string;
   description?: string;
-  mode: 'rankings' | 'comparison';
+  mode: "rankings" | "comparison";
   class?: string;
   spec?: string;
-  comparisonType?: 'race' | 'trinket' | 'both';
+  comparisonType?: "race" | "trinket" | "both";
 }
 
-const { title, description, mode, class: fixedClass, spec: fixedSpec, comparisonType = 'both' } = Astro.props;
-const isRankingsMode = mode === 'rankings';
+const {
+  title,
+  description,
+  mode,
+  class: fixedClass,
+  spec: fixedSpec,
+  comparisonType = "both",
+} = Astro.props;
+const isRankingsMode = mode === "rankings";
 const isFixedClassSpec = fixedClass && fixedSpec;
 ---
 
@@ -32,21 +39,21 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         background-color: var(--bg-primary);
         color: var(--text-primary);
       }
-      
+
       .page-header {
         text-align: center;
         padding: 30px 20px;
         background-color: var(--bg-secondary);
         border-bottom: 1px solid var(--border-color);
       }
-      
+
       .page-title {
         color: var(--highlight-color);
         margin: 0 0 10px 0;
         font-size: 2.5em;
         font-weight: 700;
       }
-      
+
       .page-description {
         color: var(--text-secondary);
         font-size: 1.1em;
@@ -58,7 +65,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         margin: 0 auto;
         padding: 20px;
       }
-      
+
       .controls {
         margin-bottom: 30px;
         padding: 20px;
@@ -66,26 +73,26 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         border-radius: 8px;
         border: 1px solid var(--border-color);
       }
-      
+
       .controls-title {
         color: var(--highlight-color);
         margin: 0 0 15px 0;
         font-size: 1.2em;
         font-weight: 600;
       }
-      
+
       .controls-grid {
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
       }
-      
+
       .control-group {
         display: flex;
         flex-direction: column;
         gap: 5px;
       }
-      
+
       .control-group label {
         font-size: 0.9em;
         color: var(--text-muted);
@@ -93,7 +100,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      
+
       .control-group select {
         padding: 8px 12px;
         background-color: #2a2a2a;
@@ -103,13 +110,14 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         font-size: 0.9em;
         min-width: 120px;
       }
-      
+
       .control-group select:focus {
         outline: none;
         border-color: var(--highlight-color);
       }
-      
-      .loading, .error {
+
+      .loading,
+      .error {
         text-align: center;
         padding: 20px;
         margin: 20px 0;
@@ -122,37 +130,37 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         z-index: 1000;
         min-width: 200px;
       }
-      
+
       .loading {
         color: var(--text-muted);
         border: 1px solid var(--border-color);
       }
-      
+
       .error {
         color: var(--highlight-color);
         background-color: #3a2a2a;
         border: 1px solid var(--highlight-color);
       }
-      
+
       #metadata-container {
         min-height: 120px;
         transition: opacity 0.2s ease;
       }
-      
+
       #chart-container {
         min-height: 400px;
         transition: opacity 0.2s ease;
       }
-      
+
       .hidden {
         display: none;
       }
 
       @media (max-width: 768px) {
         .rankings-container {
-        padding: 10px;
+          padding: 10px;
+        }
       }
-    }
     </style>
     <style is:global>
       .simulation-metadata {
@@ -162,30 +170,30 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         margin-bottom: 30px;
         border: 1px solid var(--border-color);
       }
-      
+
       .metadata-title {
         color: var(--highlight-color);
         margin: 0 0 15px 0;
         font-size: 1.2em;
         font-weight: 600;
       }
-      
+
       .metadata-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 15px;
       }
-      
+
       .metadata-item {
         display: flex;
         flex-direction: column;
         gap: 4px;
       }
-      
+
       .metadata-item-wide {
         grid-column: 1 / -1;
       }
-      
+
       .metadata-label {
         font-size: 0.85em;
         color: var(--text-muted);
@@ -193,19 +201,18 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      
+
       .metadata-value {
         font-size: 1em;
         color: var(--text-primary);
         font-weight: 600;
       }
-      
+
       .metadata-value-wrap {
         white-space: normal;
         word-wrap: break-word;
         line-height: 1.4;
       }
-
 
       .chart-container {
         background-color: var(--bg-secondary);
@@ -213,20 +220,20 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         padding: 20px;
         border: 1px solid var(--border-color);
       }
-      
+
       .chart-title {
         color: var(--highlight-color);
         margin: 0 0 20px 0;
         font-size: 1.4em;
         font-weight: 600;
       }
-      
+
       .chart-bars {
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
-      
+
       .chart-item {
         display: grid;
         grid-template-columns: 180px 1fr;
@@ -237,11 +244,11 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         border-radius: 4px;
         transition: background-color 0.2s ease;
       }
-      
+
       .chart-item:hover {
-        background-color: rgba(255,255,255,0.05);
+        background-color: rgba(255, 255, 255, 0.05);
       }
-      
+
       .chart-labels {
         display: flex;
         align-items: center;
@@ -251,14 +258,14 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         flex-shrink: 0;
         overflow: hidden;
       }
-      
+
       .chart-rank {
         font-size: 0.9em;
         color: var(--text-muted);
         font-weight: 600;
         min-width: 30px;
       }
-      
+
       .chart-label {
         font-weight: 600;
         color: var(--text-primary);
@@ -268,22 +275,22 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         text-overflow: ellipsis;
         flex: 1;
       }
-      
+
       .trinket-icon {
         width: 20px;
         height: 20px;
         border-radius: 3px;
         margin-right: 8px;
         vertical-align: middle;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
-      
+
       .trinket-ilvl {
         font-weight: 600;
         color: var(--text-primary);
         vertical-align: middle;
       }
-      
+
       .chart-bar-container {
         display: flex;
         align-items: center;
@@ -291,16 +298,16 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         gap: 10px;
         min-width: 0;
       }
-      
+
       .chart-bar-track {
         flex: 1;
         height: 20px;
-        background-color: rgba(255,255,255,0.1);
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 3px;
         position: relative;
         min-width: 0;
       }
-      
+
       .chart-bar {
         height: 100%;
         border-radius: 3px;
@@ -308,7 +315,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         transition: width 0.3s ease;
         position: relative;
       }
-      
+
       .chart-value {
         font-weight: 600;
         color: var(--text-primary);
@@ -332,11 +339,11 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       .chart-item-header:hover {
-        background-color: rgba(255,255,255,0.05);
+        background-color: rgba(255, 255, 255, 0.05);
       }
 
       .chart-item-expanded .chart-item-header {
-        background-color: rgba(255,255,255,0.08);
+        background-color: rgba(255, 255, 255, 0.08);
       }
 
       .chart-item-content {
@@ -362,9 +369,9 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         grid-column: 1 / -1;
         margin-top: 12px;
         padding: 16px;
-        background-color: var(--bg-selection); 
+        background-color: var(--bg-selection);
         border-radius: 6px;
-        border: 1px solid rgba(255,255,255,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         display: none;
       }
 
@@ -429,7 +436,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       .loadout-talents {
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
         font-size: 1.1em;
         letter-spacing: 2px;
         color: var(--highlight-color);
@@ -440,13 +447,13 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         gap: 12px;
         margin-top: 16px;
         padding-top: 16px;
-        border-top: 1px solid rgba(255,255,255,0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
       .loadout-button {
         padding: 6px 12px;
         background-color: var(--bg-primary);
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 4px;
         color: var(--text-primary);
         text-decoration: none;
@@ -457,7 +464,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       .loadout-button:hover {
-        background-color: rgba(255,255,255,0.1);
+        background-color: rgba(255, 255, 255, 0.1);
         border-color: var(--highlight-color);
       }
 
@@ -486,9 +493,9 @@ const isFixedClassSpec = fixedClass && fixedSpec;
 
       .equipment-slot {
         padding: 8px;
-        background-color: rgba(255,255,255,0.02);
+        background-color: rgba(255, 255, 255, 0.02);
         border-radius: 4px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         margin-bottom: 8px;
       }
 
@@ -677,7 +684,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       .equipment-item {
         color: var(--text-primary);
         text-align: right;
-        font-family: 'Courier New', monospace;
+        font-family: "Courier New", monospace;
       }
 
       /* Item icons and quality styles */
@@ -688,7 +695,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         border-radius: 3px;
         margin-right: 8px;
         vertical-align: middle;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       .equipment-item-header,
@@ -699,14 +706,30 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
 
       /* WoW item quality colors */
-      .quality-0 { color: #9d9d9d; } /* Poor (Gray) */
-      .quality-1 { color: #ffffff; } /* Common (White) */
-      .quality-2 { color: #1eff00; } /* Uncommon (Green) */
-      .quality-3 { color: #0070dd; } /* Rare (Blue) */
-      .quality-4 { color: #a335ee; } /* Epic (Purple) */
-      .quality-5 { color: #ff8000; } /* Legendary (Orange) */
-      .quality-6 { color: #e6cc80; } /* Artifact (Light Orange) */
-      .quality-7 { color: #00ccff; } /* Heirloom (Light Blue) */
+      .quality-0 {
+        color: #9d9d9d;
+      } /* Poor (Gray) */
+      .quality-1 {
+        color: #ffffff;
+      } /* Common (White) */
+      .quality-2 {
+        color: #1eff00;
+      } /* Uncommon (Green) */
+      .quality-3 {
+        color: #0070dd;
+      } /* Rare (Blue) */
+      .quality-4 {
+        color: #a335ee;
+      } /* Epic (Purple) */
+      .quality-5 {
+        color: #ff8000;
+      } /* Legendary (Orange) */
+      .quality-6 {
+        color: #e6cc80;
+      } /* Artifact (Light Orange) */
+      .quality-7 {
+        color: #00ccff;
+      } /* Heirloom (Light Blue) */
 
       .equipment-item-link.quality-0,
       .equipment-item-link.quality-1,
@@ -718,7 +741,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       .equipment-item-link.quality-7 {
         text-decoration: none;
       }
-
 
       /* Glyph-specific styling */
       .consumable-item-header img {
@@ -732,9 +754,9 @@ const isFixedClassSpec = fixedClass && fixedSpec;
 
       .loadout-section .loadout-item {
         padding: 8px;
-        background-color: rgba(255,255,255,0.02);
+        background-color: rgba(255, 255, 255, 0.02);
         border-radius: 4px;
-        border: 1px solid rgba(255,255,255,0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       /* Loadout notice styling */
@@ -760,32 +782,44 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       <h1 class="page-title">{title}</h1>
       {description && <p class="page-description">{description}</p>}
     </div>
-    
+
     <div class="rankings-container">
       <Callout type="warning">
         <p>
-          These benchmarks are built with <a href="https://wowsims.com/mop" target="_blank" rel="noopener noreferrer">wowsims</a> which is currently still in <strong>alpha</strong> with bug fixes and updates coming daily.</p>
+          These benchmarks are built with <a
+            href="https://wowsims.com/mop"
+            target="_blank"
+            rel="noopener noreferrer">wowsims</a
+          > which is currently still in <strong>alpha</strong> with bug fixes and
+          updates coming daily.
+        </p>
         <p>
-          Beyond that, there are a number of issues with using simulation rankings to guide your decisions: 
+          Beyond that, there are a number of issues with using simulation
+          rankings to guide your decisions:
         </p>
         <ul>
           <li>
-            <strong>Simulation Bias</strong>: Certain specs are favoured in stationary, target dummy scenarios, e.g., Arcane & Boomkin
+            <strong>Simulation Bias</strong>: Certain specs are favoured in
+            stationary, target dummy scenarios, e.g., Arcane & Boomkin
           </li>
           <li>
-            <strong>Fight Length Impact</strong>: In a 5:00 encounter, a 3:00 burst spec will be unfavoured compared to a 3:30 fight
+            <strong>Fight Length Impact</strong>: In a 5:00 encounter, a 3:00
+            burst spec will be unfavoured compared to a 3:30 fight
           </li>
           <li>
-            <strong>Incomplete APLs/spec implementation</strong>: Not all specs have been optimized for every type of encounters (short duration, high target count)
+            <strong>Incomplete APLs/spec implementation</strong>: Not all specs
+            have been optimized for every type of encounters (short duration,
+            high target count)
           </li>
         </ul>
         <p>
-          Simulation rankings, such as these, should never be used as anything more than a novelty/something interesting to look at.
+          Simulation rankings, such as these, should never be used as anything
+          more than a novelty/something interesting to look at.
         </p>
       </Callout>
-      
+
       <div id="metadata-container"></div>
-      
+
       <!-- Trinket comparison callout -->
       <div id="trinket-callout" class="hidden">
         <Callout type="note">
@@ -794,70 +828,100 @@ const isFixedClassSpec = fixedClass && fixedSpec;
           </p>
           <p><strong>Current Implementation</strong>:</p>
           <p>
-            We take the selected phase's bis profile gearset, remove the trinkets, and simulate to get the <strong>baseline</strong> result. We then generate a gearset for each trinket and compare the results against the baseline. 
+            We take the selected phase's bis profile gearset, remove the
+            trinkets, and simulate to get the <strong>baseline</strong> result. We
+            then generate a gearset for each trinket and compare the results against
+            the baseline.
           </p>
           <p>
-            This implementation comes with some caveats that can scew the results:
+            This implementation comes with some caveats that can scew the
+            results:
           </p>
           <ul>
-            <li>We <strong>don't</strong> re-reforge the gearset for every trinket</li>
-            <li>Ideally every trinket would come with it's own optimized gearset</li>
-            <li>This is simulating the trinkets <strong>individually</strong>, not in pairs</li>
-            <li>Like all other simulations, keep in mind WoWSims is still in <strong>alpha</strong> so not all spec/trinket implementations are not complete</li>
+            <li>
+              We <strong>don't</strong> re-reforge the gearset for every trinket
+            </li>
+            <li>
+              Ideally every trinket would come with it's own optimized gearset
+            </li>
+            <li>
+              This is simulating the trinkets <strong>individually</strong>, not
+              in pairs
+            </li>
+            <li>
+              Like all other simulations, keep in mind WoWSims is still in <strong
+                >alpha</strong
+              > so not all spec/trinket implementations are not complete
+            </li>
           </ul>
           <p>
-            With all that in mind, you should only consider this list as a <em>rough approximation</em> of the value of each individual trinket.
+            With all that in mind, you should only consider this list as a <em
+              >rough approximation</em
+            > of the value of each individual trinket.
           </p>
           <p>
-            In the future we will reforge the gearset for each trinket to get a more accurate value.
+            In the future we will reforge the gearset for each trinket to get a
+            more accurate value.
           </p>
         </Callout>
       </div>
-      
+
       <div class="controls">
         <h3 class="controls-title">
-          {isRankingsMode ? "Simulation Options" : (isFixedClassSpec ? "Simulation Options" : "Comparison Options")}
+          {
+            isRankingsMode
+              ? "Simulation Options"
+              : isFixedClassSpec
+                ? "Simulation Options"
+                : "Comparison Options"
+          }
         </h3>
         <div class="controls-grid">
-          {!isRankingsMode && comparisonType === 'both' && !isFixedClassSpec && (
-            <div class="control-group">
-              <label for="comparisonType">Compare:</label>
-              <select id="comparisonType">
-                <option value="race">Races</option>
-                <option value="trinket">Trinkets</option>
-              </select>
-            </div>
-          )}
-          
-          {!isRankingsMode && !isFixedClassSpec && (
-            <>
-              <div class="control-group">
-                <label for="class">Class:</label>
-                <select id="class">
-                  <option value="">Select Class</option>
-                  <option value="death_knight">Death Knight</option>
-                  <option value="druid">Druid</option>
-                  <option value="hunter">Hunter</option>
-                  <option value="mage">Mage</option>
-                  <option value="monk">Monk</option>
-                  <option value="paladin">Paladin</option>
-                  <option value="priest">Priest</option>
-                  <option value="rogue">Rogue</option>
-                  <option value="shaman">Shaman</option>
-                  <option value="warlock">Warlock</option>
-                  <option value="warrior">Warrior</option>
-                </select>
-              </div>
-              
-              <div class="control-group">
-                <label for="spec">Specialization:</label>
-                <select id="spec" disabled>
-                  <option value="">Select Class First</option>
-                </select>
-              </div>
-            </>
-          )}
-          
+          {
+            !isRankingsMode &&
+              comparisonType === "both" &&
+              !isFixedClassSpec && (
+                <div class="control-group">
+                  <label for="comparisonType">Compare:</label>
+                  <select id="comparisonType">
+                    <option value="trinket">Trinkets</option>
+                    <option value="race">Races</option>
+                  </select>
+                </div>
+              )
+          }
+
+          {
+            !isRankingsMode && !isFixedClassSpec && (
+              <>
+                <div class="control-group">
+                  <label for="class">Class:</label>
+                  <select id="class">
+                    <option value="">Select Class</option>
+                    <option value="death_knight">Death Knight</option>
+                    <option value="druid">Druid</option>
+                    <option value="hunter">Hunter</option>
+                    <option value="mage">Mage</option>
+                    <option value="monk">Monk</option>
+                    <option value="paladin">Paladin</option>
+                    <option value="priest">Priest</option>
+                    <option value="rogue">Rogue</option>
+                    <option value="shaman">Shaman</option>
+                    <option value="warlock">Warlock</option>
+                    <option value="warrior">Warrior</option>
+                  </select>
+                </div>
+
+                <div class="control-group">
+                  <label for="spec">Specialization:</label>
+                  <select id="spec" disabled>
+                    <option value="">Select Class First</option>
+                  </select>
+                </div>
+              </>
+            )
+          }
+
           <div class="control-group">
             <label for="targetCount">Target Count:</label>
             <select id="targetCount">
@@ -867,14 +931,14 @@ const isFixedClassSpec = fixedClass && fixedSpec;
               <option value="ten">10 Targets</option>
             </select>
           </div>
-          
+
           <div class="control-group">
             <label for="encounterType">Encounter:</label>
             <select id="encounterType">
               <option value="raid">Raid</option>
             </select>
           </div>
-          
+
           <div class="control-group">
             <label for="duration">Duration:</label>
             <select id="duration">
@@ -883,7 +947,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
               <option value="burst">Burst (30s)</option>
             </select>
           </div>
-          
+
           <div class="control-group">
             <label for="phase">Phase:</label>
             <select id="phase">
@@ -891,7 +955,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
               <option value="preRaid">Pre-Raid</option>
             </select>
           </div>
-          
+
           <div class="control-group">
             <label for="sortBy">Sort By:</label>
             <select id="sortBy">
@@ -906,298 +970,364 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       </div>
 
       <div id="loading" class="loading hidden">
-        {isRankingsMode ? "Loading rankings data..." : "Loading comparison data..."}
+        {
+          isRankingsMode
+            ? "Loading rankings data..."
+            : "Loading comparison data..."
+        }
       </div>
       <div id="error" class="error hidden"></div>
-      
+
       <div id="chart-container"></div>
     </div>
 
-    <script is:inline type="text/javascript" define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}>
-console.log('Unified chart script loaded with:', { mode, fixedClass, fixedSpec, comparisonType });
+    <script
+      is:inline
+      type="text/javascript"
+      define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}
+    >
+      console.log("Unified chart script loaded with:", {
+        mode,
+        fixedClass,
+        fixedSpec,
+        comparisonType,
+      });
 
-// Shared utility functions
-const formatDuration = (seconds) => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
-};
-
-const formatRaidBuffs = (buffs) => {
-  const activeBuffs = Object.entries(buffs)
-    .filter(([_, value]) => value !== false && value !== 0)
-    .map(([key, value]) => {
-      const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-      return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
-    });
-  return activeBuffs.join(', ');
-};
-
-const formatSimulationDate = (timestamp) => {
-  return new Date(timestamp).toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZoneName: 'short'
-  });
-};
-
-// Loadout formatting functions
-const formatLoadout = (loadout) => {
-  if (!loadout) return null;
-  
-  const sections = [];
-  
-  // Character Info
-  if (loadout.race || loadout.profession1 || loadout.profession2) {
-    const items = [];
-    if (loadout.race) items.push({ label: 'Race', value: formatRace(loadout.race) });
-    if (loadout.profession1) items.push({ label: 'Profession 1', value: loadout.profession1 });
-    if (loadout.profession2) items.push({ label: 'Profession 2', value: loadout.profession2 });
-    sections.push({ title: 'Character', items });
-  }
-  
-  // Talents & Glyphs
-  if (loadout.talents || loadout.glyphs) {
-    const items = [];
-    if (loadout.talents) {
-      const talentItems = formatTalents(loadout.talents);
-      if (talentItems && talentItems.length > 0) {
-        items.push(...talentItems);
-      }
-    }
-    if (loadout.glyphs) {
-      const glyphItems = formatGlyphs(loadout.glyphs);
-      if (glyphItems && glyphItems.length > 0) {
-        // Add glyphs as structured items instead of text
-        items.push(...glyphItems);
-      }
-    }
-    sections.push({ title: 'Talents & Glyphs', items });
-  }
-  
-  // Consumables
-  if (loadout.consumables) {
-    const items = formatConsumables(loadout.consumables);
-    if (items.length > 0) sections.push({ title: 'Consumables', items });
-  }
-  
-  // Equipment Summary
-  if (loadout.equipment && loadout.equipment.items) {
-    const equipmentSummary = formatEquipmentSummary(loadout.equipment.items);
-    if (equipmentSummary.length > 0) {
-      sections.push({ title: 'Equipment', items: equipmentSummary, isEquipment: true });
-    }
-  }
-  
-  return sections;
-};
-
-const formatRace = (race) => {
-  return race.replace('Race', '').replace(/([A-Z])/g, ' $1').trim();
-};
-
-// const formatClass = (className) => {
-//   return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
-// };
-
-const formatTalents = (talents) => {
-  if (!talents || !talents.talents || !Array.isArray(talents.talents)) {
-    return [];
-  }
-  
-  // Create a single talents item with all talents listed
-  const talentList = talents.talents.map(talent => {
-    const iconUrl = talent.icon 
-      ? `https://wow.zamimg.com/images/wow/icons/small/${talent.icon}.jpg`
-      : null;
-    const iconHtml = iconUrl 
-      ? `<img src="${iconUrl}" alt="${talent.name}" class="talent-icon-inline" loading="lazy" />`
-      : '';
-    const wowheadUrl = talent.spellId 
-      ? `https://www.wowhead.com/mop-classic/spell=${talent.spellId}`
-      : null;
-    const nameHtml = wowheadUrl 
-      ? `<a href="${wowheadUrl}" target="_blank" class="talent-link">${talent.name}</a>`
-      : `<span class="talent-name">${talent.name}</span>`;
-    return `<div class="talent-line">${iconHtml}${nameHtml}</div>`;
-  }).join('');
-  
-  return [{
-    label: 'Talents',
-    value: `<div class="talents-list">${talentList}</div>`,
-    isTalentList: true
-  }];
-};
-
-const formatGlyphs = (glyphs) => {
-  const glyphContainers = [];
-  
-  // Major Glyphs
-  const majorGlyphs = [];
-  ['major1', 'major2', 'major3'].forEach(slot => {
-    if (glyphs[slot]) {
-      const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
-      const iconUrl = glyphs[`${slot}Icon`] 
-        ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
-        : null;
-      const spellId = glyphs[`${slot}SpellId`];
-      const wowheadUrl = spellId 
-        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
-        : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
-      
-      const iconHtml = iconUrl 
-        ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
-        : '';
-      const nameHtml = wowheadUrl 
-        ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
-        : `<span class="glyph-name">${glyphName}</span>`;
-      majorGlyphs.push(`<div class="glyph-line">${iconHtml}${nameHtml}</div>`);
-    }
-  });
-  
-  // Minor Glyphs
-  const minorGlyphs = [];
-  ['minor1', 'minor2', 'minor3'].forEach(slot => {
-    if (glyphs[slot]) {
-      const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
-      const iconUrl = glyphs[`${slot}Icon`] 
-        ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
-        : null;
-      const spellId = glyphs[`${slot}SpellId`];
-      const wowheadUrl = spellId 
-        ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
-        : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
-      
-      const iconHtml = iconUrl 
-        ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
-        : '';
-      const nameHtml = wowheadUrl 
-        ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
-        : `<span class="glyph-name">${glyphName}</span>`;
-      minorGlyphs.push(`<div class="glyph-line">${iconHtml}${nameHtml}</div>`);
-    }
-  });
-  
-  // Add containers if glyphs exist
-  if (majorGlyphs.length > 0) {
-    glyphContainers.push({
-      label: 'Major Glyphs',
-      value: `<div class="glyphs-list">${majorGlyphs.join('')}</div>`,
-      isGlyphList: true
-    });
-  }
-  
-  if (minorGlyphs.length > 0) {
-    glyphContainers.push({
-      label: 'Minor Glyphs', 
-      value: `<div class="glyphs-list">${minorGlyphs.join('')}</div>`,
-      isGlyphList: true
-    });
-  }
-  
-  return glyphContainers;
-};
-
-const formatConsumables = (consumables) => {
-  const items = [];
-  if (consumables.flaskId) {
-    items.push({ 
-      label: 'Flask', 
-      value: consumables.flaskName || `Item ${consumables.flaskId}`,
-      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.flaskId}`,
-      iconUrl: consumables.flaskIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.flaskIcon}.jpg` : null,
-      quality: consumables.flaskQuality,
-      isItem: true
-    });
-  }
-  if (consumables.foodId) {
-    items.push({ 
-      label: 'Food', 
-      value: consumables.foodName || `Item ${consumables.foodId}`,
-      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.foodId}`,
-      iconUrl: consumables.foodIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.foodIcon}.jpg` : null,
-      quality: consumables.foodQuality,
-      isItem: true
-    });
-  }
-  if (consumables.potId) {
-    items.push({ 
-      label: 'Potion', 
-      value: consumables.potName || `Item ${consumables.potId}`,
-      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.potId}`,
-      iconUrl: consumables.potIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.potIcon}.jpg` : null,
-      quality: consumables.potQuality,
-      isItem: true
-    });
-  }
-  if (consumables.prepotId) {
-    items.push({ 
-      label: 'Pre-Potion', 
-      value: consumables.prepotName || `Item ${consumables.prepotId}`,
-      wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.prepotId}`,
-      iconUrl: consumables.prepotIcon ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.prepotIcon}.jpg` : null,
-      quality: consumables.prepotQuality,
-      isItem: true
-    });
-  }
-  return items;
-};
-
-const formatEquipmentSummary = (items) => {
-  const slotNames = [
-    'Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrists', 
-    'Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 
-    'Trinket 1', 'Trinket 2', 'Main Hand', 'Off Hand'
-  ];
-  
-  const equipment = [];
-  items.forEach((item, index) => {
-    if (item && item.id) {
-      const itemInfo = window.ItemDatabase ? window.ItemDatabase.formatEquipmentItem(item) : {
-        itemId: item.id,
-        itemName: `Item ${item.id}`,
-        itemDetails: [],
-        wowheadUrl: `https://www.wowhead.com/mop-classic/item=${item.id}`
+      // Shared utility functions
+      const formatDuration = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return minutes > 0
+          ? `${minutes}m ${remainingSeconds}s`
+          : `${remainingSeconds}s`;
       };
-      
-      if (itemInfo) {
-        equipment.push({
-          slot: slotNames[index] || `Slot ${index + 1}`,
-          ...itemInfo
+
+      const formatRaidBuffs = (buffs) => {
+        const activeBuffs = Object.entries(buffs)
+          .filter(([_, value]) => value !== false && value !== 0)
+          .map(([key, value]) => {
+            const readable = key
+              .replace(/([A-Z])/g, " $1")
+              .replace(/^./, (str) => str.toUpperCase());
+            return typeof value === "number" && value > 1
+              ? `${readable} (${value})`
+              : readable;
+          });
+        return activeBuffs.join(", ");
+      };
+
+      const formatSimulationDate = (timestamp) => {
+        return new Date(timestamp).toLocaleString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
         });
-      }
-    }
-  });
-  return equipment;
-};
+      };
 
+      // Loadout formatting functions
+      const formatLoadout = (loadout) => {
+        if (!loadout) return null;
 
-// Generate loadout dropdown HTML
-const generateLoadoutDropdown = (loadout, _chartData) => {
-  const sections = formatLoadout(loadout);
-  if (!sections || sections.length === 0) return '';
-  
-  const sectionsHtml = sections.map(section => {
-    if (section.isEquipment) {
-      // Special handling for equipment
-      const equipmentHtml = section.items.map(eq => {
-        const iconHtml = eq.iconUrl 
-          ? `<img src="${eq.iconUrl}" alt="${eq.itemName}" class="equipment-icon" loading="lazy" />`
-          : '';
-        
-        const qualityClass = eq.quality ? `quality-${eq.quality}` : '';
-        
-        // Enhanced tooltip-style details
-        const detailsHtml = eq.itemDetails && eq.itemDetails.length > 0 
-          ? `<div class="item-tooltip-details">
-               ${eq.itemDetails.map(detail => `<div class="equipment-detail">${detail}</div>`).join('')}
+        const sections = [];
+
+        // Character Info
+        if (loadout.race || loadout.profession1 || loadout.profession2) {
+          const items = [];
+          if (loadout.race)
+            items.push({ label: "Race", value: formatRace(loadout.race) });
+          if (loadout.profession1)
+            items.push({ label: "Profession 1", value: loadout.profession1 });
+          if (loadout.profession2)
+            items.push({ label: "Profession 2", value: loadout.profession2 });
+          sections.push({ title: "Character", items });
+        }
+
+        // Talents & Glyphs
+        if (loadout.talents || loadout.glyphs) {
+          const items = [];
+          if (loadout.talents) {
+            const talentItems = formatTalents(loadout.talents);
+            if (talentItems && talentItems.length > 0) {
+              items.push(...talentItems);
+            }
+          }
+          if (loadout.glyphs) {
+            const glyphItems = formatGlyphs(loadout.glyphs);
+            if (glyphItems && glyphItems.length > 0) {
+              // Add glyphs as structured items instead of text
+              items.push(...glyphItems);
+            }
+          }
+          sections.push({ title: "Talents & Glyphs", items });
+        }
+
+        // Consumables
+        if (loadout.consumables) {
+          const items = formatConsumables(loadout.consumables);
+          if (items.length > 0) sections.push({ title: "Consumables", items });
+        }
+
+        // Equipment Summary
+        if (loadout.equipment && loadout.equipment.items) {
+          const equipmentSummary = formatEquipmentSummary(
+            loadout.equipment.items,
+          );
+          if (equipmentSummary.length > 0) {
+            sections.push({
+              title: "Equipment",
+              items: equipmentSummary,
+              isEquipment: true,
+            });
+          }
+        }
+
+        return sections;
+      };
+
+      const formatRace = (race) => {
+        return race
+          .replace("Race", "")
+          .replace(/([A-Z])/g, " $1")
+          .trim();
+      };
+
+      // const formatClass = (className) => {
+      //   return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
+      // };
+
+      const formatTalents = (talents) => {
+        if (!talents || !talents.talents || !Array.isArray(talents.talents)) {
+          return [];
+        }
+
+        // Create a single talents item with all talents listed
+        const talentList = talents.talents
+          .map((talent) => {
+            const iconUrl = talent.icon
+              ? `https://wow.zamimg.com/images/wow/icons/small/${talent.icon}.jpg`
+              : null;
+            const iconHtml = iconUrl
+              ? `<img src="${iconUrl}" alt="${talent.name}" class="talent-icon-inline" loading="lazy" />`
+              : "";
+            const wowheadUrl = talent.spellId
+              ? `https://www.wowhead.com/mop-classic/spell=${talent.spellId}`
+              : null;
+            const nameHtml = wowheadUrl
+              ? `<a href="${wowheadUrl}" target="_blank" class="talent-link">${talent.name}</a>`
+              : `<span class="talent-name">${talent.name}</span>`;
+            return `<div class="talent-line">${iconHtml}${nameHtml}</div>`;
+          })
+          .join("");
+
+        return [
+          {
+            label: "Talents",
+            value: `<div class="talents-list">${talentList}</div>`,
+            isTalentList: true,
+          },
+        ];
+      };
+
+      const formatGlyphs = (glyphs) => {
+        const glyphContainers = [];
+
+        // Major Glyphs
+        const majorGlyphs = [];
+        ["major1", "major2", "major3"].forEach((slot) => {
+          if (glyphs[slot]) {
+            const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
+            const iconUrl = glyphs[`${slot}Icon`]
+              ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
+              : null;
+            const spellId = glyphs[`${slot}SpellId`];
+            const wowheadUrl = spellId
+              ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
+              : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
+
+            const iconHtml = iconUrl
+              ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
+              : "";
+            const nameHtml = wowheadUrl
+              ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
+              : `<span class="glyph-name">${glyphName}</span>`;
+            majorGlyphs.push(
+              `<div class="glyph-line">${iconHtml}${nameHtml}</div>`,
+            );
+          }
+        });
+
+        // Minor Glyphs
+        const minorGlyphs = [];
+        ["minor1", "minor2", "minor3"].forEach((slot) => {
+          if (glyphs[slot]) {
+            const glyphName = glyphs[`${slot}Name`] || `Glyph ${glyphs[slot]}`;
+            const iconUrl = glyphs[`${slot}Icon`]
+              ? `https://wow.zamimg.com/images/wow/icons/small/${glyphs[`${slot}Icon`]}.jpg`
+              : null;
+            const spellId = glyphs[`${slot}SpellId`];
+            const wowheadUrl = spellId
+              ? `https://www.wowhead.com/mop-classic/spell=${spellId}`
+              : `https://www.wowhead.com/mop-classic/item=${glyphs[slot]}`;
+
+            const iconHtml = iconUrl
+              ? `<img src="${iconUrl}" alt="${glyphName}" class="glyph-icon-inline" loading="lazy" />`
+              : "";
+            const nameHtml = wowheadUrl
+              ? `<a href="${wowheadUrl}" target="_blank" class="glyph-link">${glyphName}</a>`
+              : `<span class="glyph-name">${glyphName}</span>`;
+            minorGlyphs.push(
+              `<div class="glyph-line">${iconHtml}${nameHtml}</div>`,
+            );
+          }
+        });
+
+        // Add containers if glyphs exist
+        if (majorGlyphs.length > 0) {
+          glyphContainers.push({
+            label: "Major Glyphs",
+            value: `<div class="glyphs-list">${majorGlyphs.join("")}</div>`,
+            isGlyphList: true,
+          });
+        }
+
+        if (minorGlyphs.length > 0) {
+          glyphContainers.push({
+            label: "Minor Glyphs",
+            value: `<div class="glyphs-list">${minorGlyphs.join("")}</div>`,
+            isGlyphList: true,
+          });
+        }
+
+        return glyphContainers;
+      };
+
+      const formatConsumables = (consumables) => {
+        const items = [];
+        if (consumables.flaskId) {
+          items.push({
+            label: "Flask",
+            value: consumables.flaskName || `Item ${consumables.flaskId}`,
+            wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.flaskId}`,
+            iconUrl: consumables.flaskIcon
+              ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.flaskIcon}.jpg`
+              : null,
+            quality: consumables.flaskQuality,
+            isItem: true,
+          });
+        }
+        if (consumables.foodId) {
+          items.push({
+            label: "Food",
+            value: consumables.foodName || `Item ${consumables.foodId}`,
+            wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.foodId}`,
+            iconUrl: consumables.foodIcon
+              ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.foodIcon}.jpg`
+              : null,
+            quality: consumables.foodQuality,
+            isItem: true,
+          });
+        }
+        if (consumables.potId) {
+          items.push({
+            label: "Potion",
+            value: consumables.potName || `Item ${consumables.potId}`,
+            wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.potId}`,
+            iconUrl: consumables.potIcon
+              ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.potIcon}.jpg`
+              : null,
+            quality: consumables.potQuality,
+            isItem: true,
+          });
+        }
+        if (consumables.prepotId) {
+          items.push({
+            label: "Pre-Potion",
+            value: consumables.prepotName || `Item ${consumables.prepotId}`,
+            wowheadUrl: `https://www.wowhead.com/mop-classic/item=${consumables.prepotId}`,
+            iconUrl: consumables.prepotIcon
+              ? `https://wow.zamimg.com/images/wow/icons/large/${consumables.prepotIcon}.jpg`
+              : null,
+            quality: consumables.prepotQuality,
+            isItem: true,
+          });
+        }
+        return items;
+      };
+
+      const formatEquipmentSummary = (items) => {
+        const slotNames = [
+          "Head",
+          "Neck",
+          "Shoulders",
+          "Back",
+          "Chest",
+          "Wrists",
+          "Hands",
+          "Waist",
+          "Legs",
+          "Feet",
+          "Ring 1",
+          "Ring 2",
+          "Trinket 1",
+          "Trinket 2",
+          "Main Hand",
+          "Off Hand",
+        ];
+
+        const equipment = [];
+        items.forEach((item, index) => {
+          if (item && item.id) {
+            const itemInfo = window.ItemDatabase
+              ? window.ItemDatabase.formatEquipmentItem(item)
+              : {
+                  itemId: item.id,
+                  itemName: `Item ${item.id}`,
+                  itemDetails: [],
+                  wowheadUrl: `https://www.wowhead.com/mop-classic/item=${item.id}`,
+                };
+
+            if (itemInfo) {
+              equipment.push({
+                slot: slotNames[index] || `Slot ${index + 1}`,
+                ...itemInfo,
+              });
+            }
+          }
+        });
+        return equipment;
+      };
+
+      // Generate loadout dropdown HTML
+      const generateLoadoutDropdown = (loadout, _chartData) => {
+        const sections = formatLoadout(loadout);
+        if (!sections || sections.length === 0) return "";
+
+        const sectionsHtml = sections
+          .map((section) => {
+            if (section.isEquipment) {
+              // Special handling for equipment
+              const equipmentHtml = section.items
+                .map((eq) => {
+                  const iconHtml = eq.iconUrl
+                    ? `<img src="${eq.iconUrl}" alt="${eq.itemName}" class="equipment-icon" loading="lazy" />`
+                    : "";
+
+                  const qualityClass = eq.quality
+                    ? `quality-${eq.quality}`
+                    : "";
+
+                  // Enhanced tooltip-style details
+                  const detailsHtml =
+                    eq.itemDetails && eq.itemDetails.length > 0
+                      ? `<div class="item-tooltip-details">
+               ${eq.itemDetails.map((detail) => `<div class="equipment-detail">${detail}</div>`).join("")}
              </div>`
-          : '';
-        
-        return `
+                      : "";
+
+                  return `
           <div class="equipment-slot">
             <div class="equipment-slot-header">
               <span class="equipment-slot-name">${eq.slot}</span>
@@ -1213,9 +1343,10 @@ const generateLoadoutDropdown = (loadout, _chartData) => {
             </div>
           </div>
         `;
-      }).join('');
-      
-      return `
+                })
+                .join("");
+
+              return `
         <div class="loadout-section">
           <h4 class="loadout-title">${section.title}</h4>
           <div class="equipment-grid">
@@ -1223,39 +1354,49 @@ const generateLoadoutDropdown = (loadout, _chartData) => {
           </div>
         </div>
       `;
-    } else {
-      // Regular sections
-      const itemsHtml = section.items.map(item => {
-        const valueClass = item.isSpecial === 'talents' ? 'loadout-value loadout-talents' : 'loadout-value';
-        
-        let valueContent;
-        if (item.isTalentList || item.isGlyphList) {
-          // Special handling for talent and glyph lists
-          valueContent = item.value;
-        } else if ((item.isItem || item.isGlyph || item.isTalent) && item.wowheadUrl) {
-          const iconHtml = item.iconUrl 
-            ? `<img src="${item.iconUrl}" alt="${item.value}" class="consumable-icon" loading="lazy" />`
-            : '';
-          const qualityClass = item.quality ? `quality-${item.quality}` : '';
-          valueContent = `
+            } else {
+              // Regular sections
+              const itemsHtml = section.items
+                .map((item) => {
+                  const valueClass =
+                    item.isSpecial === "talents"
+                      ? "loadout-value loadout-talents"
+                      : "loadout-value";
+
+                  let valueContent;
+                  if (item.isTalentList || item.isGlyphList) {
+                    // Special handling for talent and glyph lists
+                    valueContent = item.value;
+                  } else if (
+                    (item.isItem || item.isGlyph || item.isTalent) &&
+                    item.wowheadUrl
+                  ) {
+                    const iconHtml = item.iconUrl
+                      ? `<img src="${item.iconUrl}" alt="${item.value}" class="consumable-icon" loading="lazy" />`
+                      : "";
+                    const qualityClass = item.quality
+                      ? `quality-${item.quality}`
+                      : "";
+                    valueContent = `
             <div class="consumable-item-header">
               ${iconHtml}
               <a href="${item.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${item.value}</a>
             </div>
           `;
-        } else {
-          valueContent = `<span class="${valueClass}">${item.value}</span>`;
-        }
-        
-        return `
+                  } else {
+                    valueContent = `<span class="${valueClass}">${item.value}</span>`;
+                  }
+
+                  return `
           <div class="loadout-item">
             <span class="loadout-label">${item.label}</span>
             ${valueContent}
           </div>
         `;
-      }).join('');
-      
-      return `
+                })
+                .join("");
+
+              return `
         <div class="loadout-section">
           <h4 class="loadout-title">${section.title}</h4>
           <div class="loadout-grid">
@@ -1263,15 +1404,16 @@ const generateLoadoutDropdown = (loadout, _chartData) => {
           </div>
         </div>
       `;
-    }
-  }).join('');
-  
-  // Create WowSim button if simLink is available
-  const wowSimButton = loadout.simLink 
-    ? `<a href="${loadout.simLink}" target="_blank" class="loadout-button wowsim-button">Open in WoWSims</a>`
-    : '';
-  
-  return `
+            }
+          })
+          .join("");
+
+        // Create WowSim button if simLink is available
+        const wowSimButton = loadout.simLink
+          ? `<a href="${loadout.simLink}" target="_blank" class="loadout-button wowsim-button">Open in WoWSims</a>`
+          : "";
+
+        return `
     <div class="chart-dropdown">
       ${wowSimButton}
       <div class="loadout-notice">
@@ -1280,451 +1422,459 @@ const generateLoadoutDropdown = (loadout, _chartData) => {
       ${sectionsHtml}
     </div>
   `;
-};
+      };
 
-// Chart interaction handlers - global function for onclick handlers
-window.toggleChartItem = (element) => {
-  const wrapper = element.closest('.chart-item-wrapper');
-  if (!wrapper) return;
-  
-  const isExpanded = wrapper.classList.contains('chart-item-expanded');
-  
-  // Close all other expanded items
-  document.querySelectorAll('.chart-item-expanded').forEach(item => {
-    if (item !== wrapper) {
-      item.classList.remove('chart-item-expanded');
-    }
-  });
-  
-  // Toggle current item
-  wrapper.classList.toggle('chart-item-expanded', !isExpanded);
-};
+      // Chart interaction handlers - global function for onclick handlers
+      window.toggleChartItem = (element) => {
+        const wrapper = element.closest(".chart-item-wrapper");
+        if (!wrapper) return;
 
-// Class specs for comparison mode
-const classSpecs = {
-  death_knight: [
-    { value: 'frost', label: 'Frost' },
-    { value: 'unholy', label: 'Unholy' }
-  ],
-  druid: [
-    { value: 'balance', label: 'Balance' }
-    //{ value: 'feral', label: 'Feral' }
-  ],
-  hunter: [
-    { value: 'beast_mastery', label: 'Beast Mastery' },
-    { value: 'marksmanship', label: 'Marksmanship' },
-    { value: 'survival', label: 'Survival' }
-  ],
-  mage: [
-    { value: 'arcane', label: 'Arcane' },
-    { value: 'fire', label: 'Fire' },
-    { value: 'frost', label: 'Frost' }
-  ],
-  monk: [
-    { value: 'windwalker', label: 'Windwalker' }
-  ],
-  paladin: [
-    { value: 'retribution', label: 'Retribution' }
-  ],
-  priest: [
-    { value: 'shadow', label: 'Shadow' }
-  ],
-  rogue: [
-    { value: 'assassination', label: 'Assassination' },
-    { value: 'combat', label: 'Combat' },
-    { value: 'subtlety', label: 'Subtlety' }
-  ],
-  shaman: [
-    { value: 'elemental', label: 'Elemental' },
-    { value: 'enhancement', label: 'Enhancement' }
-  ],
-  warlock: [
-    { value: 'affliction', label: 'Affliction' },
-    { value: 'demonology', label: 'Demonology' },
-    { value: 'destruction', label: 'Destruction' }
-  ],
-  warrior: [
-    { value: 'arms', label: 'Arms' },
-    { value: 'fury', label: 'Fury' }
-  ]
-};
+        const isExpanded = wrapper.classList.contains("chart-item-expanded");
 
-// Class colors for rankings mode
-const classColors = {
-  death_knight: '#C41E3A',
-  druid: '#FF7C0A',
-  hunter: '#AAD372',
-  mage: '#3FC7EB',
-  monk: '#00FF98',
-  paladin: '#F48CBA',
-  priest: '#FFFFFF',
-  rogue: '#FFF468',
-  shaman: '#0070DD',
-  warlock: '#8788EE',
-  warrior: '#C69B6D'
-};
-
-class UnifiedChart {
-  constructor() {
-    this.currentData = null;
-    this.isRankingsMode = mode === 'rankings';
-    this.isFixedClassSpec = fixedClass && fixedSpec;
-    
-    this.initializeControls();
-    this.bindEvents();
-    this.loadInitialData();
-  }
-
-  initializeControls() {
-    if (this.isRankingsMode) {
-
-      console.log('Rankings mode initialized');
-
-    } else if (this.isFixedClassSpec) {
-      console.log('Fixed class/spec mode:', fixedClass, fixedSpec);
-
-    } else {
-      this.updateSpecOptions();
-    }
-
-    if (!this.isRankingsMode && comparisonType !== 'both') {
-      const comparisonSelect = document.getElementById('comparisonType');
-      if (comparisonSelect) {
-        comparisonSelect.value = comparisonType;
-      }
-    }
-    
-    // Initialize phase options for comparison modes
-    if (!this.isRankingsMode) {
-      this.updatePhaseOptions();
-      this.updateTrinketCallout();
-    }
-  }
-
-  bindEvents() {
-    if (!this.isRankingsMode && !this.isFixedClassSpec) {
-
-      // class change updates spec options - comparison mode only
-      const classSelect = document.getElementById('class');
-      if (classSelect) {
-        classSelect.addEventListener('change', () => {
-          this.updateSpecOptions();
-          this.clearData();
-        });
-      }
-
-      const dataSelects = document.querySelectorAll('#spec, #comparisonType');
-      dataSelects.forEach(select => {
-        select.addEventListener('change', () => {
-          if (select.id === 'comparisonType') {
-            this.updateSortOptions();
+        // Close all other expanded items
+        document.querySelectorAll(".chart-item-expanded").forEach((item) => {
+          if (item !== wrapper) {
+            item.classList.remove("chart-item-expanded");
           }
-          this.loadData();
         });
-      });
-    }
-    
-    const commonSelects = document.querySelectorAll('#targetCount, #encounterType, #duration, #phase');
-    commonSelects.forEach(select => {
-      select.addEventListener('change', () => this.loadData());
-    });
-    
-    // sort by only re-renders chart
-    const sortBySelect = document.getElementById('sortBy');
-    if (sortBySelect) {
-      sortBySelect.addEventListener('change', () => this.renderChart());
-    }
-  }
 
-  updateSpecOptions() {
-    if (this.isRankingsMode || this.isFixedClassSpec) return;
-    
-    const classSelect = document.getElementById('class');
-    const specSelect = document.getElementById('spec');
-    
-    if (!classSelect || !specSelect) return;
-    
-    const selectedClass = classSelect.value;
-    
-    // clear existing options
-    specSelect.innerHTML = '<option value="">Select Specialization</option>';
-    
-    if (selectedClass && classSpecs[selectedClass]) {
-      specSelect.disabled = false;
-      classSpecs[selectedClass].forEach(spec => {
-        const option = document.createElement('option');
-        option.value = spec.value;
-        option.textContent = spec.label;
-        specSelect.appendChild(option);
-      });
-    } else {
-      specSelect.disabled = true;
-    }
-  }
+        // Toggle current item
+        wrapper.classList.toggle("chart-item-expanded", !isExpanded);
+      };
 
-  getCurrentClass() {
-    if (this.isFixedClassSpec) return fixedClass;
-    if (this.isRankingsMode) return null;
-    const classSelect = document.getElementById('class');
-    return classSelect ? classSelect.value : '';
-  }
+      // Class specs for comparison mode
+      const classSpecs = {
+        death_knight: [
+          { value: "frost", label: "Frost" },
+          { value: "unholy", label: "Unholy" },
+        ],
+        druid: [
+          { value: "balance", label: "Balance" },
+          //{ value: 'feral', label: 'Feral' }
+        ],
+        hunter: [
+          { value: "beast_mastery", label: "Beast Mastery" },
+          { value: "marksmanship", label: "Marksmanship" },
+          { value: "survival", label: "Survival" },
+        ],
+        mage: [
+          { value: "arcane", label: "Arcane" },
+          { value: "fire", label: "Fire" },
+          { value: "frost", label: "Frost" },
+        ],
+        monk: [{ value: "windwalker", label: "Windwalker" }],
+        paladin: [{ value: "retribution", label: "Retribution" }],
+        priest: [{ value: "shadow", label: "Shadow" }],
+        rogue: [
+          { value: "assassination", label: "Assassination" },
+          { value: "combat", label: "Combat" },
+          { value: "subtlety", label: "Subtlety" },
+        ],
+        shaman: [
+          { value: "elemental", label: "Elemental" },
+          { value: "enhancement", label: "Enhancement" },
+        ],
+        warlock: [
+          { value: "affliction", label: "Affliction" },
+          { value: "demonology", label: "Demonology" },
+          { value: "destruction", label: "Destruction" },
+        ],
+        warrior: [
+          { value: "arms", label: "Arms" },
+          { value: "fury", label: "Fury" },
+        ],
+      };
 
-  getCurrentSpec() {
-    if (this.isFixedClassSpec) return fixedSpec;
-    if (this.isRankingsMode) return null;
-    const specSelect = document.getElementById('spec');
-    return specSelect ? specSelect.value : '';
-  }
+      // Class colors for rankings mode
+      const classColors = {
+        death_knight: "#C41E3A",
+        druid: "#FF7C0A",
+        hunter: "#AAD372",
+        mage: "#3FC7EB",
+        monk: "#00FF98",
+        paladin: "#F48CBA",
+        priest: "#FFFFFF",
+        rogue: "#FFF468",
+        shaman: "#0070DD",
+        warlock: "#8788EE",
+        warrior: "#C69B6D",
+      };
 
-  getCurrentComparisonType() {
-    if (this.isRankingsMode) return null;
-    if (comparisonType !== 'both') return comparisonType;
-    const comparisonSelect = document.getElementById('comparisonType');
-    return comparisonSelect ? comparisonSelect.value : 'race';
-  }
+      class UnifiedChart {
+        constructor() {
+          this.currentData = null;
+          this.isRankingsMode = mode === "rankings";
+          this.isFixedClassSpec = fixedClass && fixedSpec;
 
-  updateSortOptions() {
-    const sortBySelect = document.getElementById('sortBy');
-    if (!sortBySelect) return;
-    
-    const currentComparisonType = this.getCurrentComparisonType();
-    const percentOption = sortBySelect.querySelector('option[value="percent"]');
-    
-    if (percentOption) {
-      // Show percentage option only for trinket comparisons
-      percentOption.style.display = currentComparisonType === 'trinket' ? '' : 'none';
-      
-      if (currentComparisonType === 'trinket') {
-        // Default to percentage for trinket comparisons
-        if (sortBySelect.value === 'dps' || !sortBySelect.value) {
-          sortBySelect.value = 'percent';
+          this.initializeControls();
+          this.bindEvents();
+          this.loadInitialData();
         }
-      } else {
-        // If percentage is selected but not available, switch to DPS
-        if (sortBySelect.value === 'percent') {
-          sortBySelect.value = 'dps';
+
+        initializeControls() {
+          if (this.isRankingsMode) {
+            console.log("Rankings mode initialized");
+          } else if (this.isFixedClassSpec) {
+            console.log("Fixed class/spec mode:", fixedClass, fixedSpec);
+          } else {
+            this.updateSpecOptions();
+          }
+
+          if (!this.isRankingsMode && comparisonType !== "both") {
+            const comparisonSelect = document.getElementById("comparisonType");
+            if (comparisonSelect) {
+              comparisonSelect.value = comparisonType;
+            }
+          }
+
+          // Initialize phase options for comparison modes
+          if (!this.isRankingsMode) {
+            this.updatePhaseOptions();
+            this.updateTrinketCallout();
+          }
         }
-      }
-    }
-    
-    // Update phase options for trinket comparisons
-    this.updatePhaseOptions();
-    
-    // Update trinket callout visibility
-    this.updateTrinketCallout();
-  }
 
-  updateTrinketCallout() {
-    const trinketCallout = document.getElementById('trinket-callout');
-    if (!trinketCallout) return;
-    
-    const currentComparisonType = this.getCurrentComparisonType();
-    
-    if (currentComparisonType === 'trinket') {
-      trinketCallout.classList.remove('hidden');
-    } else {
-      trinketCallout.classList.add('hidden');
-    }
-  }
+        bindEvents() {
+          if (!this.isRankingsMode && !this.isFixedClassSpec) {
+            // class change updates spec options - comparison mode only
+            const classSelect = document.getElementById("class");
+            if (classSelect) {
+              classSelect.addEventListener("change", () => {
+                this.updateSpecOptions();
+                this.clearData();
+              });
+            }
 
-  updatePhaseOptions() {
-    const phaseSelect = document.getElementById('phase');
-    if (!phaseSelect) return;
-    
-    // const currentComparisonType = this.getCurrentComparisonType();
-    const preRaidOption = phaseSelect.querySelector('option[value="preRaid"]');
-    
-    if (preRaidOption) {
-      if (!this.isRankingsMode) {
-        // Hide preRaid option for all comparison modes and force p1
-        preRaidOption.style.display = 'none';
-        if (phaseSelect.value === 'preRaid') {
-          phaseSelect.value = 'p1';
+            const dataSelects = document.querySelectorAll(
+              "#spec, #comparisonType",
+            );
+            dataSelects.forEach((select) => {
+              select.addEventListener("change", () => {
+                if (select.id === "comparisonType") {
+                  this.updateSortOptions();
+                }
+                this.loadData();
+              });
+            });
+          }
+
+          const commonSelects = document.querySelectorAll(
+            "#targetCount, #encounterType, #duration, #phase",
+          );
+          commonSelects.forEach((select) => {
+            select.addEventListener("change", () => this.loadData());
+          });
+
+          // sort by only re-renders chart
+          const sortBySelect = document.getElementById("sortBy");
+          if (sortBySelect) {
+            sortBySelect.addEventListener("change", () => this.renderChart());
+          }
         }
-      } else {
-        // Show preRaid option for rankings mode
-        preRaidOption.style.display = '';
-      }
-    }
-  }
 
-  getFileName() {
-    const targetCount = document.getElementById('targetCount').value;
-    const encounterType = document.getElementById('encounterType').value;
-    const duration = document.getElementById('duration').value;
-    const phase = document.getElementById('phase').value;
-    
-    if (this.isRankingsMode) {
-      return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
-    } else {
-      const currentClass = this.getCurrentClass();
-      const currentSpec = this.getCurrentSpec();
-      const currentComparisonType = this.getCurrentComparisonType();
-      return `${currentClass}_${currentSpec}_${currentComparisonType}_${phase}_${encounterType}_${targetCount}_${duration}.json`;
-    }
-  }
+        updateSpecOptions() {
+          if (this.isRankingsMode || this.isFixedClassSpec) return;
 
-  getDataPath() {
-    if (this.isRankingsMode) {
-      return `/data/rankings/`;
-    } else {
-      const currentClass = this.getCurrentClass();
-      const currentSpec = this.getCurrentSpec();
-      const currentComparisonType = this.getCurrentComparisonType();
-      
-      // Handle different comparison type paths
-      if (currentComparisonType === 'trinket') {
-        return `/data/comparison/trinkets/${currentClass}/${currentSpec}/`;
-      } else {
-        return `/data/comparison/race/${currentClass}/${currentSpec}/`;
-      }
-    }
-  }
+          const classSelect = document.getElementById("class");
+          const specSelect = document.getElementById("spec");
 
-  async loadInitialData() {
-    if (this.isRankingsMode || this.isFixedClassSpec) {
-      await this.loadData();
-    }
-    // for dynamic comparison mode, wait for user to select class/spec
-  }
+          if (!classSelect || !specSelect) return;
 
-  async loadData() {
-    if (!this.isRankingsMode) {
-      const currentClass = this.getCurrentClass();
-      const currentSpec = this.getCurrentSpec();
-      
-      if (!currentClass || !currentSpec) {
-        console.log('Class or spec not selected');
-        return;
-      }
-    }
-    
-    // Update sort options based on comparison type
-    this.updateSortOptions();
+          const selectedClass = classSelect.value;
 
-    const loadingEl = document.getElementById('loading');
-    const errorEl = document.getElementById('error');
-    const metadataContainer = document.getElementById('metadata-container');
-    const chartContainer = document.getElementById('chart-container');
+          // clear existing options
+          specSelect.innerHTML =
+            '<option value="">Select Specialization</option>';
 
-    if (!loadingEl || !errorEl || !metadataContainer || !chartContainer) {
-      console.error('Required elements not found');
-      return;
-    }
+          if (selectedClass && classSpecs[selectedClass]) {
+            specSelect.disabled = false;
+            classSpecs[selectedClass].forEach((spec) => {
+              const option = document.createElement("option");
+              option.value = spec.value;
+              option.textContent = spec.label;
+              specSelect.appendChild(option);
+            });
+          } else {
+            specSelect.disabled = true;
+          }
+        }
 
-    const scrollY = window.scrollY;
+        getCurrentClass() {
+          if (this.isFixedClassSpec) return fixedClass;
+          if (this.isRankingsMode) return null;
+          const classSelect = document.getElementById("class");
+          return classSelect ? classSelect.value : "";
+        }
 
-    metadataContainer.style.opacity = '0.5';
-    chartContainer.style.opacity = '0.5';
-    loadingEl.classList.remove('hidden');
-    errorEl.classList.add('hidden');
+        getCurrentSpec() {
+          if (this.isFixedClassSpec) return fixedSpec;
+          if (this.isRankingsMode) return null;
+          const specSelect = document.getElementById("spec");
+          return specSelect ? specSelect.value : "";
+        }
 
-    try {
-      const fileName = this.getFileName();
-      const dataPath = this.getDataPath();
-      const fullPath = `${dataPath}${fileName}`;
-      
-      console.log('Loading:', fullPath);
-      const response = await fetch(fullPath);
-      
-      if (!response.ok) {
-        throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
-      }
+        getCurrentComparisonType() {
+          if (this.isRankingsMode) return null;
+          if (comparisonType !== "both") return comparisonType;
+          const comparisonSelect = document.getElementById("comparisonType");
+          return comparisonSelect ? comparisonSelect.value : "race";
+        }
 
-      this.currentData = await response.json();
-      console.log('Data loaded successfully');
-      
-      loadingEl.classList.add('hidden');
-      
-      this.renderMetadata();
-      this.renderChart();
-      
-      metadataContainer.style.opacity = '1';
-      chartContainer.style.opacity = '1';
-      
-      requestAnimationFrame(() => {
-        window.scrollTo(0, scrollY);
-      });
-      
-    } catch (error) {
-      console.error('Error loading data:', error);
-      loadingEl.classList.add('hidden');
-      errorEl.textContent = `Error loading data: ${error.message}`;
-      errorEl.classList.remove('hidden');
-      
-      metadataContainer.innerHTML = '';
-      chartContainer.innerHTML = '';
-      metadataContainer.style.opacity = '1';
-      chartContainer.style.opacity = '1';
-    }
-  }
+        updateSortOptions() {
+          const sortBySelect = document.getElementById("sortBy");
+          if (!sortBySelect) return;
 
-  clearData() {
-    this.currentData = null;
-    const metadataContainer = document.getElementById('metadata-container');
-    const chartContainer = document.getElementById('chart-container');
-    if (metadataContainer) metadataContainer.innerHTML = '';
-    if (chartContainer) chartContainer.innerHTML = '';
-  }
+          const currentComparisonType = this.getCurrentComparisonType();
+          const percentOption = sortBySelect.querySelector(
+            'option[value="percent"]',
+          );
 
-  calculateBarWidth(itemValue, maxValue, minValue) {
-    // Dynamic scaling based on data spread
-    const minBarWidth = 15;
-    const maxBarWidth = 100;
-    
-    // Calculate how spread out the data is
-    const valueRange = maxValue - minValue;
-    const averageValue = (maxValue + minValue) / 2;
-    const coefficientOfVariation = valueRange / averageValue;
-    
-    // Dynamic scaling weight based on data spread
-    // If data is close together (low variation), emphasize differences more
-    // If data is spread out (high variation), use more zero-based scaling
-    const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
-    const zeroWeight = 1 - rangeWeight;
-    
-    // Calculate both scaling approaches
-    const zeroBasedPercentage = itemValue / maxValue;
-    const rangeBasedPercentage = valueRange > 0 ? (itemValue - minValue) / valueRange : 1;
-    
-    // Blend the two approaches
-    const hybridPercentage = (zeroBasedPercentage * zeroWeight) + (rangeBasedPercentage * rangeWeight);
-    
-    // Apply minimum visibility threshold
-    const minThreshold = minBarWidth / maxBarWidth;
-    const finalPercentage = Math.max(hybridPercentage, minThreshold);
-    return finalPercentage * maxBarWidth;
-  }
+          if (percentOption) {
+            // Show percentage option only for trinket comparisons
+            percentOption.style.display =
+              currentComparisonType === "trinket" ? "" : "none";
 
-  sortChartItems(chartItems, sortBy) {
-    // Sort based on selected metric
-    if (sortBy === 'stdev') {
-      chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
-    } else if (sortBy === 'percent') {
-      chartItems.sort((a, b) => (b.percentIncrease || 0) - (a.percentIncrease || 0)); // Higher percentage is better
-    } else {
-      chartItems.sort((a, b) => b.value - a.value); // Higher values are better
-    }
-    return chartItems;
-  }
+            if (currentComparisonType === "trinket") {
+              // Default to percentage for trinket comparisons
+              if (sortBySelect.value === "dps" || !sortBySelect.value) {
+                sortBySelect.value = "percent";
+              }
+            } else {
+              // If percentage is selected but not available, switch to DPS
+              if (sortBySelect.value === "percent") {
+                sortBySelect.value = "dps";
+              }
+            }
+          }
 
-  renderMetadata() {
-    if (!this.currentData) return;
+          // Update phase options for trinket comparisons
+          this.updatePhaseOptions();
 
-    const container = document.getElementById('metadata-container');
-    const metadata = this.currentData.metadata;
-    
-    if (this.isRankingsMode) {
-      this.renderRankingsMetadata(container, metadata);
-    } else {
-      this.renderComparisonMetadata(container, metadata);
-    }
-  }
+          // Update trinket callout visibility
+          this.updateTrinketCallout();
+        }
 
-  renderRankingsMetadata(container, metadata) {
-    const simulationDate = formatSimulationDate(metadata.timestamp);
+        updateTrinketCallout() {
+          const trinketCallout = document.getElementById("trinket-callout");
+          if (!trinketCallout) return;
 
-    container.innerHTML = `
+          const currentComparisonType = this.getCurrentComparisonType();
+
+          if (currentComparisonType === "trinket") {
+            trinketCallout.classList.remove("hidden");
+          } else {
+            trinketCallout.classList.add("hidden");
+          }
+        }
+
+        updatePhaseOptions() {
+          const phaseSelect = document.getElementById("phase");
+          if (!phaseSelect) return;
+
+          // const currentComparisonType = this.getCurrentComparisonType();
+          const preRaidOption = phaseSelect.querySelector(
+            'option[value="preRaid"]',
+          );
+
+          if (preRaidOption) {
+            if (!this.isRankingsMode) {
+              // Hide preRaid option for all comparison modes and force p1
+              preRaidOption.style.display = "none";
+              if (phaseSelect.value === "preRaid") {
+                phaseSelect.value = "p1";
+              }
+            } else {
+              // Show preRaid option for rankings mode
+              preRaidOption.style.display = "";
+            }
+          }
+        }
+
+        getFileName() {
+          const targetCount = document.getElementById("targetCount").value;
+          const encounterType = document.getElementById("encounterType").value;
+          const duration = document.getElementById("duration").value;
+          const phase = document.getElementById("phase").value;
+
+          if (this.isRankingsMode) {
+            return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+          } else {
+            const currentClass = this.getCurrentClass();
+            const currentSpec = this.getCurrentSpec();
+            const currentComparisonType = this.getCurrentComparisonType();
+            return `${currentClass}_${currentSpec}_${currentComparisonType}_${phase}_${encounterType}_${targetCount}_${duration}.json`;
+          }
+        }
+
+        getDataPath() {
+          if (this.isRankingsMode) {
+            return `/data/rankings/`;
+          } else {
+            const currentClass = this.getCurrentClass();
+            const currentSpec = this.getCurrentSpec();
+            const currentComparisonType = this.getCurrentComparisonType();
+
+            // Handle different comparison type paths
+            if (currentComparisonType === "trinket") {
+              return `/data/comparison/trinkets/${currentClass}/${currentSpec}/`;
+            } else {
+              return `/data/comparison/race/${currentClass}/${currentSpec}/`;
+            }
+          }
+        }
+
+        async loadInitialData() {
+          if (this.isRankingsMode || this.isFixedClassSpec) {
+            await this.loadData();
+          }
+          // for dynamic comparison mode, wait for user to select class/spec
+        }
+
+        async loadData() {
+          if (!this.isRankingsMode) {
+            const currentClass = this.getCurrentClass();
+            const currentSpec = this.getCurrentSpec();
+
+            if (!currentClass || !currentSpec) {
+              console.log("Class or spec not selected");
+              return;
+            }
+          }
+
+          // Update sort options based on comparison type
+          this.updateSortOptions();
+
+          const loadingEl = document.getElementById("loading");
+          const errorEl = document.getElementById("error");
+          const metadataContainer =
+            document.getElementById("metadata-container");
+          const chartContainer = document.getElementById("chart-container");
+
+          if (!loadingEl || !errorEl || !metadataContainer || !chartContainer) {
+            console.error("Required elements not found");
+            return;
+          }
+
+          const scrollY = window.scrollY;
+
+          metadataContainer.style.opacity = "0.5";
+          chartContainer.style.opacity = "0.5";
+          loadingEl.classList.remove("hidden");
+          errorEl.classList.add("hidden");
+
+          try {
+            const fileName = this.getFileName();
+            const dataPath = this.getDataPath();
+            const fullPath = `${dataPath}${fileName}`;
+
+            console.log("Loading:", fullPath);
+            const response = await fetch(fullPath);
+
+            if (!response.ok) {
+              throw new Error(
+                `Failed to load ${fileName}: ${response.statusText}`,
+              );
+            }
+
+            this.currentData = await response.json();
+            console.log("Data loaded successfully");
+
+            loadingEl.classList.add("hidden");
+
+            this.renderMetadata();
+            this.renderChart();
+
+            metadataContainer.style.opacity = "1";
+            chartContainer.style.opacity = "1";
+
+            requestAnimationFrame(() => {
+              window.scrollTo(0, scrollY);
+            });
+          } catch (error) {
+            console.error("Error loading data:", error);
+            loadingEl.classList.add("hidden");
+            errorEl.textContent = `Error loading data: ${error.message}`;
+            errorEl.classList.remove("hidden");
+
+            metadataContainer.innerHTML = "";
+            chartContainer.innerHTML = "";
+            metadataContainer.style.opacity = "1";
+            chartContainer.style.opacity = "1";
+          }
+        }
+
+        clearData() {
+          this.currentData = null;
+          const metadataContainer =
+            document.getElementById("metadata-container");
+          const chartContainer = document.getElementById("chart-container");
+          if (metadataContainer) metadataContainer.innerHTML = "";
+          if (chartContainer) chartContainer.innerHTML = "";
+        }
+
+        calculateBarWidth(itemValue, maxValue, minValue) {
+          // Dynamic scaling based on data spread
+          const minBarWidth = 15;
+          const maxBarWidth = 100;
+
+          // Calculate how spread out the data is
+          const valueRange = maxValue - minValue;
+          const averageValue = (maxValue + minValue) / 2;
+          const coefficientOfVariation = valueRange / averageValue;
+
+          // Dynamic scaling weight based on data spread
+          // If data is close together (low variation), emphasize differences more
+          // If data is spread out (high variation), use more zero-based scaling
+          const rangeWeight = Math.min(coefficientOfVariation * 1.5, 0.8); // Cap at 80% range-based
+          const zeroWeight = 1 - rangeWeight;
+
+          // Calculate both scaling approaches
+          const zeroBasedPercentage = itemValue / maxValue;
+          const rangeBasedPercentage =
+            valueRange > 0 ? (itemValue - minValue) / valueRange : 1;
+
+          // Blend the two approaches
+          const hybridPercentage =
+            zeroBasedPercentage * zeroWeight +
+            rangeBasedPercentage * rangeWeight;
+
+          // Apply minimum visibility threshold
+          const minThreshold = minBarWidth / maxBarWidth;
+          const finalPercentage = Math.max(hybridPercentage, minThreshold);
+          return finalPercentage * maxBarWidth;
+        }
+
+        sortChartItems(chartItems, sortBy) {
+          // Sort based on selected metric
+          if (sortBy === "stdev") {
+            chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+          } else if (sortBy === "percent") {
+            chartItems.sort(
+              (a, b) => (b.percentIncrease || 0) - (a.percentIncrease || 0),
+            ); // Higher percentage is better
+          } else {
+            chartItems.sort((a, b) => b.value - a.value); // Higher values are better
+          }
+          return chartItems;
+        }
+
+        renderMetadata() {
+          if (!this.currentData) return;
+
+          const container = document.getElementById("metadata-container");
+          const metadata = this.currentData.metadata;
+
+          if (this.isRankingsMode) {
+            this.renderRankingsMetadata(container, metadata);
+          } else {
+            this.renderComparisonMetadata(container, metadata);
+          }
+        }
+
+        renderRankingsMetadata(container, metadata) {
+          const simulationDate = formatSimulationDate(metadata.timestamp);
+
+          container.innerHTML = `
       <div class="simulation-metadata">
         <h3 class="metadata-title">DPS Rankings Details</h3>
         <div class="metadata-grid">
@@ -1775,15 +1925,16 @@ class UnifiedChart {
         </div>
       </div>
     `;
-  }
+        }
 
-  renderComparisonMetadata(container, metadata) {
-    const currentComparisonType = this.getCurrentComparisonType();
-    const comparisonLabel = currentComparisonType === 'race' ? 'Race' : 'Trinket';
-    const simulationDate = formatSimulationDate(metadata.timestamp);
-    const itemCount = Object.keys(this.currentData.results).length;
+        renderComparisonMetadata(container, metadata) {
+          const currentComparisonType = this.getCurrentComparisonType();
+          const comparisonLabel =
+            currentComparisonType === "race" ? "Race" : "Trinket";
+          const simulationDate = formatSimulationDate(metadata.timestamp);
+          const itemCount = Object.keys(this.currentData.results).length;
 
-    container.innerHTML = `
+          container.innerHTML = `
       <div class="simulation-metadata">
         <h3 class="metadata-title">${comparisonLabel} Comparison Details</h3>
         <div class="metadata-grid">
@@ -1832,76 +1983,88 @@ class UnifiedChart {
         </div>
       </div>
     `;
-  }
+        }
 
-  renderChart() {
-    if (!this.currentData) return;
+        renderChart() {
+          if (!this.currentData) return;
 
-    const container = document.getElementById('chart-container');
-    const sortBy = document.getElementById('sortBy').value;
-    
-    if (this.isRankingsMode) {
-      this.renderRankingsChart(container, sortBy);
-    } else {
-      this.renderComparisonChart(container, sortBy);
-    }
-  }
+          const container = document.getElementById("chart-container");
+          const sortBy = document.getElementById("sortBy").value;
 
-  renderRankingsChart(container, sortBy) {
-    const chartItems = [];
-    // convert rankings data structure
-    
-    for (const [className, classData] of Object.entries(this.currentData.results)) {
-      for (const [specName, specData] of Object.entries(classData)) {
-        chartItems.push({
-          label: specName,
-          dps: specData.dps,
-          max: specData.max,
-          min: specData.min,
-          stdev: specData.stdev,
-          value: specData[sortBy] || specData.dps,
-          category: className,
-          className: className,
-          specName: specName,
-          loadout: specData.loadout || null
-        });
-      }
-    }
+          if (this.isRankingsMode) {
+            this.renderRankingsChart(container, sortBy);
+          } else {
+            this.renderComparisonChart(container, sortBy);
+          }
+        }
 
-    this.sortChartItems(chartItems, sortBy);
+        renderRankingsChart(container, sortBy) {
+          const chartItems = [];
+          // convert rankings data structure
 
-    const maxDps = Math.max(...chartItems.map(item => item.value));
-    const minDps = Math.min(...chartItems.map(item => item.value));
-    
-    const chartTitles = {
-      dps: 'DPS Rankings (Average)',
-      max: 'DPS Rankings (Maximum)',
-      min: 'DPS Rankings (Minimum)', 
-      stdev: 'DPS Consistency Rankings (Low StdDev = More Consistent)'
-    };
-    
-    container.innerHTML = `
+          for (const [className, classData] of Object.entries(
+            this.currentData.results,
+          )) {
+            for (const [specName, specData] of Object.entries(classData)) {
+              chartItems.push({
+                label: specName,
+                dps: specData.dps,
+                max: specData.max,
+                min: specData.min,
+                stdev: specData.stdev,
+                value: specData[sortBy] || specData.dps,
+                category: className,
+                className: className,
+                specName: specName,
+                loadout: specData.loadout || null,
+              });
+            }
+          }
+
+          this.sortChartItems(chartItems, sortBy);
+
+          const maxDps = Math.max(...chartItems.map((item) => item.value));
+          const minDps = Math.min(...chartItems.map((item) => item.value));
+
+          const chartTitles = {
+            dps: "DPS Rankings (Average)",
+            max: "DPS Rankings (Maximum)",
+            min: "DPS Rankings (Minimum)",
+            stdev: "DPS Consistency Rankings (Low StdDev = More Consistent)",
+          };
+
+          container.innerHTML = `
       <div class="chart-container">
-        <h2 class="chart-title">${chartTitles[sortBy] || 'DPS Rankings'}</h2>
+        <h2 class="chart-title">${chartTitles[sortBy] || "DPS Rankings"}</h2>
         <div class="chart-bars">
-          ${chartItems.map((item, index) => {
-            const barWidth = this.calculateBarWidth(item.value, maxDps, minDps);
-            
-            const displayValue = Math.round(item.value).toLocaleString();
-            const avgDps = Math.round(item.dps).toLocaleString();
-            const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
-            const chartDisplayValue = displayValue; // Rankings always show raw values
-            
-            const barColor = classColors[item.className] || '#666';
-            const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
-            
-            return `
+          ${chartItems
+            .map((item, index) => {
+              const barWidth = this.calculateBarWidth(
+                item.value,
+                maxDps,
+                minDps,
+              );
+
+              const displayValue = Math.round(item.value).toLocaleString();
+              const avgDps = Math.round(item.dps).toLocaleString();
+              const tooltip =
+                sortBy === "dps"
+                  ? displayValue
+                  : `${displayValue} (Avg: ${avgDps})`;
+              const chartDisplayValue = displayValue; // Rankings always show raw values
+
+              const barColor = classColors[item.className] || "#666";
+              const dropdownContent = item.loadout
+                ? generateLoadoutDropdown(item.loadout, this.currentData)
+                : "";
+
+              return `
             <div class="chart-item-wrapper">
               <div class="chart-item" onclick="toggleChartItem(this.parentElement)">
                 <div class="chart-labels">
                   <span class="chart-rank">#${index + 1}</span>
                   <span class="chart-label">${item.label}</span>
-                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ''}
+                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ""}
                 </div>
                 <div class="chart-bar-container">
                   <div class="chart-bar-track">
@@ -1913,139 +2076,176 @@ class UnifiedChart {
               ${dropdownContent}
             </div>
             `;
-          }).join('')}
+            })
+            .join("")}
         </div>
       </div>
     `;
-  }
+        }
 
-  renderComparisonChart(container, sortBy) {
-    const currentComparisonType = this.getCurrentComparisonType();
-    const comparisonLabel = currentComparisonType === 'race' ? 'Race' : 'Trinket';
-    
-    const chartItems = [];
-    
-    for (const [itemName, itemData] of Object.entries(this.currentData.results)) {
-      let label = itemName.replace(/_/g, ' ');
-      let iconData = null;
-      
-      // For trinket comparisons, extract icon and ilvl from equipment
-      if (currentComparisonType === 'trinket' && itemData.loadout && itemData.loadout.equipment) {
-        const trinket1 = itemData.loadout.equipment.items[12]; // Trinket slot 1
-        const trinket2 = itemData.loadout.equipment.items[13]; // Trinket slot 2
-        
-        // Find the trinket that's not empty (baseline has no trinkets)
-        const trinket = trinket1 && trinket1.id ? trinket1 : (trinket2 && trinket2.id ? trinket2 : null);
-        
-        if (trinket) {
-          const ilvl = trinket.stats && trinket.stats.ilvl ? trinket.stats.ilvl : '';
-          iconData = {
-            icon: trinket.icon,
-            ilvl: ilvl,
-            name: trinket.name
+        renderComparisonChart(container, sortBy) {
+          const currentComparisonType = this.getCurrentComparisonType();
+          const comparisonLabel =
+            currentComparisonType === "race" ? "Race" : "Trinket";
+
+          const chartItems = [];
+
+          for (const [itemName, itemData] of Object.entries(
+            this.currentData.results,
+          )) {
+            let label = itemName.replace(/_/g, " ");
+            let iconData = null;
+
+            // For trinket comparisons, extract icon and ilvl from equipment
+            if (
+              currentComparisonType === "trinket" &&
+              itemData.loadout &&
+              itemData.loadout.equipment
+            ) {
+              const trinket1 = itemData.loadout.equipment.items[12]; // Trinket slot 1
+              const trinket2 = itemData.loadout.equipment.items[13]; // Trinket slot 2
+
+              // Find the trinket that's not empty (baseline has no trinkets)
+              const trinket =
+                trinket1 && trinket1.id
+                  ? trinket1
+                  : trinket2 && trinket2.id
+                    ? trinket2
+                    : null;
+
+              if (trinket) {
+                const ilvl =
+                  trinket.stats && trinket.stats.ilvl ? trinket.stats.ilvl : "";
+                iconData = {
+                  icon: trinket.icon,
+                  ilvl: ilvl,
+                  name: trinket.name,
+                };
+                label = ilvl ? `${ilvl}` : trinket.name; // Show just ilvl if available
+              }
+            }
+
+            chartItems.push({
+              label: label,
+              dps: itemData.dps,
+              max: itemData.max,
+              min: itemData.min,
+              stdev: itemData.stdev,
+              value: itemData[sortBy] || itemData.dps,
+              category: itemName,
+              rawName: itemName,
+              loadout: itemData.loadout || null,
+              iconData: iconData,
+            });
+          }
+
+          // Find baseline for percentage calculations (only for trinket comparisons)
+          const baseline = this.currentData.results.baseline;
+          const baselineDps = baseline ? baseline.dps : null;
+
+          // Add percentage and DPS increase calculations to chart items
+          if (baselineDps && currentComparisonType === "trinket") {
+            chartItems.forEach((item) => {
+              if (item.rawName === "baseline") {
+                item.percentIncrease = 0;
+                item.dpsIncrease = 0;
+              } else {
+                // Calculate increases based on sort type (compare like-to-like)
+                const baselineValue = baseline[sortBy] || baseline.dps;
+                const itemValue = item[sortBy] || item.dps;
+
+                item.percentIncrease =
+                  ((itemValue - baselineValue) / baselineValue) * 100;
+                item.dpsIncrease = itemValue - baselineValue;
+              }
+            });
+          }
+
+          this.sortChartItems(chartItems, sortBy);
+
+          const maxDps = Math.max(...chartItems.map((item) => item.value));
+          const minDps = Math.min(...chartItems.map((item) => item.value));
+
+          const chartTitles = {
+            dps: `${comparisonLabel} DPS Rankings (Average)`,
+            max: `${comparisonLabel} DPS Rankings (Maximum)`,
+            min: `${comparisonLabel} DPS Rankings (Minimum)`,
+            stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`,
+            percent: `${comparisonLabel} Performance Rankings (% Increase)`,
           };
-          label = ilvl ? `${ilvl}` : trinket.name; // Show just ilvl if available
-        }
-      }
-      
-      chartItems.push({
-        label: label,
-        dps: itemData.dps,
-        max: itemData.max,
-        min: itemData.min,
-        stdev: itemData.stdev,
-        value: itemData[sortBy] || itemData.dps,
-        category: itemName,
-        rawName: itemName,
-        loadout: itemData.loadout || null,
-        iconData: iconData
-      });
-    }
 
-    // Find baseline for percentage calculations (only for trinket comparisons)
-    const baseline = this.currentData.results.baseline;
-    const baselineDps = baseline ? baseline.dps : null;
-    
-    // Add percentage and DPS increase calculations to chart items
-    if (baselineDps && currentComparisonType === 'trinket') {
-      chartItems.forEach(item => {
-        if (item.rawName === 'baseline') {
-          item.percentIncrease = 0;
-          item.dpsIncrease = 0;
-        } else {
-          // Calculate increases based on sort type (compare like-to-like)
-          const baselineValue = baseline[sortBy] || baseline.dps;
-          const itemValue = item[sortBy] || item.dps;
-          
-          item.percentIncrease = ((itemValue - baselineValue) / baselineValue * 100);
-          item.dpsIncrease = itemValue - baselineValue;
-        }
-      });
-    }
-
-    this.sortChartItems(chartItems, sortBy);
-
-    const maxDps = Math.max(...chartItems.map(item => item.value));
-    const minDps = Math.min(...chartItems.map(item => item.value));
-    
-    const chartTitles = {
-      dps: `${comparisonLabel} DPS Rankings (Average)`,
-      max: `${comparisonLabel} DPS Rankings (Maximum)`,
-      min: `${comparisonLabel} DPS Rankings (Minimum)`, 
-      stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`,
-      percent: `${comparisonLabel} Performance Rankings (% Increase)`
-    };
-
-    // TODO: abstract
-    container.innerHTML = `
+          // TODO: abstract
+          container.innerHTML = `
       <div class="chart-container">
         <h2 class="chart-title">${chartTitles[sortBy] || `${comparisonLabel} DPS Rankings`}</h2>
         <div class="chart-bars">
-          ${chartItems.map((item, index) => {
-            const barWidth = this.calculateBarWidth(item.value, maxDps, minDps);
-            
-            const displayValue = Math.round(item.value).toLocaleString();
-            const avgDps = Math.round(item.dps).toLocaleString();
-            
-            // Format tooltip and display value based on sort type and comparison type
-            let tooltip, chartDisplayValue;
-            if (currentComparisonType === 'trinket' && item.percentIncrease !== undefined) {
-              const percentDisplay = item.percentIncrease === 0 ? 'Baseline' : `+${item.percentIncrease.toFixed(1)}%`;
-              const dpsIncreaseDisplay = item.dpsIncrease === 0 ? 'Baseline' : `+${Math.round(item.dpsIncrease).toLocaleString()}`;
-              
-              if (sortBy === 'percent') {
-                // When sorting by percentage, show percentage as main value
-                chartDisplayValue = percentDisplay;
-                tooltip = `${percentDisplay} (${avgDps} DPS)`;
-              } else if (sortBy === 'stdev') {
-                // For consistency sort, show actual standard deviation
-                chartDisplayValue = Math.round(item.stdev).toLocaleString();
-                tooltip = `${chartDisplayValue} StdDev (${avgDps} DPS avg, lower is more consistent)`;
+          ${chartItems
+            .map((item, index) => {
+              const barWidth = this.calculateBarWidth(
+                item.value,
+                maxDps,
+                minDps,
+              );
+
+              const displayValue = Math.round(item.value).toLocaleString();
+              const avgDps = Math.round(item.dps).toLocaleString();
+
+              // Format tooltip and display value based on sort type and comparison type
+              let tooltip, chartDisplayValue;
+              if (
+                currentComparisonType === "trinket" &&
+                item.percentIncrease !== undefined
+              ) {
+                const percentDisplay =
+                  item.percentIncrease === 0
+                    ? "Baseline"
+                    : `+${item.percentIncrease.toFixed(1)}%`;
+                const dpsIncreaseDisplay =
+                  item.dpsIncrease === 0
+                    ? "Baseline"
+                    : `+${Math.round(item.dpsIncrease).toLocaleString()}`;
+
+                if (sortBy === "percent") {
+                  // When sorting by percentage, show percentage as main value
+                  chartDisplayValue = percentDisplay;
+                  tooltip = `${percentDisplay} (${avgDps} DPS)`;
+                } else if (sortBy === "stdev") {
+                  // For consistency sort, show actual standard deviation
+                  chartDisplayValue = Math.round(item.stdev).toLocaleString();
+                  tooltip = `${chartDisplayValue} StdDev (${avgDps} DPS avg, lower is more consistent)`;
+                } else {
+                  // For DPS-based sorts, show DPS increase from baseline
+                  chartDisplayValue = dpsIncreaseDisplay;
+                  tooltip =
+                    sortBy === "dps"
+                      ? `${displayValue} DPS (${dpsIncreaseDisplay} vs baseline)`
+                      : `${displayValue} (Avg: ${avgDps} DPS, ${dpsIncreaseDisplay} vs baseline)`;
+                }
               } else {
-                // For DPS-based sorts, show DPS increase from baseline
-                chartDisplayValue = dpsIncreaseDisplay;
-                tooltip = sortBy === 'dps' ? `${displayValue} DPS (${dpsIncreaseDisplay} vs baseline)` : `${displayValue} (Avg: ${avgDps} DPS, ${dpsIncreaseDisplay} vs baseline)`;
+                chartDisplayValue = displayValue;
+                tooltip =
+                  sortBy === "dps"
+                    ? displayValue
+                    : `${displayValue} (Avg: ${avgDps})`;
               }
-            } else {
-              chartDisplayValue = displayValue;
-              tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
-            }
-            
-            const barColor = classColors[this.getCurrentClass()] || '#666';
-            const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
-            
-            // Create the label content with icon if trinket
-            const labelContent = item.iconData ? 
-              `<img src="https://wow.zamimg.com/images/wow/icons/small/${item.iconData.icon}.jpg" alt="${item.iconData.name}" class="trinket-icon" title="${item.iconData.name}" /><span class="trinket-ilvl">${item.label}</span>` :
-              `<span class="chart-label">${item.label}</span>`;
-            
-            return `
+
+              const barColor = classColors[this.getCurrentClass()] || "#666";
+              const dropdownContent = item.loadout
+                ? generateLoadoutDropdown(item.loadout, this.currentData)
+                : "";
+
+              // Create the label content with icon if trinket
+              const labelContent = item.iconData
+                ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${item.iconData.icon}.jpg" alt="${item.iconData.name}" class="trinket-icon" title="${item.iconData.name}" /><span class="trinket-ilvl">${item.label}</span>`
+                : `<span class="chart-label">${item.label}</span>`;
+
+              return `
             <div class="chart-item-wrapper">
               <div class="chart-item" onclick="toggleChartItem(this.parentElement)">
                 <div class="chart-labels">
                   <span class="chart-rank">#${index + 1}</span>
                   ${labelContent}
-                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ''}
+                  ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ""}
                 </div>
                 <div class="chart-bar-container">
                   <div class="chart-bar-track">
@@ -2057,20 +2257,21 @@ class UnifiedChart {
               ${dropdownContent}
             </div>
             `;
-          }).join('')}
+            })
+            .join("")}
         </div>
       </div>
     `;
-  }
-}
+        }
+      }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing UnifiedChart...');
-  new UnifiedChart();
-});
+      // Initialize when DOM is loaded
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("DOM loaded, initializing UnifiedChart...");
+        new UnifiedChart();
+      });
     </script>
-    
+
     <!-- ItemDatabase component for reforge data and item utilities -->
     <ItemDatabase />
   </body>
