@@ -141,14 +141,21 @@
       # Convert string to list of characters, then to list of numbers
       chars = lib.stringToCharacters talentString;
       # Convert each character to a number (tier choice 1-3)
-      choices = map (char: 
-        let num = lib.toInt char;
-        in if num >= 1 && num <= 3 then num else 0
-      ) chars;
+      choices =
+        map (
+          char: let
+            num = lib.toInt char;
+          in
+            if num >= 1 && num <= 3
+            then num
+            else 0
+        )
+        chars;
       # Create list of {tier, choice} objects, filtering out invalid choices (0)
       indexedChoices = lib.imap1 (tier: choice: {inherit tier choice;}) choices;
       validChoices = lib.filter (choice: choice.choice != 0) indexedChoices;
-    in validChoices;
+    in
+      validChoices;
 
     # parse gem stats into readable format
     parseGemStats = gem:
@@ -423,16 +430,25 @@ in {
 
   # enrich glyphs with names and icons from glyph database
   enrichGlyphs = className: glyphs:
-    if glyphs == null then null
+    if glyphs == null
+    then null
     else let
-      getGlyphDataSafe = glyphId: let 
+      getGlyphDataSafe = glyphId: let
         glyphData = helpers.getGlyphData className glyphId;
       in
-        if glyphData != null then {
+        if glyphData != null
+        then {
           name = glyphData.name;
-          icon = if glyphData ? icon then glyphData.icon else null;
-          spellId = if glyphData ? spellId then glyphData.spellId else null;
-        } else {
+          icon =
+            if glyphData ? icon
+            then glyphData.icon
+            else null;
+          spellId =
+            if glyphData ? spellId
+            then glyphData.spellId
+            else null;
+        }
+        else {
           name = "Glyph ${toString glyphId}";
           icon = null;
           spellId = null;
@@ -440,37 +456,54 @@ in {
     in
       glyphs
       // lib.optionalAttrs (glyphs ? major1 && glyphs.major1 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.major1; in {
+        let
+          glyphData = getGlyphDataSafe glyphs.major1;
+        in {
           major1Name = glyphData.name;
           major1Icon = glyphData.icon;
           major1SpellId = glyphData.spellId;
         }
-      ) // lib.optionalAttrs (glyphs ? major2 && glyphs.major2 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.major2; in {
+      )
+      // lib.optionalAttrs (glyphs ? major2 && glyphs.major2 != 0) (
+        let
+          glyphData = getGlyphDataSafe glyphs.major2;
+        in {
           major2Name = glyphData.name;
           major2Icon = glyphData.icon;
           major2SpellId = glyphData.spellId;
         }
-      ) // lib.optionalAttrs (glyphs ? major3 && glyphs.major3 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.major3; in {
+      )
+      // lib.optionalAttrs (glyphs ? major3 && glyphs.major3 != 0) (
+        let
+          glyphData = getGlyphDataSafe glyphs.major3;
+        in {
           major3Name = glyphData.name;
           major3Icon = glyphData.icon;
           major3SpellId = glyphData.spellId;
         }
-      ) // lib.optionalAttrs (glyphs ? minor1 && glyphs.minor1 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.minor1; in {
+      )
+      // lib.optionalAttrs (glyphs ? minor1 && glyphs.minor1 != 0) (
+        let
+          glyphData = getGlyphDataSafe glyphs.minor1;
+        in {
           minor1Name = glyphData.name;
           minor1Icon = glyphData.icon;
           minor1SpellId = glyphData.spellId;
         }
-      ) // lib.optionalAttrs (glyphs ? minor2 && glyphs.minor2 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.minor2; in {
+      )
+      // lib.optionalAttrs (glyphs ? minor2 && glyphs.minor2 != 0) (
+        let
+          glyphData = getGlyphDataSafe glyphs.minor2;
+        in {
           minor2Name = glyphData.name;
           minor2Icon = glyphData.icon;
           minor2SpellId = glyphData.spellId;
         }
-      ) // lib.optionalAttrs (glyphs ? minor3 && glyphs.minor3 != 0) (
-        let glyphData = getGlyphDataSafe glyphs.minor3; in {
+      )
+      // lib.optionalAttrs (glyphs ? minor3 && glyphs.minor3 != 0) (
+        let
+          glyphData = getGlyphDataSafe glyphs.minor3;
+        in {
           minor3Name = glyphData.name;
           minor3Icon = glyphData.icon;
           minor3SpellId = glyphData.spellId;
@@ -484,18 +517,28 @@ in {
     else let
       # Parse talent string into tier/choice pairs
       talentChoices = helpers.parseTalentString talentString;
-      
+
       # Get talent data for each choice and create enriched talent objects
-      enrichedTalents = map (choice: let
-        talentData = helpers.getTalentData className choice.tier choice.choice;
-      in {
-        tier = choice.tier;
-        choice = choice.choice;
-        name = if talentData != null then talentData.name else "Unknown Talent";
-        spellId = if talentData != null then talentData.spellId else null;
-        icon = if talentData != null then talentData.icon else null;
-      }) talentChoices;
-      
+      enrichedTalents =
+        map (choice: let
+          talentData = helpers.getTalentData className choice.tier choice.choice;
+        in {
+          tier = choice.tier;
+          choice = choice.choice;
+          name =
+            if talentData != null
+            then talentData.name
+            else "Unknown Talent";
+          spellId =
+            if talentData != null
+            then talentData.spellId
+            else null;
+          icon =
+            if talentData != null
+            then talentData.icon
+            else null;
+        })
+        talentChoices;
     in {
       talentString = talentString;
       talents = enrichedTalents;

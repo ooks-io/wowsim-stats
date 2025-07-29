@@ -3,7 +3,6 @@
   writeShellApplication,
   ...
 }:
-
 writeShellApplication {
   name = "getDB";
   text = ''

@@ -12,4 +12,5 @@
   party = import ./party.nix {inherit lib;};
   classes = import ./classes.nix {inherit lib;};
   itemDatabase = import ./itemDatabase.nix {inherit inputs lib;};
+  trinket = import ./trinket.nix {inherit lib;};
 }

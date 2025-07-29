@@ -6,10 +6,14 @@
   buffs,
   debuffs,
   inputs,
+  trinket,
   ...
 }: let
   massSimFunctions = import ./mkMassSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;};
   inherit (massSimFunctions) mkMassSim mkRaceComparison;
+
+  trinketComparison = import ./mkTrinketComparison.nix {inherit lib pkgs classes encounter buffs debuffs inputs trinket;};
+  inherit (trinketComparison) mkTrinketComparison;
 
   # TODO: abstract this.
   massSimulations = {
@@ -445,6 +449,150 @@
     }
   ];
 
+  # trinket scenarios - same as race scenarios for now
+  trinketScenarios = raceScenarios;
+
+  # trinket comparison specs - all DPS specs with appropriate trinket categories
+  trinketComparisonSpecs = [
+    # Agility specs
+    {
+      class = "monk";
+      spec = "windwalker";
+      trinketCategory = "agility";
+    }
+    {
+      class = "hunter";
+      spec = "beast_mastery";
+      trinketCategory = "agility";
+    }
+    {
+      class = "hunter";
+      spec = "marksmanship";
+      trinketCategory = "agility";
+    }
+    {
+      class = "hunter";
+      spec = "survival";
+      trinketCategory = "agility";
+    }
+    {
+      class = "rogue";
+      spec = "assassination";
+      trinketCategory = "agility";
+    }
+    {
+      class = "rogue";
+      spec = "combat";
+      trinketCategory = "agility";
+    }
+    {
+      class = "rogue";
+      spec = "subtlety";
+      trinketCategory = "agility";
+    }
+    {
+      class = "shaman";
+      spec = "enhancement";
+      trinketCategory = "agility";
+    }
+
+    # Intellect specs
+    {
+      class = "mage";
+      spec = "arcane";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "mage";
+      spec = "fire";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "mage";
+      spec = "frost";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "druid";
+      spec = "balance";
+      trinketCategory = "intellectHybrid";
+    }
+    {
+      class = "priest";
+      spec = "shadow";
+      trinketCategory = "intellectHybrid";
+    }
+    {
+      class = "warlock";
+      spec = "affliction";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "warlock";
+      spec = "demonology";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "warlock";
+      spec = "destruction";
+      trinketCategory = "intellect";
+    }
+    {
+      class = "shaman";
+      spec = "elemental";
+      trinketCategory = "intellectHybrid";
+    }
+
+    # Strength specs
+    {
+      class = "death_knight";
+      spec = "frost";
+      trinketCategory = "strength";
+    }
+    {
+      class = "death_knight";
+      spec = "unholy";
+      trinketCategory = "strength";
+    }
+    {
+      class = "paladin";
+      spec = "retribution";
+      trinketCategory = "strength";
+    }
+    {
+      class = "warrior";
+      spec = "arms";
+      trinketCategory = "strength";
+    }
+    {
+      class = "warrior";
+      spec = "fury";
+      trinketCategory = "strength";
+    }
+  ];
+
+  # generate all trinket comparison combinations (specs × scenarios)
+  trinketComparisons = lib.listToAttrs (lib.flatten (map (
+      specConfig:
+        map (scenario: {
+          name = "trinket-${specConfig.class}-${specConfig.spec}-p1-raid-${scenario.targetCount}-${scenario.duration}";
+          value = mkTrinketComparison {
+            class = specConfig.class;
+            spec = specConfig.spec;
+            encounter = scenario.encounter;
+            trinketCategory = specConfig.trinketCategory;
+            iterations = 10000;
+            phase = "p1";
+            encounterType = "raid";
+            targetCount = scenario.targetCount;
+            duration = scenario.duration;
+            template = scenario.template;
+          };
+        })
+        trinketScenarios
+    )
+    trinketComparisonSpecs));
+
   # generate all race comparison combinations (specs × scenarios)
   raceComparisons = lib.listToAttrs (lib.flatten (map (
       specConfig:
@@ -489,13 +637,24 @@
       '') (lib.attrNames raceComparisons)}
 
       echo ""
+      echo "=== Trinket Comparisons ==="
+      ${lib.concatMapStringsSep "\n" (name: ''
+        echo ""
+        echo "Running ${name}..."
+        ${trinketComparisons.${name}.script}/bin/${trinketComparisons.${name}.metadata.output}-aggregator
+      '') (lib.attrNames trinketComparisons)}
+
+      echo ""
       echo "All simulations completed successfully!"
       echo ""
       echo "Generated DPS rankings:"
       ls -la web/public/data/rankings/*.json 2>/dev/null || echo "No ranking files found"
       echo ""
       echo "Generated race comparisons:"
-      find web/public/data/comparison -name "*.json" 2>/dev/null || echo "No comparison files found"
+      find web/public/data/comparison/race -name "*.json" 2>/dev/null || echo "No race comparison files found"
+      echo ""
+      echo "Generated trinket comparisons:"
+      find web/public/data/comparison/trinkets -name "*.json" 2>/dev/null || echo "No trinket comparison files found"
     '';
     runtimeInputs = [pkgs.coreutils pkgs.findutils];
   };
@@ -514,9 +673,17 @@
       program = "${raceComp.script}/bin/${raceComp.metadata.output}-aggregator";
     })
     raceComparisons;
+
+  trinketComparisonApps =
+    lib.mapAttrs (name: trinketComp: {
+      type = "app";
+      program = "${trinketComp.script}/bin/${trinketComp.metadata.output}-aggregator";
+    })
+    trinketComparisons;
 in
   simulationApps
   // raceComparisonApps
+  // trinketComparisonApps
   // {
     allSimulations = {
       type = "app";
