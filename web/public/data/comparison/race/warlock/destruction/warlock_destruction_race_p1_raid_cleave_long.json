@@ -1,0 +1,4311 @@
+{
+  "metadata": {
+    "spec": "destruction",
+    "class": "warlock",
+    "encounter": "p1_raid_cleave_long",
+    "timestamp": "2025-07-29T17:01:26+10:00",
+    "iterations": 10000,
+    "encounterDuration": 300,
+    "encounterVariation": 60,
+    "targetCount": 2,
+    "wowsimsCommit": "99ee7a6",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "human": {
+      "dps": 186379.51802685915,
+      "max": 204867.464271771,
+      "min": 169876.72107601305,
+      "stdev": 5539.752159431202,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceHuman",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyW466hxwJnu20XuW+cvsP4yQ9v9bYhndmn1viL3vmr2qVajWxjl3oFlmX2A0t1R5N6o71t7y2x7mWVeB/yf+8EQ9z73fUhpiOsOFLn3vfkMYd37y1C6Xw5x39le1lH2llkmBJztvlPk3nizT7Viv1YcG+Led75PY7e2++EQzwwAWu7uUZ55AZm7s8jRdgeP8MjDW6Pcu+ibJDMFQHSPDnFvzM8MgO+K42PMPT7GvM/GWFv4NRshVi6XzWWzJ0nqFGFnyYyLJHWZnJ6JjWgphsRr8BEFWi3Z1s72PmxCoSxkIpyEWr1kiqxKyeXqttytMeLkNSuWjp0BtBVHKiZIrDrykSUXKIVuMEswSe5LaS2Sjqy5vVIAeRjUIcABUAXAl+U25N8SIgCfU89iU9AouHRGIA6jXSO04/xfmCeo+0dywKuKuEguNNFoNVp7Ozp7qHZydcLGucGcqterE3aEyXbVW+Vy+l/3UL4H6iDgHlC7ARuC2XElNnKkuVyf8QjS6beSPI19Wx/eK9eaIizpvGrdUEQWvaBJsFoj4669s68+QmdnnwFbcc46ozh2W18yAblCteAStRidUtKtRNQ1R6Kx1KrDO4lcqnz0VNPNBhXUsTMgV6kubFW3m97wmvl1TGP75o+2RBVxYPBnS96l7sCsXIEzNZlyMTNwkVqITliZTBSEXoZU3KQKhdLqFmxUsn5EHVH9598A2a06sUUuN83jkl5kMWRlh5kAlc5Jk+sX++3I+Upj+nvBlr5KGwwkUxreBRHGMEB/ymVq6RrfENulal6JNAmQImQR15UISSTJXvUYPqI2GkowaT9dAcRQ7JaduFDNx3nBXEFlxVBVWR7nW7GNSNDaHi+W7GdqJ8PrVF6jmMIJqsYpvqJeQhV4usyQxHWpKl2wOVhy413jCDTg7HR1b8Sh69ZULvQ0p7zTGZeJPEdwQaBuRMwYAYFWGsThTy38hKijBFcGWcFlc4n4AqIpmWZS6YyQZB9NwW2tXfEA26Y1+vjcXxjdHdwpuGwrkZbEaGmJLBZUNg7Xl/7udeufBB1OenKz0YPygSkXfmqHdW9ArcPpuLtW3WMoFb+aelXjp84spRENA2oewFjUBSTbM0f9H53LLAmSsN6oS1CrDiehstgaksjhJHh0kmzaQVPmdOf7aSqk1oZnel/cvNVwAokAfzdzzP2JrfmGCLk+Py8c1OebnsWPm/NDT+4n8Oz0o8FRSP0bZ8Nr+b8DO5G/UIu7v+vggdX1mG79c+lUenVyk98y/Ctsm/Fw71Ob0ht7tz6x+flBiOod/6+U2R1BzvasPnNanys96+ChSJzoCagorF8jXPCgC/LwZwAAAP//as2+qg=="
+      }
+    },
+    "dwarf": {
+      "dps": 186371.12760466436,
+      "max": 204860.7246524048,
+      "min": 169871.00415010378,
+      "stdev": 5540.049680096664,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyWo66hxwJnu20XuW+cvsP4yQ9v9bYhndmn1viL3vmr2qVajWxjl3oFlmX2A0t1R5N6o71t7y2x7mWVeB/yf+8EQ9z73fUhpiOsOFLn3vfkMYd37y1C6Xw5x39le1lH2llkmBJztvlPk3nizT7Viv1YcG+Led75PY7e2++EQzwwAWu7uUZ55AZm7s8jRdgeP8MjDW6Pcu+ibJDMFQHSPDnFvzM8MgO+K42PMPT7GvM/GWFv4NRshVi6XzWWzJ0nqFGFnyYyLJHWZnJ6JjWgphsRr8BEFWi3Z1s72PmxCoSxkIpyEWr1kiqxKyeXqttytMeLkNSuWjp0BtBVHKiZIrDrykSUXKIVuMEswSe5LaS2Sjqy5vVIAeRjUIcABUAXAl+U25N8SIgCfU89iU9AouHRGIA6jXSO04/xfmCeo+0dywKuKuEguNNFoNVp7Ozp7qHZydcLGucGcqterE3aEyXbVW+Vy+l/3UL4H6iDgHlC7ARuC2XElNnKkuVyf8QjS6beSPI19Wx/eK9eaIizpvGrdUEQWvaBJsFoj4669s68+QmdnnwFbcc46ozh2W18yAblCteAStRidUtKtRNQ1R6Kx1KrDO4lcqnz0VNPNBhXUsTMgV6kubFW3m97wmvl1TGP75o+2RBVxYPBnS96l7sCsXIEzNZlyMTNwkVqITliZTBSEXoZU3KQKhdLqFmxUsn5EHVH9598A2a06sUUuN83jkl5kMWRlh5kAlc5Jk+sX++3I+Upj+nvBlr5KGwwkUxreBRHGMEB/ymVq6RrfENulal6JNAmQImQR15UISSTJXvUYPqI2GkowaT9dAcRQ7JaduFDNx3nBXEFlxVBVWR7nW7GNSNDaHi+W7GdqJ8PrVF6jmMIJqsYpvqJeQhV4usyQxHWpKl2wOVhy413jCDTg7HR1b8Sh69ZULvQ0p7zTGZeJPEdwQaBuRMwYAYFWGsThTy38hKijBFcGWcFlc4n4AqIpmWZS6YyQZB9NwW2tXfEA26Y1+vjcXxjdHdwpuGwrkZbEaGmJLBZUNg7Xl/7udeufBB1OenKz0YPygSkXfmqHdW9ArcPpuLtW3WMoFb+aelXjp84spRENA2oewFjUBSTbM0f9H53LLAmSsN6oS1CrDiehstgaksjhJHh0kmzaQVPmdOf7aSqk1oZnel/cvNVwAokAfzdzzP2JrfmGCLk+Py8c1OebnsWPm/NDT+4n8Oz0o8FRSP0bZ8Nr+b8DO5G/UIu7v+vggdX1mG79c+lUenVyk98y/Ctsm/Fw71Ob0ht7tz6x+flBiOod/6+U2R1BzvasPnNanys96+ChSJzoCagorF8jXPCgC/LwZwAAAP//V5u+qA=="
+      }
+    },
+    "gnome": {
+      "dps": 186607.36429383178,
+      "max": 205151.03927841087,
+      "min": 169166.58894253237,
+      "stdev": 5534.437934370326,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGnome",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyWY66hxwJnu20XuW+cvsP4yQ9v9bYhndmn1viL3vmr2qVajWxjl3oFlmX2A0t1R5N6o71t7y2x7mWVeB/yf+8EQ9z73fUhpiOsOFLn3vfkMYd37y1C6Xw5x39le1lH2llkmBJztvlPk3nizT7Viv1YcG+Led75PY7e2++EQzwwAWu7uUZ55AZm7s8jRdgeP8MjDW6Pcu+ibJDMFQHSPDnFvzM8MgO+K42PMPT7GvM/GWFv4NRshVi6XzWWzJ0nqFGFnyYyLJHWZnJ6JjWgphsRr8BEFWi3Z1s72PmxCoSxkIpyEWr1kiqxKyeXqttytMeLkNSuWjp0BtBVHKiZIrDrykSUXKIVuMEswSe5LaS2Sjqy5vVIAeRjUIcABUAXAl+U25N8SIgCfU89iU9AouHRGIA6jXSO04/xfmCeo+0dywKuKuEguNNFoNVp7Ozp7qHZydcLGucGcqterE3aEyXbVW+Vy+l/3UL4H6iDgHlC7ARuC2XElNnKkuVyf8QjS6beSPI19Wx/eK9eaIizpvGrdUEQWvaBJsFoj4669s68+QmdnnwFbcc46ozh2W18yAblCteAStRidUtKtRNQ1R6Kx1KrDO4lcqnz0VNPNBhXUsTMgV6kubFW3m97wmvl1TGP75o+2RBVxYPBnS96l7sCsXIEzNZlyMTNwkVqITliZTBSEXoZU3KQKhdLqFmxUsn5EHVH9598A2a06sUUuN83jkl5kMWRlh5kAlc5Jk+sX++3I+Upj+nvBlr5KGwwkUxreBRHGMEB/ymVq6RrfENulal6JNAmQImQR15UISSTJXvUYPqI2GkowaT9dAcRQ7JaduFDNx3nBXEFlxVBVWR7nW7GNSNDaHi+W7GdqJ8PrVF6jmMIJqsYpvqJeQhV4usyQxHWpKl2wOVhy413jCDTg7HR1b8Sh69ZULvQ0p7zTGZeJPEdwQaBuRMwYAYFWGsThTy38hKijBFcGWcFlc4n4AqIpmWZS6YyQZB9NwW2tXfEA26Y1+vjcXxjdHdwpuGwrkZbEaGmJLBZUNg7Xl/7udeufBB1OenKz0YPygSkXfmqHdW9ArcPpuLtW3WMoFb+aelXjp84spRENA2oewFjUBSTbM0f9H53LLAmSsN6oS1CrDiehstgaksjhJHh0kmzaQVPmdOf7aSqk1oZnel/cvNVwAokAfzdzzP2JrfmGCLk+Py8c1OebnsWPm/NDT+4n8Oz0o8FRSP0bZ8Nr+b8DO5G/UIu7v+vggdX1mG79c+lUenVyk98y/Ctsm/Fw71Ob0ht7tz6x+flBiOod/6+U2R1BzvasPnNanys96+ChSJzoCagorF8jXPCgC/LwZwAAAP//YTS+qQ=="
+      }
+    },
+    "worgen": {
+      "dps": 188234.33260862174,
+      "max": 208174.9442234997,
+      "min": 169421.5879989134,
+      "stdev": 5582.57224491247,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceWorgen",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs585Q/T8y9lOIAsA8V1sKW7pDe8dMEQiVFEQ3wzpgl4i4lITYyoCRgTYiWyUgU6ARSjKdsHJas+0ARDqBdUSLABl5LGEOJDY3hBfcGQaM6Zmd1lsUFffPE87H7znd93/30HlQsZeBI2QwHgOMBFgG0ECoTtI0RdnSkaXEdNAM5w3y5y3zp3ng2UGdrub8M8s1Or9xa591WLT7Ua3cIY9/YvzewFlO72IvfGfN/aU2bbyizzOuD/3A+Gufe570NKQ1x3sMi9781nCGvfX4rS/XKY+862so6yp8wyIeAs950i9yZafKoV+7Ti6DD3vvN9Gru13Q+HeWYQ0HJ3jfHMC8jcHUWOtjt0mEce3hrj3gXfJJkpAKJ7ZJh7435mEHxXHBtn7rFx5n02ztrDr9kosXK5bC6bPUFSJwk7QxoukNQlcmoGNqGlGBKv0UcUaLVm27o6+rEZhbKQiXAKavWSKbIyJZep23K3xogTV61YOnoa0FYcqZgkserwR5acrxS6wUzBJLkvpbVIOrPm9nIB5CFQBwEHQRUAX5ZbkX9LiAB8Tj2LzUGT4NIZhTiMdo3QgfN+YZ6g7h/JAa8q4kK5wESj1WgdHejsptrJlUkb5wSzq16vTNoRJttdb5XL6X/dQ/keqAOAu0HtAmwMZsWV2MiR5nL9xiNIZ8BK8jT27f14r1xjirCk86p1XRFZ9IJmwWqNjLuOrv76CF1d/QZsxTnrjOLY7f3JBORy1YqL1SJ0Skm3ElHXHInGUqsO7SByifLRU803GlRQR0+DXKm6sU3dbnrDa+bXeRPbN3+0JaqIA0M/W/IudQdm5XKcocmUi5mBC9UCdMLKZKIg9BKk4iZVKJRWt2CTkvUj6ozqP/cGyB7Vha1ymWkel/QCiyErOs0EqHROmFy/2GdHzlcY098LtvRV2mAgmdLITogwhgH6Uy5VS1b7htguVXNLpFmAFCGLuK5ESCJJ9qnH8BG1wVCCSfvpCiCGYo/swgVqHs4N5ggqK4aqyvI434ptRIK2jnix5ABTOxheo/IqxRROUjVB8RX1EqrA02WGJK5LVemCLcHi6++aRqERZ6WreyMOXrOmc6GnOe2dzrhM5FmC8wN1PaJhFARaaRCHPrXwE6KOEFwRZAWXLSXiC4imZJpJpTNKkn00Bbe3dccDbL+p0cdn/8Lo7uBOwWV7ibQmRktKZJGgsmmkvvR3r1n/JOhI0pMbjR6UD0y78NM7rHsDah3ejLtr1D2GUvGrqVc1furMUhrRMKDmAYxFXUCyPbPV/9G5xJIgCeuNugS16nAKKoutIYkcToFHp8jG7TRlTk9+gKZCaq1/pu/FTVsMJ5AI8Hcxx9wf35JvjJDr8nPDIX2+6V30uDk/9OZ+As9OPxocgdS/cda/lv87sOP587W4+7sP7F9Vj+nRPxdPplclN/nNI7/C1oaH+57amN7Qt+WJTc8PQVTvxH+lzJ4IcqZ31elT+lzuXQsPReJkb0BFYd1q4YIH3ZCHPwMAAP//pGO+sA=="
+      }
+    },
+    "orc": {
+      "dps": 189456.14159405348,
+      "max": 211161.32160746775,
+      "min": 171555.9899017443,
+      "stdev": 5775.428135911326,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyVs11HjgDPdt4vct85fYP1lhrb72xDP7NLqfUXufdXsU61GtzDKvQPLMvsApbujyL1R37f2ltn2Msu8Dvg/94Mh7n3u+5DSENcdKHLve/MZwrr3l6F0vxzivrO9rKPsLbNMCDjbfafIvfFmn2rFfq04NsS973yfxm5t98MhnhkAtNzdozzzAjJ3Z5Gj7Q4e4ZGHt0a5d9E3SWYKgOgeHeLemJ8ZAN8Vx8eYe3yMeZ+NsbbwazZCrFwum8tmT5LUKcLOkhkXSeoyOT0TG9FSDInX4CMKtFqyrZ3tfdiEQlnIRDgJtXrJFFmVksvVbblbY8TJa1YsHTsDaCuOVEyQWHXkI0suUArdYJZgktyX0lokHVlze6UA8jCoQ4ADoAqAL8ttyL8lRAA+p57FpqBRcOmMQBxGu0Zox/m/ME9Q94/kgFcVcZFcaKLRarT2dnT2UO3k6oSNc4M5Va9XJ+wIk+2qt8rl9L/uoXwP1EHAPaB2AzYEs+NKbORIc7k+4xGk028leRr7tj68V641RVjSedW6oYgsekGTYLVGxl17Z199hM7OPgO24px1RnHstr5kAnKFasElajE6paRbiahrjkRjqVWHdxK5VPnoqaabDSqoY2dArlJd2KpuN73hNfPrmMb2zR9tiSriwODPlrxL3YFZuQJnajLlYmbgIrUQnbAymSgIvQypuEkVCqXVLdioZP2IOqL6z78Bslt1YotcbprHJb3IYsjKDjMBKp2TJtcv9tuR85XG9PeCLX2VNhhIpjS8CyKMYYD+lMvU0jW+IbZL1bwSaRIgRcgirisRkkiSveoxfERtNJRg0n66Aoih2C07caGaj/OCuYLKiqGqsjzOt2IbkaC1PV4s2c/UTobXqbxGMYUTVI1TfEW9hCrwdJkhietSVbpgc7DkxrvGEWjA2enq3ohD162pXOhpTnmnMy4TeY7ggkDdiJgxAgKtNIjDn1r4CVFHCa4MsoLL5hLxBURTMs2k0hkhyT6agttau+IBtk1r9PG5vzC6O7hTcNlWIi2J0dISWSyobByuL/3d69Y/CTqc9ORmowflA1Mu/NQO696AWofTcXetusdQKn419arGT51ZSiMaBtQ8gLGoC0i2Z476PzqXWRIkYb1Rl6BWHU5CZbE1JJHDSfDoJNm0g6bM6c7301RIrQ3P9L64eavhBBIB/m7mmPsTW/MNEXJ9fl44qM83PYsfN+eHntxP4NnpR4OjkPo3zobX8n8HdiJ/oRZ3f9fBA6vrMd3659Kp9OrkJr9l+FfYNuPh3qc2pTf2bn1i8/ODENU7/l8pszuCnO1Zfea0Pld61sFDkTjRE1BRWL9GuOBBF+ThzwAAAP//ff++rA=="
+      }
+    },
+    "undead": {
+      "dps": 187273.6552180946,
+      "max": 206089.3881920678,
+      "min": 170507.5922576345,
+      "stdev": 5605.555816809391,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceUndead",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyXQddQ44Ez37SL3rfMXWH+Zoe3+NsQzu7R6X5F7XzX7VKvRLYxy78CyzD5A6e4ocm/U9629Zba9zDKvA/7P/WCIe5/7PqQ0xHUHitz73nyGsO79ZSjdL4e472wv6yh7yywTAs523ylyb7zZp1qxXyuODXHvO9+nsVvb/XCIZwYALXf3KM+8gMzdWeRou4NHeOThrVHuXfRNkpkCILpHh7g35mcGwHfF8THmHh9j3mdjrC38mo0QK5fL5rLZkyR1irCzZMZFkrpMTs/ERrQUQ+I1+IgCrZZsa2d7HzahUBYyEU5CrV4yRVal5HJ1W+7WGHHymhVLx84A2oojFRMkVh35yJILlEI3mCWYJPeltBZJR9bcXimAPAzqEOAAqALgy3Ib8m8JEYDPqWexKWgUXDojEIfRrhHacf4vzBPU/SM54FVFXCQXmmi0Gq29HZ09VDu5OmHj3GBO1evVCTvCZLvqrXI5/a97KN8DdRBwD6jdgA3B7LgSGznSXK7PeATp9FtJnsa+rQ/vlWtNEZZ0XrVuKCKLXtAkWK2Rcdfe2VcfobOzz4CtOGedURy7rS+ZgFyhWnCJWoxOKelWIuqaI9FYatXhnUQuVT56qulmgwrq2BmQq1QXtqrbTW94zfw6prF980dbooo4MPizJe9Sd2BWrsCZmky5mBm4SC1EJ6xMJgpCL0MqblKFQml1CzYqWT+ijqj+82+A7Fad2CKXm+ZxSS+yGLKyw0yASuekyfWL/XbkfKUx/b1gS1+lDQaSKQ3vgghjGKA/5TK1dI1viO1SNa9EmgRIEbKI60qEJJJkr3oMH1EbDSWYtJ+uAGIodstOXKjm47xgrqCyYqiqLI/zrdhGJGhtjxdL9jO1k+F1Kq9RTOEEVeMUX1EvoQo8XWZI4rpUlS7YHCy58a5xBBpwdrq6N+LQdWsqF3qaU97pjMtEniO4IFA3ImaMgEArDeLwpxZ+QtRRgiuDrOCyuUR8AdGUTDOpdEZIso+m4LbWrniAbdMafXzuL4zuDu4UXLaVSEtitLREFgsqG4frS3/3uvVPgg4nPbnZ6EH5wJQLP7XDujeg1uF03F2r7jGUil9NvarxU2eW0oiGATUPYCzqApLtmaP+j85llgRJWG/UJahVh5NQWWwNSeRwEjw6STbtoClzuvP9NBVSa8MzvS9u3mo4gUSAv5s55v7E1nxDhFyfnxcO6vNNz+LHzfmhJ/cTeHb60eAopP6Ns+G1/N+BnchfqMXd33XwwOp6TLf+uXQqvTq5yW8Z/hW2zXi496lN6Y29W5/Y/PwgRPWO/1fK7I4gZ3tWnzmtz5WedfBQJE70BFQU1q8RLnjQBXn4MwAA//+ayr6v"
+      }
+    },
+    "troll": {
+      "dps": 190893.21481885941,
+      "max": 211066.59247927507,
+      "min": 171875.62013733826,
+      "stdev": 5677.877349387435,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyUc11HjgDPdt4vct85fYP1lhrb72xDP7NLqfUXufdXsU61GtzDKvQPLMvsApbujyL1R37f2ltn2Msu8Dvg/94Mh7n3u+5DSENcdKHLve/MZwrr3l6F0vxzivrO9rKPsLbNMCDjbfafIvfFmn2rFfq04NsS973yfxm5t98MhnhkAtNzdozzzAjJ3Z5Gj7Q4e4ZGHt0a5d9E3SWYKgOgeHeLemJ8ZAN8Vx8eYe3yMeZ+NsbbwazZCrFwum8tmT5LUKcLOkhkXSeoyOT0TG9FSDInX4CMKtFqyrZ3tfdiEQlnIRDgJtXrJFFmVksvVbblbY8TJa1YsHTsDaCuOVEyQWHXkI0suUArdYJZgktyX0lokHVlze6UA8jCoQ4ADoAqAL8ttyL8lRAA+p57FpqBRcOmMQBxGu0Zox/m/ME9Q94/kgFcVcZFcaKLRarT2dnT2UO3k6oSNc4M5Va9XJ+wIk+2qt8rl9L/uoXwP1EHAPaB2AzYEs+NKbORIc7k+4xGk028leRr7tj68V641RVjSedW6oYgsekGTYLVGxl17Z199hM7OPgO24px1RnHstr5kAnKFasElajE6paRbiahrjkRjqVWHdxK5VPnoqaabDSqoY2dArlJd2KpuN73hNfPrmMb2zR9tiSriwODPlrxL3YFZuQJnajLlYmbgIrUQnbAymSgIvQypuEkVCqXVLdioZP2IOqL6z78Bslt1YotcbprHJb3IYsjKDjMBKp2TJtcv9tuR85XG9PeCLX2VNhhIpjS8CyKMYYD+lMvU0jW+IbZL1bwSaRIgRcgirisRkkiSveoxfERtNJRg0n66Aoih2C07caGaj/OCuYLKiqGqsjzOt2IbkaC1PV4s2c/UTobXqbxGMYUTVI1TfEW9hCrwdJkhietSVbpgc7DkxrvGEWjA2enq3ohD162pXOhpTnmnMy4TeY7ggkDdiJgxAgKtNIjDn1r4CVFHCa4MsoLL5hLxBURTMs2k0hkhyT6agttau+IBtk1r9PG5vzC6O7hTcNlWIi2J0dISWSyobByuL/3d69Y/CTqc9ORmowflA1Mu/NQO696AWofTcXetusdQKn419arGT51ZSiMaBtQ8gLGoC0i2Z476PzqXWRIkYb1Rl6BWHU5CZbE1JJHDSfDoJNm0g6bM6c7301RIrQ3P9L64eavhBBIB/m7mmPsTW/MNEXJ9fl44qM83PYsfN+eHntxP4NnpR4OjkPo3zobX8n8HdiJ/oRZ3f9fBA6vrMd3659Kp9OrkJr9l+FfYNuPh3qc2pTf2bn1i8/ODENU7/l8pszuCnO1Zfea0Pld61sFDkTjRE1BRWL9GuOBBF+ThzwAAAP//kTG+rg=="
+      }
+    },
+    "blood_elf": {
+      "dps": 186461.53352468778,
+      "max": 205918.6305806552,
+      "min": 168478.32044114723,
+      "stdev": 5522.670276595,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceBloodElf",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs588Ifp+ZcyHECWgeI62NJd0hteumCIxCiiIb4Z0wS8xUSkJkbUBIwJsRJZqQKdAIrRlO2DklUfaIIh1AsqJNiAS0ljCPGhMbygvmBINOfMzO6y2FRffPE87H7znd93/30HlQsZeBK2QAHgBMAlgO0ECoTtJ0RdmyXAddQ44Ez37SL3rfMXWH+Zoe3+NsQzu7R6X5F7XzX7VKvRLYxy78CyzD5A6e4ocm/U9629Zba9zDKvA/7P/WCIe5/7PqQ0xHUHitz73nyGsO79ZSjdL4e472wv6yh7yywTAs523ylyb7zZp1qxXyuODXHvO9+nsVvb/XCIZwYALXf3KM+8gMzdWeRou4NHeOThrVHuXfRNkpkCILpHh7g35mcGwHfF8THmHh9j3mdjrC38mo0QK5fL5rLZkyR1irCzZMZFkrpMTs/ERrQUQ+I1+IgCrZZsa2d7HzahUBYyEU5CrV4yRVal5HJ1W+7WGHHymhVLx84A2oojFRMkVh35yJILlEI3mCWYJPeltBZJR9bcXimAPAzqEOAAqALgy3Ib8m8JEYDPqWexKWgUXDojEIfRrhHacf4vzBPU/SM54FVFXCQXmmi0Gq29HZ09VDu5OmHj3GBO1evVCTvCZLvqrXI5/a97KN8DdRBwD6jdgA3B7LgSGznSXK7PeATp9FtJnsa+rQ/vlWtNEZZ0XrVuKCKLXtAkWK2Rcdfe2VcfobOzz4CtOGedURy7rS+ZgFyhWnCJWoxOKelWIuqaI9FYatXhnUQuVT56qulmgwrq2BmQq1QXtqrbTW94zfw6prF980dbooo4MPizJe9Sd2BWrsCZmky5mBm4SC1EJ6xMJgpCL0MqblKFQml1CzYqWT+ijqj+82+A7Fad2CKXm+ZxSS+yGLKyw0yASuekyfWL/XbkfKUx/b1gS1+lDQaSKQ3vgghjGKA/5TK1dI1viO1SNa9EmgRIEbKI60qEJJJkr3oMH1EbDSWYtJ+uAGIodstOXKjm47xgrqCyYqiqLI/zrdhGJGhtjxdL9jO1k+F1Kq9RTOEEVeMUX1EvoQo8XWZI4rpUlS7YHCy58a5xBBpwdrq6N+LQdWsqF3qaU97pjMtEniO4IFA3ImaMgEArDeLwpxZ+QtRRgiuDrOCyuUR8AdGUTDOpdEZIso+m4LbWrniAbdMafXzuL4zuDu4UXLaVSEtitLREFgsqG4frS3/3uvVPgg4nPbnZ6EH5wJQLP7XDujeg1uF03F2r7jGUil9NvarxU2eW0oiGATUPYCzqApLtmaP+j85llgRJWG/UJahVh5NQWWwNSeRwEjw6STbtoClzuvP9NBVSa8MzvS9u3mo4gUSAv5s55v7E1nxDhFyfnxcO6vNNz+LHzfmhJ/cTeHb60eAopP6Ns+G1/N+BnchfqMXd33XwwOp6TLf+uXQqvTq5yW8Z/hW2zXi496lN6Y29W5/Y/PwgRPWO/1fK7I4gZ3tWnzmtz5WedfBQJE70BFQU1q8RLnjQBXn4MwAA//9Eab6m"
+      }
+    },
+    "goblin": {
+      "dps": 187543.3033001166,
+      "max": 207699.85330929692,
+      "min": 169722.3051436218,
+      "stdev": 5511.902338432722,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "221211",
+        "talents": {
+          "talentString": "221211",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "warlock_siphonlife",
+              "name": "Soul Leech",
+              "spellId": 108370,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "ability_warlock_mortalcoil",
+              "name": "Mortal Coil",
+              "spellId": 6789,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_warlock_soullink",
+              "name": "Soul Link",
+              "spellId": 108415,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_deathwing_sealarmorbreachtga",
+              "name": "Burning Rush",
+              "spellId": 111400,
+              "tier": 4
+            },
+            {
+              "choice": 1,
+              "icon": "warlock_grimoireofcommand",
+              "name": "Grimoire of Supremacy",
+              "spellId": 108499,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "achievement_boss_archimonde-",
+              "name": "Archimonde's Darkness",
+              "spellId": 108505,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {},
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_cloth_raidwarlock_l_01",
+              "id": 87188,
+              "name": "Sha-Skin Hood",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 1931,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_99",
+              "id": 87028,
+              "name": "Amulet of Seven Curses",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "2": 1081, "3": 720, "5": 502, "6": 445 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_cloth_raidwarlock_l_01",
+              "id": 87191,
+              "name": "Sha-Skin Mantle",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 1783,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_cloth_raidwarlock_l_01",
+              "id": 87169,
+              "name": "Robes of the Unknown Fear",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 920,
+                  "17": 2377,
+                  "2": 2071,
+                  "3": 1220,
+                  "5": 705
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_cloth_raidwarlock_l_01",
+              "id": 86948,
+              "name": "Attenuating Bracers",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Hit", "id": 151 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "11": 500,
+                  "17": 1040,
+                  "2": 1154,
+                  "3": 769,
+                  "7": 521
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_glove_cloth_raidwarlock_l_01",
+              "id": 87187,
+              "name": "Sha-Skin Gloves",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1486,
+                  "2": 1538,
+                  "3": 1026,
+                  "5": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_cloth_raidwarlock_l_01",
+              "id": 86981,
+              "name": "Belt of Malleable Amber",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 1337, "2": 1538, "3": 866, "5": 553, "7": 634 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_pants_cloth_raidwarlock_l_01",
+              "id": 87189,
+              "name": "Sha-Skin Leggings",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Crit", "id": 152 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 2080,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4427,
+                "name": "Enchant Boots - Greater Precision"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76672,
+                  "name": "Artful Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_cloth_raidwarlock_l_01",
+              "id": 86969,
+              "name": "Sandals of the Unbidden",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Crit", "id": 137 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 738,
+                  "17": 1634,
+                  "2": 1538,
+                  "3": 946,
+                  "5": 487
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "reforging": { "description": "Haste -> Mastery", "id": 154 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76682,
+                  "name": "Veiled Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGoblin",
+        "class": "ClassWarlock",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/warlock/destruction/#eJzkVFtsFNUb3+9cZs589A/T8y9lOIAsA8V1sKW7pDe8dMEQiVFEQ3wzpgl4i4lITYyoCRgTYiWyUgU6ARSjKdsHJas+0ARDqBdUSLABl5LGEOJDY3hBfcGQaM6Zmd1lsUFffPE87H7znd93/30HlQsZeBI2QwHgOMBFgG0ECoTtI0RdnSkaXEdNADa4bxe5b507zwbKDG33t2Ge2anVe4vc+6rFp1qNbmGMe/uXZvYCSnd7kXtjvm/tKbNtZZZ5HfB/7gfD3Pvc9yGlIa47WOTe9+YzhLXvL0XpfjnMfWdbWUfZU2aZEHCW+06RexMtPtWKfVpxdJh73/k+jd3a7ofDPDMIaLm7xnjmBWTujiJH2x06zCMPb41x74JvkswUANE9Msy9cT8zCL4rjo0z99g48z4bZ+3h12yUWLlcNpfNniCpk4SdITMukNQlcqoBm9BSDInX6CMKtFqzbV0d/diMQlnIRDgFtXrJFFmZksvUbblbY8SJq1YsHT0NaCuOVEySWHX4I0vOVwrdYKZgktyX0loknVlze7kA8hCog4CDoAqAL8utyL8lRAA+p57F5qBJcOmMQhxGu0bowHm/ME9Q94/kgFcVcaFcYKLRarSODnR2U+3kyqSNc4LZVa9XJu0Ik+2ut8rl9L/uoXwP1AHA3aB2ATYGs+JKbORIc7l+4xGkM2AleRr79n68V64xRVjSedW6rogsekGzYLVGxl1HV399hK6ufgO24px1RnHs9v5kAnK5asXFahE6paRbiahrjkRjqVWHdhC5RPnoqeYbDSqoo6dBrlTd2KZuN73hNfPrvIntmz/aElXEgaGfLXmXugOzcjk2aDLlYmbgQrUAnbAymSgIvQSpuEkVCqXVLdikZP2IOqP6z70Bskd1YatcZprHJb3AYsiKTjMBKp0TJtcv9tmR8xXG9PeCLX2VNhhIpjSyEyKMYYD+lEvVktW+IbZL1dwSaRYgRcgirisRkkiSfeoxfERtMJRg0n66Aoih2CO7cIGah3ODOYLKiqGqsjzOt2IbkaCtI14sOcDUDobXqLxKMYWTVE1QfEW9hCrwdJkhietSVbpgS7D4+rumUWjEWenq3oiD16zpXOhpTnunMy4TeZbg/EBdj5gxCgKtNIhDn1r4CVFHCK4IsoLLlhLxBURTMs2k0hklyT6agtvbuuMBtt/U6OOzf2F0d3Cn4LK9RFoToyUlskhQ2TRSX/q716x/EnQk6cmNRg/KB6Zd+Okd1r0BtQ5vxt016h5DqfjV1KsaP3VmKY1oGFDzAMaiLiDZntnq/+hcYkmQhPVGXYJadTgFlcXWkEQOp8CjU2Tjdpoypyc/QFMhtdY/0/fipi2GE0gE+LuYY+6Pb8k3Rsh1+bnhkD7f9C563JwfenM/gWenHw2OQOrfOOtfy/8d2PH8+Vrc/d0H9q+qx/Ton4sn06uSm/zmkV9h64yH+57amN7Qt+WJTc8PQVTvxH+lzJ4IcqZ31elT+lzuXQsPReJkb0BFYd1q4YIH3ZCHPwMAAP//rfy+sQ=="
+      }
+    }
+  }
+}

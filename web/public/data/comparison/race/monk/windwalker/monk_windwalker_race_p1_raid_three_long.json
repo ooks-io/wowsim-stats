@@ -1,0 +1,5219 @@
+{
+  "metadata": {
+    "spec": "windwalker",
+    "class": "monk",
+    "encounter": "p1_raid_three_long",
+    "timestamp": "2025-07-29T17:01:16+10:00",
+    "iterations": 10000,
+    "encounterDuration": 300,
+    "encounterVariation": 60,
+    "targetCount": 3,
+    "wowsimsCommit": "99ee7a6",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "human": {
+      "dps": 238911.28709548776,
+      "max": 257253.11455115295,
+      "min": 221390.17072621197,
+      "stdev": 4684.853083287384,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceHuman",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5j1ERxD7DUPNtDbf3WlNY2qcW6AQ3zkys0dtqznO+h1tXltupZTgGiOdBNrZM1HoqbfT3UGrFtPTuhZSfkzQVmbze1hmwblFgG0DQ/6KHWF/K3HTa/V4Ol5tvvU1tvm9SOTmqxds9L2wi1Jpbb+tHJ8P1S81Q3tW7atuq5PQyomW+MUDTMK93Us2vmox7v91AP9eE3u6l117bVQ1do7KTHIjgAJdYFtskuj2vm5XHN+nBcix+7pg0S3U0mk25imBSzT09Q8+5ZGr1zlY4SbYwU3SbKNPm2BCuQCR01dqFPtxnqqNW68TSWB6edrYZtIEW1NuEd6kJDYpXZETSQ1sZXJtL836IaI53ggdtaDTd098sdI9i1tRp8qajCyLAqDT/rLaW4wC4qOCi093bMsPd26Pz/YiOu4A6aTgkDrk6DIiiqCC4udCqYyiPDksCDi8w/T/BKVNO79/ASUeyfc80kFvBnxTM5R3Qejly+fG5Hj/8T/jGIS4DnQPQBlveDiSXRR+EC9uZCjPRLzwdGDUzxdWg7UUa51U8qGfBIb2jzIoYkGRdki4KWs5BRHhmUxjOZZiEzkXDTuJlvCh2eyTSH2wcXGa50VngO8zKWvKYKLOsnJYwU6E2gL8/PJ68TLsZ4DZY4xUzl6n2qCDVLFYwclin4bMDAyLTmbbMPJUc2MmDw4yA6AN8F8RbgRv6/IKhkjeKrqE9jmVPKVHniU4+nscoRTPOfCFllaS4L63nqDxAFsiudckY5u00pqoMhok7Su/a6wR+B+BXwR+Dfg19P+ZtqOyg4CeIW4CKnkulhwM5lmn3uiQa8BPwjkJp0n0xAoAvEiSdeqw8lbwkkJ+NpbOKNuOy+Vs3AzNeEld9WK3JtSD3JazxXs2o+vIm4rNnH4JLif0Qgk68VDbiK12L5tDa7IL3LhdELciYvTx00uCbIGoVXCRHGIN8sEvNDxuD/FWsxIVbhv5zFTOMLBgFRY5mswYlJA5ZpeV2bdd1DebPDk6yFRX7uSyO8JkEDR3SeEuuwjruzWNThUqeK6TNflaPJXekGSrzpgYLlnoyKpVjB+SxvyRzaFtEgsDNiE3DqbDX4IlEZ9kZXxhAM9Siw80f0XCMV1NvUQeP3KtUbf9vFNtzENwQZLiA1d5LctBwNKi8aBv/pC9eNwtheuG7wF8VefI7vmNmUbjLsZI9XoGGsy8CkSDyei7GuXC7mjoebz1EYszmoSsz4qMFjoka2ts5L+0lx2NUFnSWRfUd0vkzY8xAYZtWrQ78nMyDeAdzA18spqPNoP1nCgJP9iqjsJ9wL7Q2qiGDaZrLhtK2fXaJynq1yauflJZht9XMUVa4yLPUbsutV1e/0ilS7qnSq+raXdr6yu+WGSlCxH9KItA21pMp81NbU4s4Ob11vrN4j10Sj+zVYRnSHcx6Uv2JtO5iaD2woNVWIa1594njTTEyD97k3Gm0KLal9vT/B/qLtO/fuij69s+X53S93gK/3q39k/inr75LZ4EPGGps+v+mt7xo3w1P+9m6jo7LM1vXMBAtWQwp+CwAA///cyfaW"
+      }
+    },
+    "dwarf": {
+      "dps": 238897.77314511462,
+      "max": 257244.7650923247,
+      "min": 221346.39896026754,
+      "stdev": 4684.676577392857,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jqoniHmCpebaH2vqtKa1tUot1AxrmJ1do7LRnOd9DravLbdWznAJEc6CbWidrPBQ3+3qoNWLbenZCy07ImwvM3m5qDdk2KLEMoGl+0EOtL+RvO2x+rwZLzbffp7beNqkdndRi7Z6XthFqTSy39aOT4ful5qluat20bdVzexhQM98YoWiYV7qpZ9fMRz3e76Ee6sNvdlPrrm2rh67Q2EmPRXAASqwLbJNdHtfMy+Oa9eG4Fj92TRskuptMJt3EMClmn56g5t2zNHrnKh0l2hgpuk2UafJtCVYgEzpq7EKfbjPUUat142ksD047Ww3bQIpqbcI71IWGxCqzI2ggrY2vTKT5v0U1RjrBA7e1Gm7o7pc7RrBrazX4UlGFkWFVGn7WW0pxgV1UcFBo7+2YYe/t0Pn/xUZcwR00nRIGXJ0GRVBUEVxc6FQwlUeGJYEHF5l/nuCVqKZ37+Elotg/55pJLODPimdyjug8HLl8+dyOHv8n/GMQlwDPgegDLO8HE0uij8IF7M2FGOmXng+MGpji69B2ooxyq59UMuCR3tDmRQxJMi7IFgUtZyGjPDIojWcyzUJmIuGmcTPfFDo8k2kOtw8uMlzprPAc5mUseU0VWNZPShgp0JtAX56fT14nXIzxGixxipnK1ftUEWqWKhg5LFPw2YCBkWnN22YfSo5sZMDgx0F0AL4L4i3Ajfx/QVDJGsVXUZ/GMqeUqfLEpx5PY5UjmOY/EbLK0lwW1vPUHyAKZFc65YxydptSVAdDRJ2kd+11gz8C8Svgj8C/B7+e8jfVdlBwEsQtwEVOJdPDgJ3LNPvcEw14CfhHIDXpPpmAQBeIE0+8Vh9K3hJITsbT2MQbcdl9rZqBma8JK7+tVuTakHqS13iuZtV8eBNxWbOPwSXF/4hAJl8rGnAVr8XyaW12QXqXC6MX5ExenjpocE2QNQqvEiKMQb5ZJOaHjMH/K9ZiQqzCfzmLmcYXDAKixjJZgxOTBizT8ro267qH8maHJ1kLi/zcl0Z4TYIGjug8JdZhHXdnsajDpU4V02e+KkeTu9INlHjTAwXLPRkVS7GC81nekjm0LaJBYGfEJuDU2WrwRaIy7I2ujCEY6lFg54/ouUYqqLepg8bvVao3/raLbbiJbwgyXEBq7iS5aTkaVF40DP7TF64bhbG9cN3gL4q9+BzfMbMp3WTYyR6vQMNYl4FJkXg8F2NduVzMHQ83n6MwZnNQlZjxUYPHRI1sbZ2X9pPisKsLOksi+47ofJmw5yEwzKpXh35PZkC8A7iBr5dTUOfRfrKEASf7FVHZT7gX2htUEcG0zWTDaVs/u0TlPFvl1M7LSzDb6ucoqlxlWOo3ZNerqt/pFal2VelU9W0v7Xxld8sNlaBiP6QRaRtqSZX5qK2pxZ0d3rreWL1HrolG92uwjOgO5zwof8XadjA1H9hQaqoQ17z6xPGmmZgG73NvNNoUWlL7en+C/UXbd+7dFX16Z8vzu1/uAF/vV//I/FPW3yWzwYeMNTZ9ftNb3zVuhqf87d1GR2WZreuZCRashhT8FgAA///Fb/aU"
+      }
+    },
+    "night_elf": {
+      "dps": 238927.62282124802,
+      "max": 257263.96790753814,
+      "min": 221417.63079638223,
+      "stdev": 4685.110656293747,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceNightElf",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5juoniHmCpebaH2vqtKa1tUot1AxrmJ1do7LRnOd9DravLbdWznAJEc6CbWidrPBQ3+3qoNWLbenZCy07ImwvM3m5qDdk2KLEMoGl+0EOtL+RvO2x+rwZLzbffp7beNqkdndRi7Z6XthFqTSy39aOT4ful5qluat20bdVzexhQM98YoWiYV7qpZ9fMRz3e76Ee6sNvdlPrrm2rh67Q2EmPRXAASqwLbJNdHtfMy+Oa9eG4Fj92TRskuptMJt3EMClmn56g5t2zNHrnKh0l2hgpuk2UafJtCVYgEzpq7EKfbjPUUat142ksD047Ww3bQIpqbcI71IWGxCqzI2ggrY2vTKT5v0U1RjrBA7e1Gm7o7pc7RrBrazX4UlGFkWFVGn7WW0pxgV1UcFBo7+2YYe/t0Pn/xUZcwR00nRIGXJ0GRVBUEVxc6FQwlUeGJYEHF5l/nuCVqKZ37+Elotg/55pJLODPimdyjug8HLl8+dyOHv8n/GMQlwDPgegDLO8HE0uij8IF7M2FGOmXng+MGpji69B2ooxyq59UMuCR3tDmRQxJMi7IFgUtZyGjPDIojWcyzUJmIuGmcTPfFDo8k2kOtw8uMlzprPAc5mUseU0VWNZPShgp0JtAX56fT14nXIzxGixxipnK1ftUEWqWKhg5LFPw2YCBkWnN22YfSo5sZMDgx0F0AL4L4i3Ajfx/QVDJGsVXUZ/GMqeUqfLEpx5PY5UjmOY/EbLK0lwW1vPUHyAKZFc65YxydptSVAdDRJ2kd+11gz8C8Svgj8C/B7+e8jfVdlBwEsQtwEVOJdPDgJ3LNPvcEw14CfhHIDXpPpmAQBeIE0+8Vh9K3hJITsbT2MQbcdl9rZqBma8JK7+tVuTakHqS13iuZtV8eBNxWbOPwSXF/4hAJl8rGnAVr8XyaW12QXqXC6MX5ExenjpocE2QNQqvEiKMQb5ZJOaHjMH/K9ZiQqzCfzmLmcYXDAKixjJZgxOTBizT8ro267qH8maHJ1kLi/zcl0Z4TYIGjug8JdZhHXdnsajDpU4V02e+KkeTu9INlHjTAwXLPRkVS7GC81nekjm0LaJBYGfEJuDU2WrwRaIy7I2ujCEY6lFg54/ouUYqqLepg8bvVao3/raLbbiJbwgyXEBq7iS5aTkaVF40DP7TF64bhbG9cN3gL4q9+BzfMbMp3WTYyR6vQMNYl4FJkXg8F2NduVzMHQ83n6MwZnNQlZjxUYPHRI1sbZ2X9pPisKsLOksi+47ofJmw5yEwzKpXh35PZkC8A7iBr5dTUOfRfrKEASf7FVHZT7gX2htUEcG0zWTDaVs/u0TlPFvl1M7LSzDb6ucoqlxlWOo3ZNerqt/pFal2VelU9W0v7Xxld8sNlaBiP6QRaRtqSZX5qK2pxZ0d3rreWL1HrolG92uwjOgO5zwof8XadjA1H9hQaqoQ17z6xPGmmZgG73NvNNoUWlL7en+C/UXbd+7dFX16Z8vzu1/uAF/vV//I/FPW3yWzwYeMNTZ9ftNb3zVuhqf87d1GR2WZreuZCRashhT8FgAA///odvaX"
+      }
+    },
+    "gnome": {
+      "dps": 238912.38647263334,
+      "max": 257251.14121362835,
+      "min": 221388.43539708233,
+      "stdev": 4684.934154432917,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGnome",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnnfmnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABFTIqOaaq4nQZIyaKe4Cl5tkeauu3pkjbJIl1AxrmJ1do7LRnOd9DravLbc2znAJEc6CbWidrPBQ3+3qoNWLbenaCZCfkzQVmbze1hmwblFgG0DQ/6KHWF/K3HTa/V4Ol5tvvU1tvmyRHJ0ms3fPSNkKtieW2fnQyfL/UPNVNrZu2rXluDwMS840RioZ5pZt6dmI+6vF+D/VQH36zm1p3bVs7dIXGTnosggNQYl1gm+zyODEvjxPrw3ESP3aNDKq6m0wm3cSwWsw+PUHNu2dp9M5VOqqSMbXotqpMq9+WYAUyoSNhF/p0m6GOpNaNp7E8OO1sNWwDKWq1Ce9QFwRVq8yOoIG0Nr4ykeb/FtUY6QQP3NZquKG7X+4Ywa6t1eBLRRVGhjVp+FlvKcUFdlHBQaG9t2OGvbdD5/8XG3EFd9B0ShhwbRoUQVFDcHGhU8E0HhmWBB5cZP55gleilt69h5eIYv+cE1O1gD8rnsk5ovNw5PLlczt6/F/lH4O4BHgORB9geT+YWBJ9FC5gby7ESL/0fGDUwBRfh7YTZZRb/WolAx7pDW1exFBNxoW6RUHLWcgojwxK45lMs5CZSLhp3Mw3hQ7PZJrD7YOLDFc6KzyHeRlLXtMElvWrJUwt0JtAX56fT14nXIzxGixxipnGtftUEVqWKhg5LFPw2YCBkWnibbMPJUc2MmDw4yA6AN8F8RbgRv6/IKjqGsVXUZ/GMqeUafLEpx5PY5UjGPGfCFllaS4L63nqDxAFsiudckY5u00paoMhok7Su/a6wR+B+BXwR+Dfg19P+ZtaOyg4CeIW4CKnkulhwM5lmn3uiQa8BPwjkJp0n0xAoAvEiSdeqw8lbwkkJ+NpbOKNuOw+qWZg5mvCym+rFbk2pJ7kNZ6rWS0f3kRc1uxjcEnxPyKQydeKBlzFa7F8mswuSO9yYfSCnMnLUwcNToS6RuFVQoQxyDeLxPyQMfh/xVpMiFX4L2cxI3zBICASlskaXDVpwDItr5NZ1z2UNzs8ySQs8nNfGuE1CRo4ovOUWId13J3Fog6XOlVMn/mqHE3uSjdQ4k0PFCz3ZFQsxQrOZ3lL5tC2iAaBnRGbgFNnq8EXicqwN7oyhmCoR4GdP6LnGqmg3qYOGr9Xqd742y624Sa+IchwAam5k+Sm5WjQeNEw+E9fuG4UxvbCdYO/KPbic3zHzKZ0k2Ene7wCDWNdBiZF4vFcjHXlcjF3PNx8jsKYzUFVYsZHDR4TNbK1dV7arxaHXV3QWRLZd0Tny4Q9D4FhVr069HsyA+IdwA18vZyCOo/2q0sYcHW/Iir7Ve6F9gZVRDBtM9lw2tbPLlE5z1Y5tfPyEsy2+jmKKlcZlvaNuutVze/0ilS7pnRq+raXdr6yu+WGpqJiP6QRaRtqSZX5qK2pxZ0d3rreWL1HrolG92uwjOgO5zwof8XadjA1H9hQaqoQ17z6xPGmmZgG73NvNNoUWlL7en+C/UXbd+7dFX16Z8vzu1/uAF/vV//I/FPW3yWzwYeMNTZ9ftNb3zVuhqf87d1GR2OZreuZCRashhT8FgAA///RHPaV"
+      }
+    },
+    "draenei": {
+      "dps": 240355.50935188532,
+      "max": 258551.79798168648,
+      "min": 225925.23369368867,
+      "stdev": 4720.864460779356,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDraenei",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jxERxD7DUPNtDbf3WlNY2qcW6AQ3zkys0dtqznO+h1tXltupZTgGiOdBNrZM1HoqbfT3UGrFtPTuhZSfkzQVmbze1hmwblFgG0DQ/6KHWF/K3HTa/V4Ol5tvvU1tvm9SOTmqxds9L2wi1Jpbb+tHJ8P1S81Q3tW7atuq5PQyomW+MUDTMK93Us2vmox7v91AP9eE3u6l117bVQ1do7KTHIjgAJdYFtskuj2vm5XHN+nBcix+7pg0S3U0mk25imBSzT09Q8+5ZGr1zlY4SbYwU3SbKNPm2BCuQCR01dqFPtxnqqNW68TSWB6edrYZtIEW1NuEd6kJDYpXZETSQ1sZXJtL836IaI53ggdtaDTd098sdI9i1tRp8qajCyLAqDT/rLaW4wC4qOCi093bMsPd26Pz/YiOu4A6aTgkDrk6DIiiqCC4udCqYyiPDksCDi8w/T/BKVNO79/ASUeyfc80kFvBnxTM5R3Qejly+fG5Hj/8T/jGIS4DnQPQBlveDiSXRR+EC9uZCjPRLzwdGDUzxdWg7UUa51U8qGfBIb2jzIoYkGRdki4KWs5BRHhmUxjOZZiEzkXDTuJlvCh2eyTSH2wcXGa50VngO8zKWvKYKLOsnJYwU6E2gL8/PJ68TLsZ4DZY4xUzl6n2qCDVLFYwclin4bMDAyLTmbbMPJUc2MmDw4yA6AN8F8RbgRv6/IKhkjeKrqE9jmVPKVHniU4+nscoRTPOfCFllaS4L63nqDxAFsiudckY5u00pqoMhok7Su/a6wR+B+BXwR+Dfg19P+ZtqOyg4CeIW4CKnkulhwM5lmn3uiQa8BPwjkJp0n0xAoAvEiSdeqw8lbwkkJ+NpbOKNuOy+Vs3AzNeEld9WK3JtSD3JazxXs2o+vIm4rNnH4JLif0Qgk68VDbiK12L5tDa7IL3LhdELciYvTx00uCbIGoVXCRHGIN8sEvNDxuD/FWsxIVbhv5zFTOMLBgFRY5mswYlJA5ZpeV2bdd1DebPDk6yFRX7uSyO8JkEDR3SeEuuwjruzWNThUqeK6TNflaPJXekGSrzpgYLlnoyKpVjB+SxvyRzaFtEgsDNiE3DqbDX4IlEZ9kZXxhAM9Siw80f0XCMV1NvUQeP3KtUbf9vFNtzENwQZLiA1d5LctBwNKi8aBv/pC9eNwtheuG7wF8VefI7vmNmUbjLsZI9XoGGsy8CkSDyei7GuXC7mjoebz1EYszmoSsz4qMFjoka2ts5L+0lx2NUFnSWRfUd0vkzY8xAYZtWrQ78nMyDeAdzA18spqPNoP1nCgJP9iqjsJ9wL7Q2qiGDaZrLhtK2fXaJynq1yauflJZht9XMUVa4yLPUbsutV1e/0ilS7qnSq+raXdr6yu+WGSlCxH9KItA21pMp81NbU4s4Ob11vrN4j10Sj+zVYRnSHcx6Uv2JtO5iaD2woNVWIa1594njTTEyD97k3Gm0KLal9vT/B/qLtO/fuij69s+X53S93gK/3q39k/inr75LZ4EPGGps+v+mt7xo3w1P+9m6jo7LM1vXMBAtWQwp+CwAA//+5wvaT"
+      }
+    },
+    "orc": {
+      "dps": 246010.5660827816,
+      "max": 270208.54296637786,
+      "min": 230891.19188492454,
+      "stdev": 4848.092695855277,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jhoniHmCpebaH2vqtKa1tUot1AxrmJ1do7LRnOd9DravLbdWznAJEc6CbWidrPBQ3+3qoNWLbenZCy07ImwvM3m5qDdk2KLEMoGl+0EOtL+RvO2x+rwZLzbffp7beNqkdndRi7Z6XthFqTSy39aOT4ful5qluat20bdVzexhQM98YoWiYV7qpZ9fMRz3e76Ee6sNvdlPrrm2rh67Q2EmPRXAASqwLbJNdHtfMy+Oa9eG4Fj92TRskuptMJt3EMClmn56g5t2zNHrnKh0l2hgpuk2UafJtCVYgEzpq7EKfbjPUUat142ksD047Ww3bQIpqbcI71IWGxCqzI2ggrY2vTKT5v0U1RjrBA7e1Gm7o7pc7RrBrazX4UlGFkWFVGn7WW0pxgV1UcFBo7+2YYe/t0Pn/xUZcwR00nRIGXJ0GRVBUEVxc6FQwlUeGJYEHF5l/nuCVqKZ37+Elotg/55pJLODPimdyjug8HLl8+dyOHv8n/GMQlwDPgegDLO8HE0uij8IF7M2FGOmXng+MGpji69B2ooxyq59UMuCR3tDmRQxJMi7IFgUtZyGjPDIojWcyzUJmIuGmcTPfFDo8k2kOtw8uMlzprPAc5mUseU0VWNZPShgp0JtAX56fT14nXIzxGixxipnK1ftUEWqWKhg5LFPw2YCBkWnN22YfSo5sZMDgx0F0AL4L4i3Ajfx/QVDJGsVXUZ/GMqeUqfLEpx5PY5UjmOY/EbLK0lwW1vPUHyAKZFc65YxydptSVAdDRJ2kd+11gz8C8Svgj8C/B7+e8jfVdlBwEsQtwEVOJdPDgJ3LNPvcEw14CfhHIDXpPpmAQBeIE0+8Vh9K3hJITsbT2MQbcdl9rZqBma8JK7+tVuTakHqS13iuZtV8eBNxWbOPwSXF/4hAJl8rGnAVr8XyaW12QXqXC6MX5ExenjpocE2QNQqvEiKMQb5ZJOaHjMH/K9ZiQqzCfzmLmcYXDAKixjJZgxOTBizT8ro267qH8maHJ1kLi/zcl0Z4TYIGjug8JdZhHXdnsajDpU4V02e+KkeTu9INlHjTAwXLPRkVS7GC81nekjm0LaJBYGfEJuDU2WrwRaIy7I2ujCEY6lFg54/ouUYqqLepg8bvVao3/raLbbiJbwgyXEBq7iS5aTkaVF40DP7TF64bhbG9cN3gL4q9+BzfMbMp3WTYyR6vQMNYl4FJkXg8F2NduVzMHQ83n6MwZnNQlZjxUYPHRI1sbZ2X9pPisKsLOksi+47ofJmw5yEwzKpXh35PZkC8A7iBr5dTUOfRfrKEASf7FVHZT7gX2htUEcG0zWTDaVs/u0TlPFvl1M7LSzDb6ucoqlxlWOo3ZNerqt/pFal2VelU9W0v7Xxld8sNlaBiP6QRaRtqSZX5qK2pxZ0d3rreWL1HrolG92uwjOgO5zwof8XadjA1H9hQaqoQ17z6xPGmmZgG73NvNNoUWlL7en+C/UXbd+7dFX16Z8vzu1/uAF/vV//I/FPW3yWzwYeMNTZ9ftNb3zVuhqf87d1GR2WZreuZCRashhT8FgAA///0I/aY"
+      }
+    },
+    "undead": {
+      "dps": 239449.672424982,
+      "max": 259137.76518094278,
+      "min": 223524.8040639669,
+      "stdev": 4778.876702270061,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceUndead",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jaKK4B1hqnu2htn5rSmub1GLdgIb5yRUaO+1ZzvdQ6+pyW/UspwDRHOim1skaD8XNvh5qjdi2np3QshPy5gKzt5taQ7YNSiwDaJof9FDrC/nbDpvfq8FS8+33qa23TWpHJ7VYu+elbYRaE8tt/ehk+H6peaqbWjdtW/XcHgbUzDdGKBrmlW7q2TXzUY/3e6iH+vCb3dS6a9vqoSs0dtJjERyAEusC22SXxzXz8rhmfTiuxY9d0waJ7iaTSTcxTIrZpyeoefcsjd65SkeJNkaKbhNlmnxbghXIhI4au9Cn2wx11GrdeBrLg9POVsM2kKJam/AOdaEhscrsCBpIa+MrE2n+b1GNkU7wwG2thhu6++WOEezaWg2+VFRhZFiVhp/1llJcYBcVHBTaeztm2Hs7dP5/sRFXcAdNp4QBV6dBERRVBBcXOhVM5ZFhSeDBReafJ3glqunde3iJKPbPuWYSC/iz4pmcIzoPRy5fPrejx/8J/xjEJcBzIPoAy/vBxJLoo3ABe3MhRvql5wOjBqb4OrSdKKPc6ieVDHikN7R5EUOSjAuyRUHLWcgojwxK45lMs5CZSLhp3Mw3hQ7PZJrD7YOLDFc6KzyHeRlLXlMFlvWTEkYK9CbQl+fnk9cJF2O8BkucYqZy9T5VhJqlCkYOyxR8NmBgZFrzttmHkiMbGTD4cRAdgO+CeAtwI/9fEFSyRvFV1KexzCllqjzxqcfTWOUIpvlPhKyyNJeF9Tz1B4gC2ZVOOaOc3aYU1cEQUSfpXXvd4I9A/Ar4I/Dvwa+n/E21HRScBHELcJFTyfQwYOcyzT73RANeAv4RSE26TyYg0AXixBOv1YeStwSSk/E0NvFGXHZfq2Zg5mvCym+rFbk2pJ7kNZ6rWTUf3kRc1uxjcEnxPyKQydeKBlzFa7F8WptdkN7lwugFOZOXpw4aXBNkjcKrhAhjkG8WifkhY/D/irWYEKvwX85ipvEFg4CosUzW4MSkAcu0vK7Nuu6hvNnhSdbCIj/3pRFek6CBIzpPiXVYx91ZLOpwqVPF9JmvytHkrnQDJd70QMFyT0bFUqzgfJa3ZA5ti2gQ2BmxCTh1thp8kagMe6MrYwiGehTY+SN6rpEK6m3qoPF7leqNv+1iG27iG4IMF5CaO0luWo4GlRcNg//0hetGYWwvXDf4i2IvPsd3zGxKNxl2sscr0DDWZWBSJB7PxVhXLhdzx8PN5yiM2RxUJWZ81OAxUSNbW+el/aQ47OqCzpLIviM6XybseQgMs+rVod+TGRDvAG7g6+UU1Hm0nyxhwMl+RVT2E+6F9gZVRDBtM9lw2tbPLlE5z1Y5tfPyEsy2+jmKKlcZlvoN2fWq6nd6RapdVTpVfdtLO1/Z3XJDJajYD2lE2oZaUmU+amtqcWeHt643Vu+Ra6LR/RosI7rDOQ/KX7G2HUzNBzaUmirENa8+cbxpJqbB+9wbjTaFltS+3p9gf9H2nXt3RZ/e2fL87pc7wNf71T8y/5T1d8ls8CFjjU2f3/TWd42b4Sl/e7fRUVlm63pmggWrIQW/BQAA//8XOfab"
+      }
+    },
+    "tauren": {
+      "dps": 238905.506773197,
+      "max": 257262.49114978663,
+      "min": 221351.39787399844,
+      "stdev": 4685.350034414939,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTauren",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jzERxD7DUPNtDbf3WlNY2qcW6AQ3zkys0dtqznO+h1tXltupZTgGiOdBNrZM1HoqbfT3UGrFtPTuhZSfkzQVmbze1hmwblFgG0DQ/6KHWF/K3HTa/V4Ol5tvvU1tvm9SOTmqxds9L2wi1Jpbb+tHJ8P1S81Q3tW7atuq5PQyomW+MUDTMK93Us2vmox7v91AP9eE3u6l117bVQ1do7KTHIjgAJdYFtskuj2vm5XHN+nBcix+7pg0S3U0mk25imBSzT09Q8+5ZGr1zlY4SbYwU3SbKNPm2BCuQCR01dqFPtxnqqNW68TSWB6edrYZtIEW1NuEd6kJDYpXZETSQ1sZXJtL836IaI53ggdtaDTd098sdI9i1tRp8qajCyLAqDT/rLaW4wC4qOCi093bMsPd26Pz/YiOu4A6aTgkDrk6DIiiqCC4udCqYyiPDksCDi8w/T/BKVNO79/ASUeyfc80kFvBnxTM5R3Qejly+fG5Hj/8T/jGIS4DnQPQBlveDiSXRR+EC9uZCjPRLzwdGDUzxdWg7UUa51U8qGfBIb2jzIoYkGRdki4KWs5BRHhmUxjOZZiEzkXDTuJlvCh2eyTSH2wcXGa50VngO8zKWvKYKLOsnJYwU6E2gL8/PJ68TLsZ4DZY4xUzl6n2qCDVLFYwclin4bMDAyLTmbbMPJUc2MmDw4yA6AN8F8RbgRv6/IKhkjeKrqE9jmVPKVHniU4+nscoRTPOfCFllaS4L63nqDxAFsiudckY5u00pqoMhok7Su/a6wR+B+BXwR+Dfg19P+ZtqOyg4CeIW4CKnkulhwM5lmn3uiQa8BPwjkJp0n0xAoAvEiSdeqw8lbwkkJ+NpbOKNuOy+Vs3AzNeEld9WK3JtSD3JazxXs2o+vIm4rNnH4JLif0Qgk68VDbiK12L5tDa7IL3LhdELciYvTx00uCbIGoVXCRHGIN8sEvNDxuD/FWsxIVbhv5zFTOMLBgFRY5mswYlJA5ZpeV2bdd1DebPDk6yFRX7uSyO8JkEDR3SeEuuwjruzWNThUqeK6TNflaPJXekGSrzpgYLlnoyKpVjB+SxvyRzaFtEgsDNiE3DqbDX4IlEZ9kZXxhAM9Siw80f0XCMV1NvUQeP3KtUbf9vFNtzENwQZLiA1d5LctBwNKi8aBv/pC9eNwtheuG7wF8VefI7vmNmUbjLsZI9XoGGsy8CkSDyei7GuXC7mjoebz1EYszmoSsz4qMFjoka2ts5L+0lx2NUFnSWRfUd0vkzY8xAYZtWrQ78nMyDeAdzA18spqPNoP1nCgJP9iqjsJ9wL7Q2qiGDaZrLhtK2fXaJynq1yauflJZht9XMUVa4yLPUbsutV1e/0ilS7qnSq+raXdr6yu+WGSlCxH9KItA21pMp81NbU4s4Ob11vrN4j10Sj+zVYRnSHcx6Uv2JtO5iaD2woNVWIa1594njTTEyD97k3Gm0KLal9vT/B/qLtO/fuij69s+X53S93gK/3q39k/inr75LZ4EPGGps+v+mt7xo3w1P+9m6jo7LM1vXMBAtWQwp+CwAA////0PaZ"
+      }
+    },
+    "troll": {
+      "dps": 242179.32129873201,
+      "max": 263804.4774330923,
+      "min": 223989.34844174984,
+      "stdev": 4886.5230434744435,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jERPFPcBS82wPtfVbU1rbpBbrBjTMT67Q2GnPcr6HWleX26pnOQWI5kA3tU7WeChu9vVQa8S29eyElp2QNxeYvd3UGrJtUGIZQNP8oIdaX8jfdtj8Xg2Wmm+/T229bVI7OqnF2j0vbSPUmlhu60cnw/dLzVPd1Lpp26rn9jCgZr4xQtEwr3RTz66Zj3q830M91Iff7KbWXdtWD12hsZMei+AAlFgX2Ca7PK6Zl8c168NxLX7smjZIdDeZTLqJYVLMPj1BzbtnafTOVTpKtDFSdJso0+TbEqxAJnTU2IU+3Waoo1brxtNYHpx2thq2gRTV2oR3qAsNiVVmR9BAWhtfmUjzf4tqjHSCB25rNdzQ3S93jGDX1mrwpaIKI8OqNPyst5TiAruo4KDQ3tsxw97bofP/i424gjtoOiUMuDoNiqCoIri40KlgKo8MSwIPLjL/PMErUU3v3sNLRLF/zjWTWMCfFc/kHNF5OHL58rkdPf5P+McgLgGeA9EHWN4PJpZEH4UL2JsLMdIvPR8YNTDF16HtRBnlVj+pZMAjvaHNixiSZFyQLQpazkJGeWRQGs9kmoXMRMJN42a+KXR4JtMcbh9cZLjSWeE5zMtY8poqsKyflDBSoDeBvjw/n7xOuBjjNVjiFDOVq/epItQsVTByWKbgswEDI9Oat80+lBzZyIDBj4PoAHwXxFuAG/n/gqCSNYqvoj6NZU4pU+WJTz2exipHMM1/ImSVpbksrOepP0AUyK50yhnl7DalqA6GiDpJ79rrBn8E4lfAH4F/D3495W+q7aDgJIhbgIucSqaHATuXafa5JxrwEvCPQGrSfTIBgS4QJ554rT6UvCWQnIynsYk34rL7WjUDM18TVn5brci1IfUkr/Fczar58CbismYfg0uK/xGBTL5WNOAqXovl09rsgvQuF0YvyJm8PHXQ4JogaxReJUQYg3yzSMwPGYP/V6zFhFiF/3IWM40vGAREjWWyBicmDVim5XVt1nUP5c0OT7IWFvm5L43wmgQNHNF5SqzDOu7OYlGHS50qps98VY4md6UbKPGmBwqWezIqlmIF57O8JXNoW0SDwM6ITcCps9Xgi0Rl2BtdGUMw1KPAzh/Rc41UUG9TB43fq1Rv/G0X23AT3xBkuIDU3Ely03I0qLxoGPynL1w3CmN74brBXxR78Tm+Y2ZTusmwkz1egYaxLgOTIvF4Lsa6crmYOx5uPkdhzOagKjHjowaPiRrZ2jov7SfFYVcXdJZE9h3R+TJhz0NgmFWvDv2ezIB4B3ADXy+noM6j/WQJA072K6Kyn3AvtDeoIoJpm8mG07Z+donKebbKqZ2Xl2C21c9RVLnKsNRvyK5XVb/TK1LtqtKp6tte2vnK7pYbKkHFfkgj0jbUkirzUVtTizs7vHW9sXqPXBON7tdgGdEdznlQ/oq17WBqPrCh1FQhrnn1ieNNMzEN3ufeaLQptKT29f4E+4u279y7K/r0zpbnd7/cAb7er/6R+aesv0tmgw8Za2z6/Ka3vmvcDE/527uNjsoyW9czEyxYDSn4LQAA//8LjPaa"
+      }
+    },
+    "blood_elf": {
+      "dps": 240208.22189832112,
+      "max": 259379.87163267625,
+      "min": 222891.8626690088,
+      "stdev": 4659.257833959044,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceBloodElf",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVF1sFFUbnvfMnJmzb0s7PW1hOF8h2/mg2Uwo7M62+Sjko1s+4COkIUg0XhFDAijRC9L1Rq7QYqz1J8vPBW34abygtVR+Wg1QI6ktkULQNJW0FbggjRfGGI1I0GxMMHNmZndpi/ZGvfFcTM6c9znveZ73D4UJMXgB9kEGYAjgHsABAhmiHSNEnC5jYKK4B1hqnu2htn5rSmub1GLdgIb5yRUaO+1ZzvdQ6+pyW/UspwDRHOim1skaD8XNvh5qjdi2np3QshPy5gKzt5taQ7YNSiwDaJof9FDrC/nbDpvfq8FS8+33qa23TWpHJ7VYu+elbYRaE8tt/ehk+H6peaqbWjdtW/XcHgbUzDdGKBrmlW7q2TXzUY/3e6iH+vCb3dS6a9vqoSs0dtJjERyAEusC22SXxzXz8rhmfTiuxY9d0waJ7iaTSTcxTIrZpyeoefcsjd65SkeJNkaKbhNlmnxbghXIhI4au9Cn2wx11GrdeBrLg9POVsM2kKJam/AOdaEhscrsCBpIa+MrE2n+b1GNkU7wwG2thhu6++WOEezaWg2+VFRhZFiVhp/1llJcYBcVHBTaeztm2Hs7dP5/sRFXcAdNp4QBV6dBERRVBBcXOhVM5ZFhSeDBReafJ3glqunde3iJKPbPuWYSC/iz4pmcIzoPRy5fPrejx/8J/xjEJcBzIPoAy/vBxJLoo3ABe3MhRvql5wOjBqb4OrSdKKPc6ieVDHikN7R5EUOSjAuyRUHLWcgojwxK45lMs5CZSLhp3Mw3hQ7PZJrD7YOLDFc6KzyHeRlLXlMFlvWTEkYK9CbQl+fnk9cJF2O8BkucYqZy9T5VhJqlCkYOyxR8NmBgZFrzttmHkiMbGTD4cRAdgO+CeAtwI/9fEFSyRvFV1KexzCllqjzxqcfTWOUIpvlPhKyyNJeF9Tz1B4gC2ZVOOaOc3aYU1cEQUSfpXXvd4I9A/Ar4I/Dvwa+n/E21HRScBHELcJFTyfQwYOcyzT73RANeAv4RSE26TyYg0AXixBOv1YeStwSSk/E0NvFGXHZfq2Zg5mvCym+rFbk2pJ7kNZ6rWTUf3kRc1uxjcEnxPyKQydeKBlzFa7F8WptdkN7lwugFOZOXpw4aXBNkjcKrhAhjkG8WifkhY/D/irWYEKvwX85ipvEFg4CosUzW4MSkAcu0vK7Nuu6hvNnhSdbCIj/3pRFek6CBIzpPiXVYx91ZLOpwqVPF9JmvytHkrnQDJd70QMFyT0bFUqzgfJa3ZA5ti2gQ2BmxCTh1thp8kagMe6MrYwiGehTY+SN6rpEK6m3qoPF7leqNv+1iG27iG4IMF5CaO0luWo4GlRcNg//0hetGYWwvXDf4i2IvPsd3zGxKNxl2sscr0DDWZWBSJB7PxVhXLhdzx8PN5yiM2RxUJWZ81OAxUSNbW+el/aQ47OqCzpLIviM6XybseQgMs+rVod+TGRDvAG7g6+UU1Hm0nyxhwMl+RVT2E+6F9gZVRDBtM9lw2tbPLlE5z1Y5tfPyEsy2+jmKKlcZlvoN2fWq6nd6RapdVTpVfdtLO1/Z3XJDJajYD2lE2oZaUmU+amtqcWeHt643Vu+Ra6LR/RosI7rDOQ/KX7G2HUzNBzaUmirENa8+cbxpJqbB+9wbjTaFltS+3p9gf9H2nXt3RZ/e2fL87pc7wNf71T8y/5T1d8ls8CFjjU2f3/TWd42b4Sl/e7fRUVlm63pmggWrIQW/BQAA//+uFfaS"
+      }
+    },
+    "alliance_pandaren": {
+      "dps": 240810.8446181002,
+      "max": 259528.32000059335,
+      "min": 222989.57262082596,
+      "stdev": 4716.559227295646,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "233321",
+        "talents": {
+          "talentString": "233321",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_monk_tigerslust",
+              "name": "Tiger's Lust",
+              "spellId": 116841,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "spell_arcane_arcanetorrent",
+              "name": "Chi Burst",
+              "spellId": 123986,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_chibrew",
+              "name": "Chi Brew",
+              "spellId": 115399,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_monk_legsweep",
+              "name": "Leg Sweep",
+              "spellId": 119381,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_monk_dampenharm",
+              "name": "Dampen Harm",
+              "spellId": 122278,
+              "tier": 5
+            },
+            {
+              "choice": 1,
+              "icon": "ability_monk_rushingjadewind",
+              "name": "Rushing Jade Wind",
+              "spellId": 116847,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 85697,
+          "major1Icon": "ability_monk_cranekick_new",
+          "major1Name": "Glyph of Spinning Crane Kick",
+          "major1SpellId": 120479,
+          "major2": 87900,
+          "major2Icon": "ability_monk_touchofkarma",
+          "major2Name": "Glyph of Touch of Karma",
+          "major2SpellId": 125678,
+          "minor1": 90715,
+          "minor1Icon": "ability_monk_blackoutkick",
+          "minor1Name": "Glyph of Blackout Kick",
+          "minor1SpellId": 132005
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidmonk_l_01",
+              "id": 87086,
+              "name": "Red Crane Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidmonk_l_01",
+              "id": 87088,
+              "name": "Red Crane Spaulders",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Crit", "id": 159 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4894,
+                "name": "Swordguard Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidmonk_l_01",
+              "id": 87084,
+              "name": "Red Crane Tunic",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Hit", "id": 144 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raidmonk_l_01",
+              "id": 87085,
+              "name": "Red Crane Grips",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76666,
+                  "name": "Deft Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidrogue_l_01",
+              "id": 86943,
+              "name": "Boots of the Still Breath",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2080, "2": 1538, "6": 551, "7": 695 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_hand_1h_pandaraid_d_02",
+              "id": 86988,
+              "name": "Claws of Shek'zeer",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "2": 887, "6": 444, "8": 309 },
+                "weaponDamageMax": 12643,
+                "weaponDamageMin": 6807
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceAlliancePandaren",
+        "class": "ClassMonk",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/monk/windwalker/#eJzsVFtsFNUbn+/MnJmzX2/T0xaG8y9kO39oNhMKu7NtpBDpFgEJaQgSjU/EkABK9IF0fZEntBhrvWS5PNCGS+MDraVyaTVAjaS2RApB01TSVuCBND4YYzQiQdOYYObMzO7SFu2L+uJ5mJw53+985/f7bihMiMFLsBcyAIMAdwH2E8gQ7Sgh4lQpKzJR3AUsMc90U1u/Oam1TmixLkDD/OwyjZ3yLOe6qXVlma16lpOAaPZ3UetEtYfiZm83tYZtW58e16bH5c0is6eLWoO2DUosA2iaH3VT6yv52wabPqjGEvPdD6mtt05oRya0WJvnpXWYWuPLbP3IRPh+iXmyi1o3bFv13B4C1My3hika5uUu6tk182G393uwm/rwG13UumPb6sHLNHbCYxEcgBLrBNtkl8Y089KYZn08psWPXtUGiO4mk0k3MUQK2efHqXnnDI3evkJHiDZKCm4RZYp8X4zlyISOGjvfq9sMddRq3Hgay4LTjhbDNpCiWpPwDnWhIbFK7QgaSGviKxJp/n9RhZEO8MCtLYYbuvvtthHsWlsMvkRUYmRIlYZf9eYSLLIL8g7y7T3tM+w97Tp/WmzA5dxB0ylmwNUpUARFFcHFBU45U3lkSBK4f4H55wlegWp6125eLAr9c66ZxAL+vHgu64jOw5HLl83t6NF/wj8FcRHwLIhewLI+MLE4+jBcwN5egJE+6Xn/iIEpvhZtJ8oot/pIBQMe6QltXsSQJOOCbFbQchYwyiMD0ng60yRkJhJuGjfxjaHD05mmcHv/AsMVznLPYU7G4jdUgaV9pJiRPL0J9OX5+eS1wsUYr8Zip5CpXL1HFaFOUwUjh2QKvug3MDKledvpB5IjG+43+DEQ7YDvg3gHcAN/KggqWa34KurSWOqUMFWe+NTjaax0BNP8J0JW0zSbhXU89ReIPNkVThmjnN2iFNWBEFEr6V190+APQfwO+DPwH8Gvp9xNtQ0UnABxE3ChU8H0MGBnM00+90Q9XgT+CUhNuk8mINAJ4vhjr9WFkjcHkpPxNDbyBlx6T6tiYOZqwsptqxS51qce5zWerVk1F95EXNbsI3BJ8QkRyORrRD2u5DVYNqXNLkjvcn70gpzJy5MHDK4JslrhlUKEMcg1i8T8lDH4k2INJsRK/J+ziGm8aAAQNZaZNjgxacAyLa9rs657KG92eJK1sMjPfm2E1ySo/7DOU2It1nJ3FotaXOJUMn3mq3I0uSvcQIk3PVCw7JNRsQTLOZ/lLZlF2yIaBHZGbAJOHS0GXygqwt7ozBiCoR4Fdu6wnm2kvHqbPGD8WaV642+b2Iob+fogw3mk5k6Sm5ajQeUFQ+A/ff6akR/b89cM/rLYgy/w7TOb0k2GnezxCjSMdhqYFIlHczHamc3F3PFwczkKYzYHVYkZGzF4TFTL1tZ5SR8pDLs6r7MksvewzpcKex4Cw6x6dej3ZAbEe4Dr+To5BXUe7SOLGXCyTxEVfYR7ob1OFRFM28x0OG3rZpeonGcrnZp5eQlmW90cRZWtDEv9jux8XfU7vTzVpiodqr71lR2v7Wq+rhJU7Ac0Im2DzalSH7Ultaij3VvXGqp2yzXe4H4LlhHd7pwD5Z9YWw+k5gMbTE3m45pWHT/WOBNT733ujkQbQ0tqb88vsK9g2449O6PP7mh+cder7eDr/eY/mX/L+rdk1vuQ0YbGL29464eGTfCMv73T4Kgss2UdM8GCVZCCPwIAAP//OkD2ng=="
+      }
+    }
+  }
+}

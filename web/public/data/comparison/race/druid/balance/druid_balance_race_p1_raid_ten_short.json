@@ -1,0 +1,1983 @@
+{
+  "metadata": {
+    "spec": "balance",
+    "class": "druid",
+    "encounter": "p1_raid_ten_short",
+    "timestamp": "2025-07-29T17:01:06+10:00",
+    "iterations": 10000,
+    "encounterDuration": 120,
+    "encounterVariation": 30,
+    "targetCount": 10,
+    "wowsimsCommit": "99ee7a6",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "night_elf": {
+      "dps": 285909.3704228435,
+      "max": 360544.6579271114,
+      "min": 234493.77151153295,
+      "stdev": 20023.756425589254,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "113222",
+        "talents": {
+          "talentString": "113222",
+          "talents": [
+            {
+              "choice": 1,
+              "icon": "spell_druid_tirelesspursuit",
+              "name": "Feline Swiftness",
+              "spellId": 131768,
+              "tier": 1
+            },
+            {
+              "choice": 1,
+              "icon": "inv_misc_head_dragon_green",
+              "name": "Ysera's Gift",
+              "spellId": 145108,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_druid_typhoon",
+              "name": "Typhoon",
+              "spellId": 132469,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_incarnation",
+              "name": "Incarnation",
+              "spellId": 106731,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_ursolsvortex",
+              "name": "Ursol's Vortex",
+              "spellId": 102793,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "ability_druid_dreamstate",
+              "name": "Dream of Cenarius",
+              "spellId": 108373,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 40914,
+          "major1Icon": "spell_nature_healingtouch",
+          "major1Name": "Glyph of Healing Touch",
+          "major1SpellId": 54825,
+          "major2": 40906,
+          "major2Icon": "spell_druid_stampedingroar_cat",
+          "major2Name": "Glyph of Stampede",
+          "major2SpellId": 114300,
+          "major3": 40909,
+          "major3Icon": "spell_nature_reincarnation",
+          "major3Name": "Glyph of Rebirth",
+          "major3SpellId": 54733
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_helm_leather_raiddruid_l_01",
+              "id": 86934,
+              "name": "Eternal Blossom Cover",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 2458,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raiddruid_l_01",
+              "id": 86937,
+              "name": "Eternal Blossom Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 2269,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_robe_leather_raiddruid_l_01",
+              "id": 86936,
+              "name": "Eternal Blossom Vestment",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 3026,
+                  "2": 2071,
+                  "3": 1220,
+                  "6": 894,
+                  "7": 750
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidmonk_l_01",
+              "id": 87054,
+              "name": "Bracers of Dark Thoughts",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "17": 1295, "2": 1081, "3": 720, "4": 445, "6": 502 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raiddruid_l_01",
+              "id": 86933,
+              "name": "Eternal Blossom Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1891,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidmonk_l_01",
+              "id": 87181,
+              "name": "Weaver's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 576,
+                  "17": 1702,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 684
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pants_leather_raiddruid_l_01",
+              "id": 89948,
+              "name": "Fear-Blackened Leggings",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 2647,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 881,
+                  "6": 772
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_boots_leather_raiddruid_l_01",
+              "id": 90514,
+              "name": "Asani's Uncleansed Sandals",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2125,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 646,
+                  "7": 720
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76640,
+                  "name": "Misty Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Crit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceNightElf",
+        "class": "ClassDruid",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/druid/balance/#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"
+      }
+    },
+    "worgen": {
+      "dps": 289030.6702464968,
+      "max": 376440.8200612572,
+      "min": 234995.64302204878,
+      "stdev": 20172.632746947205,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "113222",
+        "talents": {
+          "talentString": "113222",
+          "talents": [
+            {
+              "choice": 1,
+              "icon": "spell_druid_tirelesspursuit",
+              "name": "Feline Swiftness",
+              "spellId": 131768,
+              "tier": 1
+            },
+            {
+              "choice": 1,
+              "icon": "inv_misc_head_dragon_green",
+              "name": "Ysera's Gift",
+              "spellId": 145108,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_druid_typhoon",
+              "name": "Typhoon",
+              "spellId": 132469,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_incarnation",
+              "name": "Incarnation",
+              "spellId": 106731,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_ursolsvortex",
+              "name": "Ursol's Vortex",
+              "spellId": 102793,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "ability_druid_dreamstate",
+              "name": "Dream of Cenarius",
+              "spellId": 108373,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 40914,
+          "major1Icon": "spell_nature_healingtouch",
+          "major1Name": "Glyph of Healing Touch",
+          "major1SpellId": 54825,
+          "major2": 40906,
+          "major2Icon": "spell_druid_stampedingroar_cat",
+          "major2Name": "Glyph of Stampede",
+          "major2SpellId": 114300,
+          "major3": 40909,
+          "major3Icon": "spell_nature_reincarnation",
+          "major3Name": "Glyph of Rebirth",
+          "major3SpellId": 54733
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_helm_leather_raiddruid_l_01",
+              "id": 86934,
+              "name": "Eternal Blossom Cover",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 2458,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raiddruid_l_01",
+              "id": 86937,
+              "name": "Eternal Blossom Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 2269,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_robe_leather_raiddruid_l_01",
+              "id": 86936,
+              "name": "Eternal Blossom Vestment",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 3026,
+                  "2": 2071,
+                  "3": 1220,
+                  "6": 894,
+                  "7": 750
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidmonk_l_01",
+              "id": 87054,
+              "name": "Bracers of Dark Thoughts",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "17": 1295, "2": 1081, "3": 720, "4": 445, "6": 502 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raiddruid_l_01",
+              "id": 86933,
+              "name": "Eternal Blossom Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1891,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidmonk_l_01",
+              "id": 87181,
+              "name": "Weaver's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 576,
+                  "17": 1702,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 684
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pants_leather_raiddruid_l_01",
+              "id": 89948,
+              "name": "Fear-Blackened Leggings",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 2647,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 881,
+                  "6": 772
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_boots_leather_raiddruid_l_01",
+              "id": 90514,
+              "name": "Asani's Uncleansed Sandals",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2125,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 646,
+                  "7": 720
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76640,
+                  "name": "Misty Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Crit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceWorgen",
+        "class": "ClassDruid",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/druid/balance/#eJzsVm1sVFUT3rlfe3cK7e20XS7n5aPcl5Zl31DubrvbLXlDtxUMMcaggD+MEjF8GkwILTGgP0Q+RYVChNAKijW4UJJCmpBoEwq0CSCxpqlaaNNoQ8SYID/EhETAYM79KLe7LQJB/dP50d4zZ2bOMzPPmT3INAjBSlgDdQBnAAYA3hKgTpD2CwLr09UsLYt9C5ij7UvJhvLdZelajxRKASramZQcWoc5Wn1K1s8VGaKzgVpdh6wfKA59xr32p2S9wzCUDy9J9ZckHKPtPCLrbYYBPst3b0rWv7ZWtfMaizFHe/+obCjXergxD5ar9bfJem+RodzpsU5eh9nang5Z7zQMkdvUoqLt6pBDtejXDqfk0A5ASdt2VEZJqz8iY462u0PW+wxDHHDRnUjJercR2g2Gpp7qlrRT3ZJ+slsyG85LrYISiZRGo9F2YYzafVrQLp4W9M7TwgVB6hKy+gTfFSEVxBBOeBvGo6Qev+pnueEcVSGxSfIxBSUUYqahooLSjKhZg/mocq167KTsaCPlw2pjw2pLazAP/UxGUT0bcpURrrRN27arhh9lFGckuFJhEgp6rhFAP8ozoiVWUNv985BXW+D4/35LcNRmSayGJjCGQZaPFNZUsFOyokdMc5aPQqwYuUWgBbjv+WsKjjWyMNDoLq2QO7/30wfAdgO+yTZghGZiXgtomF141xVQ3wmibgQxvwVyMce78dEdBeeyJ9AIF6oy5TVlOjqAEiZODP9HFYe3EZ7ysczIjw6rv9n/QLCi5Q8Lq7/Zb9WVV1whYZaPWU2OlMRqWEYAijITi9lUHBcuUBUKNFmFP/SJ4hAv5rbGUXF60DfAugDPAesAXEUrMHBR4lt3r6t292yPtGVab7t/krAgnKfKpLYrnE29czmpEEoxGM5XZQq0K9yur1d29c/TQtTC2fxmXAGfrS2zgEsUaB0KPJLwAL8/Kucq0P/ZLDSpBAPdkus3hSY7ZRxCXNd5622BOaZUxSoxRqWud3OX3yqrB8TwFU4kmGNPpSyC06jIDfHrWQX1cJD72Mnd3AQOhNIa5lhQM7BjgIeAHQScQ9Ve9GEW8qa69bZgYRAzi+XtMi6iBbbbvUhpUTzLLbcF5NNKJLHRnVZR01UNDrAykznVpgKW5y0+//9FJ9BUZqDOgl4gQ634SKWVbDm+SC/8BSDn88Z1NQNbWSa2mOkS+MZ1e4Qdv+qn/7HpOJkmZhAu6ka/3Cszh8j0h8huiXhFZD+I+DHQAcAEi+MYA1FtdciNxTTVs+KNFT3UVxskZ+dlttibmvN5cxPgkzTnITsRz8y23MQ3aD2uZq9iGUWHEoxX2iWYdQslD0KbKVGMkjn0zjn9QSFSY91oMf1Gx70jYDPQRsDx4XH3eMh5PTiivNmNEK2aJXECsREIypeFNGlYCg/+rGA5xbwn8SqBp0pRc4TDq/OslaYwRBWVuGmar9XQWYG1CXhYYI0Cfgp0CJAPE+vIVneK4XSa5l2ysM5LcG/KBRokd8/DgS2PwgHJw4FYhasazC5egUma/QBN4PE4D8SMaRzHBMXvd2wkNpJndb69TKvhQWANgLuA3gMsZJMw/Q0UN4c0zMjBsS2A9oODBE3GRWwBVlPSvcy86XyiDj92S2MOwT0bFryIXc/BGO6bhiJsJhbRf9NLo1CgHZwnlhPBniEnZaoHtg/wXaDtgK+zdV78nKFp1ROGjtDHdds9Tt6RtRfYHsBtQJv/RWyBPWI6Lo1lo9wiCapo/S4PBCnA3OemLv4sLN0o+iwpS+4QfQ2iMn/1kvXL1r5ivVPRZ5yngL2/OJlrf8xOjm+o5/Jl5ZTllvRURn8E3V/4UvgE+P4Jmb85+SBmZ5KXvXZPJw4eqEq3qeB/Bi4UVrk7yTVNv8GGrOeWrFpauHDJ2hXLauvBzrd3NM2/RUbT9MpomoMymuZomqNpPkYZTdMrjz3NCtukq7Kq8ysuv1TOg2ftz/7KsKjWPVOtaqBDApLwZwAAAP//xax1aw=="
+      }
+    },
+    "tauren": {
+      "dps": 285857.8466836318,
+      "max": 360500.9517168072,
+      "min": 234463.7406462768,
+      "stdev": 20025.269858098385,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "113222",
+        "talents": {
+          "talentString": "113222",
+          "talents": [
+            {
+              "choice": 1,
+              "icon": "spell_druid_tirelesspursuit",
+              "name": "Feline Swiftness",
+              "spellId": 131768,
+              "tier": 1
+            },
+            {
+              "choice": 1,
+              "icon": "inv_misc_head_dragon_green",
+              "name": "Ysera's Gift",
+              "spellId": 145108,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_druid_typhoon",
+              "name": "Typhoon",
+              "spellId": 132469,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_incarnation",
+              "name": "Incarnation",
+              "spellId": 106731,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_ursolsvortex",
+              "name": "Ursol's Vortex",
+              "spellId": 102793,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "ability_druid_dreamstate",
+              "name": "Dream of Cenarius",
+              "spellId": 108373,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 40914,
+          "major1Icon": "spell_nature_healingtouch",
+          "major1Name": "Glyph of Healing Touch",
+          "major1SpellId": 54825,
+          "major2": 40906,
+          "major2Icon": "spell_druid_stampedingroar_cat",
+          "major2Name": "Glyph of Stampede",
+          "major2SpellId": 114300,
+          "major3": 40909,
+          "major3Icon": "spell_nature_reincarnation",
+          "major3Name": "Glyph of Rebirth",
+          "major3SpellId": 54733
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_helm_leather_raiddruid_l_01",
+              "id": 86934,
+              "name": "Eternal Blossom Cover",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 2458,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raiddruid_l_01",
+              "id": 86937,
+              "name": "Eternal Blossom Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 2269,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_robe_leather_raiddruid_l_01",
+              "id": 86936,
+              "name": "Eternal Blossom Vestment",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 3026,
+                  "2": 2071,
+                  "3": 1220,
+                  "6": 894,
+                  "7": 750
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidmonk_l_01",
+              "id": 87054,
+              "name": "Bracers of Dark Thoughts",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "17": 1295, "2": 1081, "3": 720, "4": 445, "6": 502 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raiddruid_l_01",
+              "id": 86933,
+              "name": "Eternal Blossom Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1891,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidmonk_l_01",
+              "id": 87181,
+              "name": "Weaver's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 576,
+                  "17": 1702,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 684
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pants_leather_raiddruid_l_01",
+              "id": 89948,
+              "name": "Fear-Blackened Leggings",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 2647,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 881,
+                  "6": 772
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_boots_leather_raiddruid_l_01",
+              "id": 90514,
+              "name": "Asani's Uncleansed Sandals",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2125,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 646,
+                  "7": 720
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76640,
+                  "name": "Misty Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Crit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTauren",
+        "class": "ClassDruid",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/druid/balance/#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"
+      }
+    },
+    "troll": {
+      "dps": 292045.53668436565,
+      "max": 367125.98899775173,
+      "min": 237524.7832800289,
+      "stdev": 20875.897762649056,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "113222",
+        "talents": {
+          "talentString": "113222",
+          "talents": [
+            {
+              "choice": 1,
+              "icon": "spell_druid_tirelesspursuit",
+              "name": "Feline Swiftness",
+              "spellId": 131768,
+              "tier": 1
+            },
+            {
+              "choice": 1,
+              "icon": "inv_misc_head_dragon_green",
+              "name": "Ysera's Gift",
+              "spellId": 145108,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_druid_typhoon",
+              "name": "Typhoon",
+              "spellId": 132469,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_incarnation",
+              "name": "Incarnation",
+              "spellId": 106731,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "spell_druid_ursolsvortex",
+              "name": "Ursol's Vortex",
+              "spellId": 102793,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "ability_druid_dreamstate",
+              "name": "Dream of Cenarius",
+              "spellId": 108373,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 40914,
+          "major1Icon": "spell_nature_healingtouch",
+          "major1Name": "Glyph of Healing Touch",
+          "major1SpellId": 54825,
+          "major2": 40906,
+          "major2Icon": "spell_druid_stampedingroar_cat",
+          "major2Name": "Glyph of Stampede",
+          "major2SpellId": 114300,
+          "major3": 40909,
+          "major3Icon": "spell_nature_reincarnation",
+          "major3Name": "Glyph of Rebirth",
+          "major3SpellId": 54733
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_helm_leather_raiddruid_l_01",
+              "id": 86934,
+              "name": "Eternal Blossom Cover",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 2458,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raiddruid_l_01",
+              "id": 86937,
+              "name": "Eternal Blossom Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 2269,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Crit", "id": 166 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_robe_leather_raiddruid_l_01",
+              "id": 86936,
+              "name": "Eternal Blossom Vestment",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 3026,
+                  "2": 2071,
+                  "3": 1220,
+                  "6": 894,
+                  "7": 750
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidmonk_l_01",
+              "id": 87054,
+              "name": "Bracers of Dark Thoughts",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1370,
+                "stats": { "17": 1295, "2": 1081, "3": 720, "4": 445, "6": 502 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_leather_raiddruid_l_01",
+              "id": 86933,
+              "name": "Eternal Blossom Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 1891,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidmonk_l_01",
+              "id": 87181,
+              "name": "Weaver's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 576,
+                  "17": 1702,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 684
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4825, "name": "Greater Cerulean Spellthread" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                },
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76651,
+                  "name": "Energized Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pants_leather_raiddruid_l_01",
+              "id": 89948,
+              "name": "Fear-Blackened Leggings",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "17": 2647,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 881,
+                  "6": 772
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76697,
+                  "name": "Smooth Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Crit"]
+                }
+              ],
+              "icon": "inv_boots_leather_raiddruid_l_01",
+              "id": 90514,
+              "name": "Asani's Uncleansed Sandals",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2125,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 646,
+                  "7": 720
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Crit", "id": 116 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_145",
+              "id": 86949,
+              "name": "Fragment of Fear Made Flesh",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 450, "6": 550 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_offhand_ulduarraid_d_03",
+              "id": 87065,
+              "name": "Light of the Cosmos",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 5,
+                  "icon": "inv_misc_gem_x4_rare_cut_green",
+                  "id": 76640,
+                  "name": "Misty Wild Jade",
+                  "quality": 3,
+                  "stats": ["+160 Spirit", "+160 Crit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassDruid",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/druid/balance/#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"
+      }
+    }
+  }
+}

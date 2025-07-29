@@ -1,0 +1,5131 @@
+{
+  "metadata": {
+    "spec": "assassination",
+    "class": "rogue",
+    "encounter": "p1_raid_three_burst",
+    "timestamp": "2025-07-29T17:01:19+10:00",
+    "iterations": 10000,
+    "encounterDuration": 30,
+    "encounterVariation": 10,
+    "targetCount": 3,
+    "wowsimsCommit": "99ee7a6",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "human": {
+      "dps": 380006.0577238515,
+      "max": 519222.3242914593,
+      "min": 268728.55221671204,
+      "stdev": 40639.3823774129,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceHuman",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwyE5KoBmJb1mtDe+QU+0uDZdwC5/HhKYFou1ER0ulu7Jv0uIMrJcRF9orNjgCTP10Q0o7W3WOeLdW5yKXlsXETTWoOTPQAo5Vc1EX1pt/th8OhtmJb73xfaG2nwgw1uICRHZkRU79bewYYlf82omR0X0ZzWrhn7NqAvp8aFkeXLV2aEaeNyrCaQy6WawDVysSaii1q7Y1MCsbkDR8vgxDyXJ+Z5dHye5w59yj9iXiHfmy/kTzEenLzMZhk/x/wLzPmOfeFhB3qKI4s6tI8C3Z7eKhL6zwh0gyupaznKKFIS27uWmgHBq53UqTLYpkP08wb/RlolP1qvChhTFjMxBZySaUkVIY8ybg88cl8CJ8nc1Wy7Ua3FNRoxmACTmcyq5EexyuI6pTE1AYg8eO8nTkwK7IjTASe2yVFWZyFXvduhgurF26l7ecg1dX8iXq885MHr3/g0pJ7AR+mR62rCO1XPSuq+XBXFGcYC11a85UoxV7UsRvNGdT9uoOJqLMbdKjP/aNgOWjru081K/YWZvUtA/aoP76DYIqAFkWs93CuplmM2nQcmA6qox3E7bcUNqmi7eestYTfdiuEZbsDf/uZhZ5wJOIWn4GqiCcsoap5FOGGLJyd8SzFy2aNtags+QBtXXqW7D5yrlGyPY9DI+nKriEjpttaxxsB0O21XW3ETDf494aF57la4HfshLj/Io5AQ2cKPz9JadQOG6KPYUdlZHbbmPj/tRu4PbOhF17GRKe9znSOut3ln5fnh3RcghW0YSogyPWfn5u7Rv4owwd1b7kgW68o3HTls4rPSLTts1Ev57yHyux6LPwDn34jNL5evBzZdXmjFPdj/1psDKzFF87k02zXQrJR3HfsF9rRtqTw91LWtsvvJ4ecOQ+L36/9t/iPxX9ksJpBzpYGzcyZ+Lg3Cw8nyYil2g9GH7gskRNAPZfg9AAD//+/3NPQ="
+      }
+    },
+    "dwarf": {
+      "dps": 379980.0970359609,
+      "max": 519199.1869559194,
+      "min": 268715.38629070116,
+      "stdev": 40637.74665194307,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwxcyVUDMC3rNaG98wt8pMGz7wBy+fGUwLRcqInodLd2TfpdQJST4yL6RGfHAEmer4loRmtvsc4X69zkUvLYuIimtQYnewBQyq9qIvrSbvfD4NHbMC33vy+0N9LgBxvcQEiOzIio3q29gw1L/ppRMzsuojmtXTP2bUBfTo0LI8uXr8wI08blWE0gl0s1gWvkYk1EF7V2x6YEYnMHjpbBiXkuT8zz6Pg8zx36lH/EvEK+N1/In2I8OHmZzTJ+jvkXmPMd+8LDDvQURxZ1aB8Fuj29VST0nxHoBldS13KUUaQktnctNQOCVzupU2WwTYfo5w3+jbRKfrReFTCmLGZiCjgl05IqQh5l3B545L4ETpK5q9l2o1qLazRiMAEmM5lVyY9ilcV1SmNqAhB58N5PnJgU2BGnA05sk6OszkKuerdDBdWLt1P38pBr6v5EvF55yIPXv/FpSD2Bj9Ij19WEd6qeldR9uSqKM4wFrq14y5VirmpZjOaN6n7cQMXVWIy7VWb+0bAdtHTcp5uV+gsze5eA+lUf3kGxRUALItd6uFdSLcdsOg9MBlRRj+N22oobVNF289Zbwm66FcMz3IC//c3DzjgTcApPwdVEE5ZR1DyLcMIWT074lmLkskfb1BZ8gDauvEp3HzhXKdkex6CR9eVWEZHSba1jjYHpdtqutuImGvx7wkPz3K1wO/ZDXH6QRyEhsoUfn6W16gYM0Uexo7KzOmzNfX7ajdwf2NCLrmMjU97nOkdcb/POyvPDuy9ACtswlBBles7Ozd2jfxVhgru33JEs1pVvOnLYxGelW3bYqJfy30Pkdz0WfwDOvxGbXy5fD2y6vNCKe7D/rTcHVmKK5nNptmugWSnvOvYL7GnbUnl6qGtbZfeTw88dhsTv1//b/Efiv7JZTCDnSgNn50z8XBqEh5PlxVLsBqMP3RdIiKAfyvB7AAAA///g3zTy"
+      }
+    },
+    "night_elf": {
+      "dps": 380037.25189580966,
+      "max": 519252.2667256876,
+      "min": 268745.5904739027,
+      "stdev": 40641.60422954816,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceNightElf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1Nww8yVUDMC3rNaG98wt8pMGz7wBy+fGUwLRcqInodLd2TfpdQJST4yL6RGfHAEmer4loRmtvsc4X69zkUvLYuIimtQYnewBQyq9qIvrSbvfD4NHbMC33vy+0N9LgBxvcQEiOzIio3q29gw1L/ppRMzsuojmtXTP2bUBfTo0LI8uXr8wI08blWE0gl0s1gWvkYk1EF7V2x6YEYnMHjpbBiXkuT8zz6Pg8zx36lH/EvEK+N1/In2I8OHmZzTJ+jvkXmPMd+8LDDvQURxZ1aB8Fuj29VST0nxHoBldS13KUUaQktnctNQOCVzupU2WwTYfo5w3+jbRKfrReFTCmLGZiCjgl05IqQh5l3B545L4ETpK5q9l2o1qLazRiMAEmM5lVyY9ilcV1SmNqAhB58N5PnJgU2BGnA05sk6OszkKuerdDBdWLt1P38pBr6v5EvF55yIPXv/FpSD2Bj9Ij19WEd6qeldR9uSqKM4wFrq14y5VirmpZjOaN6n7cQMXVWIy7VWb+0bAdtHTcp5uV+gsze5eA+lUf3kGxRUALItd6uFdSLcdsOg9MBlRRj+N22oobVNF289Zbwm66FcMz3IC//c3DzjgTcApPwdVEE5ZR1DyLcMIWT074lmLkskfb1BZ8gDauvEp3HzhXKdkex6CR9eVWEZHSba1jjYHpdtqutuImGvx7wkPz3K1wO/ZDXH6QRyEhsoUfn6W16gYM0Uexo7KzOmzNfX7ajdwf2NCLrmMjU97nOkdcb/POyvPDuy9ACtswlBBles7Ozd2jfxVhgru33JEs1pVvOnLYxGelW3bYqJfy30Pkdz0WfwDOvxGbXy5fD2y6vNCKe7D/rTcHVmKK5nNptmugWSnvOvYL7GnbUnl6qGtbZfeTw88dhsTv1//b/Efiv7JZTCDnSgNn50z8XBqEh5PlxVLsBqMP3RdIiKAfyvB7AAAA///3gzT1"
+      }
+    },
+    "gnome": {
+      "dps": 380006.28387969366,
+      "max": 519216.8802125088,
+      "min": 268725.45435176836,
+      "stdev": 40640.406222036596,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGnome",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1Nwy45KoBmJb1mtDe+QU+0uDZdwC5/HhKYFou1ER0ulu7Jv0uIMrJcRF9orNjgCTP10Q0o7W3WOeLdW5yKXlsXETTWoOTPQAo5Vc1EX1pt/th8OhtmJb73xfaG2nwgw1uICRHZkRU79bewYYlf82omR0X0ZzWrhn7NqAvp8aFkeXLV2aEaeNyrCaQy6WawDVysSaii1q7Y1MCsbkDR8vgxDyXJ+Z5dHye5w59yj9iXiHfmy/kTzEenLzMZhk/x/wLzPmOfeFhB3qKI4s6tI8C3Z7eKhL6zwh0gyupaznKKFIS27uWmgHBq53UqTLYpkP08wb/RlolP1qvChhTFjMxBZySaUkVIY8ybg88cl8CJ8nc1Wy7Ua3FNRoxmACTmcyq5EexyuI6pTE1AYg8eO8nTkwK7IjTASe2yVFWZyFXvduhgurF26l7ecg1dX8iXq885MHr3/g0pJ7AR+mR62rCO1XPSuq+XBXFGcYC11a85UoxV7UsRvNGdT9uoOJqLMbdKjP/aNgOWjru081K/YWZvUtA/aoP76DYIqAFkWs93CuplmM2nQcmA6qox3E7bcUNqmi7eestYTfdiuEZbsDf/uZhZ5wJOIWn4GqiCcsoap5FOGGLJyd8SzFy2aNtags+QBtXXqW7D5yrlGyPY9DI+nKriEjpttaxxsB0O21XW3ETDf494aF57la4HfshLj/Io5AQ2cKPz9JadQOG6KPYUdlZHbbmPj/tRu4PbOhF17GRKe9znSOut3ln5fnh3RcghW0YSogyPWfn5u7Rv4owwd1b7kgW68o3HTls4rPSLTts1Ev57yHyux6LPwDn34jNL5evBzZdXmjFPdj/1psDKzFF87k02zXQrJR3HfsF9rRtqTw91LWtsvvJ4ecOQ+L36/9t/iPxX9ksJpBzpYGzcyZ+Lg3Cw8nyYil2g9GH7gskRNAPZfg9AAD//+hrNPM="
+      }
+    },
+    "worgen": {
+      "dps": 383523.4883240468,
+      "max": 521729.5669264601,
+      "min": 270594.77366015926,
+      "stdev": 40989.10848352263,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceWorgen",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP05281Ojtt4HXyIY6PLxeBm14asRXcjSGMRqf0RX0RWkvpDkdL1xT6pWIy1SEILtkVFi5C1T5r0pYJh21SMZas11N1YihaxoOKbIMWHrMy93WaNEQqivnge7p055zvn+76ZQSUhA0/BLpgAqAFcAniBwQTjhxhTe30vIblqAqZkoyq0c36Rjzd55h1ALj+eFZiSi1URnO7Ttkm/C4hyZkoEn+jMJCDJ81URzGntLDX4UoObXFIemxJBTWuwMgcApfyqKoIvo+1+GDl6G6bk/veFdsab/GCTGwjJ8TkRNPq0c7AZkb9m1MxPiaCutW3Gvg3oytkpYWS58pU5Ydq4nKwK5LJVFbhGLlVFcFFre3JWILZ3YGnpnVjg8sQCD44v8OyhT/lHzMnnBnL53CnGvZOX2Tzj55h7gVnfsS8c7EZHcWRBt3ZRoN0/UEFC9xmBtncleS1HaUVKYldvqx3gvdpDPSqNCe2jmzP4N1Iq/tF6lceQMpgOyeMUT4urCDmUYZfnkP0SWHHmrnbbjWotrtGI3jSYzExGxT8KVQbXKY3JaUDk3ns/cWJSYHeY8jixTZaKdOazlbstyqsBvJ36lodcU/cn4vXKQe69/o1Lo+oJfJQeua4mvFP1r6QezFZQnGHMs6OKs1wpZCsRi9G8Ud2PG6iwGotxt8rMPxqOBrWOu3SzUn9hZm8LaEgN4h0URgjoQGQ7D/dKsuOYTeeBGY/K6nHcTltxgypE3bzzlrCPbkX/DDfgb39zsCdMe5z8U3A10YalFbXPwp+Oiien3Yhi/LJD29QWfIA2rrxKex9YVynZHsugkQ1mVxGR1InOscZArYu2q624iUb+nnDfPPdIeDT2Q1x+kEchJooKPz5La9UN6KOLYkd5Z2UsMvf5aTuwf2CjL9pWFOnSPts6Yjubd5afH9t9AZKYQF9CkO4/W6/fo38Vfoy7t9QdL9aVbjpy2MRnxVt2RNEo5r6HwO19LPwArH8jNr9cuh5YrbTYiXtw6K03h1diCuZzab53uF0p7Tr2C+xJbCk/Pdq7rbz7ybHnDkPs9+v/bf4j8V/ZLMSQc8Xhs3UTPxdH4OF4ebEY2t7EQ/d5EgIYghL8HgAA//8dTjT6"
+      }
+    },
+    "orc": {
+      "dps": 392558.9060781443,
+      "max": 538557.9545084336,
+      "min": 276643.66807891685,
+      "stdev": 42266.54811494882,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1Nwx8yVUDMC3rNaG98wt8pMGz7wBy+fGUwLRcqInodLd2TfpdQJST4yL6RGfHAEmer4loRmtvsc4X69zkUvLYuIimtQYnewBQyq9qIvrSbvfD4NHbMC33vy+0N9LgBxvcQEiOzIio3q29gw1L/ppRMzsuojmtXTP2bUBfTo0LI8uXr8wI08blWE0gl0s1gWvkYk1EF7V2x6YEYnMHjpbBiXkuT8zz6Pg8zx36lH/EvEK+N1/In2I8OHmZzTJ+jvkXmPMd+8LDDvQURxZ1aB8Fuj29VST0nxHoBldS13KUUaQktnctNQOCVzupU2WwTYfo5w3+jbRKfrReFTCmLGZiCjgl05IqQh5l3B545L4ETpK5q9l2o1qLazRiMAEmM5lVyY9ilcV1SmNqAhB58N5PnJgU2BGnA05sk6OszkKuerdDBdWLt1P38pBr6v5EvF55yIPXv/FpSD2Bj9Ij19WEd6qeldR9uSqKM4wFrq14y5VirmpZjOaN6n7cQMXVWIy7VWb+0bAdtHTcp5uV+gsze5eA+lUf3kGxRUALItd6uFdSLcdsOg9MBlRRj+N22oobVNF289Zbwm66FcMz3IC//c3DzjgTcApPwdVEE5ZR1DyLcMIWT074lmLkskfb1BZ8gDauvEp3HzhXKdkex6CR9eVWEZHSba1jjYHpdtqutuImGvx7wkPz3K1wO/ZDXH6QRyEhsoUfn6W16gYM0Uexo7KzOmzNfX7ajdwf2NCLrmMjU97nOkdcb/POyvPDuy9ACtswlBBles7Ozd2jfxVhgru33JEs1pVvOnLYxGelW3bYqJfy30Pkdz0WfwDOvxGbXy5fD2y6vNCKe7D/rTcHVmKK5nNptmugWSnvOvYL7GnbUnl6qGtbZfeTw88dhsTv1//b/Efiv7JZTCDnSgNn50z8XBqEh5PlxVLsBqMP3RdIiKAfyvB7AAAA////DzT2"
+      }
+    },
+    "undead": {
+      "dps": 381860.86694905587,
+      "max": 527065.6419251863,
+      "min": 268378.1704192893,
+      "stdev": 40941.051005263886,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceUndead",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwxQctUATMt6TWjv/AIfafDsO4BcfjwlMC0XaiI63a1dk34XEOXkuIg+0dkxQJLnayKa0dpbrPPFOje5lDw2LqJprcHJHgCU8quaiL602/0wePQ2TMv97wvtjTT4wQY3EJIjMyKqd2vvYMOSv2bUzI6LaE5r14x9G9CXU+PCyPLlKzPCtHE5VhPI5VJN4Bq5WBPRRa3dsSmB2NyBo2VwYp7LE/M8Oj7Pc4c+5R8xr5DvzRfypxgPTl5ms4yfY/4F5nzHvvCwAz3FkUUd2keBbk9vFQn9ZwS6wZXUtRxlFCmJ7V1LzYDg1U7qVBls0yH6eYN/I62SH61XBYwpi5mYAk7JtKSKkEcZtwceuS+Bk2TuarbdqNbiGo0YTIDJTGZV8qNYZXGd0piaAEQevPcTJyYFdsTpgBPb5Cirs5Cr3u1QQfXi7dS9POSauj8Rr1ce8uD1b3waUk/go/TIdTXhnapnJXVfroriDGOBayvecqWYq1oWo3mjuh83UHE1FuNulZl/NGwHLR336Wal/sLM3iWgftWHd1BsEdCCyLUe7pVUyzGbzgOTAVXU47idtuIGVbTdvPWWsJtuxfAMN+Bvf/OwM84EnMJTcDXRhGUUNc8inLDFkxO+pRi57NE2tQUfoI0rr9LdB85VSrbHMWhkfblVRKR0W+tYY2C6nbarrbiJBv+e8NA8dyvcjv0Qlx/kUUiIbOHHZ2mtugFD9FHsqOysDltzn592I/cHNvSi69jIlPe5zhHX27yz8vzw7guQwjYMJUSZnrNzc/foX0WY4O4tdySLdeWbjhw28Vnplh026qX89xD5XY/FH4Dzb8Tml8vXA5suL7TiHux/682BlZii+Vya7RpoVsq7jv0Ce9q2VJ4e6tpW2f3k8HOHIfH79f82/5H4r2wWE8i50sDZORM/lwbh4WR5sRS7wehD9wUSIuiHMvweAAD//xXCNPk="
+      }
+    },
+    "troll": {
+      "dps": 392288.2191280728,
+      "max": 540721.3799674856,
+      "min": 283745.6969452796,
+      "stdev": 39716.268813821494,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwxCyVUDMC3rNaG98wt8pMGz7wBy+fGUwLRcqInodLd2TfpdQJST4yL6RGfHAEmer4loRmtvsc4X69zkUvLYuIimtQYnewBQyq9qIvrSbvfD4NHbMC33vy+0N9LgBxvcQEiOzIio3q29gw1L/ppRMzsuojmtXTP2bUBfTo0LI8uXr8wI08blWE0gl0s1gWvkYk1EF7V2x6YEYnMHjpbBiXkuT8zz6Pg8zx36lH/EvEK+N1/In2I8OHmZzTJ+jvkXmPMd+8LDDvQURxZ1aB8Fuj29VST0nxHoBldS13KUUaQktnctNQOCVzupU2WwTYfo5w3+jbRKfrReFTCmLGZiCjgl05IqQh5l3B545L4ETpK5q9l2o1qLazRiMAEmM5lVyY9ilcV1SmNqAhB58N5PnJgU2BGnA05sk6OszkKuerdDBdWLt1P38pBr6v5EvF55yIPXv/FpSD2Bj9Ij19WEd6qeldR9uSqKM4wFrq14y5VirmpZjOaN6n7cQMXVWIy7VWb+0bAdtHTcp5uV+gsze5eA+lUf3kGxRUALItd6uFdSLcdsOg9MBlRRj+N22oobVNF289Zbwm66FcMz3IC//c3DzjgTcApPwdVEE5ZR1DyLcMIWT074lmLkskfb1BZ8gDauvEp3HzhXKdkex6CR9eVWEZHSba1jjYHpdtqutuImGvx7wkPz3K1wO/ZDXH6QRyEhsoUfn6W16gYM0Uexo7KzOmzNfX7ajdwf2NCLrmMjU97nOkdcb/POyvPDuy9ACtswlBBles7Ozd2jfxVhgru33JEs1pVvOnLYxGelW3bYqJfy30Pkdz0WfwDOvxGbXy5fD2y6vNCKe7D/rTcHVmKK5nNptmugWSnvOvYL7GnbUnl6qGtbZfeTw88dhsTv1//b/Efiv7JZTCDnSgNn50z8XBqEh5PlxVLsBqMP3RdIiKAfyvB7AAAA//8ONjT4"
+      }
+    },
+    "blood_elf": {
+      "dps": 382025.9990124569,
+      "max": 520924.0686523805,
+      "min": 272470.9462495852,
+      "stdev": 40292.94011827479,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceBloodElf",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwxActUATMt6TWjv/AIfafDsO4BcfjwlMC0XaiI63a1dk34XEOXkuIg+0dkxQJLnayKa0dpbrPPFOje5lDw2LqJprcHJHgCU8quaiL602/0wePQ2TMv97wvtjTT4wQY3EJIjMyKqd2vvYMOSv2bUzI6LaE5r14x9G9CXU+PCyPLlKzPCtHE5VhPI5VJN4Bq5WBPRRa3dsSmB2NyBo2VwYp7LE/M8Oj7Pc4c+5R8xr5DvzRfypxgPTl5ms4yfY/4F5nzHvvCwAz3FkUUd2keBbk9vFQn9ZwS6wZXUtRxlFCmJ7V1LzYDg1U7qVBls0yH6eYN/I62SH61XBYwpi5mYAk7JtKSKkEcZtwceuS+Bk2TuarbdqNbiGo0YTIDJTGZV8qNYZXGd0piaAEQevPcTJyYFdsTpgBPb5Cirs5Cr3u1QQfXi7dS9POSauj8Rr1ce8uD1b3waUk/go/TIdTXhnapnJXVfroriDGOBayvecqWYq1oWo3mjuh83UHE1FuNulZl/NGwHLR336Wal/sLM3iWgftWHd1BsEdCCyLUe7pVUyzGbzgOTAVXU47idtuIGVbTdvPWWsJtuxfAMN+Bvf/OwM84EnMJTcDXRhGUUNc8inLDFkxO+pRi57NE2tQUfoI0rr9LdB85VSrbHMWhkfblVRKR0W+tYY2C6nbarrbiJBv+e8NA8dyvcjv0Qlx/kUUiIbOHHZ2mtugFD9FHsqOysDltzn592I/cHNvSi69jIlPe5zhHX27yz8vzw7guQwjYMJUSZnrNzc/foX0WY4O4tdySLdeWbjhw28Vnplh026qX89xD5XY/FH4Dzb8Tml8vXA5suL7TiHux/682BlZii+Vya7RpoVsq7jv0Ce9q2VJ4e6tpW2f3k8HOHIfH79f82/5H4r2wWE8i50sDZORM/lwbh4WR5sRS7wehD9wUSIuiHMvweAAD//9HHNPA="
+      }
+    },
+    "goblin": {
+      "dps": 381794.8531640773,
+      "max": 507827.9347213392,
+      "min": 272442.7667099973,
+      "stdev": 41122.786703434074,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGoblin",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP05yWYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGwbSrGstUa6m4sRYtYUPFNkOJDVubebrPGCAFRXzwP986c853zfd/MoJKQhqdgN0wAVAEuA7zAYILxw4ypfb7XKblqACZlvSK0c2GRjzd4+h1ALj+eFZiUixURnOnTtkm/C4hyZkoEn+j0JCDJCxURzGntLNX5Up2bXEIenxJBVWuw0gcBpfyqIoIvo+0BGDl2GyblgfeFdsYb/FCDGwjJ8TkR1Pu0c6gRkb9m1MxPiaCmtW3Gvg3oytkpYWS58pU5Ydq4nKwI5LJZEdgplyoiuKS1PTkrEFs7sLT0Ti5weXKBBycWeObwp/wj5uSyA9lc9jTj3qkrbJ7x88y9yKzv2BcOdqOjOLKgW7so0O4fKCOh+4xA27uauJ6jlCIlsau32QrwXu2hHpXCDu2jmzX4N5Iq/tEGlcOQ0pgKyeMUT4urCFmUYZfnkP0SWHHmrlbbjWoddmpEbxpMZiat4h+FKo3rlcbENCBy772fODEpsDtMepzYZktFOnOZ8t0W5dQA3k59y0Ouq/sT8QblIPde/8alUfUEPkqPrKkJ71T9K6kHM2UUZxnz7KjiLFfymXLEYjRvUvfjRsqvxmLcrTLzj4ajQc0TLt2s1F+Y2dcEGlKDeAeFEQLaEJn2w72aaDtm03lwxqOSehx30DbcqPJRN2+/JeyjW9E/yw34298c7AlTHif/NFxLtGApRa2z8Kej4qlpN6IYv+LQdrUVH6BNK6/S3g/WNUq21zJoZIOZVUQkdEf7WGOg2kU71DbcTCN/T7hvnnskPBr7IS4/yGMQE0WFH5+ldeoG9NFFsbO0qzwWmfv8jB3YP7DRF20rilRxv20dtZ0tu0rPj+25CAnsQF9CkOo/V6vdo38Vfoy7t9gdL9YXbzp6xMRnhVt2RlEvZL+HwO19LPwArH8jtrxcXAusWlxsxz049NabwysxefO5PN873KoUdx//BfZ2bC09Pdq7vbTnybHnjkDs9+v/bf4j8V/ZzMeQ84XhczUTPxdG4OF4eakQ2t7EQ/d5EgIYgiL8HgAA//8k2jT7"
+      }
+    },
+    "alliance_pandaren": {
+      "dps": 384080.7678292169,
+      "max": 523480.95505056804,
+      "min": 271151.85706896335,
+      "stdev": 40977.67706258638,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione3",
+          "flaskId": 76084,
+          "flaskName": "Flask of Spring Blossoms",
+          "foodIcon": "inv_misc_food_cooked_seamistricenoodles",
+          "foodId": 74648,
+          "foodName": "Sea Mist Rice Noodles",
+          "potIcon": "trade_alchemy_potiond6",
+          "potId": 76089,
+          "potName": "Virmen's Bite",
+          "prepotIcon": "trade_alchemy_potiond6",
+          "prepotId": 76089,
+          "prepotName": "Virmen's Bite"
+        },
+        "talentsString": "321232",
+        "talents": {
+          "talentString": "321232",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "rogue_shadowfocus",
+              "name": "Shadow Focus",
+              "spellId": 108209,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "rogue_nerve-_strike",
+              "name": "Nerve Strike",
+              "spellId": 108210,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_rogue_cheatdeath",
+              "name": "Cheat Death",
+              "spellId": 31230,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "ability_rogue_shadowstep",
+              "name": "Shadowstep",
+              "spellId": 36554,
+              "tier": 4
+            },
+            {
+              "choice": 3,
+              "icon": "ability_rogue_dirtydeeds",
+              "name": "Dirty Tricks",
+              "spellId": 108216,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "achievement_bg_killingblow_berserker",
+              "name": "Marked for Death",
+              "spellId": 137619,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 45761,
+          "major1Icon": "ability_rogue_deadliness",
+          "major1Name": "Glyph of Vendetta",
+          "major1SpellId": 63249
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76884,
+                  "name": "Agile Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_leather_raidrogue_l_01",
+              "id": 87126,
+              "name": "Helmet of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1140,
+                  "11": 828,
+                  "17": 2458,
+                  "2": 2071,
+                  "8": 755
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_103",
+              "id": 89917,
+              "name": "Pheromone-Coated Choker",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 564, "2": 1154, "7": 426 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4804,
+                "name": "Greater Tiger Claw Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_shoulder_leather_raidrogue_l_01",
+              "id": 87128,
+              "name": "Spaulders of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Mastery", "id": 161 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 2269, "2": 1538, "7": 520, "8": 733 }
+              },
+              "type": 3
+            },
+            {
+              "enchant": { "id": 4421, "name": "Enchant Cloak - Accuracy" },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86963,
+              "name": "Legbreaker Greatcloak",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": {
+                  "1": 769,
+                  "11": 513,
+                  "17": 1189,
+                  "2": 1154,
+                  "6": 513
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_chest_leather_raidrogue_l_01",
+              "id": 87124,
+              "name": "Tunic of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "1": 1220,
+                  "11": 800,
+                  "17": 3026,
+                  "2": 2071,
+                  "6": 880
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4416,
+                "name": "Enchant Bracer - Greater Agility"
+              },
+              "gems": [0],
+              "icon": "inv_bracer_leather_raidrogue_l_01",
+              "id": 86954,
+              "name": "Bracers of Unseen Strikes",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "17": 1324, "2": 1154, "6": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4433,
+                "name": "Enchant Gloves - Superior Mastery"
+              },
+              "gems": [0],
+              "icon": "inv_gauntlets_leather_raidrogue_l_01",
+              "id": 87125,
+              "name": "Gloves of the Thousandfold Blades",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 1026,
+                  "17": 1891,
+                  "2": 1538,
+                  "5": 724,
+                  "6": 616
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                }
+              ],
+              "icon": "inv_belt_leather_raidrogue_l_01",
+              "id": 87180,
+              "name": "Stalker's Cord of Eternal Autumn",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 946, "17": 1702, "2": 1538, "5": 593, "6": 674 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4822, "name": "Shadowleather Leg Armor" },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76692,
+                  "name": "Delicate Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Agility"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76680,
+                  "name": "Glinting Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_pants_leather_raidrogue_l_01",
+              "id": 90504,
+              "name": "Legguards of Failing Purification",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2802,
+                "stats": {
+                  "1": 1314,
+                  "11": 960,
+                  "17": 2705,
+                  "2": 2210,
+                  "5": 806
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4428,
+                "name": "Enchant Boots - Blurred Speed"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76670,
+                  "name": "Adept Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Agility", "+160 Mastery"]
+                }
+              ],
+              "icon": "inv_boot_leather_raidmonk_l_01",
+              "id": 86984,
+              "name": "Treads of Deadly Secretions",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Hit", "id": 158 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "1": 946,
+                  "11": 685,
+                  "17": 2080,
+                  "2": 1538,
+                  "8": 568
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_154",
+              "id": 86974,
+              "name": "Painful Thorned Ring",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "1": 769, "11": 557, "2": 1154, "8": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_143",
+              "id": 90503,
+              "name": "Regail's Band of the Endless",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Mastery", "id": 147 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "1": 821, "2": 1231, "6": 571, "7": 507 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_trinket_10",
+              "id": 87057,
+              "name": "Bottle of Infinite Stars",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "11": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87167,
+              "name": "Terror in the Mists",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "1": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_int",
+                  "id": 89873,
+                  "name": "Crystallized Dread",
+                  "quality": 5,
+                  "stats": ["+500 Agility"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [0],
+              "icon": "inv_knife_1h_pandaraidsha_d_01",
+              "id": 87166,
+              "name": "Spiritsever",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1125,
+                "stats": { "1": 592, "11": 429, "2": 888, "8": 337 },
+                "weaponDamageMax": 8753,
+                "weaponDamageMin": 4713
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceAlliancePandaren",
+        "class": "ClassRogue",
+        "profession1": "Engineering",
+        "profession2": "Jewelcrafting",
+        "simLink": "https://www.wowsims.com/mop/rogue/assassination/#eJzsUl1oXEUUvmfuzP056WYnx228Dj7EsdHlYnCza0PWorsRpLGI1P6ILyIrSf2hSOn6Yp9ULMZaJKEF26KiRcjaJ036UsGQNhVjSbWGuhtL0SIWVHwTpPiQyMztNmuMUBD1xfNw78w53znf980MKglZeAp2wSjANMAlgBcYjDJ+iDG1NwxSkqsGYFrWa0J75xf4SINn3wHk8uMpgWm5UBPR6W7tmvS7gCgnx0X0ic6OAZI8XxPRjNbeYp0v1rnJpeSxcRFNaw1O9gCglF/VRPSl3e6HwaO3YVruf19ob6TBDza4gZAcmRFRvVt7BxuW/DWjZnZcRHNau2bs24C+nBoXRpYvX5kRpo3LsZpALpdqAtfIxZqILmrtjk0JxOYOHC2DE/Ncnpjn0fF5njv0Kf+IeYV8b76QP8V4cPIym2X8HPMvMOc79oWHHegpjizq0D4KdHt6q0joPyPQDa6kruUoo0hJbO9aagYEr3ZSp8pgmw7Rzxv8G2mV/Gi9KmBMWczEFHBKpiVVhDzKuD3wyH0JnCRzV7PtRrUW12jEYAJMZjKrkh/FKovrlMbUBCDy4L2fODEpsCNOB5zYJkdZnYVc9W6HCqoXb6fu5SHX1P2JeL3ykAevf+PTkHoCH6VHrqsJ71Q9K6n7clUUZxgLXFvxlivFXNWyGM0b1f24gYqrsRh3q8z8o2E7aOm4Tzcr9Rdm9i4B9as+vINii4AWRK71cK+kWo7ZdB6YDKiiHsfttBU3qKLt5q23hN10K4ZnuAF/+5uHnXEm4BSegquJJiyjqHkW4YQtnpzwLcXIZY+2qS34AG1ceZXuPnCuUrI9jkEj68utIiKl21rHGgPT7bRdbcVNNPj3hIfmuVvhduyHuPwgj0JCZAs/Pktr1Q0Yoo9iR2Vnddia+/y0G7k/sKEXXcdGprzPdY643uadleeHd1+AFLZhKCHK9Jydm7tH/yrCBHdvuSNZrCvfdOSwic9Kt+ywUS/lv4fI73os/gCcfyM2v1y+Hth0eaEV92D/W28OrMQUzefSbNdAs1LedewX2NO2pfL0UNe2yu4nh587DInfr/+3+Y/Ef2WzmEDOlQbOzpn4uTQIDyfLi6XYDUYfui+QEEE/lOH3AAAA//8sZjT8"
+      }
+    }
+  }
+}

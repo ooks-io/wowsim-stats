@@ -1,0 +1,2442 @@
+{
+  "metadata": {
+    "spec": "retribution",
+    "class": "paladin",
+    "encounter": "p1_raid_ten_long",
+    "timestamp": "2025-07-29T17:01:17+10:00",
+    "iterations": 10000,
+    "encounterDuration": 300,
+    "encounterVariation": 60,
+    "targetCount": 10,
+    "wowsimsCommit": "99ee7a6",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "human": {
+      "dps": 307116.15818569553,
+      "max": 329183.797291498,
+      "min": 286069.0047251376,
+      "stdev": 6041.6300976488465,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione4",
+          "flaskId": 76088,
+          "flaskName": "Flask of Winter's Bite",
+          "foodIcon": "inv_misc_food_cooked_golden_black_pepper_ribs_and_shrimp",
+          "foodId": 74646,
+          "foodName": "Black Pepper Ribs and Shrimp",
+          "potIcon": "trade_alchemy_potiond5",
+          "potId": 76095,
+          "potName": "Potion of Mogu Power",
+          "prepotIcon": "trade_alchemy_potiond5",
+          "prepotId": 76095,
+          "prepotName": "Potion of Mogu Power"
+        },
+        "talentsString": "221223",
+        "talents": {
+          "talentString": "221223",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_paladin_longarmofthelaw",
+              "name": "Long Arm of the Law",
+              "spellId": 87172,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_prayerofhealing",
+              "name": "Repentance",
+              "spellId": 20066,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_paladin_gaurdedbythelight",
+              "name": "Selfless Healer",
+              "spellId": 85804,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_unyieldingfaith",
+              "name": "Unbreakable Spirit",
+              "spellId": 114154,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_paladin_sanctifiedwrath",
+              "name": "Sanctified Wrath",
+              "spellId": 53376,
+              "tier": 5
+            },
+            {
+              "choice": 3,
+              "icon": "spell_paladin_executionsentence",
+              "name": "Execution Sentence",
+              "spellId": 114157,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41097,
+          "major1Icon": "spell_paladin_templarsverdict",
+          "major1Name": "Glyph of Templar's Verdict",
+          "major1SpellId": 54926,
+          "major2": 41092,
+          "major2Icon": "spell_holy_righteousfury",
+          "major2Name": "Glyph of Double Jeopardy",
+          "major2SpellId": 54922,
+          "major3": 83107,
+          "major3Icon": "spell_holy_righteousfury",
+          "major3Name": "Glyph of Mass Exorcism",
+          "major3SpellId": 122028
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76886,
+                  "name": "Reverberating Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Strength"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_plate_raidpaladin_l_01",
+              "id": 87101,
+              "name": "White Tiger Helmet",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1140,
+                  "11": 760,
+                  "17": 4671,
+                  "2": 2071,
+                  "5": 840
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_111",
+              "id": 90508,
+              "name": "Shackle of Eversparks",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "0": 821, "2": 1231, "5": 595, "8": 467 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4803,
+                "name": "Greater Tiger Fang Inscription"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_plate_raiddeathknight_l_01",
+              "id": 86986,
+              "name": "Shoulderpads of Misshapen Life",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 946,
+                  "11": 576,
+                  "17": 4312,
+                  "2": 1538,
+                  "6": 684
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4424,
+                "name": "Enchant Cloak - Superior Critical Strike"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86945,
+              "name": "Hisek's Chrysanthemum Cape",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "17": 1189, "2": 1154, "5": 475, "7": 536 }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_chest_plate_raidpaladin_l_01",
+              "id": 87099,
+              "name": "White Tiger Battleplate",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1220,
+                  "17": 5749,
+                  "2": 2071,
+                  "6": 907,
+                  "7": 727
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4415,
+                "name": "Enchant Bracer - Exceptional Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_bracer_plate_raiddeathknight_l_01",
+              "id": 90506,
+              "name": "Bracers of Defiled Earth",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "0": 821,
+                  "11": 624,
+                  "17": 2570,
+                  "2": 1231,
+                  "5": 416
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4432,
+                "name": "Enchant Gloves - Super Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_glove_plate_raidpaladin_l_01",
+              "id": 87100,
+              "name": "White Tiger Gauntlets",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 1026,
+                  "17": 3593,
+                  "2": 1538,
+                  "6": 650,
+                  "8": 704
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "enchant": { "id": 4223, "name": "Nitro Boosts" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_belt_plate_raidwarrior_l_01",
+              "id": 86955,
+              "name": "Waistplate of Overwhelming Assault",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Expertise", "id": 168 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 866,
+                  "11": 520,
+                  "17": 3234,
+                  "2": 1538,
+                  "7": 653
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4823, "name": "Angerhide Leg Armor" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pant_plate_raidpaladin_l_01",
+              "id": 87102,
+              "name": "White Tiger Legplates",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1300,
+                  "11": 947,
+                  "17": 5031,
+                  "2": 2071,
+                  "8": 767
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4426,
+                "name": "Enchant Boots - Greater Haste"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_boots_plate_raidwarrior_l_01",
+              "id": 86979,
+              "name": "Impaling Treads",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 946, "17": 3953, "2": 1538, "5": 568, "7": 685 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_misc_epicring_b2",
+              "id": 87158,
+              "name": "Dread Shadow Ring",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "5": 438, "6": 557 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_epicring_a3",
+              "id": 86957,
+              "name": "Ring of the Bladed Tempest",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "7": 578, "8": 402 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "creatureportrait_cyclone_nodebris",
+              "id": 87172,
+              "name": "Darkmist Vortex",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_16",
+              "id": 87072,
+              "name": "Lei Shen's Final Orders",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_agi",
+                  "id": 89881,
+                  "name": "Crystallized Terror",
+                  "quality": 5,
+                  "stats": ["+500 Strength"]
+                }
+              ],
+              "icon": "inv_axe_2h_pandaraid_d_01",
+              "id": 87176,
+              "name": "Shin'ka, Execution of Dominion",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": { "0": 1380, "11": 920, "2": 2071, "6": 920 },
+                "weaponDamageMax": 21788,
+                "weaponDamageMin": 14525
+              },
+              "type": 13
+            },
+            {}
+          ]
+        },
+        "race": "RaceHuman",
+        "class": "ClassPaladin",
+        "profession1": "Engineering",
+        "profession2": "Blacksmithing",
+        "simLink": "https://www.wowsims.com/mop/paladin/retribution/#eJzsVF1oHFUU3nPn3tm7pzGZ3Px0eqm4maqsU9JuNqltiphNf7RICVWKb4KR1h8oUrO+KIgGAjYxDzHUnyRa0mrJNlYiRYiNNtl2HxqDQkwhqbUPpfbBguiDKBSplTt/HbODCEaf9jzMXs757jnf983ZQWlACp6FgzAAUAC4AvAagQFC3yVE/lrJmUHkEmCVcSbPLH3xIu1foqk+wLjRX2TqUGXMjTGzeI+l3VykqTcB0Tg6xsxZK9UPKIzP88wsWpY+skRHlmhqUF3oKzJzxrK0EbeVML7IM3PeS4zCrmP3Yp3x0RgzbyWtxM1FNVJV8urudJ6ZS96wUZUojjFzzrv7huL1W54pGtT4eIwhNXpOqOdonmGVcegEMy9bljY07UBilsFnFqgxs0DNzxZo+u3zdIromUxTJtN8jlTw3rPE6DlLzA962Syh84RcIrGrpFCBNahLisSsthIYR9aY3tCUE7VSSAMrk7f8AN5bLzrkbtwht2HNoFZSxGq7ilNBHonJODLUWtI5NEU9Jk6BjpSfPM78Y/8NcAeK5+UBfEo8ibZM4R3WKh/w/TsMV9t1nIrElJ+QOlIkmRxmZBoNu5LrQrtEY5KhhtCMa23JNWe4OEWquOYW3Ttp6fUQdbImNEN6ZMJpxU39jh9nYr28D+8Sd4ZZqcE0NDjjgL+Z0sVOuR1bxeYweJkq5YBSBSJxzk+4DJvcNn90M0El2RpbiWbXuuMr0ean33XxFshBwNdB9gA+Lvb67l8F3wTMygedLISs2YS2SGFijnoO+SPVsfT9hbHXuY+9cJ2X9nV49R7VxKvyFczJF/7l5Cax0cdOF4IdVUdljOav4HTBM6Yl5xA4NMwESu6cL5wB8ZDcgZtEM9bbtZyJxDh4BXdMGtfYq9U+385z1JGmN2Ry6m0EabFRNuI60RBhRv8NCPkSuBCxvIrbWilLXlSLU/3uWOSliSMQCCoeJtGCiodJpCCVjxCk+jwsd+IDYqsvaGKS+8eTp+MRu+T9xUKkGWr8Zz0gp4hGkps4Eu22ykeQU33ulpb7kYpavcDiZai/rkngeELGfarbZTs2iyass2s4E3wc3LzPzrTrOQ2lb5NDDLLiftkSXuRPJwNupyd5qXEBj1a5GRvF+ghr1UKzkm+qt9BK6DrZ8Pcg1b9ComKcBP5hd9zUfiD7urWYE7XZPi02rOl7DnS+tL9rCqgkGLPOi4RTLXRlq11cR3bN8JCKL9sannZisS1zDcx48gn7E4j9H7GnJ/tPYIXsxTBu95b332tfjmlVjyuzyXa/kj04/gu8vOqxzuf2Jfd2dj2z/8UhcPV+W5b5n0RZZjjKMoMoyyzLLMtcwSjLDMeKy2x1IfNt7V9/peLHtl3wqHu83GZrfKBjGzfAhC2QhT8DAAD//xIzYl8="
+      }
+    },
+    "dwarf": {
+      "dps": 307162.6827887624,
+      "max": 329225.1549393503,
+      "min": 286048.1137322723,
+      "stdev": 6042.857586476787,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione4",
+          "flaskId": 76088,
+          "flaskName": "Flask of Winter's Bite",
+          "foodIcon": "inv_misc_food_cooked_golden_black_pepper_ribs_and_shrimp",
+          "foodId": 74646,
+          "foodName": "Black Pepper Ribs and Shrimp",
+          "potIcon": "trade_alchemy_potiond5",
+          "potId": 76095,
+          "potName": "Potion of Mogu Power",
+          "prepotIcon": "trade_alchemy_potiond5",
+          "prepotId": 76095,
+          "prepotName": "Potion of Mogu Power"
+        },
+        "talentsString": "221223",
+        "talents": {
+          "talentString": "221223",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_paladin_longarmofthelaw",
+              "name": "Long Arm of the Law",
+              "spellId": 87172,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_prayerofhealing",
+              "name": "Repentance",
+              "spellId": 20066,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_paladin_gaurdedbythelight",
+              "name": "Selfless Healer",
+              "spellId": 85804,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_unyieldingfaith",
+              "name": "Unbreakable Spirit",
+              "spellId": 114154,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_paladin_sanctifiedwrath",
+              "name": "Sanctified Wrath",
+              "spellId": 53376,
+              "tier": 5
+            },
+            {
+              "choice": 3,
+              "icon": "spell_paladin_executionsentence",
+              "name": "Execution Sentence",
+              "spellId": 114157,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41097,
+          "major1Icon": "spell_paladin_templarsverdict",
+          "major1Name": "Glyph of Templar's Verdict",
+          "major1SpellId": 54926,
+          "major2": 41092,
+          "major2Icon": "spell_holy_righteousfury",
+          "major2Name": "Glyph of Double Jeopardy",
+          "major2SpellId": 54922,
+          "major3": 83107,
+          "major3Icon": "spell_holy_righteousfury",
+          "major3Name": "Glyph of Mass Exorcism",
+          "major3SpellId": 122028
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76886,
+                  "name": "Reverberating Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Strength"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_plate_raidpaladin_l_01",
+              "id": 87101,
+              "name": "White Tiger Helmet",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1140,
+                  "11": 760,
+                  "17": 4671,
+                  "2": 2071,
+                  "5": 840
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_111",
+              "id": 90508,
+              "name": "Shackle of Eversparks",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "0": 821, "2": 1231, "5": 595, "8": 467 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4803,
+                "name": "Greater Tiger Fang Inscription"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_plate_raiddeathknight_l_01",
+              "id": 86986,
+              "name": "Shoulderpads of Misshapen Life",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 946,
+                  "11": 576,
+                  "17": 4312,
+                  "2": 1538,
+                  "6": 684
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4424,
+                "name": "Enchant Cloak - Superior Critical Strike"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86945,
+              "name": "Hisek's Chrysanthemum Cape",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "17": 1189, "2": 1154, "5": 475, "7": 536 }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_chest_plate_raidpaladin_l_01",
+              "id": 87099,
+              "name": "White Tiger Battleplate",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1220,
+                  "17": 5749,
+                  "2": 2071,
+                  "6": 907,
+                  "7": 727
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4415,
+                "name": "Enchant Bracer - Exceptional Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_bracer_plate_raiddeathknight_l_01",
+              "id": 90506,
+              "name": "Bracers of Defiled Earth",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "0": 821,
+                  "11": 624,
+                  "17": 2570,
+                  "2": 1231,
+                  "5": 416
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4432,
+                "name": "Enchant Gloves - Super Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_glove_plate_raidpaladin_l_01",
+              "id": 87100,
+              "name": "White Tiger Gauntlets",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 1026,
+                  "17": 3593,
+                  "2": 1538,
+                  "6": 650,
+                  "8": 704
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "enchant": { "id": 4223, "name": "Nitro Boosts" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_belt_plate_raidwarrior_l_01",
+              "id": 86955,
+              "name": "Waistplate of Overwhelming Assault",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Expertise", "id": 168 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 866,
+                  "11": 520,
+                  "17": 3234,
+                  "2": 1538,
+                  "7": 653
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4823, "name": "Angerhide Leg Armor" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pant_plate_raidpaladin_l_01",
+              "id": 87102,
+              "name": "White Tiger Legplates",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1300,
+                  "11": 947,
+                  "17": 5031,
+                  "2": 2071,
+                  "8": 767
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4426,
+                "name": "Enchant Boots - Greater Haste"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_boots_plate_raidwarrior_l_01",
+              "id": 86979,
+              "name": "Impaling Treads",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 946, "17": 3953, "2": 1538, "5": 568, "7": 685 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_misc_epicring_b2",
+              "id": 87158,
+              "name": "Dread Shadow Ring",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "5": 438, "6": 557 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_epicring_a3",
+              "id": 86957,
+              "name": "Ring of the Bladed Tempest",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "7": 578, "8": 402 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "creatureportrait_cyclone_nodebris",
+              "id": 87172,
+              "name": "Darkmist Vortex",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_16",
+              "id": 87072,
+              "name": "Lei Shen's Final Orders",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_agi",
+                  "id": 89881,
+                  "name": "Crystallized Terror",
+                  "quality": 5,
+                  "stats": ["+500 Strength"]
+                }
+              ],
+              "icon": "inv_axe_2h_pandaraid_d_01",
+              "id": 87176,
+              "name": "Shin'ka, Execution of Dominion",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": { "0": 1380, "11": 920, "2": 2071, "6": 920 },
+                "weaponDamageMax": 21788,
+                "weaponDamageMin": 14525
+              },
+              "type": 13
+            },
+            {}
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassPaladin",
+        "profession1": "Engineering",
+        "profession2": "Blacksmithing",
+        "simLink": "https://www.wowsims.com/mop/paladin/retribution/#eJzsVF1oHFUU3nPn3tm7pzGZ3Px0eqm4maqsU9JuNqltiphNf7RICVWKb4KR1h8oUrO+KIgGAjYxDzHUnyRa0mrJNlYiRYiNNtl2HxqDQkwhqbUPpfbBguiDKBSplTt/HbODCEaf9jzMXs757jnf983ZQWlACp6FgzAAUAC4AvAagQFC3yVE/lrJNYPIJcAq40yeWfriRdq/RFN9gHGjv8jUocqYG2Nm8R5Lu7lIU28ConF0jJmzVqofUBif55lZtCx9ZImOLNHUoLrQV2TmjGVpI24rYXyRZ+a8lxiFXcfuxTrjozFm3kpaiZuLaqSq5NXd6Twzl7xhoypRHGPmnHf3DcXrtzxTNKjx8RhDavScUM/RPMMq49AJZl62LG1o2oHELIPPLFBjZoGany3Q9Nvn6RTRM5mmTKb5HKngvWeJ0XOWmB/0sllC5wm5RGJXSaECa1CXFIlZbSUwjqwxvaEpJ2qlkAZWJm/5Aby3XnTI3bhDbsOaQa2kiNV2FaeCPBKTcWSotaRzaIp6TJwCHSk/eZz5x/4b4A4Uz8sD+JR4Em2ZwjusVT7g+3cYrrbrOBWJKT8hdaRIMjnMyDQadiXXhXaJxiRDDaEZ19qSa85wcYpUcc0tunfS0ush6mRNaIb0yITTipv6HT/OxHp5H94l7gyzUoNpaHDGAX8zpYudcju2is1h8DJVygGlCkTinJ9wGTa5bf7oZoJKsjW2Es2udcdXos1Pv+viLZCDgK+D7AF8XOz13b8KvgmYlQ86WQhZswltkcLEHPUc8keqY+n7C2Ovcx974Tov7evw6j2qiVflK5iTL/zLyU1io4+dLgQ7qo7KGM1fwemCZ0xLziFwaJgJlNw5XzgD4iG5AzeJZqy3azkTiXHwCu6YNK6xV6t9vp3nqCNNb8jk1NsI0mKjbMR1oiHCjP4bEPIlcCFieRW3tVKWvKgWp/rdschLE0cgEFQ8TKIFFQ+TSEEqHyFI9XlY7sQHxFZf0MQk948nT8cjdsn7i4VIM9T4z3pAThGNJDdxJNptlY8gp/rcLS33IxW1eoHFy1B/XZPA8YSM+1S3y3ZsFk1YZ9dwJvg4uHmfnWnXcxpK3yaHGGTF/bIlvMifTgbcTk/yUuMCHq1yMzaK9RHWqoVmJd9Ub6GV0HWy4e9Bqn+FRMU4CfzD7rip/UD2dWsxJ2qzfVpsWNP3HOh8aX/XFFBJMGadFwmnWujKVru4juya4SEVX7Y1PO3EYlvmGpjx5BP2JxD7P2JPT/afwArZi2Hc7i3vv9e+HNOqHldmk+1+JXtw/Bd4edVjnc/tS+7t7Hpm/4tD4Or9tizzP4myzHCUZQZRllmWWZa5glGWGY4Vl9nqQubb2r/+SsWPbbvgUfd4uc3W+EDHNm6ACVsgC38GAAD///CKYl0="
+      }
+    },
+    "draenei": {
+      "dps": 307123.5133491634,
+      "max": 329192.45774017076,
+      "min": 286076.425117164,
+      "stdev": 6041.689801562965,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione4",
+          "flaskId": 76088,
+          "flaskName": "Flask of Winter's Bite",
+          "foodIcon": "inv_misc_food_cooked_golden_black_pepper_ribs_and_shrimp",
+          "foodId": 74646,
+          "foodName": "Black Pepper Ribs and Shrimp",
+          "potIcon": "trade_alchemy_potiond5",
+          "potId": 76095,
+          "potName": "Potion of Mogu Power",
+          "prepotIcon": "trade_alchemy_potiond5",
+          "prepotId": 76095,
+          "prepotName": "Potion of Mogu Power"
+        },
+        "talentsString": "221223",
+        "talents": {
+          "talentString": "221223",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_paladin_longarmofthelaw",
+              "name": "Long Arm of the Law",
+              "spellId": 87172,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_prayerofhealing",
+              "name": "Repentance",
+              "spellId": 20066,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_paladin_gaurdedbythelight",
+              "name": "Selfless Healer",
+              "spellId": 85804,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_unyieldingfaith",
+              "name": "Unbreakable Spirit",
+              "spellId": 114154,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_paladin_sanctifiedwrath",
+              "name": "Sanctified Wrath",
+              "spellId": 53376,
+              "tier": 5
+            },
+            {
+              "choice": 3,
+              "icon": "spell_paladin_executionsentence",
+              "name": "Execution Sentence",
+              "spellId": 114157,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41097,
+          "major1Icon": "spell_paladin_templarsverdict",
+          "major1Name": "Glyph of Templar's Verdict",
+          "major1SpellId": 54926,
+          "major2": 41092,
+          "major2Icon": "spell_holy_righteousfury",
+          "major2Name": "Glyph of Double Jeopardy",
+          "major2SpellId": 54922,
+          "major3": 83107,
+          "major3Icon": "spell_holy_righteousfury",
+          "major3Name": "Glyph of Mass Exorcism",
+          "major3SpellId": 122028
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76886,
+                  "name": "Reverberating Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Strength"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_plate_raidpaladin_l_01",
+              "id": 87101,
+              "name": "White Tiger Helmet",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1140,
+                  "11": 760,
+                  "17": 4671,
+                  "2": 2071,
+                  "5": 840
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_111",
+              "id": 90508,
+              "name": "Shackle of Eversparks",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "0": 821, "2": 1231, "5": 595, "8": 467 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4803,
+                "name": "Greater Tiger Fang Inscription"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_plate_raiddeathknight_l_01",
+              "id": 86986,
+              "name": "Shoulderpads of Misshapen Life",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 946,
+                  "11": 576,
+                  "17": 4312,
+                  "2": 1538,
+                  "6": 684
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4424,
+                "name": "Enchant Cloak - Superior Critical Strike"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86945,
+              "name": "Hisek's Chrysanthemum Cape",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "17": 1189, "2": 1154, "5": 475, "7": 536 }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_chest_plate_raidpaladin_l_01",
+              "id": 87099,
+              "name": "White Tiger Battleplate",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1220,
+                  "17": 5749,
+                  "2": 2071,
+                  "6": 907,
+                  "7": 727
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4415,
+                "name": "Enchant Bracer - Exceptional Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_bracer_plate_raiddeathknight_l_01",
+              "id": 90506,
+              "name": "Bracers of Defiled Earth",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "0": 821,
+                  "11": 624,
+                  "17": 2570,
+                  "2": 1231,
+                  "5": 416
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4432,
+                "name": "Enchant Gloves - Super Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_glove_plate_raidpaladin_l_01",
+              "id": 87100,
+              "name": "White Tiger Gauntlets",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 1026,
+                  "17": 3593,
+                  "2": 1538,
+                  "6": 650,
+                  "8": 704
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "enchant": { "id": 4223, "name": "Nitro Boosts" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_belt_plate_raidwarrior_l_01",
+              "id": 86955,
+              "name": "Waistplate of Overwhelming Assault",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Expertise", "id": 168 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 866,
+                  "11": 520,
+                  "17": 3234,
+                  "2": 1538,
+                  "7": 653
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4823, "name": "Angerhide Leg Armor" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pant_plate_raidpaladin_l_01",
+              "id": 87102,
+              "name": "White Tiger Legplates",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1300,
+                  "11": 947,
+                  "17": 5031,
+                  "2": 2071,
+                  "8": 767
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4426,
+                "name": "Enchant Boots - Greater Haste"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_boots_plate_raidwarrior_l_01",
+              "id": 86979,
+              "name": "Impaling Treads",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 946, "17": 3953, "2": 1538, "5": 568, "7": 685 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_misc_epicring_b2",
+              "id": 87158,
+              "name": "Dread Shadow Ring",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "5": 438, "6": 557 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_epicring_a3",
+              "id": 86957,
+              "name": "Ring of the Bladed Tempest",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "7": 578, "8": 402 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "creatureportrait_cyclone_nodebris",
+              "id": 87172,
+              "name": "Darkmist Vortex",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_16",
+              "id": 87072,
+              "name": "Lei Shen's Final Orders",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_agi",
+                  "id": 89881,
+                  "name": "Crystallized Terror",
+                  "quality": 5,
+                  "stats": ["+500 Strength"]
+                }
+              ],
+              "icon": "inv_axe_2h_pandaraid_d_01",
+              "id": 87176,
+              "name": "Shin'ka, Execution of Dominion",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": { "0": 1380, "11": 920, "2": 2071, "6": 920 },
+                "weaponDamageMax": 21788,
+                "weaponDamageMin": 14525
+              },
+              "type": 13
+            },
+            {}
+          ]
+        },
+        "race": "RaceDraenei",
+        "class": "ClassPaladin",
+        "profession1": "Engineering",
+        "profession2": "Blacksmithing",
+        "simLink": "https://www.wowsims.com/mop/paladin/retribution/#eJzsVF1oHFUU3nPn3tm7pzGZ3Px0eqm4maqsU9JuNqltiphNf7RICVWKb4KR1h8oUrO+KIgGAjYxDzHUnyRa0mrJNlYiRYiNNtl2HxqDQkwhqbUPpfbBguiDKBSplTt/HbODCEaf9jzMXs757jnf983ZQWlACp6FgzAAUAC4AvAagQFC3yVE/lrJiUHkEmCVcSbPLH3xIu1foqk+wLjRX2TqUGXMjTGzeI+l3VykqTcB0Tg6xsxZK9UPKIzP88wsWpY+skRHlmhqUF3oKzJzxrK0EbeVML7IM3PeS4zCrmP3Yp3x0RgzbyWtxM1FNVJV8urudJ6ZS96wUZUojjFzzrv7huL1W54pGtT4eIwhNXpOqOdonmGVcegEMy9bljY07UBilsFnFqgxs0DNzxZo+u3zdIromUxTJtN8jlTw3rPE6DlLzA962Syh84RcIrGrpFCBNahLisSsthIYR9aY3tCUE7VSSAMrk7f8AN5bLzrkbtwht2HNoFZSxGq7ilNBHonJODLUWtI5NEU9Jk6BjpSfPM78Y/8NcAeK5+UBfEo8ibZM4R3WKh/w/TsMV9t1nIrElJ+QOlIkmRxmZBoNu5LrQrtEY5KhhtCMa23JNWe4OEWquOYW3Ttp6fUQdbImNEN6ZMJpxU39jh9nYr28D+8Sd4ZZqcE0NDjjgL+Z0sVOuR1bxeYweJkq5YBSBSJxzk+4DJvcNn90M0El2RpbiWbXuuMr0ean33XxFshBwNdB9gA+Lvb67l8F3wTMygedLISs2YS2SGFijnoO+SPVsfT9hbHXuY+9cJ2X9nV49R7VxKvyFczJF/7l5Cax0cdOF4IdVUdljOav4HTBM6Yl5xA4NMwESu6cL5wB8ZDcgZtEM9bbtZyJxDh4BXdMGtfYq9U+385z1JGmN2Ry6m0EabFRNuI60RBhRv8NCPkSuBCxvIrbWilLXlSLU/3uWOSliSMQCCoeJtGCiodJpCCVjxCk+jwsd+IDYqsvaGKS+8eTp+MRu+T9xUKkGWr8Zz0gp4hGkps4Eu22ykeQU33ulpb7kYpavcDiZai/rkngeELGfarbZTs2iyass2s4E3wc3LzPzrTrOQ2lb5NDDLLiftkSXuRPJwNupyd5qXEBj1a5GRvF+ghr1UKzkm+qt9BK6DrZ8Pcg1b9ComKcBP5hd9zUfiD7urWYE7XZPi02rOl7DnS+tL9rCqgkGLPOi4RTLXRlq11cR3bN8JCKL9sannZisS1zDcx48gn7E4j9H7GnJ/tPYIXsxTBu95b332tfjmlVjyuzyXa/kj04/gu8vOqxzuf2Jfd2dj2z/8UhcPV+W5b5n0RZZjjKMoMoyyzLLMtcwSjLDMeKy2x1IfNt7V9/peLHtl3wqHu83GZrfKBjGzfAhC2QhT8DAAD//9+9Ylw="
+      }
+    },
+    "tauren": {
+      "dps": 307153.6375074767,
+      "max": 329225.1549393503,
+      "min": 286105.96286455163,
+      "stdev": 6042.292454552205,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione4",
+          "flaskId": 76088,
+          "flaskName": "Flask of Winter's Bite",
+          "foodIcon": "inv_misc_food_cooked_golden_black_pepper_ribs_and_shrimp",
+          "foodId": 74646,
+          "foodName": "Black Pepper Ribs and Shrimp",
+          "potIcon": "trade_alchemy_potiond5",
+          "potId": 76095,
+          "potName": "Potion of Mogu Power",
+          "prepotIcon": "trade_alchemy_potiond5",
+          "prepotId": 76095,
+          "prepotName": "Potion of Mogu Power"
+        },
+        "talentsString": "221223",
+        "talents": {
+          "talentString": "221223",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_paladin_longarmofthelaw",
+              "name": "Long Arm of the Law",
+              "spellId": 87172,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_prayerofhealing",
+              "name": "Repentance",
+              "spellId": 20066,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_paladin_gaurdedbythelight",
+              "name": "Selfless Healer",
+              "spellId": 85804,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_unyieldingfaith",
+              "name": "Unbreakable Spirit",
+              "spellId": 114154,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_paladin_sanctifiedwrath",
+              "name": "Sanctified Wrath",
+              "spellId": 53376,
+              "tier": 5
+            },
+            {
+              "choice": 3,
+              "icon": "spell_paladin_executionsentence",
+              "name": "Execution Sentence",
+              "spellId": 114157,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41097,
+          "major1Icon": "spell_paladin_templarsverdict",
+          "major1Name": "Glyph of Templar's Verdict",
+          "major1SpellId": 54926,
+          "major2": 41092,
+          "major2Icon": "spell_holy_righteousfury",
+          "major2Name": "Glyph of Double Jeopardy",
+          "major2SpellId": 54922,
+          "major3": 83107,
+          "major3Icon": "spell_holy_righteousfury",
+          "major3Name": "Glyph of Mass Exorcism",
+          "major3SpellId": 122028
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76886,
+                  "name": "Reverberating Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Strength"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_plate_raidpaladin_l_01",
+              "id": 87101,
+              "name": "White Tiger Helmet",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1140,
+                  "11": 760,
+                  "17": 4671,
+                  "2": 2071,
+                  "5": 840
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_111",
+              "id": 90508,
+              "name": "Shackle of Eversparks",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "0": 821, "2": 1231, "5": 595, "8": 467 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4803,
+                "name": "Greater Tiger Fang Inscription"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_plate_raiddeathknight_l_01",
+              "id": 86986,
+              "name": "Shoulderpads of Misshapen Life",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 946,
+                  "11": 576,
+                  "17": 4312,
+                  "2": 1538,
+                  "6": 684
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4424,
+                "name": "Enchant Cloak - Superior Critical Strike"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86945,
+              "name": "Hisek's Chrysanthemum Cape",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "17": 1189, "2": 1154, "5": 475, "7": 536 }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_chest_plate_raidpaladin_l_01",
+              "id": 87099,
+              "name": "White Tiger Battleplate",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1220,
+                  "17": 5749,
+                  "2": 2071,
+                  "6": 907,
+                  "7": 727
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4415,
+                "name": "Enchant Bracer - Exceptional Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_bracer_plate_raiddeathknight_l_01",
+              "id": 90506,
+              "name": "Bracers of Defiled Earth",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "0": 821,
+                  "11": 624,
+                  "17": 2570,
+                  "2": 1231,
+                  "5": 416
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4432,
+                "name": "Enchant Gloves - Super Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_glove_plate_raidpaladin_l_01",
+              "id": 87100,
+              "name": "White Tiger Gauntlets",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 1026,
+                  "17": 3593,
+                  "2": 1538,
+                  "6": 650,
+                  "8": 704
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "enchant": { "id": 4223, "name": "Nitro Boosts" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_belt_plate_raidwarrior_l_01",
+              "id": 86955,
+              "name": "Waistplate of Overwhelming Assault",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Expertise", "id": 168 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 866,
+                  "11": 520,
+                  "17": 3234,
+                  "2": 1538,
+                  "7": 653
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4823, "name": "Angerhide Leg Armor" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pant_plate_raidpaladin_l_01",
+              "id": 87102,
+              "name": "White Tiger Legplates",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1300,
+                  "11": 947,
+                  "17": 5031,
+                  "2": 2071,
+                  "8": 767
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4426,
+                "name": "Enchant Boots - Greater Haste"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_boots_plate_raidwarrior_l_01",
+              "id": 86979,
+              "name": "Impaling Treads",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 946, "17": 3953, "2": 1538, "5": 568, "7": 685 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_misc_epicring_b2",
+              "id": 87158,
+              "name": "Dread Shadow Ring",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "5": 438, "6": 557 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_epicring_a3",
+              "id": 86957,
+              "name": "Ring of the Bladed Tempest",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "7": 578, "8": 402 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "creatureportrait_cyclone_nodebris",
+              "id": 87172,
+              "name": "Darkmist Vortex",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_16",
+              "id": 87072,
+              "name": "Lei Shen's Final Orders",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_agi",
+                  "id": 89881,
+                  "name": "Crystallized Terror",
+                  "quality": 5,
+                  "stats": ["+500 Strength"]
+                }
+              ],
+              "icon": "inv_axe_2h_pandaraid_d_01",
+              "id": 87176,
+              "name": "Shin'ka, Execution of Dominion",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": { "0": 1380, "11": 920, "2": 2071, "6": 920 },
+                "weaponDamageMax": 21788,
+                "weaponDamageMin": 14525
+              },
+              "type": 13
+            },
+            {}
+          ]
+        },
+        "race": "RaceTauren",
+        "class": "ClassPaladin",
+        "profession1": "Engineering",
+        "profession2": "Blacksmithing",
+        "simLink": "https://www.wowsims.com/mop/paladin/retribution/#eJzsVF1oHFUU3nPn3tm7pzGZ3Px0eqm4maqsU9JuNqltiphNf7RICVWKb4KR1h8oUrO+KIgGAjYxDzHUnyRa0mrJNlYiRYiNNtl2HxqDQkwhqbUPpfbBguiDKBSplTt/HbODCEaf9jzMXs757jnf983ZQWlACp6FgzAAUAC4AvAagQFC3yVE/lrJuUHkEmCVcSbPLH3xIu1foqk+wLjRX2TqUGXMjTGzeI+l3VykqTcB0Tg6xsxZK9UPKIzP88wsWpY+skRHlmhqUF3oKzJzxrK0EbeVML7IM3PeS4zCrmP3Yp3x0RgzbyWtxM1FNVJV8urudJ6ZS96wUZUojjFzzrv7huL1W54pGtT4eIwhNXpOqOdonmGVcegEMy9bljY07UBilsFnFqgxs0DNzxZo+u3zdIromUxTJtN8jlTw3rPE6DlLzA962Syh84RcIrGrpFCBNahLisSsthIYR9aY3tCUE7VSSAMrk7f8AN5bLzrkbtwht2HNoFZSxGq7ilNBHonJODLUWtI5NEU9Jk6BjpSfPM78Y/8NcAeK5+UBfEo8ibZM4R3WKh/w/TsMV9t1nIrElJ+QOlIkmRxmZBoNu5LrQrtEY5KhhtCMa23JNWe4OEWquOYW3Ttp6fUQdbImNEN6ZMJpxU39jh9nYr28D+8Sd4ZZqcE0NDjjgL+Z0sVOuR1bxeYweJkq5YBSBSJxzk+4DJvcNn90M0El2RpbiWbXuuMr0ean33XxFshBwNdB9gA+Lvb67l8F3wTMygedLISs2YS2SGFijnoO+SPVsfT9hbHXuY+9cJ2X9nV49R7VxKvyFczJF/7l5Cax0cdOF4IdVUdljOav4HTBM6Yl5xA4NMwESu6cL5wB8ZDcgZtEM9bbtZyJxDh4BXdMGtfYq9U+385z1JGmN2Ry6m0EabFRNuI60RBhRv8NCPkSuBCxvIrbWilLXlSLU/3uWOSliSMQCCoeJtGCiodJpCCVjxCk+jwsd+IDYqsvaGKS+8eTp+MRu+T9xUKkGWr8Zz0gp4hGkps4Eu22ykeQU33ulpb7kYpavcDiZai/rkngeELGfarbZTs2iyass2s4E3wc3LzPzrTrOQ2lb5NDDLLiftkSXuRPJwNupyd5qXEBj1a5GRvF+ghr1UKzkm+qt9BK6DrZ8Pcg1b9ComKcBP5hd9zUfiD7urWYE7XZPi02rOl7DnS+tL9rCqgkGLPOi4RTLXRlq11cR3bN8JCKL9sannZisS1zDcx48gn7E4j9H7GnJ/tPYIXsxTBu95b332tfjmlVjyuzyXa/kj04/gu8vOqxzuf2Jfd2dj2z/8UhcPV+W5b5n0RZZjjKMoMoyyzLLMtcwSjLDMeKy2x1IfNt7V9/peLHtl3wqHu83GZrfKBjGzfAhC2QhT8DAAD//0SaYmI="
+      }
+    },
+    "blood_elf": {
+      "dps": 307093.594948304,
+      "max": 329159.3162639011,
+      "min": 286046.9476430796,
+      "stdev": 6041.170221439649,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione4",
+          "flaskId": 76088,
+          "flaskName": "Flask of Winter's Bite",
+          "foodIcon": "inv_misc_food_cooked_golden_black_pepper_ribs_and_shrimp",
+          "foodId": 74646,
+          "foodName": "Black Pepper Ribs and Shrimp",
+          "potIcon": "trade_alchemy_potiond5",
+          "potId": 76095,
+          "potName": "Potion of Mogu Power",
+          "prepotIcon": "trade_alchemy_potiond5",
+          "prepotId": 76095,
+          "prepotName": "Potion of Mogu Power"
+        },
+        "talentsString": "221223",
+        "talents": {
+          "talentString": "221223",
+          "talents": [
+            {
+              "choice": 2,
+              "icon": "ability_paladin_longarmofthelaw",
+              "name": "Long Arm of the Law",
+              "spellId": 87172,
+              "tier": 1
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_prayerofhealing",
+              "name": "Repentance",
+              "spellId": 20066,
+              "tier": 2
+            },
+            {
+              "choice": 1,
+              "icon": "ability_paladin_gaurdedbythelight",
+              "name": "Selfless Healer",
+              "spellId": 85804,
+              "tier": 3
+            },
+            {
+              "choice": 2,
+              "icon": "spell_holy_unyieldingfaith",
+              "name": "Unbreakable Spirit",
+              "spellId": 114154,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_paladin_sanctifiedwrath",
+              "name": "Sanctified Wrath",
+              "spellId": 53376,
+              "tier": 5
+            },
+            {
+              "choice": 3,
+              "icon": "spell_paladin_executionsentence",
+              "name": "Execution Sentence",
+              "spellId": 114157,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41097,
+          "major1Icon": "spell_paladin_templarsverdict",
+          "major1Name": "Glyph of Templar's Verdict",
+          "major1SpellId": 54926,
+          "major2": 41092,
+          "major2Icon": "spell_holy_righteousfury",
+          "major2Name": "Glyph of Double Jeopardy",
+          "major2SpellId": 54922,
+          "major3": 83107,
+          "major3Icon": "spell_holy_righteousfury",
+          "major3Name": "Glyph of Mass Exorcism",
+          "major3SpellId": 122028
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76886,
+                  "name": "Reverberating Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Strength"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                }
+              ],
+              "icon": "inv_helmet_plate_raidpaladin_l_01",
+              "id": 87101,
+              "name": "White Tiger Helmet",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1140,
+                  "11": 760,
+                  "17": 4671,
+                  "2": 2071,
+                  "5": 840
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "inv_jewelry_necklace_111",
+              "id": 90508,
+              "name": "Shackle of Eversparks",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "0": 821, "2": 1231, "5": 595, "8": 467 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4803,
+                "name": "Greater Tiger Fang Inscription"
+              },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_shoulder_plate_raiddeathknight_l_01",
+              "id": 86986,
+              "name": "Shoulderpads of Misshapen Life",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 946,
+                  "11": 576,
+                  "17": 4312,
+                  "2": 1538,
+                  "6": 684
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4424,
+                "name": "Enchant Cloak - Superior Critical Strike"
+              },
+              "icon": "inv_cape_pandaria_d_01",
+              "id": 86945,
+              "name": "Hisek's Chrysanthemum Cape",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Mastery", "id": 140 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "17": 1189, "2": 1154, "5": 475, "7": 536 }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_chest_plate_raidpaladin_l_01",
+              "id": 87099,
+              "name": "White Tiger Battleplate",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Expertise", "id": 146 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1220,
+                  "17": 5749,
+                  "2": 2071,
+                  "6": 907,
+                  "7": 727
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4415,
+                "name": "Enchant Bracer - Exceptional Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_bracer_plate_raiddeathknight_l_01",
+              "id": 90506,
+              "name": "Bracers of Defiled Earth",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Haste", "id": 138 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "0": 821,
+                  "11": 624,
+                  "17": 2570,
+                  "2": 1231,
+                  "5": 416
+                }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4432,
+                "name": "Enchant Gloves - Super Strength"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_glove_plate_raidpaladin_l_01",
+              "id": 87100,
+              "name": "White Tiger Gauntlets",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 1026,
+                  "17": 3593,
+                  "2": 1538,
+                  "6": 650,
+                  "8": 704
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "enchant": { "id": 4223, "name": "Nitro Boosts" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76684,
+                  "name": "Etched Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Hit"]
+                },
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_belt_plate_raidwarrior_l_01",
+              "id": 86955,
+              "name": "Waistplate of Overwhelming Assault",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Expertise", "id": 168 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "0": 866,
+                  "11": 520,
+                  "17": 3234,
+                  "2": 1538,
+                  "7": 653
+                }
+              },
+              "type": 8
+            },
+            {
+              "enchant": { "id": 4823, "name": "Angerhide Leg Armor" },
+              "gems": [
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76669,
+                  "name": "Fierce Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Strength", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_pant_plate_raidpaladin_l_01",
+              "id": 87102,
+              "name": "White Tiger Legplates",
+              "quality": 4,
+              "reforging": { "description": "Expertise -> Haste", "id": 160 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "0": 1300,
+                  "11": 947,
+                  "17": 5031,
+                  "2": 2071,
+                  "8": 767
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4426,
+                "name": "Enchant Boots - Greater Haste"
+              },
+              "gems": [
+                {
+                  "color": 4,
+                  "icon": "inv_misc_gem_x4_rare_cut_yellow",
+                  "id": 76699,
+                  "name": "Quick Sun's Radiance",
+                  "quality": 3,
+                  "stats": ["+320 Haste"]
+                }
+              ],
+              "icon": "inv_boots_plate_raidwarrior_l_01",
+              "id": 86979,
+              "name": "Impaling Treads",
+              "quality": 4,
+              "reforging": { "description": "Hit -> Expertise", "id": 139 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 946, "17": 3953, "2": 1538, "5": 568, "7": 685 }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_misc_epicring_b2",
+              "id": 87158,
+              "name": "Dread Shadow Ring",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "5": 438, "6": 557 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_epicring_a3",
+              "id": 86957,
+              "name": "Ring of the Bladed Tempest",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "0": 769, "2": 1154, "7": 578, "8": 402 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "creatureportrait_cyclone_nodebris",
+              "id": 87172,
+              "name": "Darkmist Vortex",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "0": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_jewelry_trinket_16",
+              "id": 87072,
+              "name": "Lei Shen's Final Orders",
+              "quality": 4,
+              "stats": {
+                "ilvl": 502,
+                "randPropPoints": 1827,
+                "stats": { "7": 1218 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": {
+                "id": 4444,
+                "name": "Enchant Weapon - Dancing Steel"
+              },
+              "gems": [
+                {
+                  "color": 10,
+                  "icon": "inv_legendary_breathofblackprince_agi",
+                  "id": 89881,
+                  "name": "Crystallized Terror",
+                  "quality": 5,
+                  "stats": ["+500 Strength"]
+                }
+              ],
+              "icon": "inv_axe_2h_pandaraid_d_01",
+              "id": 87176,
+              "name": "Shin'ka, Execution of Dominion",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": { "0": 1380, "11": 920, "2": 2071, "6": 920 },
+                "weaponDamageMax": 21788,
+                "weaponDamageMin": 14525
+              },
+              "type": 13
+            },
+            {}
+          ]
+        },
+        "race": "RaceBloodElf",
+        "class": "ClassPaladin",
+        "profession1": "Engineering",
+        "profession2": "Blacksmithing",
+        "simLink": "https://www.wowsims.com/mop/paladin/retribution/#eJzsVF1oHFUU3nPn3tm7pzGZ3Px0eqm4maqsU9JuNqltiphNf7RICVWKb4KR1h8oUrO+KIgGAjYxDzHUnyRa0mrJNlYiRYiNNtl2HxqDQkwhqbUPpfbBguiDKBSplTt/HbODCEaf9jzMXs757jnf983ZQWlACp6FgzAAUAC4AvAagQFC3yVE/lrJwSByCbDKOJNnlr54kfYv0VQfYNzoLzJ1qDLmxphZvMfSbi7S1JuAaBwdY+asleoHFMbneWYWLUsfWaIjSzQ1qC70FZk5Y1naiNtKGF/kmTnvJUZh17F7sc74aIyZt5JW4uaiGqkqeXV3Os/MJW/YqEoUx5g55919Q/H6Lc8UDWp8PMaQGj0n1HM0z7DKOHSCmZctSxuadiAxy+AzC9SYWaDmZws0/fZ5OkX0TKYpk2k+Ryp471li9Jwl5ge9bJbQeUIukdhVUqjAGtQlRWJWWwmMI2tMb2jKiVoppIGVyVt+AO+tFx1yN+6Q27BmUCspYrVdxakgj8RkHBlqLekcmqIeE6dAR8pPHmf+sf8GuAPF8/IAPiWeRFum8A5rlQ/4/h2Gq+06TkViyk9IHSmSTA4zMo2GXcl1oV2iMclQQ2jGtbbkmjNcnCJVXHOL7p209HqIOlkTmiE9MuG04qZ+x48zsV7eh3eJO8Os1GAaGpxxwN9M6WKn3I6tYnMYvEyVckCpApE45ydchk1umz+6maCSbI2tRLNr3fGVaPPT77p4C+Qg4OsgewAfF3t996+CbwJm5YNOFkLWbEJbpDAxRz2H/JHqWPr+wtjr3MdeuM5L+zq8eo9q4lX5CubkC/9ycpPY6GOnC8GOqqMyRvNXcLrgGdOScwgcGmYCJXfOF86AeEjuwE2iGevtWs5EYhy8gjsmjWvs1Wqfb+c56kjTGzI59TaCtNgoG3GdaIgwo/8GhHwJXIhYXsVtrZQlL6rFqX53LPLSxBEIBBUPk2hBxcMkUpDKRwhSfR6WO/EBsdUXNDHJ/ePJ0/GIXfL+YiHSDDX+sx6QU0QjyU0ciXZb5SPIqT53S8v9SEWtXmDxMtRf1yRwPCHjPtXtsh2bRRPW2TWcCT4Obt5nZ9r1nIbSt8khBllxv2wJL/KnkwG305O81LiAR6vcjI1ifYS1aqFZyTfVW2gldJ1s+HuQ6l8hUTFOAv+wO25qP5B93VrMidpsnxYb1vQ9Bzpf2t81BVQSjFnnRcKpFrqy1S6uI7tmeEjFl20NTzux2Ja5BmY8+YT9CcT+j9jTk/0nsEL2Yhi3e8v777Uvx7Sqx5XZZLtfyR4c/wVeXvVY53P7kns7u57Z/+IQuHq/Lcv8T6IsMxxlmUGUZZZllmWuYJRlhmPFZba6kPm29q+/UvFj2y541D1ebrM1PtCxjRtgwhbIwp8BAAD//87wYls="
+      }
+    }
+  }
+}
