@@ -29,8 +29,15 @@ work.
 
 ## Developing
 
-- Install [nix (the package manager)](https://nixos.org/download/)
-- run `nix develop`
+1. Install [nix (the package manager)](https://nixos.org/download/)
+2. Ensure `nix-command` and `flakes` are enabled in your
+   `~/.config/nix/nix.conf`:
+
+```
+experimental-features = nix-command flakes
+```
+
+3. run `nix develop`
 
 This will enter a nix development shell with all the required dependencies in
 your PATH.
@@ -41,7 +48,7 @@ your PATH.
 
 ## Running and updating simulations
 
-To run simulations run:
+To run simulations use:
 
 - `nix run .#<simulation>`
 
