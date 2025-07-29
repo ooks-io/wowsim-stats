@@ -269,6 +269,21 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         flex: 1;
       }
       
+      .trinket-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        margin-right: 8px;
+        vertical-align: middle;
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+      
+      .trinket-ilvl {
+        font-weight: 600;
+        color: var(--text-primary);
+        vertical-align: middle;
+      }
+      
       .chart-bar-container {
         display: flex;
         align-items: center;
@@ -771,6 +786,34 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       
       <div id="metadata-container"></div>
       
+      <!-- Trinket comparison callout -->
+      <div id="trinket-callout" class="hidden">
+        <Callout type="note">
+          <p>
+            <em>Trinket rankings are still a work-in-progress.</em>
+          </p>
+          <p><strong>Current Implementation</strong>:</p>
+          <p>
+            We take the selected phase's bis profile gearset, remove the trinkets, and simulate to get the <strong>baseline</strong> result. We then generate a gearset for each trinket and compare the results against the baseline. 
+          </p>
+          <p>
+            This implementation comes with some caveats that can scew the results:
+          </p>
+          <ul>
+            <li>We <strong>don't</strong> re-reforge the gearset for every trinket</li>
+            <li>Ideally every trinket would come with it's own optimized gearset</li>
+            <li>This is simulating the trinkets <strong>individually</strong>, not in pairs</li>
+            <li>Like all other simulations, keep in mind WoWSims is still in <strong>alpha</strong> so not all spec/trinket implementations are not complete</li>
+          </ul>
+          <p>
+            With all that in mind, you should only consider this list as a <em>rough approximation</em> of the value of each individual trinket.
+          </p>
+          <p>
+            In the future we will reforge the gearset for each trinket to get a more accurate value.
+          </p>
+        </Callout>
+      </div>
+      
       <div class="controls">
         <h3 class="controls-title">
           {isRankingsMode ? "Simulation Options" : (isFixedClassSpec ? "Simulation Options" : "Comparison Options")}
@@ -781,7 +824,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
               <label for="comparisonType">Compare:</label>
               <select id="comparisonType">
                 <option value="race">Races</option>
-                <option value="trinket" disabled>Trinkets (Coming Soon)</option>
+                <option value="trinket">Trinkets</option>
               </select>
             </div>
           )}
@@ -852,6 +895,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
           <div class="control-group">
             <label for="sortBy">Sort By:</label>
             <select id="sortBy">
+              <option value="percent">Average Percentage Increase</option>
               <option value="dps">Average DPS</option>
               <option value="max">Max DPS</option>
               <option value="min">Min DPS</option>
@@ -955,9 +999,9 @@ const formatRace = (race) => {
   return race.replace('Race', '').replace(/([A-Z])/g, ' $1').trim();
 };
 
-const formatClass = (className) => {
-  return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
-};
+// const formatClass = (className) => {
+//   return className.replace('Class', '').replace(/([A-Z])/g, ' $1').trim();
+// };
 
 const formatTalents = (talents) => {
   if (!talents || !talents.talents || !Array.isArray(talents.talents)) {
@@ -1132,7 +1176,7 @@ const formatEquipmentSummary = (items) => {
 
 
 // Generate loadout dropdown HTML
-const generateLoadoutDropdown = (loadout, chartData) => {
+const generateLoadoutDropdown = (loadout, _chartData) => {
   const sections = formatLoadout(loadout);
   if (!sections || sections.length === 0) return '';
   
@@ -1349,6 +1393,12 @@ class UnifiedChart {
         comparisonSelect.value = comparisonType;
       }
     }
+    
+    // Initialize phase options for comparison modes
+    if (!this.isRankingsMode) {
+      this.updatePhaseOptions();
+      this.updateTrinketCallout();
+    }
   }
 
   bindEvents() {
@@ -1365,7 +1415,12 @@ class UnifiedChart {
 
       const dataSelects = document.querySelectorAll('#spec, #comparisonType');
       dataSelects.forEach(select => {
-        select.addEventListener('change', () => this.loadData());
+        select.addEventListener('change', () => {
+          if (select.id === 'comparisonType') {
+            this.updateSortOptions();
+          }
+          this.loadData();
+        });
       });
     }
     
@@ -1428,6 +1483,71 @@ class UnifiedChart {
     return comparisonSelect ? comparisonSelect.value : 'race';
   }
 
+  updateSortOptions() {
+    const sortBySelect = document.getElementById('sortBy');
+    if (!sortBySelect) return;
+    
+    const currentComparisonType = this.getCurrentComparisonType();
+    const percentOption = sortBySelect.querySelector('option[value="percent"]');
+    
+    if (percentOption) {
+      // Show percentage option only for trinket comparisons
+      percentOption.style.display = currentComparisonType === 'trinket' ? '' : 'none';
+      
+      if (currentComparisonType === 'trinket') {
+        // Default to percentage for trinket comparisons
+        if (sortBySelect.value === 'dps' || !sortBySelect.value) {
+          sortBySelect.value = 'percent';
+        }
+      } else {
+        // If percentage is selected but not available, switch to DPS
+        if (sortBySelect.value === 'percent') {
+          sortBySelect.value = 'dps';
+        }
+      }
+    }
+    
+    // Update phase options for trinket comparisons
+    this.updatePhaseOptions();
+    
+    // Update trinket callout visibility
+    this.updateTrinketCallout();
+  }
+
+  updateTrinketCallout() {
+    const trinketCallout = document.getElementById('trinket-callout');
+    if (!trinketCallout) return;
+    
+    const currentComparisonType = this.getCurrentComparisonType();
+    
+    if (currentComparisonType === 'trinket') {
+      trinketCallout.classList.remove('hidden');
+    } else {
+      trinketCallout.classList.add('hidden');
+    }
+  }
+
+  updatePhaseOptions() {
+    const phaseSelect = document.getElementById('phase');
+    if (!phaseSelect) return;
+    
+    // const currentComparisonType = this.getCurrentComparisonType();
+    const preRaidOption = phaseSelect.querySelector('option[value="preRaid"]');
+    
+    if (preRaidOption) {
+      if (!this.isRankingsMode) {
+        // Hide preRaid option for all comparison modes and force p1
+        preRaidOption.style.display = 'none';
+        if (phaseSelect.value === 'preRaid') {
+          phaseSelect.value = 'p1';
+        }
+      } else {
+        // Show preRaid option for rankings mode
+        preRaidOption.style.display = '';
+      }
+    }
+  }
+
   getFileName() {
     const targetCount = document.getElementById('targetCount').value;
     const encounterType = document.getElementById('encounterType').value;
@@ -1450,7 +1570,14 @@ class UnifiedChart {
     } else {
       const currentClass = this.getCurrentClass();
       const currentSpec = this.getCurrentSpec();
-      return `/data/comparison/${currentClass}/${currentSpec}/`;
+      const currentComparisonType = this.getCurrentComparisonType();
+      
+      // Handle different comparison type paths
+      if (currentComparisonType === 'trinket') {
+        return `/data/comparison/trinkets/${currentClass}/${currentSpec}/`;
+      } else {
+        return `/data/comparison/race/${currentClass}/${currentSpec}/`;
+      }
     }
   }
 
@@ -1471,6 +1598,9 @@ class UnifiedChart {
         return;
       }
     }
+    
+    // Update sort options based on comparison type
+    this.updateSortOptions();
 
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
@@ -1570,6 +1700,8 @@ class UnifiedChart {
     // Sort based on selected metric
     if (sortBy === 'stdev') {
       chartItems.sort((a, b) => a.value - b.value); // Lower stdev is better
+    } else if (sortBy === 'percent') {
+      chartItems.sort((a, b) => (b.percentIncrease || 0) - (a.percentIncrease || 0)); // Higher percentage is better
     } else {
       chartItems.sort((a, b) => b.value - a.value); // Higher values are better
     }
@@ -1758,6 +1890,7 @@ class UnifiedChart {
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
             const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
+            const chartDisplayValue = displayValue; // Rankings always show raw values
             
             const barColor = classColors[item.className] || '#666';
             const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
@@ -1774,7 +1907,7 @@ class UnifiedChart {
                   <div class="chart-bar-track">
                     <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
                   </div>
-                  <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                  <span class="chart-value" title="${tooltip}">${chartDisplayValue}</span>
                 </div>
               </div>
               ${dropdownContent}
@@ -1793,8 +1926,30 @@ class UnifiedChart {
     const chartItems = [];
     
     for (const [itemName, itemData] of Object.entries(this.currentData.results)) {
+      let label = itemName.replace(/_/g, ' ');
+      let iconData = null;
+      
+      // For trinket comparisons, extract icon and ilvl from equipment
+      if (currentComparisonType === 'trinket' && itemData.loadout && itemData.loadout.equipment) {
+        const trinket1 = itemData.loadout.equipment.items[12]; // Trinket slot 1
+        const trinket2 = itemData.loadout.equipment.items[13]; // Trinket slot 2
+        
+        // Find the trinket that's not empty (baseline has no trinkets)
+        const trinket = trinket1 && trinket1.id ? trinket1 : (trinket2 && trinket2.id ? trinket2 : null);
+        
+        if (trinket) {
+          const ilvl = trinket.stats && trinket.stats.ilvl ? trinket.stats.ilvl : '';
+          iconData = {
+            icon: trinket.icon,
+            ilvl: ilvl,
+            name: trinket.name
+          };
+          label = ilvl ? `${ilvl}` : trinket.name; // Show just ilvl if available
+        }
+      }
+      
       chartItems.push({
-        label: itemName.replace(/_/g, ' '),
+        label: label,
         dps: itemData.dps,
         max: itemData.max,
         min: itemData.min,
@@ -1802,7 +1957,29 @@ class UnifiedChart {
         value: itemData[sortBy] || itemData.dps,
         category: itemName,
         rawName: itemName,
-        loadout: itemData.loadout || null
+        loadout: itemData.loadout || null,
+        iconData: iconData
+      });
+    }
+
+    // Find baseline for percentage calculations (only for trinket comparisons)
+    const baseline = this.currentData.results.baseline;
+    const baselineDps = baseline ? baseline.dps : null;
+    
+    // Add percentage and DPS increase calculations to chart items
+    if (baselineDps && currentComparisonType === 'trinket') {
+      chartItems.forEach(item => {
+        if (item.rawName === 'baseline') {
+          item.percentIncrease = 0;
+          item.dpsIncrease = 0;
+        } else {
+          // Calculate increases based on sort type (compare like-to-like)
+          const baselineValue = baseline[sortBy] || baseline.dps;
+          const itemValue = item[sortBy] || item.dps;
+          
+          item.percentIncrease = ((itemValue - baselineValue) / baselineValue * 100);
+          item.dpsIncrease = itemValue - baselineValue;
+        }
       });
     }
 
@@ -1815,7 +1992,8 @@ class UnifiedChart {
       dps: `${comparisonLabel} DPS Rankings (Average)`,
       max: `${comparisonLabel} DPS Rankings (Maximum)`,
       min: `${comparisonLabel} DPS Rankings (Minimum)`, 
-      stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`
+      stdev: `${comparisonLabel} DPS Consistency Rankings (Low StdDev = More Consistent)`,
+      percent: `${comparisonLabel} Performance Rankings (% Increase)`
     };
 
     // TODO: abstract
@@ -1828,25 +2006,52 @@ class UnifiedChart {
             
             const displayValue = Math.round(item.value).toLocaleString();
             const avgDps = Math.round(item.dps).toLocaleString();
-            const tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
             
-            const barColor = currentComparisonType === 'race' ? 
-              (classColors[this.getCurrentClass()] || '#666') : '#666';
+            // Format tooltip and display value based on sort type and comparison type
+            let tooltip, chartDisplayValue;
+            if (currentComparisonType === 'trinket' && item.percentIncrease !== undefined) {
+              const percentDisplay = item.percentIncrease === 0 ? 'Baseline' : `+${item.percentIncrease.toFixed(1)}%`;
+              const dpsIncreaseDisplay = item.dpsIncrease === 0 ? 'Baseline' : `+${Math.round(item.dpsIncrease).toLocaleString()}`;
+              
+              if (sortBy === 'percent') {
+                // When sorting by percentage, show percentage as main value
+                chartDisplayValue = percentDisplay;
+                tooltip = `${percentDisplay} (${avgDps} DPS)`;
+              } else if (sortBy === 'stdev') {
+                // For consistency sort, show actual standard deviation
+                chartDisplayValue = Math.round(item.stdev).toLocaleString();
+                tooltip = `${chartDisplayValue} StdDev (${avgDps} DPS avg, lower is more consistent)`;
+              } else {
+                // For DPS-based sorts, show DPS increase from baseline
+                chartDisplayValue = dpsIncreaseDisplay;
+                tooltip = sortBy === 'dps' ? `${displayValue} DPS (${dpsIncreaseDisplay} vs baseline)` : `${displayValue} (Avg: ${avgDps} DPS, ${dpsIncreaseDisplay} vs baseline)`;
+              }
+            } else {
+              chartDisplayValue = displayValue;
+              tooltip = sortBy === 'dps' ? displayValue : `${displayValue} (Avg: ${avgDps})`;
+            }
+            
+            const barColor = classColors[this.getCurrentClass()] || '#666';
             const dropdownContent = item.loadout ? generateLoadoutDropdown(item.loadout, this.currentData) : '';
+            
+            // Create the label content with icon if trinket
+            const labelContent = item.iconData ? 
+              `<img src="https://wow.zamimg.com/images/wow/icons/small/${item.iconData.icon}.jpg" alt="${item.iconData.name}" class="trinket-icon" title="${item.iconData.name}" /><span class="trinket-ilvl">${item.label}</span>` :
+              `<span class="chart-label">${item.label}</span>`;
             
             return `
             <div class="chart-item-wrapper">
               <div class="chart-item" onclick="toggleChartItem(this.parentElement)">
                 <div class="chart-labels">
                   <span class="chart-rank">#${index + 1}</span>
-                  <span class="chart-label">${item.label}</span>
+                  ${labelContent}
                   ${item.loadout ? '<span class="chart-expand-icon">▶</span>' : ''}
                 </div>
                 <div class="chart-bar-container">
                   <div class="chart-bar-track">
                     <div class="chart-bar" style="width: ${barWidth}%; background-color: ${barColor};"></div>
                   </div>
-                  <span class="chart-value" title="${tooltip}">${displayValue}</span>
+                  <span class="chart-value" title="${tooltip}">${chartDisplayValue}</span>
                 </div>
               </div>
               ${dropdownContent}

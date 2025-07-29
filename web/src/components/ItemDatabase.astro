@@ -76,30 +76,30 @@ const statNames = {
 };
 
 // Global functions for item database functionality
-window.ItemDatabase = {
+(window as any).ItemDatabase = {
   // Helper function to format reforging
-  formatReforge: (reforgeId) => {
+  formatReforge: (reforgeId: any) => {
     if (!reforgeId || reforgeId === 0) return '';
-    const reforge = reforgeData[reforgeId.toString()];
+    const reforge = reforgeData[reforgeId.toString() as keyof typeof reforgeData];
     if (!reforge) return ` [R:${reforgeId}]`;
     
-    const fromStat = statNames[reforge.s1] || reforge.s1;
-    const toStat = statNames[reforge.s2] || reforge.s2;
+    const fromStat = statNames[reforge.s1 as keyof typeof statNames] || reforge.s1;
+    const toStat = statNames[reforge.s2 as keyof typeof statNames] || reforge.s2;
     return ` [${fromStat} → ${toStat}]`;
   },
 
   // Generate Wowhead URL for items
-  getWowheadUrl: (itemId) => {
+  getWowheadUrl: (itemId: any) => {
     return `https://www.wowhead.com/mop-classic/item=${itemId}`;
   },
 
   // Format equipment item with all details - uses enriched data from backend
-  formatEquipmentItem: (item) => {
+  formatEquipmentItem: (item: any) => {
     if (!item || !item.id) return null;
     
     // Use enriched name if available, otherwise fallback to ID
     const itemName = item.name || `Item ${item.id}`;
-    const wowheadUrl = window.ItemDatabase.getWowheadUrl(item.id);
+    const wowheadUrl = (window as any).ItemDatabase.getWowheadUrl(item.id);
     const iconUrl = item.icon ? `https://wow.zamimg.com/images/wow/icons/large/${item.icon}.jpg` : null;
     
     // Build details array with specific layout structure
@@ -118,17 +118,17 @@ window.ItemDatabase = {
       details.push(`<div class="item-reforge">Reforged ${item.reforging.description}</div>`);
     } else if (item.reforging && typeof item.reforging === 'number') {
       // Fallback to manual reforge lookup if not enriched
-      const reforge = reforgeData[item.reforging.toString()];
+      const reforge = reforgeData[item.reforging.toString() as keyof typeof reforgeData];
       if (reforge) {
-        const fromStat = statNames[reforge.s1] || reforge.s1;
-        const toStat = statNames[reforge.s2] || reforge.s2;
+        const fromStat = statNames[reforge.s1 as keyof typeof statNames] || reforge.s1;
+        const toStat = statNames[reforge.s2 as keyof typeof statNames] || reforge.s2;
         details.push(`<div class="item-reforge">Reforged ${fromStat} → ${toStat}</div>`);
       }
     }
     
     // Gems - each gem on separate line with icon and white stats
     if (item.gems && item.gems.length > 0) {
-      item.gems.forEach(gem => {
+      item.gems.forEach((gem: any) => {
         if (gem && gem.name) {
           const gemIcon = gem.icon ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${gem.icon}.jpg" alt="${gem.name}" class="gem-icon-inline" />` : '';
           const gemStats = gem.stats && gem.stats.length > 0 ? gem.stats.join(', ') : gem.name;
@@ -163,12 +163,12 @@ window.ItemDatabase = {
   },
 
   // Format gem information
-  formatGems: (gems) => {
+  formatGems: (gems: any) => {
     if (!gems || gems.length === 0) return '';
-    const activeGems = gems.filter(g => g && g !== 0);
+    const activeGems = gems.filter((g: any) => g && g !== 0);
     if (activeGems.length === 0) return '';
     
-    return activeGems.map(gemId => `Gem ${gemId}`).join(', ');
+    return activeGems.map((gemId: any) => `Gem ${gemId}`).join(', ');
   }
 };
 </script>
