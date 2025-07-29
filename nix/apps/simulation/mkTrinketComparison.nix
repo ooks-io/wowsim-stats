@@ -56,14 +56,33 @@
     # Create baseline player config
     baselineConfig = baseConfig // {equipment = baselineGearset;};
 
+    # Trinket profession requirements mapping
+    trinketProfessionRequirements = {
+      "75274" = "Alchemy";  # Zen Alchemist Stone
+      # Add other profession-specific trinkets here as needed
+    };
+
     # Generate trinket gearsets
     trinketGearsets = trinketLib.generateTrinketGearsets baselineGearset actualTrinketIds;
 
-    # Create trinket configs with gearsets
+    # Create trinket configs with gearsets and profession adjustments
     trinketConfigs =
-      lib.imap0 (index: gearset: {
+      lib.imap0 (index: gearset: let
         trinketId = builtins.elemAt actualTrinketIds index;
-        config = baseConfig // {equipment = gearset;};
+        trinketIdStr = toString trinketId;
+        requiredProfession = trinketProfessionRequirements.${trinketIdStr} or null;
+        
+        # Modify profession if trinket requires it
+        configWithProfession = 
+          if requiredProfession != null
+          then baseConfig // {
+            equipment = gearset;
+            profession2 = requiredProfession;
+          }
+          else baseConfig // {equipment = gearset;};
+      in {
+        trinketId = trinketId;
+        config = configWithProfession;
       })
       trinketGearsets;
 
