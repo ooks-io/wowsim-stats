@@ -12,5 +12,6 @@
     ./debuffs
     ./target
     ./encounter
+    ./trinkets
   ];
 }

@@ -279,7 +279,7 @@
           repo_root="$PWD"
         fi
 
-        comparison_dir="$repo_root/web/public/data/comparison/${class}/${spec}"
+        comparison_dir="$repo_root/web/public/data/comparison/race/${class}/${spec}"
         mkdir -p "$comparison_dir"
 
         # copy race comparison file
