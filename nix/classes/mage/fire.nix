@@ -45,8 +45,11 @@
       profession1 = "engineering";
       profession2 = "jewelcrafting";
       distanceFromTarget = 20;
-      options = {};
-
+      options = {
+        classOptions = {
+          defaultMageArmor = "MageArmorMoltenArmor";
+        };
+      };
       singleTarget = {
         apl = "fire";
         p1.gearset = "p1_bis";
