@@ -21,6 +21,8 @@
       OUTPUT_ROOT = "./web/public/data/leaderboards"
       # The number of top runs to collect from each realm's file.
       TOP_N_PER_REALM = 50
+      # The number of top runs to keep in final aggregated leaderboards.
+      TOP_N_FINAL = 50
 
       def parse_and_aggregate_data():
           # finds all fetched leaderboard files, parses them, and aggregates the data
@@ -115,14 +117,18 @@
                   # Deduplicate and sort regional runs
                   print(f"    Deduplicating {region.upper()} runs ({len(runs)} -> ", end="")
                   deduplicated_runs = deduplicate_runs(runs)
-                  print(f"{len(deduplicated_runs)})")
+                  print(f"{len(deduplicated_runs)} -> ", end="")
                   deduplicated_runs.sort(key=sort_key)
                   
+                  # Limit to top N runs for regional leaderboard
+                  final_runs = deduplicated_runs[:TOP_N_FINAL]
+                  print(f"{len(final_runs)})")
+                  
                   # Re-rank runs for regional leaderboard
-                  for i, run in enumerate(deduplicated_runs):
+                  for i, run in enumerate(final_runs):
                       run["ranking"] = i + 1
                   
-                  all_regional_runs.extend(deduplicated_runs)
+                  all_regional_runs.extend(final_runs)
                   output_dir = os.path.join(regional_path, region, dungeon_slug)
                   os.makedirs(output_dir, exist_ok=True)
                   output_file = os.path.join(output_dir, "leaderboard.json")
@@ -132,7 +138,7 @@
                           "dungeon_name": data["dungeon_name"],
                           "dungeon_slug": dungeon_slug,
                           "region": region,
-                          "leaderboard": deduplicated_runs,
+                          "leaderboard": final_runs,
                       }, f, indent=2)
 
               # 2. Generate and save GLOBAL leaderboard
@@ -142,11 +148,15 @@
               # Deduplicate global runs (cross-region duplicates)
               print(f"    Deduplicating global runs ({len(all_regional_runs)} -> ", end="")
               deduplicated_global = deduplicate_runs(all_regional_runs)
-              print(f"{len(deduplicated_global)})")
+              print(f"{len(deduplicated_global)} -> ", end="")
               deduplicated_global.sort(key=sort_key)
               
+              # Limit to top N runs for global leaderboard
+              final_global = deduplicated_global[:TOP_N_FINAL]
+              print(f"{len(final_global)})")
+              
               # Re-rank runs for global leaderboard
-              for i, run in enumerate(deduplicated_global):
+              for i, run in enumerate(final_global):
                   run["ranking"] = i + 1
               
               global_path = os.path.join(OUTPUT_ROOT, "global", dungeon_slug)
@@ -157,7 +167,7 @@
                   json.dump({
                       "dungeon_name": data["dungeon_name"],
                       "dungeon_slug": dungeon_slug,
-                      "leaderboard": deduplicated_global,
+                      "leaderboard": final_global,
                   }, f, indent=2)
 
       def main():
