@@ -1,10 +1,8 @@
 ---
 import PageLayout from "../components/PageLayout.astro";
-import Callout from "../components/Callout.astro";
 import ControlPanel from "../components/ControlPanel.astro";
 import FormSelect from "../components/FormSelect.astro";
 import LoadingState from "../components/LoadingState.astro";
-import InfoGrid from "../components/InfoGrid.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
 ---
 
@@ -483,7 +481,7 @@ import WoWClassColors from "../components/WoWClassColors.astro";
     row.className = "leaderboard-row";
 
     let teamHtml = "";
-    group.members.forEach((member, index) => {
+    group.members.forEach((member) => {
       // Handle missing specialization data (deleted/transferred characters)
       const specId = member.specialization?.id;
       const spec = specId
