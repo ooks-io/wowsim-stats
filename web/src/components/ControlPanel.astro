@@ -1,0 +1,44 @@
+---
+export interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<div class={`controls ${className || ''}`.trim()}>
+  <h3 class="controls-title">{title}</h3>
+  <div class="controls-grid">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .controls {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  .controls-title {
+    color: var(--highlight-color);
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  .controls-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .controls-grid {
+      flex-direction: column;
+    }
+  }
+</style>

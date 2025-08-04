@@ -1,0 +1,35 @@
+---
+import Navigation from "./Navigation.astro";
+import "../styles/global.css";
+
+export interface Props {
+  title: string;
+  description?: string;
+  pageTitle?: string;
+}
+
+const { title, description, pageTitle } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle || title}</title>
+  </head>
+  <body>
+    <Navigation />
+    
+    <div class="page-header">
+      <h1 class="page-title">{title}</h1>
+      {description && (
+        <p class="page-description">{description}</p>
+      )}
+    </div>
+
+    <div class="page-container">
+      <slot />
+    </div>
+  </body>
+</html>
