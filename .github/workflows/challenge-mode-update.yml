@@ -100,8 +100,8 @@ jobs:
         run: |
           git add web/public/data/
           git commit -m "Update Challenge Mode leaderboards (${{ steps.changes.outputs.timestamp }})
-
-          Updated ${{ steps.changes.outputs.changed_files }} leaderboard files with latest data from Blizzard API.
+          
+          Updated ${{ steps.changes.outputs.changed_files }} leaderboard files with latest data from Blizzard API."
           
           git push origin ${{ github.ref_name }}
 
