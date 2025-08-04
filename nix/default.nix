@@ -13,5 +13,6 @@
     ./target
     ./encounter
     ./trinkets
+    ./api
   ];
 }
