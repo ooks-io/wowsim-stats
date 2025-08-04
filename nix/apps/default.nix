@@ -17,6 +17,7 @@
     testEnrichmentOutput = callPackage ./testEnrichmentOutput.nix {inherit inputs lib;};
     testEquipmentEnrichment = callPackage ./testEquipmentEnrichment.nix {inherit inputs lib;};
     getCMLeaders = import ./challenge-mode-leaderboard.nix {inherit api writers python3Packages;};
+    parseCMs = import ./challenge-mode-parser.nix {inherit api writers python3Packages;};
 
     # Trinket testing apps
     trinketTest = callPackage ./trinket-test.nix {inherit lib classes encounter buffs debuffs inputs trinket writeShellApplication;};
@@ -64,6 +65,10 @@
         getCM = {
           type = "app";
           program = "${getCMLeaders}/bin/cm-leaderboard-fetcher";
+        };
+        parseCM = {
+          type = "app";
+          program = "${parseCMs}/bin/cm-leaderboard-parser";
         };
       };
   };
