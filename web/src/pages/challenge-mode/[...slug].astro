@@ -758,7 +758,8 @@ console.log('Initial values from props:', { initialRegion, initialRealm, initial
     try {
       const fileName = getDataFileName();
       console.log("Loading file:", fileName);
-      const fullUrl = `${baseUrl}data/challenge-mode/${fileName}`.replace('//', '/');
+      // Use absolute path for GitHub Pages compatibility
+      const fullUrl = `/data/challenge-mode/${fileName}`;
       console.log("Full fetch URL:", fullUrl);
       const response = await fetch(fullUrl);
 
