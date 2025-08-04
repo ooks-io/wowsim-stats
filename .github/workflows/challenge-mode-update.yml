@@ -1,0 +1,130 @@
+name: Challenge Mode Leaderboard Update
+
+on:
+  schedule:
+    - cron: '5 */3 * * *'
+  workflow_dispatch: 
+    inputs:
+      force_update:
+        description: 'Force update even if no changes'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  update-leaderboards:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v22
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+      - name: Authenticate with Blizzard API
+        id: blizzard_auth
+        run: |
+          echo "Authenticating with Blizzard API..."
+          
+          # Get OAuth token using client credentials flow
+          RESPONSE=$(curl -s -X POST "https://oauth.battle.net/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" \
+            -u "${{ secrets.BLIZZARD_CLIENT_ID }}:${{ secrets.BLIZZARD_CLIENT_SECRET }}")
+          
+          # Extract access token from response
+          ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+          
+          if [ "$ACCESS_TOKEN" = "null" ] || [ -z "$ACCESS_TOKEN" ]; then
+            echo "Failed to authenticate with Blizzard API - check client credentials"
+            exit 1
+          fi
+          
+          # Mask the token in logs to prevent exposure
+          echo "::add-mask::$ACCESS_TOKEN"
+          
+          echo "Successfully authenticated with Blizzard API"
+          echo "BLIZZARD_API_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+      - name: Fetch Challenge Mode Data
+        run: |
+          echo "Fetching Challenge Mode leaderboards..."
+          nix run .#getCM
+
+      - name: Parse and Aggregate Data
+        run: |
+          echo "Parsing and aggregating leaderboard data..."
+          nix run .#parseCM
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git add web/public/data/
+          if git diff --staged --quiet; then
+            echo "No changes detected in leaderboard data"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected in leaderboard data"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            
+            # Count changed files for commit message
+            CHANGED_FILES=$(git diff --staged --name-only | wc -l)
+            echo "changed_files=$CHANGED_FILES" >> $GITHUB_OUTPUT
+            
+            # Get timestamp for commit message  
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+            echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.has_changes == 'true' || github.event.inputs.force_update == 'true'
+        run: |
+          git add web/public/data/
+          git commit -m "Update Challenge Mode leaderboards (${{ steps.changes.outputs.timestamp }})
+
+          Updated ${{ steps.changes.outputs.changed_files }} leaderboard files with latest data from Blizzard API.
+          
+          git push origin ${{ github.ref_name }}
+
+      - name: Build and upload website
+        if: steps.changes.outputs.has_changes == 'true' || github.event.inputs.force_update == 'true'
+        uses: withastro/action@v3
+        with: 
+          path: ./web
+
+      - name: Deploy to GitHub Pages
+        if: steps.changes.outputs.has_changes == 'true' || github.event.inputs.force_update == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Notify completion
+        if: steps.changes.outputs.has_changes == 'true' || github.event.inputs.force_update == 'true'
+        run: |
+          echo "Challenge Mode leaderboards updated successfully!"
+          echo "Website deployed to: ${{ steps.deployment.outputs.page_url }}"
+          echo "Updated ${{ steps.changes.outputs.changed_files }} files at ${{ steps.changes.outputs.timestamp }}"
+
+      - name: No changes notification
+        if: steps.changes.outputs.has_changes == 'false' && github.event.inputs.force_update != 'true'
+        run: |
+          echo "No changes detected - skipping commit and deployment"
+          echo "Next scheduled run in 3 hours"
