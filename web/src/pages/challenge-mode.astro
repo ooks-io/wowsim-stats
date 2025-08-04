@@ -630,10 +630,15 @@ import WoWClassColors from "../components/WoWClassColors.astro";
     const realm = document.getElementById("realm").value;
     const dungeon = document.getElementById("dungeon").value;
 
+    console.log('Getting data filename with:', { region, realm, dungeon });
+    console.log('Dungeon name lookup:', dungeonNames[dungeon]);
+
     const dungeonName = dungeonNames[dungeon]
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "-");
-    return `${region}/${realm}/${dungeonName}/${realm}-${dungeonName}-leaderboard.json`;
+    const fileName = `${region}/${realm}/${dungeonName}/${realm}-${dungeonName}-leaderboard.json`;
+    console.log('Generated filename:', fileName);
+    return fileName;
   }
 
   async function loadLeaderboard() {
@@ -642,7 +647,8 @@ import WoWClassColors from "../components/WoWClassColors.astro";
     try {
       const fileName = getDataFileName();
       console.log("Loading file:", fileName);
-      const response = await fetch(`data/challenge-mode/${fileName}`);
+      console.log("Full fetch URL:", `${window.location.origin}/data/challenge-mode/${fileName}`);
+      const response = await fetch(`/data/challenge-mode/${fileName}`);
 
       if (!response.ok) {
         throw new Error(
@@ -659,24 +665,108 @@ import WoWClassColors from "../components/WoWClassColors.astro";
     }
   }
 
+  // URL routing functions
+  function parseURLPath() {
+    const path = window.location.pathname;
+    console.log('Parsing URL path:', path);
+    const match = path.match(/^\/challenge-mode\/([^\/]+)\/([^\/]+)\/([^\/]+)\/?$/);
+    
+    if (match) {
+      const [, region, realm, dungeonSlug] = match;
+      console.log('URL parts:', { region, realm, dungeonSlug });
+      
+      // Find dungeon ID from slug
+      const dungeonId = Object.entries(dungeonNames).find(([id, name]) => {
+        const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        console.log(`Comparing "${slug}" with "${dungeonSlug}"`);
+        return slug === dungeonSlug;
+      });
+      
+      console.log('Found dungeon ID:', dungeonId);
+      
+      return {
+        region,
+        realm,
+        dungeon: dungeonId ? dungeonId[0] : null
+      };
+    }
+    
+    console.log('URL did not match pattern');
+    return null;
+  }
+
+  function updateURL() {
+    const region = document.getElementById("region").value;
+    const realm = document.getElementById("realm").value;
+    const dungeon = document.getElementById("dungeon").value;
+    
+    const dungeonName = dungeonNames[dungeon]
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "-");
+    
+    const newURL = `/challenge-mode/${region}/${realm}/${dungeonName}`;
+    window.history.pushState({}, '', newURL);
+  }
+
+  function initializeFromURL() {
+    const urlParams = parseURLPath();
+    console.log('URL params parsed:', urlParams);
+    
+    if (urlParams && urlParams.region && urlParams.realm && urlParams.dungeon) {
+      console.log('Setting values from URL:', urlParams);
+      
+      // Set region first
+      document.getElementById("region").value = urlParams.region;
+      updateRealmOptions();
+      
+      // Validate realm exists in current region
+      const regionData = DATA_MAP[urlParams.region];
+      if (regionData && regionData.realms && regionData.realms[urlParams.realm]) {
+        document.getElementById("realm").value = urlParams.realm;
+      } else {
+        console.log('Realm not found:', urlParams.realm, 'in region:', urlParams.region);
+        console.log('Available realms:', Object.keys(regionData?.realms || {}));
+      }
+      
+      document.getElementById("dungeon").value = urlParams.dungeon;
+      
+      console.log('Final values set:', {
+        region: document.getElementById("region").value,
+        realm: document.getElementById("realm").value,
+        dungeon: document.getElementById("dungeon").value
+      });
+      
+      return true; // URL params were applied
+    }
+    
+    console.log('No valid URL params found, using defaults');
+    return false; // No valid URL params found
+  }
+
   // Event listeners
   document.addEventListener("DOMContentLoaded", () => {
     // Initialize realm options
     updateRealmOptions();
 
+    // Try to initialize from URL, if not successful use defaults
+    const fromURL = initializeFromURL();
+    
     // Load initial data
     loadLeaderboard();
 
     // Bind change events
     document.getElementById("region").addEventListener("change", () => {
       updateRealmOptions();
+      updateURL();
       loadLeaderboard();
     });
-    document
-      .getElementById("realm")
-      .addEventListener("change", loadLeaderboard);
-    document
-      .getElementById("dungeon")
-      .addEventListener("change", loadLeaderboard);
+    document.getElementById("realm").addEventListener("change", () => {
+      updateURL();
+      loadLeaderboard();
+    });
+    document.getElementById("dungeon").addEventListener("change", () => {
+      updateURL();
+      loadLeaderboard();
+    });
   });
 </script>
