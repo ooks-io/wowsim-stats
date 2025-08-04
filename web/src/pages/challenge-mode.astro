@@ -4,6 +4,8 @@ import ControlPanel from "../components/ControlPanel.astro";
 import FormSelect from "../components/FormSelect.astro";
 import LoadingState from "../components/LoadingState.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <PageLayout
@@ -374,7 +376,7 @@ import WoWClassColors from "../components/WoWClassColors.astro";
   }
 </style>
 
-<script is:inline>
+<script is:inline define:vars={{ baseUrl }}>
   const DATA_MAP = {
     us: {
       name: "US",
@@ -647,8 +649,9 @@ import WoWClassColors from "../components/WoWClassColors.astro";
     try {
       const fileName = getDataFileName();
       console.log("Loading file:", fileName);
-      console.log("Full fetch URL:", `${window.location.origin}/data/challenge-mode/${fileName}`);
-      const response = await fetch(`/data/challenge-mode/${fileName}`);
+      const fullUrl = `${baseUrl}data/challenge-mode/${fileName}`.replace('//', '/');
+      console.log("Full fetch URL:", fullUrl);
+      const response = await fetch(fullUrl);
 
       if (!response.ok) {
         throw new Error(
