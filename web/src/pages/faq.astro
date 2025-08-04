@@ -1,24 +1,11 @@
 ---
-import Navigation from "../components/Navigation.astro";
-import "../styles/global.css";
+import PageLayout from "../components/PageLayout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <title>FAQ - WoW MoP Rankings</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
-  </head>
-  <body>
-    <Navigation />
-
-    <div class="page-header">
-      <h1 class="page-title">Frequently Asked Questions</h1>
-    </div>
-
-    <div class="page-container">
+<PageLayout 
+  title="Frequently Asked Questions"
+  pageTitle="FAQ - WoW MoP Rankings"
+>
       <div class="card">
         <div class="faq-item">
           <h3 class="faq-question">
@@ -158,9 +145,7 @@ import "../styles/global.css";
           </p>
         </div>
       </div>
-    </div>
-  </body>
-</html>
+</PageLayout>
 
 <style>
   .faq-item {

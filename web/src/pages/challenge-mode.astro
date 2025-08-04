@@ -1,809 +1,684 @@
 ---
-import Navigation from "../components/Navigation.astro";
+import PageLayout from "../components/PageLayout.astro";
 import Callout from "../components/Callout.astro";
-import "../styles/global.css";
+import ControlPanel from "../components/ControlPanel.astro";
+import FormSelect from "../components/FormSelect.astro";
+import LoadingState from "../components/LoadingState.astro";
+import InfoGrid from "../components/InfoGrid.astro";
+import WoWClassColors from "../components/WoWClassColors.astro";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Challenge Mode Leaderboards - MoP Classic</title>
-    <style>
-      :root {
-        --highlight-color: #d8a657;
-        --bg-primary: #282828;
-        --bg-secondary: #32302f;
-        --bg-selection: #32302f;
-        --border-color: #4a4a4a;
-        --text-primary: #ffffff;
-        --text-secondary: #aaaaaa;
-        --text-muted: #a9a9a9;
-        --blue-color: #7daea3;
-        --note-color: #7daea3;
-      }
+<PageLayout
+  title="Challenge Mode Leaderboards"
+  description="Mists of Pandaria Classic Challenge Mode Rankings"
+  pageTitle="Challenge Mode Leaderboards - MoP Classic"
+>
+  <WoWClassColors />
 
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: var(--bg-primary);
-        color: var(--text-primary);
-      }
+  <style>
+    .leaderboard-container {
+      background-color: var(--bg-secondary);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-top: 20px;
+    }
 
-      .page-header {
-        text-align: center;
-        padding: 30px 20px;
-        background-color: var(--bg-secondary);
-        border-bottom: 1px solid var(--border-color);
-      }
+    .hidden {
+      display: none;
+    }
 
-      .page-title {
-        color: var(--highlight-color);
-        margin: 0 0 10px 0;
-        font-size: 2.5em;
-        font-weight: 700;
-      }
+    .loading-overlay,
+    .error-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      min-width: 300px;
+    }
 
-      .page-description {
-        color: var(--text-secondary);
-        font-size: 1.1em;
-        margin: 0;
-      }
+    #content {
+      min-height: 400px;
+      transition: opacity 0.2s ease;
+    }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
-      }
+    .content-loading {
+      opacity: 0.3;
+      pointer-events: none;
+    }
 
-      .controls {
-        margin-bottom: 30px;
-        padding: 20px;
-        background-color: var(--bg-secondary);
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-      }
+    .no-data-message {
+      margin: 20px 0;
+    }
 
-      .controls-title {
-        color: var(--highlight-color);
-        margin: 0 0 15px 0;
-        font-size: 1.2em;
-        font-weight: 600;
-      }
+    .no-data-content {
+      text-align: center;
+      padding: 40px 20px;
+    }
 
-      .controls-grid {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-      }
+    .no-data-content h3 {
+      color: var(--highlight-color);
+      margin: 0 0 15px 0;
+      font-size: 1.4em;
+      font-weight: 600;
+    }
 
-      .control-group {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-      }
+    .no-data-content p {
+      color: var(--text-secondary);
+      margin: 0;
+      font-size: 1.1em;
+    }
 
-      .control-group label {
-        font-size: 0.9em;
-        color: var(--text-muted);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
+    #leaderboard-rows {
+      display: table;
+      width: 100%;
+    }
 
-      .control-group select {
-        padding: 8px 12px;
-        background-color: #2a2a2a;
-        border: 1px solid #555;
-        border-radius: 4px;
-        color: var(--text-primary);
-        font-size: 0.9em;
-        min-width: 120px;
-      }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
 
-      .control-group select:focus {
-        outline: none;
-        border-color: var(--highlight-color);
-      }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
-      .dungeon-info {
-        background-color: var(--bg-secondary);
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 30px;
-        border: 1px solid var(--border-color);
-      }
+    .info-label {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-      .dungeon-info h2 {
-        color: var(--highlight-color);
-        margin: 0 0 15px 0;
-        font-size: 1.4em;
-        font-weight: 600;
-      }
+    .info-value {
+      font-size: 1em;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
 
+    @media (max-width: 768px) {
       .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 1024px) {
+      .leaderboard-header,
+      .leaderboard-row {
+        grid-template-columns: 60px 100px 1fr 80px 120px;
         gap: 15px;
       }
 
-      .info-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .info-label {
-        font-size: 0.85em;
-        color: var(--text-muted);
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .info-value {
-        font-size: 1em;
-        color: var(--text-primary);
-        font-weight: 600;
-      }
-
-      .leaderboard-container {
-        background-color: var(--bg-secondary);
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-        overflow: hidden;
-      }
-
-      .loading,
-      .error {
-        text-align: center;
-        padding: 40px 20px;
-        margin: 20px 0;
-        background-color: var(--bg-secondary);
-        border-radius: 8px;
-        border: 1px solid var(--border-color);
-      }
-
-      .loading {
-        color: var(--text-muted);
-      }
-
-      .error {
-        color: #ff6666;
-        border-color: #ff4444;
-        background-color: rgba(255, 0, 0, 0.1);
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      @media (max-width: 1024px) {
-        .leaderboard-header,
-        .leaderboard-row {
-          grid-template-columns: 60px 100px 1fr 80px 120px;
-          gap: 15px;
-        }
-
-        .player {
-          min-width: 75px;
-          font-size: 0.75em;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .container {
-          padding: 10px;
-        }
-
-        .leaderboard-header,
-        .leaderboard-row {
-          grid-template-columns: 1fr;
-          gap: 10px;
-          text-align: center;
-          padding: 10px 15px;
-        }
-
-        .team-composition {
-          justify-content: center;
-        }
-
-        .player {
-          min-width: 70px;
-          font-size: 0.75em;
-        }
-
-        .controls-grid {
-          flex-direction: column;
-        }
-
-        .rank,
-        .duration,
-        .mythic-rating,
-        .completed-time {
-          font-size: 1.1em;
-          margin: 5px 0;
-        }
-      }
-
-      /* Callout component styles */
-      .callout {
-        background-color: #2a3a3a;
-        border: 1px solid #458588;
-        border-left: 4px solid #458588;
-        border-radius: 6px;
-        padding: 16px;
-        margin-bottom: 20px;
-      }
-
-      .callout-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-      }
-
-      .callout-icon {
-        width: 20px;
-        height: 20px;
-        color: #458588;
-        flex-shrink: 0;
-      }
-
-      .callout-title {
-        color: #458588;
-        margin: 0;
-        font-size: 1em;
-        font-weight: 600;
-      }
-
-      .callout-content {
-        color: var(--text-primary);
-        line-height: 1.5;
-        margin-left: 30px;
-      }
-
-      .callout-content p {
-        margin: 0 0 8px 0;
-      }
-
-      .callout-content p:last-child {
-        margin-bottom: 0;
-      }
-
-      .callout-content a {
-        color: #458588;
-        text-decoration: none;
-      }
-
-      .callout-content a:hover {
-        text-decoration: underline;
-      }
-
-      .callout-content strong {
-        color: #458588;
-      }
-
-      .callout-content code {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 2px 4px;
-        border-radius: 3px;
-        font-family: "Courier New", monospace;
-        font-size: 0.9em;
-      }
-    </style>
-  </head>
-  <body>
-    <Navigation />
-
-    <div class="page-header">
-      <h1 class="page-title">Challenge Mode Leaderboards</h1>
-      <p class="page-description">
-        Mists of Pandaria Classic Challenge Mode Rankings
-      </p>
-    </div>
-
-    <div class="container">
-      <div class="controls">
-        <h3 class="controls-title">Leaderboard Options</h3>
-        <div class="controls-grid">
-          <div class="control-group">
-            <label for="region">Region:</label>
-            <select id="region">
-              <option value="us" selected>US</option>
-              <option value="eu">EU</option>
-              <option value="kr">KR</option>
-            </select>
-          </div>
-          <div class="control-group">
-            <label for="realm">Realm:</label>
-            <select id="realm">
-              <!-- Options populated by JavaScript -->
-            </select>
-          </div>
-
-          <div class="control-group">
-            <label for="dungeon">Dungeon:</label>
-            <select id="dungeon">
-              <option value="2" selected>Temple of the Jade Serpent</option>
-              <option value="56">Stormstout Brewery</option>
-              <option value="57">Gate of the Setting Sun</option>
-              <option value="58">Shado-Pan Monastery</option>
-              <option value="59">Siege of Niuzao Temple</option>
-              <option value="60">Mogu'shan Palace</option>
-              <option value="76">Scholomance</option>
-              <option value="77">Scarlet Halls</option>
-              <option value="78">Scarlet Monastery</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div id="loading" class="loading">
-        Loading Challenge Mode leaderboard data...
-      </div>
-
-      <div id="error" class="error hidden"></div>
-
-      <div id="content" class="hidden">
-        <div class="dungeon-info">
-          <h2 id="dungeon-name">Loading...</h2>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Period</span>
-              <span class="info-value" id="period">-</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Realm</span>
-              <span class="info-value" id="realm-name">-</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Period Start</span>
-              <span class="info-value" id="period-start">-</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Period End</span>
-              <span class="info-value" id="period-end">-</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="leaderboard-container">
-          <div id="leaderboard-rows"></div>
-        </div>
-      </div>
-    </div>
-  </body>
-
-  <style is:global>
-    /* Global styles for dynamically generated content */
-    #leaderboard-rows .leaderboard-row {
-      display: grid !important;
-      grid-template-columns: 80px 120px 2fr 100px 140px !important;
-      gap: 20px !important;
-      align-items: center !important;
-      padding: 15px 20px !important;
-      border-bottom: 1px solid #4a4a4a !important;
-      min-height: 60px !important;
-    }
-
-    #leaderboard-rows .rank {
-      font-size: 1.2em !important;
-      font-weight: bold !important;
-      text-align: center !important;
-      color: #d8a657 !important;
-    }
-
-    #leaderboard-rows .duration {
-      font-family: "Courier New", monospace !important;
-      font-weight: bold !important;
-      color: #00ff88 !important;
-      text-align: right !important;
-    }
-
-    #leaderboard-rows .team-composition {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      gap: 6px !important;
-      justify-content: flex-start !important;
-      align-items: center !important;
-    }
-
-    #leaderboard-rows .mythic-rating {
-      color: #d8a657 !important;
-      font-weight: bold !important;
-      text-align: center !important;
-    }
-
-    #leaderboard-rows .completed-time {
-      color: #aaaaaa !important;
-      font-size: 0.9em !important;
-      text-align: center !important;
-    }
-
-    @media (max-width: 1024px) {
-      #leaderboard-rows .leaderboard-row {
-        grid-template-columns: 60px 100px 1fr 80px 120px !important;
-        gap: 15px !important;
+      .player {
+        min-width: 75px;
+        font-size: 0.75em;
       }
     }
 
     @media (max-width: 768px) {
-      #leaderboard-rows .leaderboard-row {
-        grid-template-columns: 1fr !important;
-        gap: 10px !important;
-        text-align: center !important;
-        padding: 10px 15px !important;
+      .container {
+        padding: 10px;
       }
 
-      #leaderboard-rows .team-composition {
-        justify-content: center !important;
+      .leaderboard-header,
+      .leaderboard-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: center;
+        padding: 10px 15px;
       }
 
-      #leaderboard-rows .rank,
-      #leaderboard-rows .duration,
-      #leaderboard-rows .mythic-rating,
-      #leaderboard-rows .completed-time {
-        font-size: 1.1em !important;
-        margin: 5px 0 !important;
+      .team-composition {
+        justify-content: center;
       }
+
+      .player {
+        min-width: 70px;
+        font-size: 0.75em;
+      }
+
+      .controls-grid {
+        flex-direction: column;
+      }
+
+      .rank,
+      .duration,
+      .mythic-rating,
+      .completed-time {
+        font-size: 1.1em;
+        margin: 5px 0;
+      }
+    }
+
+    /* Callout component styles */
+    .callout {
+      background-color: #2a3a3a;
+      border: 1px solid #458588;
+      border-left: 4px solid #458588;
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .callout-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .callout-icon {
+      width: 20px;
+      height: 20px;
+      color: #458588;
+      flex-shrink: 0;
+    }
+
+    .callout-title {
+      color: #458588;
+      margin: 0;
+      font-size: 1em;
+      font-weight: 600;
+    }
+
+    .callout-content {
+      color: var(--text-primary);
+      line-height: 1.5;
+      margin-left: 30px;
+    }
+
+    .callout-content p {
+      margin: 0 0 8px 0;
+    }
+
+    .callout-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .callout-content a {
+      color: #458588;
+      text-decoration: none;
+    }
+
+    .callout-content a:hover {
+      text-decoration: underline;
+    }
+
+    .callout-content strong {
+      color: #458588;
+    }
+
+    .callout-content code {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: "Courier New", monospace;
+      font-size: 0.9em;
     }
   </style>
 
-  <script is:inline>
-    // Specialization ID to role/class mapping
-    const specMap = {
-      65: { role: "healer", class: "Paladin", spec: "Holy" },
-      66: { role: "tank", class: "Paladin", spec: "Protection" },
-      70: { role: "dps", class: "Paladin", spec: "Retribution" },
+  <ControlPanel title="Leaderboard Options">
+    <FormSelect
+      id="region"
+      label="Region"
+      options={[
+        { value: "us", label: "US", selected: true },
+        { value: "eu", label: "EU" },
+        { value: "kr", label: "KR" },
+      ]}
+    />
+    <FormSelect id="realm" label="Realm" options={[]} />
+    <FormSelect
+      id="dungeon"
+      label="Dungeon"
+      options={[
+        { value: "2", label: "Temple of the Jade Serpent", selected: true },
+        { value: "56", label: "Stormstout Brewery" },
+        { value: "57", label: "Gate of the Setting Sun" },
+        { value: "58", label: "Shado-Pan Monastery" },
+        { value: "59", label: "Siege of Niuzao Temple" },
+        { value: "60", label: "Mogu'shan Palace" },
+        { value: "76", label: "Scholomance" },
+        { value: "77", label: "Scarlet Halls" },
+        { value: "78", label: "Scarlet Monastery" },
+      ]}
+    />
+  </ControlPanel>
 
-      71: { role: "dps", class: "Warrior", spec: "Arms" },
-      72: { role: "dps", class: "Warrior", spec: "Fury" },
-      73: { role: "tank", class: "Warrior", spec: "Protection" },
+  <div id="loading" class="loading-overlay">
+    <LoadingState message="Loading Challenge Mode leaderboard data..." />
+  </div>
 
-      103: { role: "dps", class: "Druid", spec: "Feral" },
-      104: { role: "tank", class: "Druid", spec: "Guardian" },
-      102: { role: "dps", class: "Druid", spec: "Balance" },
-      105: { role: "healer", class: "Druid", spec: "Restoration" },
+  <div id="error" class="error-overlay hidden">
+    <LoadingState type="error" />
+  </div>
 
-      250: { role: "tank", class: "Death Knight", spec: "Blood" },
-      251: { role: "dps", class: "Death Knight", spec: "Frost" },
-      252: { role: "dps", class: "Death Knight", spec: "Unholy" },
+  <div id="no-data" class="no-data-message hidden">
+    <div class="card">
+      <div class="no-data-content">
+        <h3>No Times Found</h3>
+        <p>
+          No Challenge Mode times were found for this realm and dungeon
+          combination.
+        </p>
+      </div>
+    </div>
+  </div>
 
-      268: { role: "tank", class: "Monk", spec: "Brewmaster" },
-      270: { role: "healer", class: "Monk", spec: "Mistweaver" },
-      269: { role: "dps", class: "Monk", spec: "Windwalker" },
+  <div id="content">
+    <div class="card">
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Dungeon</span>
+          <span class="info-value" id="dungeon-name">Loading...</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Period</span>
+          <span class="info-value" id="period">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Realm</span>
+          <span class="info-value" id="realm-name">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Period Start</span>
+          <span class="info-value" id="period-start">-</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Period End</span>
+          <span class="info-value" id="period-end">-</span>
+        </div>
+      </div>
+    </div>
 
-      263: { role: "dps", class: "Shaman", spec: "Enhancement" },
-      264: { role: "healer", class: "Shaman", spec: "Restoration" },
-      262: { role: "dps", class: "Shaman", spec: "Elemental" },
+    <div class="leaderboard-container">
+      <div id="leaderboard-rows"></div>
+    </div>
+  </div>
+</PageLayout>
 
-      256: { role: "healer", class: "Priest", spec: "Discipline" },
-      257: { role: "healer", class: "Priest", spec: "Holy" },
-      258: { role: "dps", class: "Priest", spec: "Shadow" },
+<style is:global>
+  /* Global styles for dynamically generated content */
+  #leaderboard-rows .leaderboard-row {
+    display: grid !important;
+    grid-template-columns: 80px 120px 2fr 100px 140px !important;
+    gap: 20px !important;
+    align-items: center !important;
+    padding: 15px 20px !important;
+    border-bottom: 1px solid #4a4a4a !important;
+    min-height: 60px !important;
+  }
 
-      255: { role: "dps", class: "Hunter", spec: "Survival" },
-      254: { role: "dps", class: "Hunter", spec: "Marksmanship" },
-      253: { role: "dps", class: "Hunter", spec: "Beast Mastery" },
+  #leaderboard-rows .rank {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    color: #d8a657 !important;
+  }
 
-      259: { role: "dps", class: "Rogue", spec: "Assassination" },
-      260: { role: "dps", class: "Rogue", spec: "Outlaw" },
-      261: { role: "dps", class: "Rogue", spec: "Subtlety" },
+  #leaderboard-rows .duration {
+    font-family: "Courier New", monospace !important;
+    font-weight: bold !important;
+    color: #00ff88 !important;
+    text-align: right !important;
+  }
 
-      62: { role: "dps", class: "Mage", spec: "Arcane" },
-      63: { role: "dps", class: "Mage", spec: "Fire" },
-      64: { role: "dps", class: "Mage", spec: "Frost" },
+  #leaderboard-rows .team-composition {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+  }
 
-      265: { role: "dps", class: "Warlock", spec: "Affliction" },
-      266: { role: "dps", class: "Warlock", spec: "Demonology" },
-      267: { role: "dps", class: "Warlock", spec: "Destruction" },
-    };
+  #leaderboard-rows .mythic-rating {
+    color: #d8a657 !important;
+    font-weight: bold !important;
+    text-align: center !important;
+  }
 
-    const DATA_MAP = {
-      us: {
-        name: "US",
-        realms: {
-          angerforge: "Angerforge",
-          arugal: "Arugal",
-          ashkandi: "Ashkandi",
-          atiesh: "Atiesh",
-          azursong: "Azuresong",
-          benediction: "Benediction",
-          bloodsailBuccaneers: "Bloodsail Buccaneers",
-          earthfury: "Earthfury",
-          eranikus: "Eranikus",
-          faerlina: "Faerlina",
-          grobbulus: "Grobbulus",
-          maladath: "Maladath",
-          mankrik: "Mankrik",
-          myzrael: "Myzrael",
-          old_blanchy: "Old Blanchy",
-          pagle: "Pagle",
-          remulos: "Remulos",
-          skyfury: "Skyfury",
-          sulfuras: "Sulfuras",
-          westfall: "Westfall",
-          whitemane: "Whitemane",
-          windseeker: "Windseeker",
-          yojamba: "Yojamba",
-        },
-      },
-      eu: {
-        name: "EU",
-        realms: {
-          amnennar: "Amnennar",
-          ashbringer: "Ashbringer",
-          auberdine: "Auberdine",
-          chromie: "Chromie",
-          earthshaker: "Earthshaker",
-          everlook: "Everlook",
-          firemaw: "Firemaw",
-          flamegor: "Flamegor",
-          gehennas: "Gehennas",
-          giantstalker: "Giantstalker",
-          golemagg: "Golemagg",
-          hydraxianWaterlords: "Hydraxian Waterlords",
-          jindo: "Jin'do",
-          lakeshire: "Lakeshire",
-          mandokir: "Mandokir",
-          mirageRaceway: "Mirage Raceway",
-          mograine: "Mograine",
-          nethergardeKeep: "Nethergarde Keep",
-          patchwerk: "Patchwerk",
-          pyrewoodVillage: "Pyrewood Village",
-          razorfen: "Razorfen",
-          sulfuron: "Sulfuron",
-          thekal: "Thekal",
-          transcendence: "Transcendence",
-          venoxis: "Venoxis",
-        },
-      },
-      kr: {
-        name: "KR",
-        realms: {
-          frostmourne: "Frostmourne",
-          iceblood: "Iceblood",
-          lokholar: "Lok'holar",
-          ragnaros: "Ragnaros",
-          shimmeringFlats: "Shimmering Flats",
-        },
-      },
-    };
-    // Dungeon name mapping
-    const dungeonNames = {
-      "2": "Temple of the Jade Serpent",
-      "56": "Stormstout Brewery",
-      "57": "Gate of the Setting Sun",
-      "58": "Shado-Pan Monastery",
-      "59": "Siege of Niuzao Temple",
-      "60": "Mogu'shan Palace",
-      "76": "Scholomance",
-      "77": "Scarlet Halls",
-      "78": "Scarlet Monastery",
-    };
+  #leaderboard-rows .completed-time {
+    color: #aaaaaa !important;
+    font-size: 0.9em !important;
+    text-align: center !important;
+  }
 
-    function formatDuration(milliseconds) {
-      const totalSeconds = Math.floor(milliseconds / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  @media (max-width: 1024px) {
+    #leaderboard-rows .leaderboard-row {
+      grid-template-columns: 60px 100px 1fr 80px 120px !important;
+      gap: 15px !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    #leaderboard-rows .leaderboard-row {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+      text-align: center !important;
+      padding: 10px 15px !important;
     }
 
-    function formatTimestamp(timestamp) {
-      return new Date(timestamp).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+    #leaderboard-rows .team-composition {
+      justify-content: center !important;
     }
 
-    function createPlayerElement(member) {
+    #leaderboard-rows .rank,
+    #leaderboard-rows .duration,
+    #leaderboard-rows .mythic-rating,
+    #leaderboard-rows .completed-time {
+      font-size: 1.1em !important;
+      margin: 5px 0 !important;
+    }
+  }
+</style>
+
+<script is:inline>
+  const DATA_MAP = {
+    us: {
+      name: "US",
+      realms: {
+        angerforge: "Angerforge",
+        arugal: "Arugal",
+        ashkandi: "Ashkandi",
+        atiesh: "Atiesh",
+        azursong: "Azuresong",
+        benediction: "Benediction",
+        bloodsailBuccaneers: "Bloodsail Buccaneers",
+        earthfury: "Earthfury",
+        eranikus: "Eranikus",
+        faerlina: "Faerlina",
+        grobbulus: "Grobbulus",
+        maladath: "Maladath",
+        mankrik: "Mankrik",
+        myzrael: "Myzrael",
+        old_blanchy: "Old Blanchy",
+        pagle: "Pagle",
+        remulos: "Remulos",
+        skyfury: "Skyfury",
+        sulfuras: "Sulfuras",
+        westfall: "Westfall",
+        whitemane: "Whitemane",
+        windseeker: "Windseeker",
+        yojamba: "Yojamba",
+      },
+    },
+    eu: {
+      name: "EU",
+      realms: {
+        amnennar: "Amnennar",
+        ashbringer: "Ashbringer",
+        auberdine: "Auberdine",
+        chromie: "Chromie",
+        earthshaker: "Earthshaker",
+        everlook: "Everlook",
+        firemaw: "Firemaw",
+        flamegor: "Flamegor",
+        gehennas: "Gehennas",
+        giantstalker: "Giantstalker",
+        golemagg: "Golemagg",
+        hydraxianWaterlords: "Hydraxian Waterlords",
+        jindo: "Jin'do",
+        lakeshire: "Lakeshire",
+        mandokir: "Mandokir",
+        mirageRaceway: "Mirage Raceway",
+        mograine: "Mograine",
+        nethergardeKeep: "Nethergarde Keep",
+        patchwerk: "Patchwerk",
+        pyrewoodVillage: "Pyrewood Village",
+        razorfen: "Razorfen",
+        sulfuron: "Sulfuron",
+        thekal: "Thekal",
+        transcendence: "Transcendence",
+        venoxis: "Venoxis",
+      },
+    },
+    kr: {
+      name: "KR",
+      realms: {
+        frostmourne: "Frostmourne",
+        iceblood: "Iceblood",
+        lokholar: "Lok'holar",
+        ragnaros: "Ragnaros",
+        shimmeringFlats: "Shimmering Flats",
+      },
+    },
+  };
+  // Dungeon name mapping
+  const dungeonNames = {
+    "2": "Temple of the Jade Serpent",
+    "56": "Stormstout Brewery",
+    "57": "Gate of the Setting Sun",
+    "58": "Shado-Pan Monastery",
+    "59": "Siege of Niuzao Temple",
+    "60": "Mogu'shan Palace",
+    "76": "Scholomance",
+    "77": "Scarlet Halls",
+    "78": "Scarlet Monastery",
+  };
+
+  function formatDuration(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  }
+
+  function formatTimestamp(timestamp) {
+    return new Date(timestamp).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function createLeaderboardRow(group) {
+    console.log("Creating row for group:", group);
+
+    const row = document.createElement("div");
+    row.className = "leaderboard-row";
+
+    let teamHtml = "";
+    group.members.forEach((member, index) => {
       // Handle missing specialization data (deleted/transferred characters)
       const specId = member.specialization?.id;
-      const spec = specId ? (specMap[specId] || {
-        role: "dps",
-        class: "Unknown", 
-        spec: "Unknown",
-      }) : {
-        role: "dps",
-        class: "Unknown",
-        spec: "Unknown",
-      };
+      const spec = specId
+        ? window.WoW.getSpecInfo(specId)
+        : {
+            role: "dps",
+            class: "Unknown",
+            spec: "Unknown",
+          };
+      const iconUrl = window.WoW.getSpecIcon(spec.class, spec.spec);
+      const iconHtml = iconUrl
+        ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">`
+        : "";
 
-      const getClassColor = (className) => {
-        const cssVarName = `--class-${className.toLowerCase().replace(" ", "-")}`;
-        return `var(${cssVarName}, #ffffff)`;
-      };
+      teamHtml += `<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">
+        ${iconHtml}
+        <span style="color: ${window.WoW.getClassColor(spec.class)}; font-weight: 600; font-size: 0.9em;">${member.profile.name}</span>
+      </span>`;
+    });
 
-      const nameSpan = document.createElement("span");
-      nameSpan.className = `player-name`;
-      nameSpan.style.cssText = `
-          color: ${getClassColor(spec.class)} !important;
-          font-weight: 600 !important;
-          font-size: 0.9em !important;
-          margin-right: 8px !important;
-        `;
-      nameSpan.textContent = member.profile.name;
-
-      return nameSpan;
-    }
-
-    function createLeaderboardRow(group) {
-      console.log("Creating row for group:", group);
-
-      const row = document.createElement("div");
-      row.className = "leaderboard-row";
-
-      let teamHtml = "";
-      group.members.forEach((member, index) => {
-        // Handle missing specialization data (deleted/transferred characters)
-        const specId = member.specialization?.id;
-        const spec = specId ? (specMap[specId] || {
-          role: "dps",
-          class: "Unknown",
-          spec: "Unknown",
-        }) : {
-          role: "dps",
-          class: "Unknown",
-          spec: "Unknown",
-        };
-        const getClassColor = (className) => {
-          const cssVarName = `--class-${className.toLowerCase().replace(" ", "-")}`;
-          return `var(${cssVarName}, #ffffff)`;
-        };
-        teamHtml += `<span class="player-name" style="color: ${getClassColor(spec.class)}; font-weight: 600; font-size: 0.9em; margin-right: 8px;">${member.profile.name}</span>`;
-      });
-
-      row.innerHTML = `
+    row.innerHTML = `
           <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center; width: 80px;">#${group.ranking}</div>
           <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right; width: 120px;">${formatDuration(group.duration)}</div>
           <div style="display: table-cell; padding: 15px 10px; vertical-align: middle;">${teamHtml}</div>
           <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; color: #aaaaaa; font-size: 0.9em; text-align: center; width: 140px;">${formatTimestamp(group.completed_timestamp)}</div>
         `;
 
-      // Apply table-row styles
-      row.style.cssText = `
+    // Apply table-row styles
+    row.style.cssText = `
           display: table-row !important;
           border-bottom: 1px solid #4a4a4a !important;
           background-color: #32302f;
           transition: background-color 0.2s ease;
         `;
 
-      // Add hover effect
-      row.addEventListener("mouseenter", () => {
-        row.style.backgroundColor = "rgba(255, 215, 0, 0.05)";
-      });
-      row.addEventListener("mouseleave", () => {
-        row.style.backgroundColor = "#32302f";
-      });
-
-      console.log("Row created:", row);
-      return row;
-    }
-
-    function displayLeaderboard(data) {
-      console.log("Displaying leaderboard data:", data);
-
-      // Handle localized dungeon names
-      const dungeonName = typeof data.map.name === 'object' 
-        ? data.map.name.en_US || data.map.name 
-        : data.map.name;
-      document.getElementById("dungeon-name").textContent = dungeonName;
-      document.getElementById("period").textContent = data.period;
-      document.getElementById("period-start").textContent = formatTimestamp(
-        data.period_start_timestamp,
-      );
-      document.getElementById("period-end").textContent = formatTimestamp(
-        data.period_end_timestamp,
-      );
-
-      const currentRegion = document.getElementById("region").value;
-      const currentRealm = document.getElementById("realm").value;
-      const regionData = DATA_MAP[currentRegion];
-      const realmName = regionData?.realms?.[currentRealm] || currentRealm;
-      document.getElementById("realm-name").textContent = realmName;
-
-      const rowsContainer = document.getElementById("leaderboard-rows");
-      rowsContainer.innerHTML = "";
-
-      console.log("Creating rows for", data.leading_groups.length, "groups");
-      data.leading_groups.forEach((group, index) => {
-        console.log("Creating row for group", index + 1);
-        const row = createLeaderboardRow(group);
-        rowsContainer.appendChild(row);
-      });
-
-      document.getElementById("loading").classList.add("hidden");
-      document.getElementById("error").classList.add("hidden");
-      document.getElementById("content").classList.remove("hidden");
-
-      console.log("Leaderboard displayed successfully");
-    }
-
-    function showError(message) {
-      document.getElementById("error").textContent = message;
-      document.getElementById("error").classList.remove("hidden");
-      document.getElementById("loading").classList.add("hidden");
-      document.getElementById("content").classList.add("hidden");
-    }
-
-    function showLoading() {
-      document.getElementById("loading").classList.remove("hidden");
-      document.getElementById("error").classList.add("hidden");
-      document.getElementById("content").classList.add("hidden");
-    }
-
-    function updateRealmOptions() {
-      const region = document.getElementById("region").value;
-      const realmSelect = document.getElementById("realm");
-      
-      // Clear existing options
-      realmSelect.innerHTML = "";
-      
-      // Add realms for selected region
-      const regionData = DATA_MAP[region];
-      if (regionData && regionData.realms) {
-        Object.entries(regionData.realms).forEach(([slug, name]) => {
-          const option = document.createElement("option");
-          option.value = slug;
-          option.textContent = name;
-          realmSelect.appendChild(option);
-        });
-      }
-    }
-
-    function getDataFileName() {
-      const region = document.getElementById("region").value;
-      const realm = document.getElementById("realm").value;
-      const dungeon = document.getElementById("dungeon").value;
-
-      const dungeonName = dungeonNames[dungeon]
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "-");
-      return `${region}/${realm}/${dungeonName}/${realm}-${dungeonName}-leaderboard.json`;
-    }
-
-    async function loadLeaderboard() {
-      showLoading();
-
-      try {
-        const fileName = getDataFileName();
-        console.log("Loading file:", fileName);
-        const response = await fetch(`data/challenge-mode/${fileName}`);
-
-        if (!response.ok) {
-          throw new Error(
-            `Failed to load leaderboard data: ${response.statusText}`,
-          );
-        }
-
-        const data = await response.json();
-        console.log("Data loaded:", data);
-        displayLeaderboard(data);
-      } catch (error) {
-        console.error("Error loading leaderboard:", error);
-        showError(`Error loading leaderboard data: ${error.message}`);
-      }
-    }
-
-    // Event listeners
-    document.addEventListener("DOMContentLoaded", () => {
-      // Initialize realm options
-      updateRealmOptions();
-      
-      // Load initial data
-      loadLeaderboard();
-
-      // Bind change events
-      document.getElementById("region").addEventListener("change", () => {
-        updateRealmOptions();
-        loadLeaderboard();
-      });
-      document.getElementById("realm").addEventListener("change", loadLeaderboard);
-      document.getElementById("dungeon").addEventListener("change", loadLeaderboard);
+    // Add hover effect
+    row.addEventListener("mouseenter", () => {
+      row.style.backgroundColor = "rgba(255, 215, 0, 0.05)";
     });
-  </script>
-</html>
+    row.addEventListener("mouseleave", () => {
+      row.style.backgroundColor = "#32302f";
+    });
+
+    console.log("Row created:", row);
+    return row;
+  }
+
+  function displayLeaderboard(data) {
+    console.log("Displaying leaderboard data:", data);
+
+    // Check if we have no data (missing or empty leading_groups)
+    if (!data.leading_groups || data.leading_groups.length === 0) {
+      showNoData();
+      return;
+    }
+
+    // Handle localized dungeon names
+    const dungeonName =
+      typeof data.map.name === "object"
+        ? data.map.name.en_US || data.map.name
+        : data.map.name;
+    document.getElementById("dungeon-name").textContent = dungeonName;
+    document.getElementById("period").textContent = data.period;
+    document.getElementById("period-start").textContent = formatTimestamp(
+      data.period_start_timestamp,
+    );
+    document.getElementById("period-end").textContent = formatTimestamp(
+      data.period_end_timestamp,
+    );
+
+    const currentRegion = document.getElementById("region").value;
+    const currentRealm = document.getElementById("realm").value;
+    const regionData = DATA_MAP[currentRegion];
+    const realmName = regionData?.realms?.[currentRealm] || currentRealm;
+    document.getElementById("realm-name").textContent = realmName;
+
+    const rowsContainer = document.getElementById("leaderboard-rows");
+    rowsContainer.innerHTML = "";
+
+    console.log("Creating rows for", data.leading_groups.length, "groups");
+    data.leading_groups.forEach((group, index) => {
+      console.log("Creating row for group", index + 1);
+      const row = createLeaderboardRow(group);
+      rowsContainer.appendChild(row);
+    });
+
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("error").classList.add("hidden");
+    document.getElementById("no-data").classList.add("hidden");
+    document.getElementById("content").classList.remove("content-loading");
+    document.getElementById("content").classList.remove("hidden");
+
+    console.log("Leaderboard displayed successfully");
+  }
+
+  function showNoData() {
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("error").classList.add("hidden");
+    document.getElementById("no-data").classList.remove("hidden");
+    document.getElementById("content").classList.add("hidden");
+  }
+
+  function showError(message) {
+    const errorDiv = document.getElementById("error");
+    const loadingMessage = errorDiv.querySelector(".loading-message");
+    if (loadingMessage) {
+      loadingMessage.textContent = message;
+    } else {
+      // Fallback if LoadingState structure isn't found
+      errorDiv.innerHTML = `<div class="loading-state error"><p class="loading-message">${message}</p></div>`;
+    }
+    errorDiv.classList.remove("hidden");
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("no-data").classList.add("hidden");
+    document.getElementById("content").classList.add("hidden");
+  }
+
+  function showLoading() {
+    document.getElementById("loading").classList.remove("hidden");
+    document.getElementById("error").classList.add("hidden");
+    document.getElementById("no-data").classList.add("hidden");
+    document.getElementById("content").classList.add("content-loading");
+  }
+
+  function updateRealmOptions() {
+    const region = document.getElementById("region").value;
+    const realmSelect = document.getElementById("realm");
+
+    // Clear existing options
+    realmSelect.innerHTML = "";
+
+    // Add realms for selected region
+    const regionData = DATA_MAP[region];
+    if (regionData && regionData.realms) {
+      Object.entries(regionData.realms).forEach(([slug, name]) => {
+        const option = document.createElement("option");
+        option.value = slug;
+        option.textContent = name;
+        realmSelect.appendChild(option);
+      });
+    }
+  }
+
+  function getDataFileName() {
+    const region = document.getElementById("region").value;
+    const realm = document.getElementById("realm").value;
+    const dungeon = document.getElementById("dungeon").value;
+
+    const dungeonName = dungeonNames[dungeon]
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "-");
+    return `${region}/${realm}/${dungeonName}/${realm}-${dungeonName}-leaderboard.json`;
+  }
+
+  async function loadLeaderboard() {
+    showLoading();
+
+    try {
+      const fileName = getDataFileName();
+      console.log("Loading file:", fileName);
+      const response = await fetch(`data/challenge-mode/${fileName}`);
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load leaderboard data: ${response.statusText}`,
+        );
+      }
+
+      const data = await response.json();
+      console.log("Data loaded:", data);
+      displayLeaderboard(data);
+    } catch (error) {
+      console.error("Error loading leaderboard:", error);
+      showError(`Error loading leaderboard data: ${error.message}`);
+    }
+  }
+
+  // Event listeners
+  document.addEventListener("DOMContentLoaded", () => {
+    // Initialize realm options
+    updateRealmOptions();
+
+    // Load initial data
+    loadLeaderboard();
+
+    // Bind change events
+    document.getElementById("region").addEventListener("change", () => {
+      updateRealmOptions();
+      loadLeaderboard();
+    });
+    document
+      .getElementById("realm")
+      .addEventListener("change", loadLeaderboard);
+    document
+      .getElementById("dungeon")
+      .addEventListener("change", loadLeaderboard);
+  });
+</script>

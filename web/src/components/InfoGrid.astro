@@ -1,0 +1,33 @@
+---
+export interface Props {
+  title?: string;
+  class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<div class={`info-container card ${className || ''}`.trim()}>
+  {title && <h2 class="card-title-large">{title}</h2>}
+  <div class="info-grid">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .info-container {
+    margin-bottom: 30px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

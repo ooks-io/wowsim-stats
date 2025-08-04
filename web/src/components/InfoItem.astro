@@ -1,0 +1,36 @@
+---
+export interface Props {
+  label: string;
+  value: string;
+  class?: string;
+}
+
+const { label, value, class: className } = Astro.props;
+---
+
+<div class={`info-item ${className || ''}`.trim()}>
+  <span class="info-label">{label}</span>
+  <span class="info-value">{value}</span>
+</div>
+
+<style>
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .info-value {
+    font-size: 1em;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+</style>
