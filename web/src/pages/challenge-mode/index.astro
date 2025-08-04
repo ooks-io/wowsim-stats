@@ -8,9 +8,9 @@ import WoWClassColors from "../../components/WoWClassColors.astro";
 const baseUrl = import.meta.env.BASE_URL;
 
 // No default selections for the base challenge-mode page
-const initialRegion = '';
-const initialRealm = '';
-const initialDungeon = '';
+const initialRegion = "";
+const initialRealm = "";
+const initialDungeon = "";
 ---
 
 <PageLayout
@@ -235,9 +235,14 @@ const initialDungeon = '';
         { value: "us", label: "US" },
         { value: "eu", label: "EU" },
         { value: "kr", label: "KR" },
+        { value: "global", label: "Global" },
       ]}
     />
-    <FormSelect id="realm" label="Realm" options={[{ value: "", label: "Select Region First", selected: true }]} />
+    <FormSelect
+      id="realm"
+      label="Realm"
+      options={[{ value: "", label: "Select Region First", selected: true }]}
+    />
     <FormSelect
       id="dungeon"
       label="Dungeon"
@@ -299,6 +304,13 @@ const initialDungeon = '';
           <span class="info-label">Period End</span>
           <span class="info-value" id="period-end">-</span>
         </div>
+      </div>
+      
+      <div id="cross-realm-note" style="display: none; margin-top: 15px; padding: 10px; background-color: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;">
+        <p style="margin: 0; font-size: 0.85em; color: var(--text-secondary);">
+          <span style="color: #ff6b6b; font-weight: bold;">*</span> indicates players from other realms. 
+          Times with all local players represent the true realm record for Feat of Strength achievement.
+        </p>
       </div>
     </div>
 
@@ -383,7 +395,10 @@ const initialDungeon = '';
   }
 </style>
 
-<script is:inline define:vars={{ baseUrl, initialRegion, initialRealm, initialDungeon }}>
+<script
+  is:inline
+  define:vars={{ baseUrl, initialRegion, initialRealm, initialDungeon }}
+>
   const DATA_MAP = {
     us: {
       name: "US",
@@ -489,6 +504,11 @@ const initialDungeon = '';
     const row = document.createElement("div");
     row.className = "leaderboard-row";
 
+    // Get current realm selection to check for cross-realm players
+    const currentRegion = document.getElementById("region").value;
+    const currentRealm = document.getElementById("realm").value;
+    const isIndividualRealmView = currentRegion && currentRealm && currentRealm !== "all" && currentRegion !== "global";
+
     let teamHtml = "";
     group.members.forEach((member) => {
       // Handle missing specialization data (deleted/transferred characters)
@@ -502,22 +522,49 @@ const initialDungeon = '';
           };
       const iconUrl = window.WoW.getSpecIcon(spec.class, spec.spec);
       const iconHtml = iconUrl
-        ? '<img src="' + iconUrl + '" alt="' + spec.spec + ' ' + spec.class + '" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">'
+        ? '<img src="' +
+          iconUrl +
+          '" alt="' +
+          spec.spec +
+          " " +
+          spec.class +
+          '" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">'
         : "";
 
-      teamHtml += '<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">' +
+      // Check if player is from a different realm (for individual realm views only)
+      let playerName = member.profile.name;
+      if (isIndividualRealmView && member.profile.realm?.slug && member.profile.realm.slug !== currentRealm) {
+        playerName += '<span style="color: #ff6b6b; font-weight: bold; margin-left: 2px;">*</span>';
+      }
+
+      teamHtml +=
+        '<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">' +
         iconHtml +
-        '<span style="color: ' + window.WoW.getClassColor(spec.class) + '; font-weight: 600; font-size: 0.9em;">' + member.profile.name + '</span>' +
-        '</span>';
+        '<span style="color: ' +
+        window.WoW.getClassColor(spec.class) +
+        '; font-weight: 600; font-size: 0.9em;">' +
+        playerName +
+        "</span>" +
+        "</span>";
     });
 
-    row.innerHTML = '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center; width: 80px;">#' + group.ranking + '</div>' +
-          '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-family: \'Courier New\', monospace; font-weight: bold; color: #ffffff; text-align: right; width: 120px;">' + formatDuration(group.duration) + '</div>' +
-          '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle;">' + teamHtml + '</div>' +
-          '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle; color: #aaaaaa; font-size: 0.9em; text-align: center; width: 140px;">' + formatTimestamp(group.completed_timestamp) + '</div>';
+    row.innerHTML =
+      '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center; width: 80px;">#' +
+      group.ranking +
+      "</div>" +
+      "<div style=\"display: table-cell; padding: 15px 10px; vertical-align: middle; font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right; width: 120px;\">" +
+      formatDuration(group.duration) +
+      "</div>" +
+      '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle;">' +
+      teamHtml +
+      "</div>" +
+      '<div style="display: table-cell; padding: 15px 10px; vertical-align: middle; color: #aaaaaa; font-size: 0.9em; text-align: center; width: 140px;">' +
+      formatTimestamp(group.completed_timestamp) +
+      "</div>";
 
     // Apply table-row styles
-    row.style.cssText = 'display: table-row !important; border-bottom: 1px solid #4a4a4a !important; background-color: #32302f; transition: background-color 0.2s ease;';
+    row.style.cssText =
+      "display: table-row !important; border-bottom: 1px solid #4a4a4a !important; background-color: #32302f; transition: background-color 0.2s ease;";
 
     // Add hover effect
     row.addEventListener("mouseenter", () => {
@@ -534,37 +581,66 @@ const initialDungeon = '';
   function displayLeaderboard(data) {
     console.log("Displaying leaderboard data:", data);
 
-    // Check if we have no data (missing or empty leading_groups)
-    if (!data.leading_groups || data.leading_groups.length === 0) {
+    // Handle both old format (individual realm) and new format (aggregated)
+    const leaderboardData = data.leaderboard || data.leading_groups;
+    
+    // Check if we have no data
+    if (!leaderboardData || leaderboardData.length === 0) {
       showNoData();
       return;
     }
 
-    // Handle localized dungeon names
-    const dungeonName =
-      typeof data.map.name === "object"
+    // Handle dungeon name from both formats
+    let dungeonName;
+    if (data.dungeon_name) {
+      // New aggregated format
+      dungeonName = data.dungeon_name;
+    } else if (data.map) {
+      // Old individual realm format
+      dungeonName = typeof data.map.name === "object"
         ? data.map.name.en_US || data.map.name
         : data.map.name;
-    document.getElementById("dungeon-name").textContent = dungeonName;
-    document.getElementById("period").textContent = data.period;
-    document.getElementById("period-start").textContent = formatTimestamp(
-      data.period_start_timestamp,
-    );
-    document.getElementById("period-end").textContent = formatTimestamp(
-      data.period_end_timestamp,
-    );
+    }
+    document.getElementById("dungeon-name").textContent = dungeonName || "Unknown Dungeon";
 
+    // Handle period info (only available in individual realm format)
+    if (data.period) {
+      document.getElementById("period").textContent = data.period;
+      document.getElementById("period-start").textContent = formatTimestamp(data.period_start_timestamp);
+      document.getElementById("period-end").textContent = formatTimestamp(data.period_end_timestamp);
+    } else {
+      document.getElementById("period").textContent = "Multiple Periods";
+      document.getElementById("period-start").textContent = "-";
+      document.getElementById("period-end").textContent = "-";
+    }
+
+    // Handle realm name display
     const currentRegion = document.getElementById("region").value;
     const currentRealm = document.getElementById("realm").value;
-    const regionData = DATA_MAP[currentRegion];
-    const realmName = regionData?.realms?.[currentRealm] || currentRealm;
-    document.getElementById("realm-name").textContent = realmName;
+    let realmDisplayName;
+    
+    if (currentRegion === "global") {
+      realmDisplayName = "All Regions";
+    } else if (currentRealm === "all") {
+      realmDisplayName = "All " + currentRegion.toUpperCase() + " Realms";
+    } else {
+      const regionData = DATA_MAP[currentRegion];
+      realmDisplayName = regionData?.realms?.[currentRealm] || currentRealm;
+    }
+    document.getElementById("realm-name").textContent = realmDisplayName;
+
+    // Show/hide cross-realm indicator explanation
+    const crossRealmNote = document.getElementById("cross-realm-note");
+    const isIndividualRealmView = currentRegion && currentRealm && currentRealm !== "all" && currentRegion !== "global";
+    if (crossRealmNote) {
+      crossRealmNote.style.display = isIndividualRealmView ? "block" : "none";
+    }
 
     const rowsContainer = document.getElementById("leaderboard-rows");
     rowsContainer.innerHTML = "";
 
-    console.log("Creating rows for", data.leading_groups.length, "groups");
-    data.leading_groups.forEach((group, index) => {
+    console.log("Creating rows for", leaderboardData.length, "groups");
+    leaderboardData.forEach((group, index) => {
       console.log("Creating row for group", index + 1);
       const row = createLeaderboardRow(group);
       rowsContainer.appendChild(row);
@@ -593,7 +669,10 @@ const initialDungeon = '';
       loadingMessage.textContent = message;
     } else {
       // Fallback if LoadingState structure isn't found
-      errorDiv.innerHTML = '<div class="loading-state error"><p class="loading-message">' + message + '</p></div>';
+      errorDiv.innerHTML =
+        '<div class="loading-state error"><p class="loading-message">' +
+        message +
+        "</p></div>";
     }
     errorDiv.classList.remove("hidden");
     document.getElementById("loading").classList.add("hidden");
@@ -611,11 +690,9 @@ const initialDungeon = '';
   function updateRealmOptions() {
     const region = document.getElementById("region").value;
     const realmSelect = document.getElementById("realm");
-    
+
     console.log("=== updateRealmOptions START ===");
     console.log("Region:", region);
-    console.log("Realm select element:", realmSelect);
-    console.log("DATA_MAP keys:", Object.keys(DATA_MAP));
 
     // Clear existing options
     realmSelect.innerHTML = "";
@@ -627,9 +704,31 @@ const initialDungeon = '';
       option.textContent = "Select Region First";
       option.selected = true;
       realmSelect.appendChild(option);
+      realmSelect.disabled = true;
       console.log("No region selected, showing placeholder");
       return;
     }
+
+    if (region === "global") {
+      // Global selected - disable realm selection and show "N/A"
+      const option = document.createElement("option");
+      option.value = "global";
+      option.textContent = "N/A (Global View)";
+      option.selected = true;
+      realmSelect.appendChild(option);
+      realmSelect.disabled = true;
+      console.log("Global region selected, disabled realm options");
+      return;
+    }
+
+    // Enable realm selection for regional selections
+    realmSelect.disabled = false;
+
+    // Add "All Realms" option for regional view
+    const allRealmsOption = document.createElement("option");
+    allRealmsOption.value = "all";
+    allRealmsOption.textContent = "All " + region.toUpperCase() + " Realms";
+    realmSelect.appendChild(allRealmsOption);
 
     // Add default option
     const defaultOption = document.createElement("option");
@@ -637,37 +736,18 @@ const initialDungeon = '';
     defaultOption.textContent = "Select Realm";
     defaultOption.selected = true;
     realmSelect.appendChild(defaultOption);
-    console.log("Added default option");
 
-    // Test with hardcoded US realms first
-    if (region === 'us') {
-      console.log("Adding hardcoded US realms for testing");
-      const testRealms = ['angerforge', 'arugal', 'ashkandi'];
-      testRealms.forEach(realm => {
-        const option = document.createElement("option");
-        option.value = realm;
-        option.textContent = realm.charAt(0).toUpperCase() + realm.slice(1);
-        realmSelect.appendChild(option);
-      });
-    }
-
-    // Add realms for selected region
+    // Add individual realms for selected region
     const regionData = DATA_MAP[region];
-    console.log("Region data:", regionData);
     if (regionData && regionData.realms) {
-      console.log("Adding realms:", Object.keys(regionData.realms));
       Object.entries(regionData.realms).forEach(([slug, name]) => {
         const option = document.createElement("option");
         option.value = slug;
         option.textContent = name;
         realmSelect.appendChild(option);
-        console.log("Added realm: " + slug + " -> " + name);
       });
-    } else {
-      console.log("No realm data found for region:", region);
     }
-    
-    console.log("Final realm select options:", realmSelect.options.length);
+
     console.log("=== updateRealmOptions END ===");
   }
 
@@ -676,14 +756,27 @@ const initialDungeon = '';
     const realm = document.getElementById("realm").value;
     const dungeon = document.getElementById("dungeon").value;
 
-    console.log('Getting data filename with:', { region, realm, dungeon });
-    console.log('Dungeon name lookup:', dungeonNames[dungeon]);
+    console.log("Getting data filename with:", { region, realm, dungeon });
+    console.log("Dungeon name lookup:", dungeonNames[dungeon]);
 
-    const dungeonName = dungeonNames[dungeon]
+    const dungeonSlug = dungeonNames[dungeon]
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "-");
-    const fileName = region + "/" + realm + "/" + dungeonName + "/" + realm + "-" + dungeonName + "-leaderboard.json";
-    console.log('Generated filename:', fileName);
+
+    let fileName;
+    
+    if (region === "global") {
+      // Global leaderboard path
+      fileName = "leaderboards/global/" + dungeonSlug + "/leaderboard.json";
+    } else if (realm === "all") {
+      // Regional aggregated leaderboard path
+      fileName = "leaderboards/regional/" + region + "/" + dungeonSlug + "/leaderboard.json";
+    } else {
+      // Individual realm leaderboard path (existing system)
+      fileName = "challenge-mode/" + region + "/" + realm + "/" + dungeonSlug + "/" + realm + "-" + dungeonSlug + "-leaderboard.json";
+    }
+    
+    console.log("Generated filename:", fileName);
     return fileName;
   }
 
@@ -691,7 +784,13 @@ const initialDungeon = '';
     const region = document.getElementById("region").value;
     const realm = document.getElementById("realm").value;
     const dungeon = document.getElementById("dungeon").value;
+
+    // For global, we only need region and dungeon
+    if (region === "global") {
+      return region && dungeon;
+    }
     
+    // For regional/individual realms, we need all three
     return region && realm && dungeon;
   }
 
@@ -708,12 +807,14 @@ const initialDungeon = '';
       const fileName = getDataFileName();
       console.log("Loading file:", fileName);
       // Use absolute path for GitHub Pages compatibility
-      const fullUrl = "/data/challenge-mode/" + fileName;
+      const fullUrl = "/data/" + fileName;
       console.log("Full fetch URL:", fullUrl);
       const response = await fetch(fullUrl);
 
       if (!response.ok) {
-        throw new Error("Failed to load leaderboard data: " + response.statusText);
+        throw new Error(
+          "Failed to load leaderboard data: " + response.statusText,
+        );
       }
 
       const data = await response.json();
@@ -726,21 +827,22 @@ const initialDungeon = '';
   }
 
   function updateURL() {
-    // Only update URL if all selections are made
-    if (!canLoadLeaderboard()) {
-      return;
-    }
-
+    // Only update URL for individual realm selections (not global/regional)
     const region = document.getElementById("region").value;
     const realm = document.getElementById("realm").value;
     const dungeon = document.getElementById("dungeon").value;
     
+    // Don't update URL for global or "all realms" selections
+    if (region === "global" || realm === "all" || !canLoadLeaderboard()) {
+      return;
+    }
+
     const dungeonName = dungeonNames[dungeon]
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "-");
-    
+
     const newURL = "/challenge-mode/" + region + "/" + realm + "/" + dungeonName;
-    window.history.pushState({}, '', newURL);
+    window.history.pushState({}, "", newURL);
   }
 
   // Event listeners
@@ -750,7 +852,10 @@ const initialDungeon = '';
 
     // Bind change events
     document.getElementById("region").addEventListener("change", () => {
-      console.log("Region changed to:", document.getElementById("region").value);
+      console.log(
+        "Region changed to:",
+        document.getElementById("region").value,
+      );
       updateRealmOptions();
       // Reset realm selection when region changes
       document.getElementById("realm").value = "";
@@ -765,9 +870,13 @@ const initialDungeon = '';
       loadLeaderboard();
     });
     document.getElementById("dungeon").addEventListener("change", () => {
-      console.log("Dungeon changed to:", document.getElementById("dungeon").value);
+      console.log(
+        "Dungeon changed to:",
+        document.getElementById("dungeon").value,
+      );
       updateURL();
       loadLeaderboard();
     });
   });
 </script>
+
