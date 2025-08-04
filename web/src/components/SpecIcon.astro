@@ -10,7 +10,7 @@ export interface Props {
 const { specId, className, specName, size = 16, class: cssClass } = Astro.props;
 
 // WoW Specialization ID to role/class mapping (if specId provided)
-const specMap = {
+const specMap: Record<number, { role: string; class: string; spec: string }> = {
   // Tank specs
   73: { role: "tank", class: "Warrior", spec: "Protection" },
   104: { role: "tank", class: "Druid", spec: "Guardian" },
@@ -55,7 +55,7 @@ const specMap = {
 };
 
 // Exact icon mappings from your list
-const specIconMap = {
+const specIconMap: Record<string, string> = {
   // Mage
   "Mage|Frost":
     "https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg",
