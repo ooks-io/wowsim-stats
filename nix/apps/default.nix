@@ -6,15 +6,17 @@
   debuffs,
   inputs,
   trinket,
+  api,
   ...
 }: {
   perSystem = {pkgs, ...}: let
-    inherit (pkgs) callPackage writeShellApplication;
+    inherit (pkgs) callPackage writeShellApplication writers python3Packages;
     simulation = import ./simulation {inherit lib classes encounter buffs debuffs inputs trinket pkgs;};
     getDB = callPackage ./getDB.nix {inherit inputs;};
     testItemLookup = callPackage ./testItemLookup.nix {inherit inputs lib;};
     testEnrichmentOutput = callPackage ./testEnrichmentOutput.nix {inherit inputs lib;};
     testEquipmentEnrichment = callPackage ./testEquipmentEnrichment.nix {inherit inputs lib;};
+    getCMLeaders = import ./challenge-mode-leaderboard.nix {inherit api writers python3Packages;};
 
     # Trinket testing apps
     trinketTest = callPackage ./trinket-test.nix {inherit lib classes encounter buffs debuffs inputs trinket writeShellApplication;};
@@ -58,6 +60,10 @@
         trinket-comparison-test = {
           type = "app";
           program = "${trinketComparisonTest}/bin/trinket-comparison-test";
+        };
+        getCM = {
+          type = "app";
+          program = "${getCMLeaders}/bin/cm-leaderboard-fetcher";
         };
       };
   };
