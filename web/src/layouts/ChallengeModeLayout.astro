@@ -11,7 +11,11 @@ export interface Props {
   initialDungeon?: string;
 }
 
-const { initialRegion = "", initialRealm = "", initialDungeon = "" } = Astro.props;
+const {
+  initialRegion = "",
+  initialRealm = "",
+  initialDungeon = "",
+} = Astro.props;
 const baseUrl = import.meta.env.BASE_URL;
 ---
 
@@ -237,7 +241,11 @@ const baseUrl = import.meta.env.BASE_URL;
         { value: "us", label: "US", selected: initialRegion === "us" },
         { value: "eu", label: "EU", selected: initialRegion === "eu" },
         { value: "kr", label: "KR", selected: initialRegion === "kr" },
-        { value: "global", label: "Global", selected: initialRegion === "global" },
+        {
+          value: "global",
+          label: "Global",
+          selected: initialRegion === "global",
+        },
       ]}
     />
     <FormSelect
@@ -250,15 +258,51 @@ const baseUrl = import.meta.env.BASE_URL;
       label="Dungeon"
       options={[
         { value: "", label: "Select Dungeon", selected: initialDungeon === "" },
-        { value: "2", label: "Temple of the Jade Serpent", selected: initialDungeon === "2" },
-        { value: "56", label: "Stormstout Brewery", selected: initialDungeon === "56" },
-        { value: "57", label: "Gate of the Setting Sun", selected: initialDungeon === "57" },
-        { value: "58", label: "Shado-Pan Monastery", selected: initialDungeon === "58" },
-        { value: "59", label: "Siege of Niuzao Temple", selected: initialDungeon === "59" },
-        { value: "60", label: "Mogu'shan Palace", selected: initialDungeon === "60" },
-        { value: "76", label: "Scholomance", selected: initialDungeon === "76" },
-        { value: "77", label: "Scarlet Halls", selected: initialDungeon === "77" },
-        { value: "78", label: "Scarlet Monastery", selected: initialDungeon === "78" },
+        {
+          value: "2",
+          label: "Temple of the Jade Serpent",
+          selected: initialDungeon === "2",
+        },
+        {
+          value: "56",
+          label: "Stormstout Brewery",
+          selected: initialDungeon === "56",
+        },
+        {
+          value: "57",
+          label: "Gate of the Setting Sun",
+          selected: initialDungeon === "57",
+        },
+        {
+          value: "58",
+          label: "Shado-Pan Monastery",
+          selected: initialDungeon === "58",
+        },
+        {
+          value: "59",
+          label: "Siege of Niuzao Temple",
+          selected: initialDungeon === "59",
+        },
+        {
+          value: "60",
+          label: "Mogu'shan Palace",
+          selected: initialDungeon === "60",
+        },
+        {
+          value: "76",
+          label: "Scholomance",
+          selected: initialDungeon === "76",
+        },
+        {
+          value: "77",
+          label: "Scarlet Halls",
+          selected: initialDungeon === "77",
+        },
+        {
+          value: "78",
+          label: "Scarlet Monastery",
+          selected: initialDungeon === "78",
+        },
       ]}
     />
   </ControlPanel>
@@ -307,11 +351,15 @@ const baseUrl = import.meta.env.BASE_URL;
           <span class="info-value" id="period-end">-</span>
         </div>
       </div>
-      
-      <div id="cross-realm-note" style="display: none; margin-top: 15px; padding: 10px; background-color: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;">
+
+      <div
+        id="cross-realm-note"
+        style="display: none; margin-top: 15px; padding: 10px; background-color: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;"
+      >
         <p style="margin: 0; font-size: 0.85em; color: var(--text-secondary);">
-          <span style="color: #ff6b6b; font-weight: bold;">*</span> indicates players from other realms. 
-          Times with all local players represent the true realm record for Feat of Strength achievement.
+          <span style="color: #ff6b6b; font-weight: bold;">*</span> indicates players
+          from other realms. Times with 3+ local players represent the true realm
+          record for Feat of Strength achievement.
         </p>
       </div>
     </div>
@@ -397,7 +445,10 @@ const baseUrl = import.meta.env.BASE_URL;
   }
 </style>
 
-<script is:inline define:vars={{ baseUrl, initialRegion, initialRealm, initialDungeon }}>
+<script
+  is:inline
+  define:vars={{ baseUrl, initialRegion, initialRealm, initialDungeon }}
+>
   const DATA_MAP = {
     us: {
       name: "US",
@@ -506,7 +557,11 @@ const baseUrl = import.meta.env.BASE_URL;
     // Get current realm selection to check for cross-realm players
     const currentRegion = document.getElementById("region").value;
     const currentRealm = document.getElementById("realm").value;
-    const isIndividualRealmView = currentRegion && currentRealm && currentRealm !== "all" && currentRegion !== "global";
+    const isIndividualRealmView =
+      currentRegion &&
+      currentRealm &&
+      currentRealm !== "all" &&
+      currentRegion !== "global";
 
     let teamHtml = "";
     group.members.forEach((member) => {
@@ -532,8 +587,13 @@ const baseUrl = import.meta.env.BASE_URL;
 
       // Check if player is from a different realm (for individual realm views only)
       let playerName = member.profile.name;
-      if (isIndividualRealmView && member.profile.realm?.slug && member.profile.realm.slug !== currentRealm) {
-        playerName += '<span style="color: #ff6b6b; font-weight: bold; margin-left: 2px;">*</span>';
+      if (
+        isIndividualRealmView &&
+        member.profile.realm?.slug &&
+        member.profile.realm.slug !== currentRealm
+      ) {
+        playerName +=
+          '<span style="color: #ff6b6b; font-weight: bold; margin-left: 2px;">*</span>';
       }
 
       teamHtml +=
@@ -582,7 +642,7 @@ const baseUrl = import.meta.env.BASE_URL;
 
     // Handle both old format (individual realm) and new format (aggregated)
     const leaderboardData = data.leaderboard || data.leading_groups;
-    
+
     // Check if we have no data
     if (!leaderboardData || leaderboardData.length === 0) {
       showNoData();
@@ -596,17 +656,23 @@ const baseUrl = import.meta.env.BASE_URL;
       dungeonName = data.dungeon_name;
     } else if (data.map) {
       // Old individual realm format
-      dungeonName = typeof data.map.name === "object"
-        ? data.map.name.en_US || data.map.name
-        : data.map.name;
+      dungeonName =
+        typeof data.map.name === "object"
+          ? data.map.name.en_US || data.map.name
+          : data.map.name;
     }
-    document.getElementById("dungeon-name").textContent = dungeonName || "Unknown Dungeon";
+    document.getElementById("dungeon-name").textContent =
+      dungeonName || "Unknown Dungeon";
 
     // Handle period info (only available in individual realm format)
     if (data.period) {
       document.getElementById("period").textContent = data.period;
-      document.getElementById("period-start").textContent = formatTimestamp(data.period_start_timestamp);
-      document.getElementById("period-end").textContent = formatTimestamp(data.period_end_timestamp);
+      document.getElementById("period-start").textContent = formatTimestamp(
+        data.period_start_timestamp,
+      );
+      document.getElementById("period-end").textContent = formatTimestamp(
+        data.period_end_timestamp,
+      );
     } else {
       document.getElementById("period").textContent = "Multiple Periods";
       document.getElementById("period-start").textContent = "-";
@@ -617,7 +683,7 @@ const baseUrl = import.meta.env.BASE_URL;
     const currentRegion = document.getElementById("region").value;
     const currentRealm = document.getElementById("realm").value;
     let realmDisplayName;
-    
+
     if (currentRegion === "global") {
       realmDisplayName = "All Regions";
     } else if (currentRealm === "all") {
@@ -630,7 +696,11 @@ const baseUrl = import.meta.env.BASE_URL;
 
     // Show/hide cross-realm indicator explanation
     const crossRealmNote = document.getElementById("cross-realm-note");
-    const isIndividualRealmView = currentRegion && currentRealm && currentRealm !== "all" && currentRegion !== "global";
+    const isIndividualRealmView =
+      currentRegion &&
+      currentRealm &&
+      currentRealm !== "all" &&
+      currentRegion !== "global";
     if (crossRealmNote) {
       crossRealmNote.style.display = isIndividualRealmView ? "block" : "none";
     }
@@ -763,18 +833,34 @@ const baseUrl = import.meta.env.BASE_URL;
       .replace(/[^a-z0-9]/g, "-");
 
     let fileName;
-    
+
     if (region === "global") {
       // Global leaderboard path
       fileName = "leaderboards/global/" + dungeonSlug + "/leaderboard.json";
     } else if (realm === "all") {
       // Regional aggregated leaderboard path
-      fileName = "leaderboards/regional/" + region + "/" + dungeonSlug + "/leaderboard.json";
+      fileName =
+        "leaderboards/regional/" +
+        region +
+        "/" +
+        dungeonSlug +
+        "/leaderboard.json";
     } else {
       // Individual realm leaderboard path (existing system)
-      fileName = "challenge-mode/" + region + "/" + realm + "/" + dungeonSlug + "/" + realm + "-" + dungeonSlug + "-leaderboard.json";
+      fileName =
+        "challenge-mode/" +
+        region +
+        "/" +
+        realm +
+        "/" +
+        dungeonSlug +
+        "/" +
+        realm +
+        "-" +
+        dungeonSlug +
+        "-leaderboard.json";
     }
-    
+
     console.log("Generated filename:", fileName);
     return fileName;
   }
@@ -788,7 +874,7 @@ const baseUrl = import.meta.env.BASE_URL;
     if (region === "global") {
       return region && dungeon;
     }
-    
+
     // For regional/individual realms, we need all three
     return region && realm && dungeon;
   }
@@ -829,7 +915,7 @@ const baseUrl = import.meta.env.BASE_URL;
     const region = document.getElementById("region").value;
     const realm = document.getElementById("realm").value;
     const dungeon = document.getElementById("dungeon").value;
-    
+
     // Don't update URL if we can't load leaderboard
     if (!canLoadLeaderboard()) {
       return;
@@ -840,7 +926,7 @@ const baseUrl = import.meta.env.BASE_URL;
       .replace(/[^a-z0-9]/g, "-");
 
     let newURL;
-    
+
     if (region === "global") {
       // Global leaderboard URL: /challenge-mode/global/dungeon
       newURL = "/challenge-mode/global/" + dungeonName;
@@ -905,3 +991,4 @@ const baseUrl = import.meta.env.BASE_URL;
     });
   });
 </script>
+
