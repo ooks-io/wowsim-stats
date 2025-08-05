@@ -9,612 +9,78 @@
   trinket,
   ...
 }: let
+  config = import ./config.nix {inherit encounter;};
+
   massSimFunctions = import ./mkMassSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;};
   inherit (massSimFunctions) mkMassSim mkRaceComparison;
 
   trinketComparison = import ./mkTrinketComparison.nix {inherit lib pkgs classes encounter buffs debuffs inputs trinket;};
   inherit (trinketComparison) mkTrinketComparison;
 
-  # TODO: abstract this.
-  massSimulations = {
-    dps-p1-raid-single-long = mkMassSim {
-      specs = "dps"; # shortcut to all DPS classes templates
-      encounter = encounter.raid.long.singleTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "long";
-      template = "singleTarget";
-    };
+  generateScenarios = targetConfigs: durations:
+    lib.flatten (lib.mapAttrsToList (
+        targetCount: targetConfig:
+          map (duration: {
+            inherit targetCount duration;
+            inherit (targetConfig) template;
+            encounter = targetConfig.encounters.${duration};
+          })
+          durations
+      )
+      targetConfigs);
 
-    dps-p1-raid-three-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.threeTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "long";
-      template = "multiTarget";
-    };
+  scenarios = generateScenarios config.targetConfigs config.durations;
 
-    dps-p1-raid-cleave-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.cleave;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "long";
-      template = "cleave";
-    };
+  makeMassSimName = phase: targetCount: duration: "dps-${phase}-raid-${targetCount}-${duration}";
 
-    dps-p1-raid-ten-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.tenTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "long";
-      template = "multiTarget";
-    };
-    dps-p1-raid-single-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.singleTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "short";
-      template = "singleTarget";
-    };
-
-    dps-p1-raid-three-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.threeTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "short";
-      template = "multiTarget";
-    };
-
-    dps-p1-raid-cleave-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.cleave;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "short";
-      template = "cleave";
-    };
-
-    dps-p1-raid-ten-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.tenTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "short";
-      template = "multiTarget";
-    };
-    dps-p1-raid-single-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.singleTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "burst";
-      template = "singleTarget";
-    };
-
-    dps-p1-raid-three-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.threeTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "burst";
-      template = "multiTarget";
-    };
-
-    dps-p1-raid-cleave-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.cleave;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "burst";
-      template = "cleave";
-    };
-
-    dps-p1-raid-ten-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.tenTarget;
-      iterations = 10000;
-      phase = "p1";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "burst";
-      template = "multiTarget";
-    };
-    dps-preRaid-raid-single-long = mkMassSim {
-      specs = "dps"; # shortcut to all DPS classes templates
-      encounter = encounter.raid.long.singleTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "long";
-      template = "singleTarget";
-    };
-
-    dps-preRaid-raid-three-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.threeTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "long";
-      template = "multiTarget";
-    };
-
-    dps-preRaid-raid-cleave-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.cleave;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "long";
-      template = "cleave";
-    };
-
-    dps-preRaid-raid-ten-long = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.long.tenTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "long";
-      template = "multiTarget";
-    };
-    dps-preRaid-raid-single-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.singleTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "short";
-      template = "singleTarget";
-    };
-
-    dps-preRaid-raid-three-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.threeTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "short";
-      template = "multiTarget";
-    };
-
-    dps-preRaid-raid-cleave-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.cleave;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "short";
-      template = "cleave";
-    };
-
-    dps-preRaid-raid-ten-short = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.short.tenTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "short";
-      template = "multiTarget";
-    };
-    dps-preRaid-raid-single-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.singleTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "single";
-      duration = "burst";
-      template = "singleTarget";
-    };
-
-    dps-preRaid-raid-three-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.threeTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "three";
-      duration = "burst";
-      template = "multiTarget";
-    };
-
-    dps-preRaid-raid-cleave-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.cleave;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "cleave";
-      duration = "burst";
-      template = "cleave";
-    };
-
-    dps-preRaid-raid-ten-burst = mkMassSim {
-      specs = "dps";
-      encounter = encounter.raid.burst.tenTarget;
-      iterations = 10000;
-      phase = "preRaid";
-      encounterType = "raid";
-      targetCount = "ten";
-      duration = "burst";
-      template = "multiTarget";
-    };
-  };
-
-  # for all race combinations
-  # we will only run race benchmarks for p1 geartsets for now
-  raceScenarios = [
-    {
-      targetCount = "single";
-      duration = "long";
-      encounter = encounter.raid.long.singleTarget;
-      template = "singleTarget";
-    }
-    {
-      targetCount = "single";
-      duration = "short";
-      encounter = encounter.raid.short.singleTarget;
-      template = "singleTarget";
-    }
-    {
-      targetCount = "single";
-      duration = "burst";
-      encounter = encounter.raid.burst.singleTarget;
-      template = "singleTarget";
-    }
-
-    {
-      targetCount = "three";
-      duration = "long";
-      encounter = encounter.raid.long.threeTarget;
-      template = "multiTarget";
-    }
-    {
-      targetCount = "three";
-      duration = "short";
-      encounter = encounter.raid.short.threeTarget;
-      template = "multiTarget";
-    }
-    {
-      targetCount = "three";
-      duration = "burst";
-      encounter = encounter.raid.burst.threeTarget;
-      template = "multiTarget";
-    }
-
-    {
-      targetCount = "cleave";
-      duration = "long";
-      encounter = encounter.raid.long.cleave;
-      template = "cleave";
-    }
-    {
-      targetCount = "cleave";
-      duration = "short";
-      encounter = encounter.raid.short.cleave;
-      template = "cleave";
-    }
-    {
-      targetCount = "cleave";
-      duration = "burst";
-      encounter = encounter.raid.burst.cleave;
-      template = "cleave";
-    }
-
-    {
-      targetCount = "ten";
-      duration = "long";
-      encounter = encounter.raid.long.tenTarget;
-      template = "multiTarget";
-    }
-    {
-      targetCount = "ten";
-      duration = "short";
-      encounter = encounter.raid.short.tenTarget;
-      template = "multiTarget";
-    }
-    {
-      targetCount = "ten";
-      duration = "burst";
-      encounter = encounter.raid.burst.tenTarget;
-      template = "multiTarget";
-    }
-  ];
-
-  raceComparisonSpecs = [
-    {
-      class = "death_knight";
-      spec = "frost";
-    }
-    {
-      class = "death_knight";
-      spec = "unholy";
-    }
-    {
-      class = "druid";
-      spec = "balance";
-    }
-    # { class = "druid"; spec = "feral"; }
-    {
-      class = "hunter";
-      spec = "beast_mastery";
-    }
-    {
-      class = "hunter";
-      spec = "marksmanship";
-    }
-    {
-      class = "hunter";
-      spec = "survival";
-    }
-    {
-      class = "mage";
-      spec = "arcane";
-    }
-    {
-      class = "mage";
-      spec = "fire";
-    }
-    {
-      class = "mage";
-      spec = "frost";
-    }
-    {
-      class = "monk";
-      spec = "windwalker";
-    }
-    {
-      class = "paladin";
-      spec = "retribution";
-    }
-    {
-      class = "priest";
-      spec = "shadow";
-    }
-    {
-      class = "rogue";
-      spec = "assassination";
-    }
-    {
-      class = "rogue";
-      spec = "combat";
-    }
-    {
-      class = "rogue";
-      spec = "subtlety";
-    }
-    {
-      class = "shaman";
-      spec = "elemental";
-    }
-    {
-      class = "shaman";
-      spec = "enhancement";
-    }
-    {
-      class = "warlock";
-      spec = "affliction";
-    }
-    {
-      class = "warlock";
-      spec = "demonology";
-    }
-    {
-      class = "warlock";
-      spec = "destruction";
-    }
-    {
-      class = "warrior";
-      spec = "arms";
-    }
-    {
-      class = "warrior";
-      spec = "fury";
-    }
-  ];
-
-  # trinket scenarios - same as race scenarios for now
-  trinketScenarios = raceScenarios;
-
-  # trinket comparison specs - all DPS specs with appropriate trinket categories
-  trinketComparisonSpecs = [
-    # Agility specs
-    {
-      class = "monk";
-      spec = "windwalker";
-      trinketCategory = "agility";
-    }
-    {
-      class = "hunter";
-      spec = "beast_mastery";
-      trinketCategory = "agility";
-    }
-    {
-      class = "hunter";
-      spec = "marksmanship";
-      trinketCategory = "agility";
-    }
-    {
-      class = "hunter";
-      spec = "survival";
-      trinketCategory = "agility";
-    }
-    {
-      class = "rogue";
-      spec = "assassination";
-      trinketCategory = "agility";
-    }
-    {
-      class = "rogue";
-      spec = "combat";
-      trinketCategory = "agility";
-    }
-    {
-      class = "rogue";
-      spec = "subtlety";
-      trinketCategory = "agility";
-    }
-    {
-      class = "shaman";
-      spec = "enhancement";
-      trinketCategory = "agility";
-    }
-
-    # Intellect specs
-    {
-      class = "mage";
-      spec = "arcane";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "mage";
-      spec = "fire";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "mage";
-      spec = "frost";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "druid";
-      spec = "balance";
-      trinketCategory = "intellectHybrid";
-    }
-    {
-      class = "priest";
-      spec = "shadow";
-      trinketCategory = "intellectHybrid";
-    }
-    {
-      class = "warlock";
-      spec = "affliction";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "warlock";
-      spec = "demonology";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "warlock";
-      spec = "destruction";
-      trinketCategory = "intellect";
-    }
-    {
-      class = "shaman";
-      spec = "elemental";
-      trinketCategory = "intellectHybrid";
-    }
-
-    # Strength specs
-    {
-      class = "death_knight";
-      spec = "frost";
-      trinketCategory = "strength";
-    }
-    {
-      class = "death_knight";
-      spec = "unholy";
-      trinketCategory = "strength";
-    }
-    {
-      class = "paladin";
-      spec = "retribution";
-      trinketCategory = "strength";
-    }
-    {
-      class = "warrior";
-      spec = "arms";
-      trinketCategory = "strength";
-    }
-    {
-      class = "warrior";
-      spec = "fury";
-      trinketCategory = "strength";
-    }
-  ];
-
-  # generate all trinket comparison combinations (specs × scenarios)
-  trinketComparisons = lib.listToAttrs (lib.flatten (map (
-      specConfig:
+  massSimulations = lib.listToAttrs (lib.flatten (map (
+      phase:
         map (scenario: {
-          name = "trinket-${specConfig.class}-${specConfig.spec}-p1-raid-${scenario.targetCount}-${scenario.duration}";
-          value = mkTrinketComparison {
-            class = specConfig.class;
-            spec = specConfig.spec;
-            encounter = scenario.encounter;
-            trinketCategory = specConfig.trinketCategory;
-            iterations = 10000;
-            phase = "p1";
-            encounterType = "raid";
-            targetCount = scenario.targetCount;
-            duration = scenario.duration;
-            template = scenario.template;
+          name = makeMassSimName phase scenario.targetCount scenario.duration;
+          value = mkMassSim {
+            inherit (config.common) iterations specs encounterType;
+            inherit (scenario) encounter targetCount duration template;
+            inherit phase;
           };
         })
-        trinketScenarios
+        scenarios
     )
-    trinketComparisonSpecs));
+    config.phases));
 
-  # generate all race comparison combinations (specs × scenarios)
+  # Generate race comparisons (specs × scenarios)
   raceComparisons = lib.listToAttrs (lib.flatten (map (
       specConfig:
         map (scenario: {
           name = "race-${specConfig.class}-${specConfig.spec}-p1-raid-${scenario.targetCount}-${scenario.duration}";
           value = mkRaceComparison {
-            class = specConfig.class;
-            spec = specConfig.spec;
-            encounter = scenario.encounter;
-            iterations = 10000;
+            inherit (specConfig) class spec;
+            inherit (scenario) encounter targetCount duration template;
+            inherit (config.common) encounterType iterations;
+            # only simulate race benchmarks for p1
             phase = "p1";
-            encounterType = "raid";
-            targetCount = scenario.targetCount;
-            duration = scenario.duration;
-            template = scenario.template;
           };
         })
-        raceScenarios
+        scenarios
     )
-    raceComparisonSpecs));
+    config.raceComparisonSpecs));
 
-  # script that runs all simulations
+  # Generate trinket comparisons (specs × scenarios)
+  trinketComparisons = lib.listToAttrs (lib.flatten (map (
+      specConfig:
+        map (scenario: {
+          name = "trinket-${specConfig.class}-${specConfig.spec}-p1-raid-${scenario.targetCount}-${scenario.duration}";
+          value = mkTrinketComparison {
+            inherit (specConfig) class spec trinketCategory;
+            inherit (scenario) encounter duration template targetCount;
+            inherit (config.common) encounterType iterations;
+            phase = "p1";
+          };
+        })
+        scenarios
+    )
+    config.trinketComparisonSpecs));
+
+  # Script that runs all simulations
   allSimulationsScript = pkgs.writeShellApplication {
     name = "all-simulations";
     text = ''
@@ -659,7 +125,7 @@
     runtimeInputs = [pkgs.coreutils pkgs.findutils];
   };
 
-  # nix app
+  # Convert simulation outputs to nix apps
   simulationApps =
     lib.mapAttrs (name: massSim: {
       type = "app";
@@ -681,6 +147,7 @@
     })
     trinketComparisons;
 in
+  # Export all apps
   simulationApps
   // raceComparisonApps
   // trinketComparisonApps
@@ -690,3 +157,4 @@ in
       program = "${allSimulationsScript}/bin/all-simulations";
     };
   }
+

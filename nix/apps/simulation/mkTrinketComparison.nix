@@ -10,7 +10,8 @@
   ...
 }: let
   inherit (lib.sim.simulation) mkSim;
-  inherit (lib.sim) itemDatabase;
+  inherit (lib.sim) itemDatabase shellUtils;
+  inherit (lib) hasAttr length listToAttrs imap0 replaceStrings concatMapStringsSep;
 
   # Import our trinket manipulation functions
   trinketLib = lib.sim.trinket;
@@ -36,11 +37,11 @@
     # Get the base player configuration
     baseConfig =
       if
-        lib.hasAttr "template" baseSpec
-        && lib.hasAttr defaultRace baseSpec.template
-        && lib.hasAttr phase baseSpec.template.${defaultRace}
-        && lib.hasAttr encounterType baseSpec.template.${defaultRace}.${phase}
-        && lib.hasAttr template baseSpec.template.${defaultRace}.${phase}.${encounterType}
+        hasAttr "template" baseSpec
+        && hasAttr defaultRace baseSpec.template
+        && hasAttr phase baseSpec.template.${defaultRace}
+        && hasAttr encounterType baseSpec.template.${defaultRace}.${phase}
+        && hasAttr template baseSpec.template.${defaultRace}.${phase}.${encounterType}
       then baseSpec.template.${defaultRace}.${phase}.${encounterType}.${template}
       else throw "Template ${template} not found for ${class}/${spec}/${defaultRace} at ${phase}.${encounterType}";
 
@@ -67,7 +68,7 @@
 
     # Create trinket configs with gearsets and profession adjustments
     trinketConfigs =
-      lib.imap0 (index: gearset: let
+      imap0 (index: gearset: let
         trinketId = builtins.elemAt actualTrinketIds index;
         trinketIdStr = toString trinketId;
         requiredProfession = trinketProfessionRequirements.${trinketIdStr} or null;
@@ -187,7 +188,7 @@
       '';
 
     # Create individual trinket simulations
-    trinketSims = lib.listToAttrs (map (trinketConfig: let
+    trinketSims = listToAttrs (map (trinketConfig: let
         trinketItem = itemDatabase.getItem trinketConfig.trinketId;
         trinketName =
           if trinketItem != null
@@ -198,7 +199,7 @@
           then toString trinketItem.scalingOptions."0".ilvl
           else "0";
         # Clean name for use as attribute key
-        cleanName = lib.replaceStrings [" " "'" "," "(" ")"] ["_" "" "" "" ""] trinketName;
+        cleanName = replaceStrings [" " "'" "," "(" ")"] ["_" "" "" "" ""] trinketName;
       in {
         name = "${cleanName}_${trinketIlvl}";
         value = let
@@ -311,7 +312,7 @@
     aggregationScript = pkgs.writeShellApplication {
       name = "${structuredOutput}-aggregator";
       text = ''
-        set -euo pipefail
+        ${shellUtils.parseArgsAndEnv}
 
         echo "Aggregating trinket comparison results for: ${class}/${spec}"
         echo "Trinkets tested: ${toString (builtins.length actualTrinketIds)}"
@@ -326,7 +327,7 @@
           '.baseline = $baseline')
 
         # Add each trinket result
-        ${lib.concatMapStringsSep "\n" (trinketConfig: let
+        ${concatMapStringsSep "\n" (trinketConfig: let
             trinketItem = itemDatabase.getItem trinketConfig.trinketId;
             trinketName =
               if trinketItem != null
@@ -336,7 +337,7 @@
               if trinketItem != null && trinketItem ? scalingOptions && trinketItem.scalingOptions ? "0"
               then toString trinketItem.scalingOptions."0".ilvl
               else "0";
-            cleanName = lib.replaceStrings [" " "'" "," "(" ")"] ["_" "" "" "" ""] trinketName;
+            cleanName = replaceStrings [" " "'" "," "(" ")"] ["_" "" "" "" ""] trinketName;
             keyName = "${cleanName}_${trinketIlvl}";
           in ''
             trinketData=$(cat ${trinketSims.${keyName}})
@@ -358,7 +359,7 @@
           --arg iterations "${toString iterations}" \
           --arg encounterDuration "${toString encounter.duration}" \
           --arg encounterVariation "${toString encounter.durationVariation}" \
-          --arg targetCount "${toString (lib.length encounter.targets)}" \
+          --arg targetCount "${toString (length encounter.targets)}" \
           --arg wowsimsCommit "${wowsimsCommit}" \
           --arg trinketCategory "${trinketCategory}" \
           --argjson raidBuffs '${builtins.toJSON classSpecificBuffs}' \
@@ -381,30 +382,16 @@
             results: .
           }')
 
-        echo "$finalResult" | jq -c '.' | tee "${structuredOutput}.json"
-
-        # Find repo root and copy to web directory
-        repo_root=""
-        current_dir="$PWD"
-        while [[ "$current_dir" != "/" ]]; do
-          if [[ -f "$current_dir/flake.nix" ]]; then
-            repo_root="$current_dir"
-            break
-          fi
-          current_dir="$(dirname "$current_dir")"
-        done
-
-        if [[ -z "$repo_root" ]]; then
-          echo "Warning: Could not find repo root (flake.nix), using current directory"
-          repo_root="$PWD"
-        fi
-
-        trinket_dir="$repo_root/web/public/data/comparison/trinkets/${class}/${spec}"
-        mkdir -p "$trinket_dir"
-
-        # Copy trinket comparison file
-        cp "${structuredOutput}.json" "$trinket_dir/"
-        echo "Copied to: $trinket_dir/${structuredOutput}.json"
+        ${shellUtils.conditionalOutput {
+          inherit structuredOutput;
+          webSetupCode = shellUtils.setupComparisonDirs {
+            comparisonType = "trinkets";
+            class = "${class}";
+            spec = "${spec}";
+          };
+          webPath = "$comparison_dir";
+          webMessage = "Copied to";
+        }}
 
         echo ""
         echo "Trinket DPS Rankings for ${class}/${spec}:"
@@ -421,8 +408,6 @@
           "\(.value.trinket.name): \(.value.dps | floor) DPS"
         ' | sort -k2 -nr
 
-        echo ""
-        echo "Results written to: $trinket_dir/${structuredOutput}.json"
       '';
       runtimeInputs = [pkgs.jq pkgs.coreutils];
     };
@@ -438,7 +423,7 @@
       inherit class spec trinketCategory;
       output = structuredOutput;
       inherit iterations phase encounterType targetCount duration;
-      trinketCount = builtins.length actualTrinketIds;
+      trinketCount = length actualTrinketIds;
       trinkets = actualTrinketIds;
     };
   };
