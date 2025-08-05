@@ -8,10 +8,11 @@
   inputs,
   trinket,
   writeShellApplication,
+  self,
   ...
 }: let
   mkTrinketComparison =
-    (import ./simulation/mkTrinketComparison.nix {
+    (import "${self}/nix/apps/simulation/mkTrinketComparison.nix" {
       inherit lib pkgs classes encounter buffs debuffs inputs trinket;
     }).mkTrinketComparison;
 

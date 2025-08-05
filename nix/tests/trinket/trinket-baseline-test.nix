@@ -8,20 +8,21 @@
   inputs,
   trinket,
   writeShellApplication,
+  self,
   ...
 }: let
   mkTrinketComparison =
-    (import ./simulation/mkTrinketComparison.nix {
+    (import "${self}/nix/apps/simulation/mkTrinketComparison.nix" {
       inherit lib pkgs classes encounter buffs debuffs inputs trinket;
     }).mkTrinketComparison;
 
-  # Test creating a trinket comparison for windwalker with minimal iterations
+  # test creating a trinket comparison for windwalker with minimal iterations
   trinketTest = mkTrinketComparison {
     class = "monk";
     spec = "windwalker";
     encounter = encounter.raid.long.singleTarget;
-    trinketIds = [87167 87057 79328]; # Terror in Mists (heroic), Bottle of Stars (heroic), Relic of Xuen
-    iterations = 100; # Keep very low for testing
+    trinketIds = [87167 87057 79328];
+    iterations = 100; # keep very low for testing
   };
 in
   writeShellApplication {
@@ -37,7 +38,7 @@ in
       baseline_result=$(nix build --no-link --print-out-paths ${trinketTest.simulations.baseline})
 
       if [ -f "$baseline_result" ]; then
-        echo "✅ Baseline simulation completed successfully!"
+        echo "Baseline simulation completed successfully!"
         echo ""
 
         echo "=== Baseline Results ==="
@@ -59,11 +60,11 @@ in
         jq -r '.loadout.equipment.items[12:14]' "$baseline_result"
 
         echo ""
-        echo "✅ Baseline test completed!"
+        echo "Baseline test completed"
         echo ""
         echo "Next: Run 'nix run .#trinket-single-test' to test a single trinket simulation"
       else
-        echo "❌ Baseline simulation failed!"
+        echo "Baseline simulation failed"
         exit 1
       fi
     '';

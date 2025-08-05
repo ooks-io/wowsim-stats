@@ -13,4 +13,5 @@
   classes = import ./classes.nix {inherit lib;};
   itemDatabase = import ./itemDatabase.nix {inherit inputs lib;};
   trinket = import ./trinket.nix {inherit lib;};
+  shellUtils = import ./shell-utils.nix {inherit lib;};
 }

@@ -8,13 +8,14 @@
   inputs,
   ...
 }: let
-  # TODO: this is cursed, consolidate the functions.
+  # TODO: use writers.writePython3Bin
   inherit (lib.sim.simulation) mkSim;
-  inherit (lib.sim) itemDatabase;
+  inherit (lib.sim) itemDatabase shellUtils;
+  inherit (lib) length listToAttrs hasAttr flatten mapAttrsToList;
 
   # extract playable races from class definitions
   getPlayableRaces = className:
-    if lib.hasAttr className classes && lib.hasAttr "playableRaces" classes.${className}
+    if lib.hasAttr className classes && hasAttr "playableRaces" classes.${className}
     then classes.${className}.playableRaces
     else throw "playableRaces not defined for class ${className}. Please add playableRaces = [...] to nix/classes/${className}/default.nix";
 
@@ -36,24 +37,24 @@
     };
 
     # extract specs that exist in classes and have the template structure
-    validSpecs = lib.flatten (lib.mapAttrsToList (
+    validSpecs = flatten (mapAttrsToList (
         className: specNames:
           lib.filter (spec: spec != null) (map (
               specName:
                 if
-                  lib.hasAttr className classes
-                  && lib.hasAttr specName classes.${className}
-                  && lib.hasAttr "defaultRace" classes.${className}.${specName}
-                  && lib.hasAttr "template" classes.${className}.${specName}
+                  hasAttr className classes
+                  && hasAttr specName classes.${className}
+                  && hasAttr "defaultRace" classes.${className}.${specName}
+                  && hasAttr "template" classes.${className}.${specName}
                 then let
-                  defaultRace = classes.${className}.${specName}.defaultRace;
+                  inherit (classes.${className}.${specName}) defaultRace;
                   spec = classes.${className}.${specName};
                 in
                   if
-                    lib.hasAttr defaultRace spec.template
-                    && lib.hasAttr phase spec.template.${defaultRace}
-                    && lib.hasAttr "raid" spec.template.${defaultRace}.${phase}
-                    && lib.hasAttr template spec.template.${defaultRace}.${phase}.raid
+                    hasAttr defaultRace spec.template
+                    && hasAttr phase spec.template.${defaultRace}
+                    && hasAttr "raid" spec.template.${defaultRace}.${phase}
+                    && hasAttr template spec.template.${defaultRace}.${phase}.raid
                   then {
                     inherit className specName;
                     config = spec.template.${defaultRace}.${phase}.raid.${template};
@@ -75,11 +76,12 @@
       inherit className specName raceName;
       config =
         if
-          lib.hasAttr "template" baseSpec
-          && lib.hasAttr raceName baseSpec.template
-          && lib.hasAttr phase baseSpec.template.${raceName}
-          && lib.hasAttr encounterType baseSpec.template.${raceName}.${phase}
-          && lib.hasAttr template baseSpec.template.${raceName}.${phase}.${encounterType}
+          # validate template exists
+          hasAttr "template" baseSpec
+          && hasAttr raceName baseSpec.template
+          && hasAttr phase baseSpec.template.${raceName}
+          && hasAttr encounterType baseSpec.template.${raceName}.${phase}
+          && hasAttr template baseSpec.template.${raceName}.${phase}.${encounterType}
         then baseSpec.template.${raceName}.${phase}.${encounterType}.${template}
         else throw "Template ${template} not found for ${className}/${specName}/${raceName} at ${phase}.${encounterType}";
     })
@@ -100,10 +102,10 @@
     raceConfigs = getRaceConfigs classes class spec template phase encounterType;
 
     # create individual simulation derivations for each race
-    simDerivations = lib.listToAttrs (map (raceConfig: {
+    simDerivations = listToAttrs (map (raceConfig: {
         name = "${raceConfig.className}-${raceConfig.specName}-${raceConfig.raceName}";
         value = let
-          # Pre-enrich the equipment, consumables, glyphs, and talents for this race config
+          # pre enrich the equipment, consumables, glyphs, and talents for this race config
           enrichedEquipment = itemDatabase.enrichEquipment raceConfig.config.equipment;
           enrichedConsumables = itemDatabase.enrichConsumables raceConfig.config.consumables;
           enrichedGlyphs = itemDatabase.enrichGlyphs raceConfig.config.class raceConfig.config.glyphs;
@@ -129,79 +131,79 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-                        # Write enriched JSON data to files using cat with EOF to handle any quotes safely
-                        cat > enriched_equipment.json << 'EQUIPMENT_EOF'
-            ${builtins.toJSON enrichedEquipment}
+            # Write enriched JSON data to files using cat with EOF to handle any quotes safely
+            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+              ${builtins.toJSON enrichedEquipment}
             EQUIPMENT_EOF
 
-                        cat > consumables.json << 'CONSUMABLES_EOF'
-            ${builtins.toJSON enrichedConsumables}
+            cat > consumables.json << 'CONSUMABLES_EOF'
+              ${builtins.toJSON enrichedConsumables}
             CONSUMABLES_EOF
 
-                        cat > glyphs.json << 'GLYPHS_EOF'
-            ${builtins.toJSON enrichedGlyphs}
+            cat > glyphs.json << 'GLYPHS_EOF'
+              ${builtins.toJSON enrichedGlyphs}
             GLYPHS_EOF
 
-                        cat > talents.json << 'TALENTS_EOF'
-            ${builtins.toJSON enrichedTalents}
+            cat > talents.json << 'TALENTS_EOF'
+              ${builtins.toJSON enrichedTalents}
             TALENTS_EOF
 
-                        cat > input.json << 'INPUT_EOF'
-            ${simInput}
+            cat > input.json << 'INPUT_EOF'
+              ${simInput}
             INPUT_EOF
 
-                        echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
-                        if wowsimcli sim --infile input.json --outfile output.json; then
-                          # extract dps statistics
-                          avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
-                          maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
-                          minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
-                          stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+            echo "Running ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName} simulation..."
+            if wowsimcli sim --infile input.json --outfile output.json; then
+              # extract dps statistics
+              avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
+              maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
+              minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
+              stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-                          # Generate wowsim link from input file
-                          echo "Generating wowsim link..."
-                          simLink=$(wowsimcli encodelink input.json || echo "")
+              # Generate wowsim link from input file
+              echo "Generating wowsim link..."
+              simLink=$(wowsimcli encodelink input.json || echo "")
 
-                          # create final result with enriched data
-                          jq -n \
-                            --arg raceName "${raceConfig.raceName}" \
-                            --arg avgDps "$avgDps" \
-                            --arg maxDps "$maxDps" \
-                            --arg minDps "$minDps" \
-                            --arg stdevDps "$stdevDps" \
-                            --arg simLink "$simLink" \
-                            --slurpfile equipment enriched_equipment.json \
-                            --slurpfile consumables consumables.json \
-                            --arg talentsString "${raceConfig.config.talentsString}" \
-                            --slurpfile talents talents.json \
-                            --slurpfile glyphs glyphs.json \
-                            --arg race "${raceConfig.config.race}" \
-                            --arg class "${raceConfig.config.class}" \
-                            --arg profession1 "${raceConfig.config.profession1}" \
-                            --arg profession2 "${raceConfig.config.profession2}" \
-                            '{
-                              race: $raceName,
-                              dps: ($avgDps | tonumber),
-                              max: ($maxDps | tonumber),
-                              min: ($minDps | tonumber),
-                              stdev: ($stdevDps | tonumber),
-                              loadout: {
-                                consumables: $consumables[0],
-                                talentsString: $talentsString,
-                                talents: $talents[0],
-                                glyphs: $glyphs[0],
-                                equipment: $equipment[0],
-                                race: $race,
-                                class: $class,
-                                profession1: $profession1,
-                                profession2: $profession2,
-                                simLink: $simLink
-                              }
-                            }' > $out
-                        else
-                          echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
-                          exit 1
-                        fi
+              # create final result with enriched data
+              jq -n \
+                --arg raceName "${raceConfig.raceName}" \
+                --arg avgDps "$avgDps" \
+                --arg maxDps "$maxDps" \
+                --arg minDps "$minDps" \
+                --arg stdevDps "$stdevDps" \
+                --arg simLink "$simLink" \
+                --slurpfile equipment enriched_equipment.json \
+                --slurpfile consumables consumables.json \
+                --arg talentsString "${raceConfig.config.talentsString}" \
+                --slurpfile talents talents.json \
+                --slurpfile glyphs glyphs.json \
+                --arg race "${raceConfig.config.race}" \
+                --arg class "${raceConfig.config.class}" \
+                --arg profession1 "${raceConfig.config.profession1}" \
+                --arg profession2 "${raceConfig.config.profession2}" \
+                '{
+                  race: $raceName,
+                  dps: ($avgDps | tonumber),
+                  max: ($maxDps | tonumber),
+                  min: ($minDps | tonumber),
+                  stdev: ($stdevDps | tonumber),
+                  loadout: {
+                    consumables: $consumables[0],
+                    talentsString: $talentsString,
+                    talents: $talents[0],
+                    glyphs: $glyphs[0],
+                    equipment: $equipment[0],
+                    race: $race,
+                    class: $class,
+                    profession1: $profession1,
+                    profession2: $profession2,
+                    simLink: $simLink
+                  }
+                }' > $out
+              else
+                echo "Simulation failed for ${raceConfig.className}/${raceConfig.specName}/${raceConfig.raceName}"
+                exit 1
+              fi
           '';
       })
       raceConfigs);
@@ -211,7 +213,7 @@
     aggregationScript = pkgs.writeShellApplication {
       name = "${structuredOutput}-aggregator";
       text = ''
-        set -euo pipefail
+        ${shellUtils.parseArgsAndEnv}
 
         echo "Aggregating race comparison results for: ${class}/${spec}"
         echo "Races simulated: ${toString (lib.length raceConfigs)}"
@@ -262,29 +264,16 @@
             results: .
           }')
 
-        echo "$finalResult" | jq -c '.' | tee "${structuredOutput}.json"
-
-        repo_root=""
-        current_dir="$PWD"
-        while [[ "$current_dir" != "/" ]]; do
-          if [[ -f "$current_dir/flake.nix" ]]; then
-            repo_root="$current_dir"
-            break
-          fi
-          current_dir="$(dirname "$current_dir")"
-        done
-
-        if [[ -z "$repo_root" ]]; then
-          echo "Warning: Could not find repo root (flake.nix), using current directory"
-          repo_root="$PWD"
-        fi
-
-        comparison_dir="$repo_root/web/public/data/comparison/race/${class}/${spec}"
-        mkdir -p "$comparison_dir"
-
-        # copy race comparison file
-        cp "${structuredOutput}.json" "$comparison_dir/"
-        echo "Copied to: $comparison_dir/${structuredOutput}.json"
+        ${shellUtils.conditionalOutput {
+          inherit structuredOutput;
+          webSetupCode = shellUtils.setupComparisonDirs {
+            comparisonType = "race";
+            class = "${class}";
+            spec = "${spec}";
+          };
+          webPath = "$comparison_dir";
+          webMessage = "Copied to";
+        }}
 
         echo ""
         echo "Race DPS Rankings for ${class}/${spec}:"
@@ -308,8 +297,6 @@
           echo "$failed_races"
         fi
 
-        echo ""
-        echo "Results written to: $comparison_dir/${structuredOutput}.json"
       '';
       runtimeInputs = [pkgs.jq pkgs.coreutils];
     };
@@ -375,81 +362,80 @@
             buildInputs = [pkgs.jq];
             nativeBuildInputs = [inputs.wowsims.packages.${pkgs.system}.wowsimcli];
           } ''
-                        # Write enriched JSON data to files using cat with EOF to handle any quotes safely
-                        cat > enriched_equipment.json << 'EQUIPMENT_EOF'
-            ${builtins.toJSON enrichedEquipment}
+            cat > enriched_equipment.json << 'EQUIPMENT_EOF'
+              ${builtins.toJSON enrichedEquipment}
             EQUIPMENT_EOF
 
-                        cat > consumables.json << 'CONSUMABLES_EOF'
-            ${builtins.toJSON enrichedConsumables}
+            cat > consumables.json << 'CONSUMABLES_EOF'
+              ${builtins.toJSON enrichedConsumables}
             CONSUMABLES_EOF
 
-                        cat > glyphs.json << 'GLYPHS_EOF'
-            ${builtins.toJSON enrichedGlyphs}
+            cat > glyphs.json << 'GLYPHS_EOF'
+              ${builtins.toJSON enrichedGlyphs}
             GLYPHS_EOF
 
-                        cat > talents.json << 'TALENTS_EOF'
-            ${builtins.toJSON enrichedTalents}
+            cat > talents.json << 'TALENTS_EOF'
+              ${builtins.toJSON enrichedTalents}
             TALENTS_EOF
 
-                        cat > input.json << 'INPUT_EOF'
-            ${simInput}
+            cat > input.json << 'INPUT_EOF'
+              ${simInput}
             INPUT_EOF
 
-                        echo "Running ${spec.className}/${spec.specName} simulation..."
-                        if wowsimcli sim --infile input.json --outfile output.json; then
+            echo "Running ${spec.className}/${spec.specName} simulation..."
+            if wowsimcli sim --infile input.json --outfile output.json; then
 
-                          avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
-                          maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
-                          minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
-                          stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
+              avgDps=$(jq -r '.raidMetrics.dps.avg // 0' output.json)
+              maxDps=$(jq -r '.raidMetrics.dps.max // 0' output.json)
+              minDps=$(jq -r '.raidMetrics.dps.min // 0' output.json)
+              stdevDps=$(jq -r '.raidMetrics.dps.stdev // 0' output.json)
 
-                          # Generate wowsim link from input file
-                          echo "Generating wowsim link..."
-                          simLink=$(wowsimcli encodelink input.json || echo "")
+              # Generate wowsim link from input file
+              echo "Generating wowsim link..."
+              simLink=$(wowsimcli encodelink input.json || echo "")
 
-                          # create final result with all DPS statistics and enriched data
-                          jq -n \
-                            --arg className "${spec.className}" \
-                            --arg specName "${spec.specName}" \
-                            --arg avgDps "$avgDps" \
-                            --arg maxDps "$maxDps" \
-                            --arg minDps "$minDps" \
-                            --arg stdevDps "$stdevDps" \
-                            --arg simLink "$simLink" \
-                            --slurpfile equipment enriched_equipment.json \
-                            --slurpfile consumables consumables.json \
-                            --arg talentsString "${spec.config.talentsString}" \
-                            --slurpfile talents talents.json \
-                            --slurpfile glyphs glyphs.json \
-                            --arg race "${spec.config.race}" \
-                            --arg class "${spec.config.class}" \
-                            --arg profession1 "${spec.config.profession1}" \
-                            --arg profession2 "${spec.config.profession2}" \
-                            '{
-                              className: $className,
-                              specName: $specName,
-                              dps: ($avgDps | tonumber),
-                              max: ($maxDps | tonumber),
-                              min: ($minDps | tonumber),
-                              stdev: ($stdevDps | tonumber),
-                              loadout: {
-                                consumables: $consumables[0],
-                                talentsString: $talentsString,
-                                talents: $talents[0],
-                                glyphs: $glyphs[0],
-                                equipment: $equipment[0],
-                                race: $race,
-                                class: $class,
-                                profession1: $profession1,
-                                profession2: $profession2,
-                                simLink: $simLink
-                              }
-                            }' > $out
-                        else
-                          echo "Simulation failed for ${spec.className}/${spec.specName}"
-                          exit 1
-                        fi
+              # create final result with all DPS statistics and enriched data
+              jq -n \
+                --arg className "${spec.className}" \
+                --arg specName "${spec.specName}" \
+                --arg avgDps "$avgDps" \
+                --arg maxDps "$maxDps" \
+                --arg minDps "$minDps" \
+                --arg stdevDps "$stdevDps" \
+                --arg simLink "$simLink" \
+                --slurpfile equipment enriched_equipment.json \
+                --slurpfile consumables consumables.json \
+                --arg talentsString "${spec.config.talentsString}" \
+                --slurpfile talents talents.json \
+                --slurpfile glyphs glyphs.json \
+                --arg race "${spec.config.race}" \
+                --arg class "${spec.config.class}" \
+                --arg profession1 "${spec.config.profession1}" \
+                --arg profession2 "${spec.config.profession2}" \
+                '{
+                  className: $className,
+                  specName: $specName,
+                  dps: ($avgDps | tonumber),
+                  max: ($maxDps | tonumber),
+                  min: ($minDps | tonumber),
+                  stdev: ($stdevDps | tonumber),
+                  loadout: {
+                    consumables: $consumables[0],
+                    talentsString: $talentsString,
+                    talents: $talents[0],
+                    glyphs: $glyphs[0],
+                    equipment: $equipment[0],
+                    race: $race,
+                    class: $class,
+                    profession1: $profession1,
+                    profession2: $profession2,
+                    simLink: $simLink
+                  }
+                }' > $out
+            else
+              echo "Simulation failed for ${spec.className}/${spec.specName}"
+              exit 1
+            fi
           '';
       })
       specConfigs);
@@ -462,6 +448,8 @@
       name = "${structuredOutput}-aggregator";
       text = ''
         set -euo pipefail
+
+        ${shellUtils.parseArgsAndEnv}
 
         echo "Aggregating mass simulation results for: ${structuredOutput}"
         echo "Specs simulated: ${toString (lib.length specConfigs)}"
@@ -513,43 +501,12 @@
             results: .
           }')
 
-        echo "$finalResult" | jq -c '.' | tee "${structuredOutput}.json"
-
-        # copy to web public directory for web frontend
-        # find the repo root by looking for flake.nix
-        repo_root=""
-        current_dir="$PWD"
-        while [[ "$current_dir" != "/" ]]; do
-          if [[ -f "$current_dir/flake.nix" ]]; then
-            repo_root="$current_dir"
-            break
-          fi
-          current_dir="$(dirname "$current_dir")"
-        done
-
-        if [[ -z "$repo_root" ]]; then
-          echo "Warning: Could not find repo root (flake.nix), using current directory"
-          repo_root="$PWD"
-        fi
-
-        web_data_dir="$repo_root/web/public/data"
-        rankings_dir="$web_data_dir/rankings"
-        archive_dir="$rankings_dir/archive"
-        existing_file="$rankings_dir/${structuredOutput}.json"
-
-        mkdir -p "$web_data_dir"
-        mkdir -p "$rankings_dir"
-        mkdir -p "$archive_dir"
-
-        if [[ -f "$existing_file" ]]; then
-          timestamp=$(date +"%Y%m%d_%H%M%S")
-          archived_name="${structuredOutput}_$timestamp.json"
-          cp "$existing_file" "$archive_dir/$archived_name"
-          echo "Archived existing file: $archived_name"
-        fi
-
-        cp "${structuredOutput}.json" "$rankings_dir/"
-        echo "Copied to: $rankings_dir/${structuredOutput}.json"
+        ${shellUtils.conditionalOutput {
+          inherit structuredOutput;
+          webSetupCode = shellUtils.setupRankingsDirs;
+          webPath = "$rankings_dir";
+          webMessage = "Copied to";
+        }}
 
         echo ""
         echo "Top DPS Rankings:"
@@ -561,8 +518,6 @@
           "\($className)/\($spec.key): \($spec.value.dps | floor) DPS"
         ' | sort -k2 -nr | head -10
 
-        echo ""
-        echo "Results written to: ${structuredOutput}.json"
       '';
       runtimeInputs = [pkgs.jq pkgs.coreutils];
     };
@@ -576,7 +531,7 @@
     metadata = {
       output = structuredOutput;
       inherit iterations phase encounterType targetCount duration;
-      specCount = lib.length specConfigs;
+      specCount = length specConfigs;
       specs = map (s: "${s.className}/${s.specName}") specConfigs;
     };
   };
