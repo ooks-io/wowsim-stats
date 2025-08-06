@@ -3,36 +3,12 @@
   consumables,
   ...
 }: let
-  inherit (lib.sim.player) mkPlayer;
+  inherit (lib.sim.classes) mkClassTemplate;
   inherit (consumables.preset) agility;
 
-  mkBrewmaster = {
-    race,
-    apl ? "brewmaster",
-    gearset ? "p1",
-    talents,
-    consumables ? agility,
-    profession1 ? "engineering",
-    profession2 ? "jewelcrafting",
-    distanceFromTarget ? 5,
-  }:
-    mkPlayer {
-      class = "monk";
-      spec = "brewmaster";
-      options = {
-        chiWave = true;
-        expelHarm = true;
-      };
-      inherit race gearset talents apl consumables profession1 profession2 distanceFromTarget;
-      glyphs = {
-        major1 = 123392; # fortifying brew
-        major2 = 123394; # guard
-        major3 = 123396; # keg smash
-      };
-    };
-
   brewmaster = {
-    # Talent configurations
+    defaultRace = "orc";
+
     talents = {
       xuen = "213322";
       rjw = "233321";
@@ -40,20 +16,62 @@
 
     glyphs = {
       default = {
-        major1 = 124997;
-        major2 = 123394;
-        minor1 = 125660;
+        major1 = 85697; # spinning crane kick
+        major2 = 87900; # touch of karma
+        minor1 = 90715; # blackout kick
       };
     };
 
-    p1 = {
-      singleTarget = mkBrewmaster {
-        race = "AlliancePandaren";
+    template = mkClassTemplate {
+      playableRaces = [
+        "human"
+        "dwarf"
+        "night_elf"
+        "gnome"
+        "draenei"
+        "orc"
+        "undead"
+        "tauren"
+        "troll"
+        "blood_elf"
+        "alliance_pandaren"
+      ];
+      class = "monk";
+      spec = "brewmaster";
+      consumables = agility;
+      profession1 = "engineering";
+      profession2 = "tailoring";
+      distanceFromTarget = 5;
+      options = {};
+
+      singleTarget = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis";
         talents = brewmaster.talents.xuen;
+        glyphs = brewmaster.glyphs.default;
       };
-      aoe = mkBrewmaster {
-        race = "AlliancePandaren";
+
+      multiTarget = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis";
         talents = brewmaster.talents.rjw;
+        glyphs = brewmaster.glyphs.default;
+      };
+
+      cleave = {
+        apl = "default";
+        p1.gearset = "p1_bis_dw";
+        preRaid.gearset = "p1_prebis";
+        talents = brewmaster.talents.rjw;
+        glyphs = brewmaster.glyphs.default;
+      };
+
+      challengeMode = {
+        gearset = "p1_bis_dw";
+        talents = brewmaster.talents.xuen;
+        glyphs = brewmaster.glyphs.default;
       };
     };
   };
