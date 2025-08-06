@@ -1,7 +1,7 @@
 {
   "_links": {
     "self": {
-      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4816/mythic-leaderboard/76/period/1023?namespace=dynamic-classic-eu"
+      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4816/mythic-leaderboard/76/period/1022?namespace=dynamic-classic-eu"
     }
   },
   "map": {
@@ -21,12 +21,135 @@
     },
     "id": 1007
   },
-  "period": 1023,
-  "period_start_timestamp": 1754452800000,
-  "period_end_timestamp": 1755057599000,
+  "period": 1022,
+  "period_start_timestamp": 1753848000000,
+  "period_end_timestamp": 1754452799000,
   "connected_realm": {
     "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4816?namespace=dynamic-classic-eu"
   },
+  "leading_groups": [
+    {
+      "ranking": 1,
+      "duration": 580630,
+      "completed_timestamp": 1754160983000,
+      "keystone_level": 1,
+      "members": [
+        {
+          "profile": {
+            "name": "Burdjur",
+            "id": 100262628,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4467?namespace=dynamic-classic-eu"
+              },
+              "id": 4467,
+              "slug": "firemaw"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/262?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 262
+          }
+        },
+        {
+          "profile": {
+            "name": "Leucosias",
+            "id": 97680941,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4816?namespace=dynamic-classic-eu"
+              },
+              "id": 4816,
+              "slug": "jindo"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/262?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 262
+          }
+        },
+        {
+          "profile": {
+            "name": "Flamehugs",
+            "id": 97670777,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4816?namespace=dynamic-classic-eu"
+              },
+              "id": 4816,
+              "slug": "jindo"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/64?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 64
+          }
+        },
+        {
+          "profile": {
+            "name": "Barrybonds",
+            "id": 100332875,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4467?namespace=dynamic-classic-eu"
+              },
+              "id": 4467,
+              "slug": "firemaw"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/256?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 256
+          }
+        },
+        {
+          "profile": {
+            "name": "Cece",
+            "id": 97666037,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4816?namespace=dynamic-classic-eu"
+              },
+              "id": 4816,
+              "slug": "jindo"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/268?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 268
+          }
+        }
+      ],
+      "mythic_rating": {
+        "rating": 30.0
+      }
+    }
+  ],
   "map_challenge_mode_id": 76,
   "name": {
     "en_US": "Scholomance",

@@ -1,7 +1,7 @@
 {
   "_links": {
     "self": {
-      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4678/mythic-leaderboard/60/period/1023?namespace=dynamic-classic-eu"
+      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4678/mythic-leaderboard/60/period/1022?namespace=dynamic-classic-eu"
     }
   },
   "map": {
@@ -21,12 +21,135 @@
     },
     "id": 994
   },
-  "period": 1023,
-  "period_start_timestamp": 1754452800000,
-  "period_end_timestamp": 1755057599000,
+  "period": 1022,
+  "period_start_timestamp": 1753848000000,
+  "period_end_timestamp": 1754452799000,
   "connected_realm": {
     "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4678?namespace=dynamic-classic-eu"
   },
+  "leading_groups": [
+    {
+      "ranking": 1,
+      "duration": 667595,
+      "completed_timestamp": 1754216474000,
+      "keystone_level": 1,
+      "members": [
+        {
+          "profile": {
+            "name": "Zwurg",
+            "id": 94366104,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4678?namespace=dynamic-classic-eu"
+              },
+              "id": 4678,
+              "slug": "hydraxian-waterlords"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/73?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 73
+          }
+        },
+        {
+          "profile": {
+            "name": "Zex\u00fas",
+            "id": 96127638,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4467?namespace=dynamic-classic-eu"
+              },
+              "id": 4467,
+              "slug": "firemaw"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/71?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 71
+          }
+        },
+        {
+          "profile": {
+            "name": "Mistrgizmo",
+            "id": 75866057,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4467?namespace=dynamic-classic-eu"
+              },
+              "id": 4467,
+              "slug": "firemaw"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/263?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 263
+          }
+        },
+        {
+          "profile": {
+            "name": "Aceitol",
+            "id": 59703089,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4441?namespace=dynamic-classic-eu"
+              },
+              "id": 4441,
+              "slug": "auberdine"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/102?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 102
+          }
+        },
+        {
+          "profile": {
+            "name": "Pprx",
+            "id": 77017577,
+            "realm": {
+              "key": {
+                "href": "https://eu.api.blizzard.com/data/wow/realm/4467?namespace=dynamic-classic-eu"
+              },
+              "id": 4467,
+              "slug": "firemaw"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://eu.api.blizzard.com/data/wow/playable-specialization/105?namespace=static-5.5.0_61496-classic-eu"
+            },
+            "id": 105
+          }
+        }
+      ],
+      "mythic_rating": {
+        "rating": 30.0
+      }
+    }
+  ],
   "map_challenge_mode_id": 60,
   "name": {
     "en_US": "Mogu'shan Palace",
