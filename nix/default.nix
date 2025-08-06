@@ -1,6 +1,7 @@
 {
   imports = [
     ./shell.nix
+    ./simulation
     ./apps
     #./checks.nix
     ./pkgs
