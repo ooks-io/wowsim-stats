@@ -28,32 +28,32 @@ in {
   angerforge = mkRealm 4795 "us" "Andgerforge";
   eranikus = mkRealm 4800 "us" "Eranikus";
 
-  # EU Realms
-  everlook = mkRealm 4440 "eu" "Everlook";
-  auberdine = mkRealm 4441 "eu" "Auberdine";
-  lakeshire = mkRealm 4442 "eu" "Lakeshire";
-  chromie = mkRealm 4452 "eu" "Chromie";
-  pyrewoodVillage = mkRealm 4453 "eu" "Pyrewood Village";
-  mirageRaceway = mkRealm 4454 "eu" "Mirage Raceway";
-  razorfen = mkRealm 4455 "eu" "Razorfen";
-  nethergardeKeep = mkRealm 4456 "eu" "Nethergarde Keep";
-  sulfuron = mkRealm 4464 "eu" "Sulfuron";
-  golemagg = mkRealm 4465 "eu" "Golemagg";
-  patchwerk = mkRealm 4466 "eu" "Patchwerk";
-  firemaw = mkRealm 4467 "eu" "Firemaw";
-  flamegor = mkRealm 4474 "eu" "Flamegor";
-  gehennas = mkRealm 4476 "eu" "Gehennas";
-  venoxis = mkRealm 4477 "eu" "Venoxis";
-  hydraxianWaterlords = mkRealm 4678 "eu" "Hydraxian Waterlords";
-  mograine = mkRealm 4701 "eu" "Mograine";
-  amnennar = mkRealm 4703 "eu" "Amnennar";
-  ashbringer = mkRealm 4742 "eu" "Ashbringer";
-  transcendence = mkRealm 4745 "eu" "Transcendence";
-  earthshaker = mkRealm 4749 "eu" "Earthshaker";
-  giantstalker = mkRealm 4811 "eu" "Giantstalker";
-  mandokir = mkRealm 4813 "eu" "Mandokir";
-  thekal = mkRealm 4815 "eu" "Thekal";
-  jindo = mkRealm 4816 "eu" "Jin'do";
+  # EU Realms - TEMPORARILY DISABLED due to Blizzard API issues
+  # everlook = mkRealm 4440 "eu" "Everlook";
+  # auberdine = mkRealm 4441 "eu" "Auberdine";
+  # lakeshire = mkRealm 4442 "eu" "Lakeshire";
+  # chromie = mkRealm 4452 "eu" "Chromie";
+  # pyrewoodVillage = mkRealm 4453 "eu" "Pyrewood Village";
+  # mirageRaceway = mkRealm 4454 "eu" "Mirage Raceway";
+  # razorfen = mkRealm 4455 "eu" "Razorfen";
+  # nethergardeKeep = mkRealm 4456 "eu" "Nethergarde Keep";
+  # sulfuron = mkRealm 4464 "eu" "Sulfuron";
+  # golemagg = mkRealm 4465 "eu" "Golemagg";
+  # patchwerk = mkRealm 4466 "eu" "Patchwerk";
+  # firemaw = mkRealm 4467 "eu" "Firemaw";
+  # flamegor = mkRealm 4474 "eu" "Flamegor";
+  # gehennas = mkRealm 4476 "eu" "Gehennas";
+  # venoxis = mkRealm 4477 "eu" "Venoxis";
+  # hydraxianWaterlords = mkRealm 4678 "eu" "Hydraxian Waterlords";
+  # mograine = mkRealm 4701 "eu" "Mograine";
+  # amnennar = mkRealm 4703 "eu" "Amnennar";
+  # ashbringer = mkRealm 4742 "eu" "Ashbringer";
+  # transcendence = mkRealm 4745 "eu" "Transcendence";
+  # earthshaker = mkRealm 4749 "eu" "Earthshaker";
+  # giantstalker = mkRealm 4811 "eu" "Giantstalker";
+  # mandokir = mkRealm 4813 "eu" "Mandokir";
+  # thekal = mkRealm 4815 "eu" "Thekal";
+  # jindo = mkRealm 4816 "eu" "Jin'do";
 
   # kr
   shimmeringFlats = mkRealm 4417 "kr" "Shimmering Flats";
