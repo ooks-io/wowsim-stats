@@ -41,6 +41,10 @@
 
   encounter = {
     inherit raid;
+    shaOfDoubt = mkEncounter {
+      targets = [target.shaOfDoubt];
+      useHealth = true;
+    };
   };
 in {
   flake.encounter = encounter;

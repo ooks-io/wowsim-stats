@@ -86,6 +86,11 @@
       )
       config.trinketComparisonSpecs));
 
+  # Function to generate test group simulation with pkgs
+  generateTestGroupSim = pkgs: let
+    testGroupSim = import ./mkTestGroupSim.nix {inherit lib pkgs classes encounter buffs debuffs inputs;};
+  in testGroupSim.mkTestGroupScript;
+
   # Function to generate all simulations script with pkgs
   generateAllSimulationsScript = pkgs: let
     massSimulations = generateMassSimulations pkgs;
@@ -138,7 +143,7 @@
 
   simulation = {
     # Generation functions that take pkgs as parameter
-    inherit generateMassSimulations generateRaceComparisons generateTrinketComparisons generateAllSimulationsScript;
+    inherit generateMassSimulations generateRaceComparisons generateTrinketComparisons generateAllSimulationsScript generateTestGroupSim;
     
     # Configuration and utilities
     inherit config generateScenarios scenarios;

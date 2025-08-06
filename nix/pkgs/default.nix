@@ -29,6 +29,7 @@
         testRaid = callPackage ./testRaid.nix {
           inherit lib classes encounter buffs debuffs wowsimcli;
         };
+        testGroupSim = simulation.generateTestGroupSim pkgs;
       };
   };
 }

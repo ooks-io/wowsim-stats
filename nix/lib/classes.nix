@@ -40,7 +40,7 @@
                 challengeMode = true;
                 inherit race class spec options distanceFromTarget profession1 profession2 consumables;
                 inherit (singleTarget) apl;
-                inherit (challengeMode) gearset talents;
+                inherit (challengeMode) glyphs gearset talents;
               };
               multiTarget = mkPlayer {
                 challengeMode = true;
