@@ -19,6 +19,12 @@
       level = 90;
       minBaseDamage = 40000;
     };
+    shaOfDoubt = {
+      level = 93;
+      mobType = "elemental";
+      health = 19600000;
+      minBaseDamage = 150000;
+    };
   };
 in {
   flake.target = target;

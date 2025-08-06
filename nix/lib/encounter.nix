@@ -3,9 +3,10 @@ let
     duration ? 300,
     durationVariation ? 60,
     targets ? [],
+    useHealth ? false,
   }: {
     apiVersion = 1;
-    inherit duration durationVariation targets;
+    inherit useHealth duration durationVariation targets;
 
     # default execute config
     executeProportion20 = 0.2;

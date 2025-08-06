@@ -11,7 +11,6 @@
     buffs ? null,
     debuffs ? null,
   }:
-  # Validation assertions
     assert (player != null)
     != (raid != null)
     || throw "Must provide exactly one of 'player' or 'raid', not both";

@@ -23,7 +23,7 @@
   toPascalCase = string: concatMapStrings toUpperCaseFirstLetter (splitWords string);
 
   mkPlayer = {
-    name ? "Player",
+    name ? "${spec} Player",
     race,
     class,
     spec,

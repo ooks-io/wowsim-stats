@@ -58,6 +58,10 @@
           type = "app";
           program = "${parseCMs}/bin/cm-leaderboard-parser";
         };
+        testGroupSim = {
+          type = "app";
+          program = "${simulation.generateTestGroupSim pkgs}/bin/test-group-sim";
+        };
       };
   };
 }
