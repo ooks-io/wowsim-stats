@@ -11,7 +11,7 @@
           (inputs'.wowsims.packages)
           wowsimcli
           ;
-        inherit (pkgs) nodejs;
+        inherit (pkgs) nodejs just;
       };
     };
   };
