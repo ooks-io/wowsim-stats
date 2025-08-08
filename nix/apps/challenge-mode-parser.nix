@@ -79,18 +79,18 @@
           # Remove duplicate runs caused by cross-realm groups appearing on multiple realm leaderboards
           seen = set()
           deduplicated = []
-          
+
           for run in runs:
               # Create a unique identifier for each run using timestamp, duration, and sorted player IDs
               player_ids = sorted([member["profile"]["id"] for member in run["members"]])
               unique_key = (run["completed_timestamp"], run["duration"], tuple(player_ids))
-              
+
               if unique_key not in seen:
                   seen.add(unique_key)
                   deduplicated.append(run)
               else:
                   print(f"    Removing duplicate run: {run['duration']}ms at {run['completed_timestamp']}")
-          
+
           return deduplicated
 
       def rank_and_save_leaderboards(dungeon_data):
@@ -119,15 +119,15 @@
                   deduplicated_runs = deduplicate_runs(runs)
                   print(f"{len(deduplicated_runs)} -> ", end="")
                   deduplicated_runs.sort(key=sort_key)
-                  
+
                   # Limit to top N runs for regional leaderboard
                   final_runs = deduplicated_runs[:TOP_N_FINAL]
                   print(f"{len(final_runs)})")
-                  
+
                   # Re-rank runs for regional leaderboard
                   for i, run in enumerate(final_runs):
                       run["ranking"] = i + 1
-                  
+
                   all_regional_runs.extend(final_runs)
                   output_dir = os.path.join(regional_path, region, dungeon_slug)
                   os.makedirs(output_dir, exist_ok=True)
@@ -150,15 +150,15 @@
               deduplicated_global = deduplicate_runs(all_regional_runs)
               print(f"{len(deduplicated_global)} -> ", end="")
               deduplicated_global.sort(key=sort_key)
-              
+
               # Limit to top N runs for global leaderboard
               final_global = deduplicated_global[:TOP_N_FINAL]
               print(f"{len(final_global)})")
-              
+
               # Re-rank runs for global leaderboard
               for i, run in enumerate(final_global):
                   run["ranking"] = i + 1
-              
+
               global_path = os.path.join(OUTPUT_ROOT, "global", dungeon_slug)
               os.makedirs(global_path, exist_ok=True)
               global_output_file = os.path.join(global_path, "leaderboard.json")

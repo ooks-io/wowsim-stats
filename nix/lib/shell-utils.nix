@@ -31,20 +31,20 @@
     baseDir ? "web/public/data",
     subdirs ? [],
   }:
-    /*
-    bash
-    */
-    ''
-      # setup web data directories
-      web_data_dir="$repo_root/${baseDir}"
-      mkdir -p "$web_data_dir"
+  /*
+  bash
+  */
+  ''
+    # setup web data directories
+    web_data_dir="$repo_root/${baseDir}"
+    mkdir -p "$web_data_dir"
 
-      ${concatMapStringsSep "\n" (subdir: ''
+    ${concatMapStringsSep "\n" (subdir: ''
         ${replaceStrings ["/"] ["_"] subdir}_dir="$web_data_dir/${subdir}"
         mkdir -p "$${replaceStrings ["/"] ["_"] subdir}_dir"
       '')
       subdirs}
-    '';
+  '';
 
   # function to generate shell code for common simulation result copying patterns
   copySimulationResults = {
@@ -74,17 +74,17 @@
     class,
     spec,
   }:
-    /*
-    bash
-    */
-    ''
-      ${findRepoRoot}
+  /*
+  bash
+  */
+  ''
+    ${findRepoRoot}
 
-      # setup comparison directory structure
-      comparison_base_dir="$repo_root/web/public/data/comparison/${comparisonType}"
-      comparison_dir="$comparison_base_dir/${class}/${spec}"
-      mkdir -p "$comparison_dir"
-    '';
+    # setup comparison directory structure
+    comparison_base_dir="$repo_root/web/public/data/comparison/${comparisonType}"
+    comparison_dir="$comparison_base_dir/${class}/${spec}"
+    mkdir -p "$comparison_dir"
+  '';
 
   # combined function for the most common pattern: find repo root + setup rankings dirs
   setupRankingsDirs =
@@ -109,19 +109,19 @@
     sortKey ? ".dps",
     filterCondition ? "select(.dps != null and .dps > 0)",
   }:
-    /*
-    bash
-    */
-    ''
-      echo ""
-      echo "${title}:"
-      echo "======================================="
-      echo '${jsonData}' | jq -r '
-        .results | to_entries[] |
-        ${filterCondition} |
-        "\(.key): \(${sortKey} | floor) DPS"
-      ' | sort -k2 -nr
-    '';
+  /*
+  bash
+  */
+  ''
+    echo ""
+    echo "${title}:"
+    echo "======================================="
+    echo '${jsonData}' | jq -r '
+      .results | to_entries[] |
+      ${filterCondition} |
+      "\(.key): \(${sortKey} | floor) DPS"
+    ' | sort -k2 -nr
+  '';
 
   # argument parsing and environment variable handling
   parseArgsAndEnv =
@@ -155,19 +155,19 @@
     webPath,
     webMessage,
   }:
-    /*
-    bash
-    */
-    ''
-      if [[ "$copyToWeb" == "true" ]]; then
-        ${webSetupCode}
-        echo "$finalResult" | jq -c '.' > "${webPath}/${structuredOutput}.json"
-        echo "${webMessage}: ${webPath}/${structuredOutput}.json"
-      else
-        echo "$finalResult" | jq -c '.' > "${structuredOutput}.json"
-        echo "Results written to: ${structuredOutput}.json"
-      fi
-    '';
+  /*
+  bash
+  */
+  ''
+    if [[ "$copyToWeb" == "true" ]]; then
+      ${webSetupCode}
+      echo "$finalResult" | jq -c '.' > "${webPath}/${structuredOutput}.json"
+      echo "${webMessage}: ${webPath}/${structuredOutput}.json"
+    else
+      echo "$finalResult" | jq -c '.' > "${structuredOutput}.json"
+      echo "Results written to: ${structuredOutput}.json"
+    fi
+  '';
 in {
   inherit displayDPSRankings setupRankingsDirs setupComparisonDirs copySimulationResults setupWebDataDirs findRepoRoot parseArgsAndEnv conditionalOutput;
 }
