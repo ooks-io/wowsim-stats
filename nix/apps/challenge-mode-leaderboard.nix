@@ -105,26 +105,26 @@
           """Merge new leaderboard data with existing data, preserving historical entries."""
           if not os.path.exists(existing_path):
               return new_data
-          
+
           try:
               with open(existing_path, 'r', encoding='utf-8') as f:
                   existing_data = json.load(f)
-              
+
               # Get existing and new leading groups
               existing_groups = existing_data.get('leading_groups', [])
               new_groups = new_data.get('leading_groups', [])
-              
+
               # Merge the leading groups (append new to existing)
               merged_groups = existing_groups + new_groups
-              
+
               # Use new data as base (has current metadata) but with merged groups
               merged_data = new_data.copy()
               merged_data['leading_groups'] = merged_groups
-              
+
               print(f"    Merged {len(existing_groups)} existing + {len(new_groups)} new = {len(merged_groups)} total entries")
-              
+
               return merged_data
-              
+
           except (json.JSONDecodeError, KeyError) as e:
               print(f"    ERROR reading existing file, using new data only: {e}")
               return new_data
@@ -171,13 +171,13 @@
                       f"{realm_slug}-{dungeon['slug']}-leaderboard.json"
                   )
                   os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                  
+
                   # For EU realms, merge with existing data to preserve historical records
                   if realm_info['region'] == 'eu':
                       final_data = merge_leaderboard_data(output_path, leaderboard)
                   else:
                       final_data = leaderboard
-                  
+
                   with open(output_path, 'w', encoding='utf-8') as f:
                       json.dump(final_data, f, indent=2)
 

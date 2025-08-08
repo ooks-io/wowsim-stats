@@ -12,25 +12,41 @@
         if builtins.isString classStr && lib.hasPrefix "Class" classStr
         then lib.toLower (lib.removePrefix "Class" classStr)
         else null;
-      
+
       # Extract spec from spec-specific fields like "elementalShaman", "brewmasterMonk", etc.
-      specName = 
-        if builtins.hasAttr "elementalShaman" player then "elemental"
-        else if builtins.hasAttr "enhancementShaman" player then "enhancement"
-        else if builtins.hasAttr "restorationShaman" player then "restoration"
-        else if builtins.hasAttr "brewmasterMonk" player then "brewmaster"
-        else if builtins.hasAttr "windwalkerMonk" player then "windwalker"
-        else if builtins.hasAttr "mistweaverMonk" player then "mistweaver"
-        else if builtins.hasAttr "survivalHunter" player then "survival"
-        else if builtins.hasAttr "beastMasteryHunter" player then "beast_mastery"
-        else if builtins.hasAttr "marksmanshipHunter" player then "marksmanship"
-        else if builtins.hasAttr "balanceDruid" player then "balance"
-        else if builtins.hasAttr "feralDruid" player then "feral"
-        else if builtins.hasAttr "guardianDruid" player then "guardian"
-        else if builtins.hasAttr "restorationDruid" player then "restoration"
-        else if builtins.hasAttr "holyPaladin" player then "holy"
-        else if builtins.hasAttr "protectionPaladin" player then "protection"
-        else if builtins.hasAttr "retributionPaladin" player then "retribution"
+      specName =
+        if builtins.hasAttr "elementalShaman" player
+        then "elemental"
+        else if builtins.hasAttr "enhancementShaman" player
+        then "enhancement"
+        else if builtins.hasAttr "restorationShaman" player
+        then "restoration"
+        else if builtins.hasAttr "brewmasterMonk" player
+        then "brewmaster"
+        else if builtins.hasAttr "windwalkerMonk" player
+        then "windwalker"
+        else if builtins.hasAttr "mistweaverMonk" player
+        then "mistweaver"
+        else if builtins.hasAttr "survivalHunter" player
+        then "survival"
+        else if builtins.hasAttr "beastMasteryHunter" player
+        then "beast_mastery"
+        else if builtins.hasAttr "marksmanshipHunter" player
+        then "marksmanship"
+        else if builtins.hasAttr "balanceDruid" player
+        then "balance"
+        else if builtins.hasAttr "feralDruid" player
+        then "feral"
+        else if builtins.hasAttr "guardianDruid" player
+        then "guardian"
+        else if builtins.hasAttr "restorationDruid" player
+        then "restoration"
+        else if builtins.hasAttr "holyPaladin" player
+        then "holy"
+        else if builtins.hasAttr "protectionPaladin" player
+        then "protection"
+        else if builtins.hasAttr "retributionPaladin" player
+        then "retribution"
         else null;
     in {
       class = className;

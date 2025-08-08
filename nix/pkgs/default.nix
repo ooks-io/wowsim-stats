@@ -14,13 +14,13 @@
   }: let
     inherit (pkgs) callPackage;
     inherit (inputs'.wowsims.packages) wowsimcli;
-    
+
     # Convert simulation data to packages
     simulationPackages = lib.mapAttrs (name: sim: sim.script) (simulation.generateMassSimulations pkgs);
     racePackages = lib.mapAttrs (name: sim: sim.script) (simulation.generateRaceComparisons pkgs);
     trinketPackages = lib.mapAttrs (name: sim: sim.script) (simulation.generateTrinketComparisons pkgs);
   in {
-    packages = 
+    packages =
       simulationPackages
       // racePackages
       // trinketPackages

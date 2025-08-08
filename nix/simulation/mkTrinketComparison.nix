@@ -59,7 +59,7 @@
 
     # Trinket profession requirements mapping
     trinketProfessionRequirements = {
-      "75274" = "Alchemy";  # Zen Alchemist Stone
+      "75274" = "Alchemy"; # Zen Alchemist Stone
       # Add other profession-specific trinkets here as needed
     };
 
@@ -72,14 +72,16 @@
         trinketId = builtins.elemAt actualTrinketIds index;
         trinketIdStr = toString trinketId;
         requiredProfession = trinketProfessionRequirements.${trinketIdStr} or null;
-        
+
         # Modify profession if trinket requires it
-        configWithProfession = 
+        configWithProfession =
           if requiredProfession != null
-          then baseConfig // {
-            equipment = gearset;
-            profession2 = requiredProfession;
-          }
+          then
+            baseConfig
+            // {
+              equipment = gearset;
+              profession2 = requiredProfession;
+            }
           else baseConfig // {equipment = gearset;};
       in {
         trinketId = trinketId;
