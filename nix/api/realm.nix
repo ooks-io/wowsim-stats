@@ -12,20 +12,20 @@ in {
   pagle = mkRealm 4385 "us" "Pagle";
   ashkandi = mkRealm 4387 "us" "Ashkandi";
   westfall = mkRealm 4388 "us" "Westfall";
-  whitemane = mkRealm 4408 "us" "Whitemane";
+  whitemane = mkRealm 4395 "us" "Whitemane";
   faerlina = mkRealm 4408 "us" "Faerlina";
   grobbulus = mkRealm 4647 "us" "Grobbulus";
   bloodsailBuccaneers = mkRealm 4648 "us" "Bloodsail Buccaneers";
   remulos = mkRealm 4667 "us" "Remulos";
   arugal = mkRealm 4669 "us" "Arugal";
   yojamba = mkRealm 4670 "us" "Yojamba";
-  skyfury = mkRealm 4727 "us" "Skyfury";
+  skyfury = mkRealm 4725 "us" "Skyfury";
   sulfuras = mkRealm 4726 "us" "Sulfuras";
   windseeker = mkRealm 4727 "us" "Windseeker";
   benediction = mkRealm 4728 "us" "Benediction";
   earthfury = mkRealm 4731 "us" "Earthfury";
   maladath = mkRealm 4738 "us" "Maladath";
-  angerforge = mkRealm 4795 "us" "Andgerforge";
+  angerforge = mkRealm 4795 "us" "Angerforge";
   eranikus = mkRealm 4800 "us" "Eranikus";
 
   # EU Realms - Smart merging enabled to preserve historical data
