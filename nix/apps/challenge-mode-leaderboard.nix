@@ -102,7 +102,7 @@
 
 
       def merge_leaderboard_data(existing_path, new_data):
-          """Merge new leaderboard data with existing data, preserving historical entries."""
+        #FIX ME: merge new leaderboard data with existing data, preserving historical entries (https://github.com/ClassicWoWCommunity/mop-classic-bugs/issues/2208)
           if not os.path.exists(existing_path):
               return new_data
 
@@ -110,18 +110,39 @@
               with open(existing_path, 'r', encoding='utf-8') as f:
                   existing_data = json.load(f)
 
-              # Get existing and new leading groups
+              # get existing and new leading groups
               existing_groups = existing_data.get('leading_groups', [])
               new_groups = new_data.get('leading_groups', [])
 
-              # Merge the leading groups (append new to existing)
-              merged_groups = existing_groups + new_groups
+              # combine all groups for deduplication
+              all_groups = existing_groups + new_groups
 
-              # Use new data as base (has current metadata) but with merged groups
+              # deduplicate runs using the same logic as the parser
+              seen = set()
+              deduplicated_groups = []
+
+              for run in all_groups:
+                  # create a unique identifier for each run using timestamp, duration, and sorted player IDs
+                  player_ids = sorted([member["profile"]["id"] for member in run["members"]])
+                  unique_key = (run["completed_timestamp"], run["duration"], tuple(player_ids))
+
+                  if unique_key not in seen:
+                      seen.add(unique_key)
+                      deduplicated_groups.append(run)
+
+              # sort by duration and re-rank (same logic as parser)
+              sort_key = lambda run: run["duration"]
+              deduplicated_groups.sort(key=sort_key)
+
+              # re-rank runs from 1 to N based on sorted order
+              for i, run in enumerate(deduplicated_groups):
+                  run["ranking"] = i + 1
+
+              # use new data as base (has current metadata) but with properly sorted and ranked groups
               merged_data = new_data.copy()
-              merged_data['leading_groups'] = merged_groups
+              merged_data['leading_groups'] = deduplicated_groups
 
-              print(f"    Merged {len(existing_groups)} existing + {len(new_groups)} new = {len(merged_groups)} total entries")
+              print(f"    Merged {len(existing_groups)} existing + {len(new_groups)} new = {len(deduplicated_groups)} sorted and ranked entries")
 
               return merged_data
 
@@ -172,7 +193,7 @@
                   )
                   os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-                  # For EU realms, merge with existing data to preserve historical records
+                  # for EU realms, merge with existing data to preserve historical records
                   if realm_info['region'] == 'eu':
                       final_data = merge_leaderboard_data(output_path, leaderboard)
                   else:
