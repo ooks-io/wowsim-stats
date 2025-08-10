@@ -19,6 +19,7 @@
     iterations = 500;
     encounter = mkEncounter {
       targets = [
+        # based off Sha of Doubt challenge mode logs
         (mkTarget {
           level = 93;
           mobType = "elemental";
@@ -26,16 +27,18 @@
           minBaseDamage = 150000;
         })
       ];
+      # irrelevant if useHealth true
       duration = 60;
       durationVariation = 20;
+
       useHealth = true;
     };
     raid = mkRaid {
       dynamicBuffs = true;
       party1 = [
         monk.brewmaster.template.orc.p1.challengeMode.multiTarget
-        warlock.destruction.template.troll.p1.challengeMode.singleTarget
-        hunter.survival.template.troll.p1.challengeMode.singleTarget
+        shaman.elemental.template.troll.p1.challengeMode.singleTarget
+        paladin.retribution.template.blood_elf.p1.challengeMode.singleTarget
         shaman.elemental.template.troll.p1.challengeMode.singleTarget
       ];
     };
@@ -51,6 +54,9 @@
       echo "Running simulation with wowsimcli..."
       wowsimcli sim --infile test-group-sim.json --outfile test-out.json
 
+      echo "=== Sha of Doubt - Challenge Mode - 19.6M HP ==="
+      echo "=== Buffs ==="
+      echo $(jq -r '.)
       echo "=== Simulation Results ==="
       echo "Avg Fight Duration: $(jq -r '.avgIterationDuration' test-out.json)s"
       echo "Iterations: $(jq -r '.iterationsDone' test-out.json)"
