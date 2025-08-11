@@ -1,74 +1,8 @@
 ---
 import ChallengeModeLayout from "../../layouts/ChallengeModeLayout.astro";
+import { DATA_MAP } from "../../data/realms.js";
 
 export async function getStaticPaths() {
-  const DATA_MAP = {
-    us: {
-      realms: {
-        angerforge: "Angerforge",
-        arugal: "Arugal",
-        ashkandi: "Ashkandi", 
-        atiesh: "Atiesh",
-        azuresong: "Azuresong",
-        benediction: "Benediction",
-        "bloodsail-buccaneers": "Bloodsail Buccaneers",
-        earthfury: "Earthfury",
-        eranikus: "Eranikus",
-        faerlina: "Faerlina",
-        grobbulus: "Grobbulus",
-        maladath: "Maladath",
-        mankrik: "Mankrik",
-        myzrael: "Myzrael",
-        "old-blanchy": "Old Blanchy",
-        pagle: "Pagle",
-        remulos: "Remulos",
-        skyfury: "Skyfury",
-        sulfuras: "Sulfuras",
-        westfall: "Westfall",
-        whitemane: "Whitemane",
-        windseeker: "Windseeker",
-        yojamba: "Yojamba",
-      },
-    },
-    eu: {
-      realms: {
-        amnennar: "Amnennar",
-        ashbringer: "Ashbringer",
-        auberdine: "Auberdine",
-        chromie: "Chromie",
-        earthshaker: "Earthshaker",
-        everlook: "Everlook",
-        firemaw: "Firemaw",
-        flamegor: "Flamegor",
-        gehennas: "Gehennas",
-        giantstalker: "Giantstalker",
-        golemagg: "Golemagg",
-        "hydraxian-waterlords": "Hydraxian Waterlords",
-        "jin-do": "Jin'do",
-        lakeshire: "Lakeshire",
-        mandokir: "Mandokir",
-        "mirage-raceway": "Mirage Raceway",
-        mograine: "Mograine",
-        "nethergarde-keep": "Nethergarde Keep",
-        patchwerk: "Patchwerk",
-        "pyrewood-village": "Pyrewood Village",
-        razorfen: "Razorfen",
-        sulfuron: "Sulfuron",
-        thekal: "Thekal",
-        transcendence: "Transcendence",
-        venoxis: "Venoxis",
-      },
-    },
-    kr: {
-      realms: {
-        frostmourne: "Frostmourne",
-        iceblood: "Iceblood",
-        lokholar: "Lok'holar",
-        ragnaros: "Ragnaros",
-        "shimmering-flats": "Shimmering Flats",
-      },
-    },
-  };
 
   const dungeonNames = {
     "2": "Temple of the Jade Serpent",
