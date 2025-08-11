@@ -53,7 +53,7 @@ in {
   giantstalker = mkRealm 4811 "eu" "Giantstalker";
   mandokir = mkRealm 4813 "eu" "Mandokir";
   thekal = mkRealm 4815 "eu" "Thekal";
-  "jin-do" = mkRealm 4816 "eu" "Jin'do";
+  "jindo" = mkRealm 4816 "eu" "Jin'do";
 
   # kr
   "shimmering-flats" = mkRealm 4417 "kr" "Shimmering Flats";
