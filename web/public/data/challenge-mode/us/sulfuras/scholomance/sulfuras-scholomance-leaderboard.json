@@ -1,7 +1,7 @@
 {
   "_links": {
     "self": {
-      "href": "https://us.api.blizzard.com/data/wow/connected-realm/4726/mythic-leaderboard/76/period/1024?namespace=dynamic-classic-us"
+      "href": "https://us.api.blizzard.com/data/wow/connected-realm/4726/mythic-leaderboard/76/period/1023?namespace=dynamic-classic-us"
     }
   },
   "map": {
@@ -21,12 +21,135 @@
     },
     "id": 1007
   },
-  "period": 1024,
-  "period_start_timestamp": 1755010800000,
-  "period_end_timestamp": 1755615599000,
+  "period": 1023,
+  "period_start_timestamp": 1754406000000,
+  "period_end_timestamp": 1755010799000,
   "connected_realm": {
     "href": "https://us.api.blizzard.com/data/wow/connected-realm/4726?namespace=dynamic-classic-us"
   },
+  "leading_groups": [
+    {
+      "ranking": 1,
+      "duration": 1287299,
+      "completed_timestamp": 1754192765000,
+      "keystone_level": 1,
+      "members": [
+        {
+          "profile": {
+            "name": "F\u00eezzlewig",
+            "id": 93693283,
+            "realm": {
+              "key": {
+                "href": "https://us.api.blizzard.com/data/wow/realm/4385?namespace=dynamic-classic-us"
+              },
+              "id": 4385,
+              "slug": "pagle"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://us.api.blizzard.com/data/wow/playable-specialization/64?namespace=static-5.5.0_61496-classic-us"
+            },
+            "id": 64
+          }
+        },
+        {
+          "profile": {
+            "name": "Mikephoenix",
+            "id": 97766953,
+            "realm": {
+              "key": {
+                "href": "https://us.api.blizzard.com/data/wow/realm/4728?namespace=dynamic-classic-us"
+              },
+              "id": 4728,
+              "slug": "benediction"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://us.api.blizzard.com/data/wow/playable-specialization/269?namespace=static-5.5.0_61496-classic-us"
+            },
+            "id": 269
+          }
+        },
+        {
+          "profile": {
+            "name": "Regorthweppz",
+            "id": 90476070,
+            "realm": {
+              "key": {
+                "href": "https://us.api.blizzard.com/data/wow/realm/4728?namespace=dynamic-classic-us"
+              },
+              "id": 4728,
+              "slug": "benediction"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://us.api.blizzard.com/data/wow/playable-specialization/105?namespace=static-5.5.0_61496-classic-us"
+            },
+            "id": 105
+          }
+        },
+        {
+          "profile": {
+            "name": "Xeong",
+            "id": 86302835,
+            "realm": {
+              "key": {
+                "href": "https://us.api.blizzard.com/data/wow/realm/4728?namespace=dynamic-classic-us"
+              },
+              "id": 4728,
+              "slug": "benediction"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://us.api.blizzard.com/data/wow/playable-specialization/66?namespace=static-5.5.0_61496-classic-us"
+            },
+            "id": 66
+          }
+        },
+        {
+          "profile": {
+            "name": "Voxir",
+            "id": 97419532,
+            "realm": {
+              "key": {
+                "href": "https://us.api.blizzard.com/data/wow/realm/4726?namespace=dynamic-classic-us"
+              },
+              "id": 4726,
+              "slug": "sulfuras"
+            }
+          },
+          "faction": {
+            "type": "ALLIANCE"
+          },
+          "specialization": {
+            "key": {
+              "href": "https://us.api.blizzard.com/data/wow/playable-specialization/255?namespace=static-5.5.0_61496-classic-us"
+            },
+            "id": 255
+          }
+        }
+      ],
+      "mythic_rating": {
+        "rating": 30.0
+      }
+    }
+  ],
   "map_challenge_mode_id": 76,
   "name": {
     "en_US": "Scholomance",
