@@ -193,11 +193,8 @@
                   )
                   os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-                  # for EU realms, merge with existing data to preserve historical records
-                  if realm_info['region'] == 'eu':
-                      final_data = merge_leaderboard_data(output_path, leaderboard)
-                  else:
-                      final_data = leaderboard
+                  # merge with existing data to preserve historical records for all regions
+                  final_data = merge_leaderboard_data(output_path, leaderboard)
 
                   with open(output_path, 'w', encoding='utf-8') as f:
                       json.dump(final_data, f, indent=2)
