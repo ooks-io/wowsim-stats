@@ -7,7 +7,7 @@ in {
   atiesh = mkRealm 4372 "us" "Atiesh";
   myzrael = mkRealm 4373 "us" "Myzrael";
   "old-blanchy" = mkRealm 4374 "us" "Old Blanchy";
-  azursong = mkRealm 4376 "us" "Azuresong";
+  azuresong = mkRealm 4376 "us" "Azuresong";
   mankrik = mkRealm 4384 "us" "Mankrik";
   pagle = mkRealm 4385 "us" "Pagle";
   ashkandi = mkRealm 4387 "us" "Ashkandi";
