@@ -1,7 +1,7 @@
 {
   "_links": {
     "self": {
-      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4742/mythic-leaderboard/76/period/1023?namespace=dynamic-classic-eu"
+      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4742/mythic-leaderboard/76/period/1024?namespace=dynamic-classic-eu"
     }
   },
   "map": {
@@ -21,11 +21,26 @@
     },
     "id": 1007
   },
-  "period": 1023,
-  "period_start_timestamp": 1754452800000,
-  "period_end_timestamp": 1755057599000,
+  "period": 1024,
+  "period_start_timestamp": 1755057600000,
+  "period_end_timestamp": 1755662399000,
   "connected_realm": {
     "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4742?namespace=dynamic-classic-eu"
+  },
+  "map_challenge_mode_id": 76,
+  "name": {
+    "en_US": "Scholomance",
+    "es_MX": "Scholomance",
+    "pt_BR": "Scolom\u00e2ntia",
+    "de_DE": "Scholomance",
+    "en_GB": "Scholomance",
+    "es_ES": "Scholomance",
+    "fr_FR": "Scholomance",
+    "it_IT": "Scholomance",
+    "ru_RU": "\u041d\u0435\u043a\u0440\u043e\u0441\u0438\u0442\u0435\u0442",
+    "ko_KR": "\uc2a4\uce7c\ub85c\ub9e8\uc2a4",
+    "zh_TW": "\u901a\u9748\u5b78\u9662",
+    "zh_CN": "\u901a\u7075\u5b66\u9662"
   },
   "leading_groups": [
     {
@@ -391,20 +406,5 @@
         "rating": 30.0
       }
     }
-  ],
-  "map_challenge_mode_id": 76,
-  "name": {
-    "en_US": "Scholomance",
-    "es_MX": "Scholomance",
-    "pt_BR": "Scolom\u00e2ntia",
-    "de_DE": "Scholomance",
-    "en_GB": "Scholomance",
-    "es_ES": "Scholomance",
-    "fr_FR": "Scholomance",
-    "it_IT": "Scholomance",
-    "ru_RU": "\u041d\u0435\u043a\u0440\u043e\u0441\u0438\u0442\u0435\u0442",
-    "ko_KR": "\uc2a4\uce7c\ub85c\ub9e8\uc2a4",
-    "zh_TW": "\u901a\u9748\u5b78\u9662",
-    "zh_CN": "\u901a\u7075\u5b66\u9662"
-  }
+  ]
 }

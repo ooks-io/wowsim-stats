@@ -1,7 +1,7 @@
 {
   "_links": {
     "self": {
-      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4703/mythic-leaderboard/2/period/1023?namespace=dynamic-classic-eu"
+      "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4703/mythic-leaderboard/2/period/1024?namespace=dynamic-classic-eu"
     }
   },
   "map": {
@@ -21,11 +21,26 @@
     },
     "id": 960
   },
-  "period": 1023,
-  "period_start_timestamp": 1754452800000,
-  "period_end_timestamp": 1755057599000,
+  "period": 1024,
+  "period_start_timestamp": 1755057600000,
+  "period_end_timestamp": 1755662399000,
   "connected_realm": {
     "href": "https://eu.api.blizzard.com/data/wow/connected-realm/4703?namespace=dynamic-classic-eu"
+  },
+  "map_challenge_mode_id": 2,
+  "name": {
+    "en_US": "Temple of the Jade Serpent",
+    "es_MX": "Templo del Drag\u00f3n de Jade",
+    "pt_BR": "Templo da Serpente de Jade",
+    "de_DE": "Der Tempel der Jadeschlange",
+    "en_GB": "Temple of the Jade Serpent",
+    "es_ES": "Templo del Drag\u00f3n de Jade",
+    "fr_FR": "Temple du Serpent de jade",
+    "it_IT": "Tempio della Serpe di Giada",
+    "ru_RU": "\u0425\u0440\u0430\u043c \u041d\u0435\u0444\u0440\u0438\u0442\u043e\u0432\u043e\u0439 \u0417\u043c\u0435\u0438",
+    "ko_KR": "\uc625\ub8e1\uc0ac",
+    "zh_TW": "\u7389\u86df\u5bfa",
+    "zh_CN": "\u9752\u9f99\u5bfa"
   },
   "leading_groups": [
     {
@@ -512,20 +527,5 @@
         "rating": 30.0
       }
     }
-  ],
-  "map_challenge_mode_id": 2,
-  "name": {
-    "en_US": "Temple of the Jade Serpent",
-    "es_MX": "Templo del Drag\u00f3n de Jade",
-    "pt_BR": "Templo da Serpente de Jade",
-    "de_DE": "Der Tempel der Jadeschlange",
-    "en_GB": "Temple of the Jade Serpent",
-    "es_ES": "Templo del Drag\u00f3n de Jade",
-    "fr_FR": "Temple du Serpent de jade",
-    "it_IT": "Tempio della Serpe di Giada",
-    "ru_RU": "\u0425\u0440\u0430\u043c \u041d\u0435\u0444\u0440\u0438\u0442\u043e\u0432\u043e\u0439 \u0417\u043c\u0435\u0438",
-    "ko_KR": "\uc625\ub8e1\uc0ac",
-    "zh_TW": "\u7389\u86df\u5bfa",
-    "zh_CN": "\u9752\u9f99\u5bfa"
-  }
+  ]
 }
