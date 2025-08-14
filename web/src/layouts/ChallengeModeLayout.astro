@@ -456,8 +456,8 @@ const baseUrl = import.meta.env.BASE_URL;
 
     let teamHtml = "";
     group.members.forEach((member) => {
-      // Handle missing specialization data (deleted/transferred characters)
-      const specId = member.specialization?.id;
+      // Handle both old format (member.specialization.id) and optimized format (member.spec_id)
+      const specId = member.spec_id || member.specialization?.id;
       const spec = specId
         ? window.WoW.getSpecInfo(specId)
         : {
@@ -476,12 +476,15 @@ const baseUrl = import.meta.env.BASE_URL;
           '" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">'
         : "";
 
+      // Handle both old format (member.profile.name) and optimized format (member.name)
+      let playerName = member.name || member.profile?.name;
+      
       // Check if player is from a different realm (for individual realm views only)
-      let playerName = member.profile.name;
+      const memberRealmSlug = member.realm_slug || member.profile?.realm?.slug;
       if (
         isIndividualRealmView &&
-        member.profile.realm?.slug &&
-        member.profile.realm.slug !== currentRealm
+        memberRealmSlug &&
+        memberRealmSlug !== currentRealm
       ) {
         playerName +=
           '<span style="color: #ff6b6b; font-weight: bold; margin-left: 2px;">*</span>';
