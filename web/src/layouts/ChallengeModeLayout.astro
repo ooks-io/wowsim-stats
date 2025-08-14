@@ -5,6 +5,7 @@ import FormSelect from "../components/FormSelect.astro";
 import LoadingState from "../components/LoadingState.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
 import { DATA_MAP } from "../data/realms.js";
+import '../styles/components.scss';
 
 export interface Props {
   initialRegion?: string;
@@ -26,7 +27,6 @@ const baseUrl = import.meta.env.BASE_URL;
   pageTitle="Challenge Mode Leaderboards - MoP Classic"
 >
   <WoWClassColors />
-  <link rel="stylesheet" href="/src/styles/components.scss" />
 
   <style>
     .leaderboard-container {
