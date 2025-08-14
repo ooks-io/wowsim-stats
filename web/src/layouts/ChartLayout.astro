@@ -3,6 +3,7 @@ import Navigation from "../components/Navigation.astro";
 import Callout from "../components/Callout.astro";
 import ItemDatabase from "../components/ItemDatabase.astro";
 import '../styles/components.scss';
+import '../styles/global.css';
 
 export interface Props {
   title: string;
@@ -31,7 +32,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    <link rel="stylesheet" href="/src/styles/global.css" />
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -874,7 +874,7 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     </div>
 
     <script type="module" is:inline define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}>
-      import { initializeChart } from "/src/scripts/chart-logic.js";
+      import { initializeChart } from "/scripts/chart-logic.js";
       initializeChart({ mode, fixedClass, fixedSpec, comparisonType });
     </script>
 
