@@ -2,6 +2,7 @@
 import Navigation from "../components/Navigation.astro";
 import Callout from "../components/Callout.astro";
 import ItemDatabase from "../components/ItemDatabase.astro";
+import '../styles/components.scss';
 
 export interface Props {
   title: string;
@@ -31,7 +32,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <link rel="stylesheet" href="/src/styles/global.css" />
-    <link rel="stylesheet" href="/src/styles/components.scss" />
     <style>
       body {
         font-family: Arial, sans-serif;
