@@ -11,17 +11,27 @@
   --note-color: #7daea3;
 
   /* WoW Class Colors */
-  --class-death-knight: #C41E3A;
-  --class-druid: #FF7C0A;
-  --class-hunter: #AAD372;
-  --class-mage: #3FC7EB;
-  --class-monk: #00FF98;
-  --class-paladin: #F48CBA;
-  --class-priest: #FFFFFF;
-  --class-rogue: #FFF468;
-  --class-shaman: #0070DD;
-  --class-warlock: #8788EE;
-  --class-warrior: #C69B6D;
+  --class-death-knight: #c41e3a;
+  --class-druid: #ff7c0a;
+  --class-hunter: #aad372;
+  --class-mage: #3fc7eb;
+  --class-monk: #00ff98;
+  --class-paladin: #f48cba;
+  --class-priest: #ffffff;
+  --class-rogue: #fff468;
+  --class-shaman: #0070dd;
+  --class-warlock: #8788ee;
+  --class-warrior: #c69b6d;
+
+  /* WoW Item Quality Colors */
+  --quality-poor: #9d9d9d;
+  --quality-common: #ffffff;
+  --quality-uncommon: #1eff00;
+  --quality-rare: #0070dd;
+  --quality-epic: #a335ee;
+  --quality-legendary: #ff8000;
+  --quality-artifact: #e6cc80;
+  --quality-heirloom: #00ccff;
 }
 
 body {
@@ -153,6 +163,51 @@ a:hover {
   margin: 0;
   font-size: 0.9em;
   flex: 1;
+}
+
+/* WoW Item Quality Classes */
+.quality-0,
+.quality-poor {
+  color: var(--quality-poor);
+}
+.quality-1,
+.quality-common {
+  color: var(--quality-common);
+}
+.quality-2,
+.quality-uncommon {
+  color: var(--quality-uncommon);
+}
+.quality-3,
+.quality-rare {
+  color: var(--quality-rare);
+}
+.quality-4,
+.quality-epic {
+  color: var(--quality-epic);
+}
+.quality-5,
+.quality-legendary {
+  color: var(--quality-legendary);
+}
+.quality-6,
+.quality-artifact {
+  color: var(--quality-artifact);
+}
+.quality-7,
+.quality-heirloom {
+  color: var(--quality-heirloom);
+}
+
+.equipment-item-link.quality-0,
+.equipment-item-link.quality-1,
+.equipment-item-link.quality-2,
+.equipment-item-link.quality-3,
+.equipment-item-link.quality-4,
+.equipment-item-link.quality-5,
+.equipment-item-link.quality-6,
+.equipment-item-link.quality-7 {
+  text-decoration: none;
 }
 
 /* Responsive design */

@@ -1,18 +1,18 @@
 ---
 export interface Props {
   message?: string;
-  type?: 'loading' | 'error';
+  type?: "loading" | "error";
   class?: string;
 }
 
-const { message, type = 'loading', class: className } = Astro.props;
+const { message, type = "loading", class: className } = Astro.props;
 ---
 
-<div class={`loading-state ${type} ${className || ''}`.trim()}>
-  {type === 'loading' && (
-    <div class="loading-spinner"></div>
-  )}
-  <p class="loading-message">{message || (type === 'error' ? 'An error occurred' : 'Loading...')}</p>
+<div class={`loading-state ${type} ${className || ""}`.trim()}>
+  {type === "loading" && <div class="loading-spinner" />}
+  <p class="loading-message">
+    {message || (type === "error" ? "An error occurred" : "Loading...")}
+  </p>
 </div>
 
 <style>
@@ -58,7 +58,11 @@ const { message, type = 'loading', class: className } = Astro.props;
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>

@@ -1,20 +1,10 @@
 ---
 import ChallengeModeLayout from "../../layouts/ChallengeModeLayout.astro";
 import { DATA_MAP } from "../../data/realms.js";
+import { DUNGEON_MAP, dungeonNameToSlug } from "../../scripts/wow-constants.js";
 
 export async function getStaticPaths() {
-
-  const dungeonNames = {
-    "2": "Temple of the Jade Serpent",
-    "56": "Stormstout Brewery", 
-    "57": "Gate of the Setting Sun",
-    "58": "Shado-Pan Monastery",
-    "59": "Siege of Niuzao Temple",
-    "60": "Mogu'shan Palace",
-    "76": "Scholomance",
-    "77": "Scarlet Halls",
-    "78": "Scarlet Monastery",
-  };
+  const dungeonNames = DUNGEON_MAP;
 
   const paths = [];
 
@@ -22,50 +12,50 @@ export async function getStaticPaths() {
   for (const [regionKey, regionData] of Object.entries(DATA_MAP)) {
     for (const realmKey of Object.keys(regionData.realms)) {
       for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-        const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const dungeonSlug = dungeonNameToSlug(dungeonName);
         paths.push({
-          params: { 
-            slug: `${regionKey}/${realmKey}/${dungeonSlug}` 
+          params: {
+            slug: `${regionKey}/${realmKey}/${dungeonSlug}`,
           },
           props: {
             initialRegion: regionKey,
             initialRealm: realmKey,
-            initialDungeon: dungeonId
-          }
+            initialDungeon: dungeonId,
+          },
         });
       }
     }
   }
 
-  // 2. Generate regional "all realms" combinations  
-  for (const [regionKey, regionData] of Object.entries(DATA_MAP)) {
+  // 2. Generate regional "all realms" combinations
+  for (const [regionKey] of Object.entries(DATA_MAP)) {
     for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-      const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const dungeonSlug = dungeonNameToSlug(dungeonName);
       paths.push({
-        params: { 
-          slug: `${regionKey}/all/${dungeonSlug}` 
+        params: {
+          slug: `${regionKey}/all/${dungeonSlug}`,
         },
         props: {
           initialRegion: regionKey,
           initialRealm: "all",
-          initialDungeon: dungeonId
-        }
+          initialDungeon: dungeonId,
+        },
       });
     }
   }
 
   // 3. Generate global combinations
   for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-    const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, "-");
     paths.push({
-      params: { 
-        slug: `global/${dungeonSlug}` 
+      params: {
+        slug: `global/${dungeonSlug}`,
       },
       props: {
         initialRegion: "global",
         initialRealm: "global",
-        initialDungeon: dungeonId
-      }
+        initialDungeon: dungeonId,
+      },
     });
   }
 
@@ -74,10 +64,14 @@ export async function getStaticPaths() {
 
 // Get initial values from props passed by getStaticPaths
 const { initialRegion, initialRealm, initialDungeon } = Astro.props;
-console.log('Initial values from props:', { initialRegion, initialRealm, initialDungeon });
+console.log("Initial values from props:", {
+  initialRegion,
+  initialRealm,
+  initialDungeon,
+});
 ---
 
-<ChallengeModeLayout 
+<ChallengeModeLayout
   initialRegion={initialRegion}
   initialRealm={initialRealm}
   initialDungeon={initialDungeon}

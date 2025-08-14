@@ -4,7 +4,7 @@ export const DATA_MAP = {
     realms: {
       angerforge: "Angerforge",
       arugal: "Arugal",
-      ashkandi: "Ashkandi", 
+      ashkandi: "Ashkandi",
       atiesh: "Atiesh",
       azuresong: "Azuresong",
       benediction: "Benediction",
@@ -42,7 +42,7 @@ export const DATA_MAP = {
       giantstalker: "Giantstalker",
       golemagg: "Golemagg",
       "hydraxian-waterlords": "Hydraxian Waterlords",
-      "jindo": "Jin'do",
+      jindo: "Jin'do",
       lakeshire: "Lakeshire",
       mandokir: "Mandokir",
       "mirage-raceway": "Mirage Raceway",

@@ -29,7 +29,7 @@ const { item } = Astro.props;
 // Slot type mappings (based on WoW equipment slot types)
 const slotNames: { [key: number]: string } = {
   1: "Head",
-  2: "Neck", 
+  2: "Neck",
   3: "Shoulder",
   4: "Shirt",
   5: "Chest",
@@ -54,13 +54,13 @@ const slotNames: { [key: number]: string } = {
   24: "Ammo",
   25: "Thrown",
   26: "Ranged Right",
-  28: "Relic"
+  28: "Relic",
 };
 
 // Stat name mappings (from itemDatabase.nix)
 const statNames: { [key: string]: string } = {
   "0": "Strength",
-  "1": "Agility", 
+  "1": "Agility",
   "2": "Stamina",
   "3": "Intellect",
   "4": "Spirit",
@@ -71,7 +71,7 @@ const statNames: { [key: string]: string } = {
   "9": "Dodge Rating",
   "10": "Parry Rating",
   "11": "Mastery Rating",
-  "17": "Armor"
+  "17": "Armor",
 };
 
 // Quality color classes
@@ -83,11 +83,12 @@ const qualityColors: { [key: number]: string } = {
   4: "quality-4", // Epic (Purple)
   5: "quality-5", // Legendary (Orange)
   6: "quality-6", // Artifact (Light Red)
-  7: "quality-7"  // Heirloom (Gold)
+  7: "quality-7", // Heirloom (Gold)
 };
 
 const slotName = item.type ? slotNames[item.type] || "Unknown" : "";
-const qualityClass = item.quality !== undefined ? qualityColors[item.quality] || "" : "";
+const qualityClass =
+  item.quality !== undefined ? qualityColors[item.quality] || "" : "";
 
 // Parse item stats
 const itemStats: string[] = [];
@@ -113,74 +114,68 @@ if (item.stats?.stats) {
   <div class={`item-name ${qualityClass}`}>
     {item.name}
   </div>
-  
-  {item.stats?.ilvl && (
-    <div class="item-ilvl">
-      ilvl: {item.stats.ilvl}
-    </div>
-  )}
-  
-  {slotName && (
-    <div class="item-slot">
-      {slotName}
-    </div>
-  )}
-  
-  {armorValue > 0 && (
-    <div class="item-armor">
-      {armorValue} Armor
-    </div>
-  )}
-  
-  {itemStats.length > 0 && (
-    <div class="item-stats">
-      {itemStats.map(stat => (
-        <div class="item-stat">{stat}</div>
-      ))}
-    </div>
-  )}
-  
-  {item.enchant && (
-    <div class="item-enchant">
-      Enchanted: {item.enchant.name}
-    </div>
-  )}
-  
-  {item.reforging && (
-    <div class="item-reforge">
-      Reforged: {item.reforging.description}
-    </div>
-  )}
-  
-  {item.gems && item.gems.length > 0 && (
-    <div class="item-gems">
-      <div class="gems-title">Gems:</div>
-      {item.gems.map(gem => (
-        <div class="gem-item">
-          {gem.icon && (
-            <img 
-              src={`https://wow.zamimg.com/images/wow/icons/small/${gem.icon}.jpg`}
-              alt={gem.name}
-              class="gem-icon"
-              loading="lazy"
-            />
-          )}
-          <div class="gem-info">
-            <div class={`gem-name ${gem.quality !== undefined ? qualityColors[gem.quality] : ''}`}>
-              {gem.name}
-            </div>
-            {gem.stats && gem.stats.length > 0 && (
-              <div class="gem-stats">
-                {gem.stats.map(stat => (
-                  <div class="gem-stat">{stat}</div>
-                ))}
-              </div>
+
+  {item.stats?.ilvl && <div class="item-ilvl">ilvl: {item.stats.ilvl}</div>}
+
+  {slotName && <div class="item-slot">{slotName}</div>}
+
+  {armorValue > 0 && <div class="item-armor">{armorValue} Armor</div>}
+
+  {
+    itemStats.length > 0 && (
+      <div class="item-stats">
+        {itemStats.map((stat) => (
+          <div class="item-stat">{stat}</div>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    item.enchant && (
+      <div class="item-enchant">Enchanted: {item.enchant.name}</div>
+    )
+  }
+
+  {
+    item.reforging && (
+      <div class="item-reforge">Reforged: {item.reforging.description}</div>
+    )
+  }
+
+  {
+    item.gems && item.gems.length > 0 && (
+      <div class="item-gems">
+        <div class="gems-title">Gems:</div>
+        {item.gems.map((gem) => (
+          <div class="gem-item">
+            {gem.icon && (
+              <img
+                src={`https://wow.zamimg.com/images/wow/icons/small/${gem.icon}.jpg`}
+                alt={gem.name}
+                class="gem-icon"
+                loading="lazy"
+              />
             )}
+            <div class="gem-info">
+              <div
+                class={`gem-name ${gem.quality !== undefined ? qualityColors[gem.quality] : ""}`}
+              >
+                {gem.name}
+              </div>
+              {gem.stats && gem.stats.length > 0 && (
+                <div class="gem-stats">
+                  {gem.stats.map((stat) => (
+                    <div class="gem-stat">{stat}</div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  )}
+        ))}
+      </div>
+    )
+  }
 </div>
 
 <style>
@@ -190,7 +185,7 @@ if (item.stats?.stats) {
     border-radius: 8px;
     padding: 12px;
     color: #fff;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: "Segoe UI", Arial, sans-serif;
     font-size: 13px;
     line-height: 1.4;
     min-width: 200px;
@@ -198,9 +193,9 @@ if (item.stats?.stats) {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
     position: relative;
   }
-  
+
   .item-tooltip::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -208,105 +203,121 @@ if (item.stats?.stats) {
     height: 1px;
     background: linear-gradient(90deg, transparent, #666, transparent);
   }
-  
+
   .item-name {
     font-weight: bold;
     font-size: 14px;
     margin-bottom: 4px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   }
-  
+
   .item-ilvl {
     color: #ffd700;
     font-weight: 500;
     margin-bottom: 2px;
   }
-  
+
   .item-slot {
     color: #aaa;
     font-style: italic;
     margin-bottom: 6px;
   }
-  
+
   .item-armor {
     color: #c0c0c0;
     margin-bottom: 6px;
     font-weight: 500;
   }
-  
+
   .item-stats {
     margin-bottom: 8px;
   }
-  
+
   .item-stat {
     color: #40ff40;
     font-weight: 500;
     margin-bottom: 1px;
   }
-  
+
   .item-enchant {
     color: #40ff40;
     font-style: italic;
     margin-bottom: 4px;
   }
-  
+
   .item-reforge {
     color: #ff8040;
     font-style: italic;
     margin-bottom: 8px;
   }
-  
+
   .item-gems {
     border-top: 1px solid #444;
     padding-top: 8px;
   }
-  
+
   .gems-title {
     color: #ffd700;
     font-weight: 600;
     margin-bottom: 6px;
   }
-  
+
   .gem-item {
     display: flex;
     align-items: flex-start;
     gap: 6px;
     margin-bottom: 4px;
   }
-  
+
   .gem-icon {
     width: 16px;
     height: 16px;
     border-radius: 2px;
     flex-shrink: 0;
   }
-  
+
   .gem-info {
     flex: 1;
   }
-  
+
   .gem-name {
     font-weight: 500;
     margin-bottom: 1px;
     font-size: 12px;
   }
-  
+
   .gem-stats {
     font-size: 11px;
   }
-  
+
   .gem-stat {
     color: #40ff40;
     margin-bottom: 1px;
   }
-  
+
   /* Quality colors - matching WoW item quality */
-  .quality-0 { color: #9d9d9d; } /* Poor (Gray) */
-  .quality-1 { color: #ffffff; } /* Common (White) */
-  .quality-2 { color: #1eff00; } /* Uncommon (Green) */
-  .quality-3 { color: #0070dd; } /* Rare (Blue) */
-  .quality-4 { color: #a335ee; } /* Epic (Purple) */
-  .quality-5 { color: #ff8000; } /* Legendary (Orange) */
-  .quality-6 { color: #e6cc80; } /* Artifact (Light Red) */
-  .quality-7 { color: #00ccff; } /* Heirloom (Gold) */
+  .quality-0 {
+    color: #9d9d9d;
+  } /* Poor (Gray) */
+  .quality-1 {
+    color: #ffffff;
+  } /* Common (White) */
+  .quality-2 {
+    color: #1eff00;
+  } /* Uncommon (Green) */
+  .quality-3 {
+    color: #0070dd;
+  } /* Rare (Blue) */
+  .quality-4 {
+    color: #a335ee;
+  } /* Epic (Purple) */
+  .quality-5 {
+    color: #ff8000;
+  } /* Legendary (Orange) */
+  .quality-6 {
+    color: #e6cc80;
+  } /* Artifact (Light Red) */
+  .quality-7 {
+    color: #00ccff;
+  } /* Heirloom (Gold) */
 </style>

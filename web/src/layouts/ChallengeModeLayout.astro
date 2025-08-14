@@ -26,27 +26,16 @@ const baseUrl = import.meta.env.BASE_URL;
   pageTitle="Challenge Mode Leaderboards - MoP Classic"
 >
   <WoWClassColors />
+  <link rel="stylesheet" href="/src/styles/components.scss" />
 
   <style>
     .leaderboard-container {
-      background-color: var(--bg-secondary);
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
       overflow: hidden;
       margin-top: 20px;
     }
 
-    .hidden {
-      display: none;
-    }
-
     .loading-overlay,
     .error-overlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1000;
       min-width: 300px;
     }
 
@@ -69,13 +58,6 @@ const baseUrl = import.meta.env.BASE_URL;
       padding: 40px 20px;
     }
 
-    .no-data-content h3 {
-      color: var(--highlight-color);
-      margin: 0 0 15px 0;
-      font-size: 1.4em;
-      font-weight: 600;
-    }
-
     .no-data-content p {
       color: var(--text-secondary);
       margin: 0;
@@ -85,38 +67,6 @@ const baseUrl = import.meta.env.BASE_URL;
     #leaderboard-rows {
       display: table;
       width: 100%;
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .info-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .info-label {
-      font-size: 0.85em;
-      color: var(--text-muted);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .info-value {
-      font-size: 1em;
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    @media (max-width: 768px) {
-      .info-grid {
-        grid-template-columns: 1fr;
-      }
     }
     @media (max-width: 1024px) {
       .leaderboard-header,
@@ -319,7 +269,7 @@ const baseUrl = import.meta.env.BASE_URL;
   <div id="no-data" class="no-data-message hidden">
     <div class="card">
       <div class="no-data-content">
-        <h3>No Times Found</h3>
+        <h3 class="section-title-large">No Times Found</h3>
         <p>
           No Challenge Mode times were found for this realm and dungeon
           combination.
@@ -365,7 +315,7 @@ const baseUrl = import.meta.env.BASE_URL;
       </div>
     </div>
 
-    <div class="leaderboard-container">
+    <div class="leaderboard-container card-container">
       <div id="leaderboard-rows"></div>
     </div>
   </div>
@@ -448,10 +398,15 @@ const baseUrl = import.meta.env.BASE_URL;
 
 <script
   is:inline
-  define:vars={{ baseUrl, initialRegion, initialRealm, initialDungeon, DATA_MAP }}
+  define:vars={{
+    baseUrl,
+    initialRegion,
+    initialRealm,
+    initialDungeon,
+    DATA_MAP,
+  }}
 >
   // DATA_MAP is now passed from Astro via define:vars
-  // Dungeon name mapping
   const dungeonNames = {
     "2": "Temple of the Jade Serpent",
     "56": "Stormstout Brewery",
@@ -463,6 +418,10 @@ const baseUrl = import.meta.env.BASE_URL;
     "77": "Scarlet Halls",
     "78": "Scarlet Monastery",
   };
+
+  function dungeonNameToSlug(dungeonName) {
+    return dungeonName.toLowerCase().replace(/[^a-z0-9]/g, "-");
+  }
 
   function formatDuration(milliseconds) {
     const totalSeconds = Math.floor(milliseconds / 1000);
@@ -760,9 +719,7 @@ const baseUrl = import.meta.env.BASE_URL;
     console.log("Getting data filename with:", { region, realm, dungeon });
     console.log("Dungeon name lookup:", dungeonNames[dungeon]);
 
-    const dungeonSlug = dungeonNames[dungeon]
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "-");
+    const dungeonSlug = dungeonNameToSlug(dungeonNames[dungeon]);
 
     let fileName;
 
@@ -853,9 +810,7 @@ const baseUrl = import.meta.env.BASE_URL;
       return;
     }
 
-    const dungeonName = dungeonNames[dungeon]
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "-");
+    const dungeonName = dungeonNameToSlug(dungeonNames[dungeon]);
 
     let newURL;
 
@@ -923,4 +878,3 @@ const baseUrl = import.meta.env.BASE_URL;
     });
   });
 </script>
-

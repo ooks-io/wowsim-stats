@@ -7,7 +7,7 @@ export interface Props {
 const { title, class: className } = Astro.props;
 ---
 
-<div class={`info-container card ${className || ''}`.trim()}>
+<div class={`info-container card ${className || ""}`.trim()}>
   {title && <h2 class="card-title-large">{title}</h2>}
   <div class="info-grid">
     <slot />
