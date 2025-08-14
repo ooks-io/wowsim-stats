@@ -1,184 +1,22 @@
 ---
-// WoW Class Colors utility component
-// Provides consistent class color mappings and helper functions
+
 ---
 
-<script is:inline>
-  // WoW Specialization ID to role/class mapping
+<script type="module" is:inline>
+  import {
+    SPEC_MAP,
+    SPEC_ICON_MAP,
+    getClassColor,
+    getSpecInfo,
+    getSpecIcon,
+    createPlayerElement,
+  } from "/src/scripts/wow-constants.js";
+
   window.WoW = window.WoW || {};
-  
-  window.WoW.specMap = {
-    // Tank specs
-    73: { role: 'tank', class: 'Warrior', spec: 'Protection' },
-    104: { role: 'tank', class: 'Druid', spec: 'Guardian' }, 
-    250: { role: 'tank', class: 'Death Knight', spec: 'Blood' },
-    268: { role: 'tank', class: 'Monk', spec: 'Brewmaster' },
-    66: { role: 'tank', class: 'Paladin', spec: 'Protection' },
-
-    // Healer specs
-    65: { role: 'healer', class: 'Paladin', spec: 'Holy' },
-    256: { role: 'healer', class: 'Priest', spec: 'Discipline' },
-    257: { role: 'healer', class: 'Priest', spec: 'Holy' },
-    264: { role: 'healer', class: 'Shaman', spec: 'Restoration' },
-    105: { role: 'healer', class: 'Druid', spec: 'Restoration' },
-    270: { role: 'healer', class: 'Monk', spec: 'Mistweaver' },
-
-    // DPS specs - Physical
-    71: { role: 'dps', class: 'Warrior', spec: 'Arms' },
-    72: { role: 'dps', class: 'Warrior', spec: 'Fury' },
-    70: { role: 'dps', class: 'Paladin', spec: 'Retribution' },
-    255: { role: 'dps', class: 'Hunter', spec: 'Survival' },
-    254: { role: 'dps', class: 'Hunter', spec: 'Marksmanship' },
-    253: { role: 'dps', class: 'Hunter', spec: 'Beast Mastery' },
-    259: { role: 'dps', class: 'Rogue', spec: 'Assassination' },
-    260: { role: 'dps', class: 'Rogue', spec: 'Outlaw' },
-    261: { role: 'dps', class: 'Rogue', spec: 'Subtlety' },
-    251: { role: 'dps', class: 'Death Knight', spec: 'Frost' },
-    252: { role: 'dps', class: 'Death Knight', spec: 'Unholy' },
-    263: { role: 'dps', class: 'Shaman', spec: 'Enhancement' },
-    269: { role: 'dps', class: 'Monk', spec: 'Windwalker' },
-    103: { role: 'dps', class: 'Druid', spec: 'Feral' },
-
-    // DPS specs - Magical
-    262: { role: 'dps', class: 'Shaman', spec: 'Elemental' },
-    62: { role: 'dps', class: 'Mage', spec: 'Arcane' },
-    63: { role: 'dps', class: 'Mage', spec: 'Fire' },
-    64: { role: 'dps', class: 'Mage', spec: 'Frost' },
-    265: { role: 'dps', class: 'Warlock', spec: 'Affliction' },
-    266: { role: 'dps', class: 'Warlock', spec: 'Demonology' },
-    267: { role: 'dps', class: 'Warlock', spec: 'Destruction' },
-    258: { role: 'dps', class: 'Priest', spec: 'Shadow' },
-    102: { role: 'dps', class: 'Druid', spec: 'Balance' }
-  };
-
-  // Helper functions
-  window.WoW.getClassColor = function(className) {
-    const cssVarName = `--class-${className.toLowerCase().replace(' ', '-')}`;
-    return `var(${cssVarName}, #ffffff)`;
-  };
-
-  window.WoW.getSpecInfo = function(specId) {
-    return window.WoW.specMap[specId] || {
-      role: 'dps',
-      class: 'Unknown',
-      spec: 'Unknown',
-    };
-  };
-
-  // Exact icon mappings from Zamimg
-  window.WoW.specIconMap = {
-    // Mage
-    'Mage|Frost': 'https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg',
-    'Mage|Fire': 'https://wow.zamimg.com/images/wow/icons/large/spell_fire_flamebolt.jpg',
-    'Mage|Arcane': 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg',
-    
-    // Paladin
-    'Paladin|Holy': 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg',
-    'Paladin|Protection': 'https://wow.zamimg.com/images/wow/icons/large/ability_paladin_shieldofthetemplar.jpg',
-    'Paladin|Retribution': 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg',
-    
-    // Death Knight
-    'Death Knight|Blood': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_bloodpresence.jpg',
-    'Death Knight|Frost': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_frostpresence.jpg',
-    'Death Knight|Unholy': 'https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg',
-    
-    // Druid
-    'Druid|Balance': 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg',
-    'Druid|Feral': 'https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg',
-    'Druid|Guardian': 'https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg',
-    'Druid|Restoration': 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg',
-    
-    // Hunter
-    'Hunter|Beast Mastery': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg',
-    'Hunter|Marksmanship': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_focusedaim.jpg',
-    'Hunter|Survival': 'https://wow.zamimg.com/images/wow/icons/large/ability_hunter_camouflage.jpg',
-    
-    // Monk
-    'Monk|Brewmaster': 'https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg',
-    'Monk|Windwalker': 'https://wow.zamimg.com/images/wow/icons/large/spell_monk_windwalker_spec.jpg',
-    'Monk|Mistweaver': 'https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg',
-    
-    // Priest
-    'Priest|Discipline': 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg',
-    'Priest|Holy': 'https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg',
-    'Priest|Shadow': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg',
-    
-    // Rogue
-    'Rogue|Subtlety': 'https://wow.zamimg.com/images/wow/icons/large/ability_stealth.jpg',
-    'Rogue|Assassination': 'https://wow.zamimg.com/images/wow/icons/large/ability_rogue_eviscerate.jpg',
-    'Rogue|Outlaw': 'https://wow.zamimg.com/images/wow/icons/large/ability_backstab.jpg',
-    
-    // Shaman
-    'Shaman|Elemental': 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg',
-    'Shaman|Enhancement': 'https://wow.zamimg.com/images/wow/icons/large/spell_shaman_improvedstormstrike.jpg',
-    'Shaman|Restoration': 'https://wow.zamimg.com/images/wow/icons/large/spell_nature_magicimmunity.jpg',
-    
-    // Warlock
-    'Warlock|Affliction': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_deathcoil.jpg',
-    'Warlock|Destruction': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_rainoffire.jpg',
-    'Warlock|Demonology': 'https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg',
-    
-    // Warrior
-    'Warrior|Arms': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_savageblow.jpg',
-    'Warrior|Fury': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg',
-    'Warrior|Protection': 'https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg',
-  };
-
-  window.WoW.getSpecIcon = function(className, specName) {
-    if (className === 'Unknown' || specName === 'Unknown') {
-      return null;
-    }
-    
-    const iconKey = `${className}|${specName}`;
-    return window.WoW.specIconMap[iconKey] || null;
-  };
-
-  window.WoW.createPlayerElement = function(member) {
-    // Handle missing specialization data (deleted/transferred characters)
-    const specId = member.specialization?.id;
-    const spec = specId ? window.WoW.getSpecInfo(specId) : {
-      role: 'dps',
-      class: 'Unknown',
-      spec: 'Unknown',
-    };
-
-    // Create container for icon + name
-    const playerContainer = document.createElement('span');
-    playerContainer.className = 'player-container';
-    playerContainer.style.cssText = `
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 4px !important;
-      margin-right: 8px !important;
-    `;
-
-    // Create spec icon if available
-    const iconUrl = window.WoW.getSpecIcon(spec.class, spec.spec);
-    if (iconUrl) {
-      const iconImg = document.createElement('img');
-      iconImg.src = iconUrl;
-      iconImg.alt = `${spec.spec} ${spec.class}`;
-      iconImg.className = 'spec-icon';
-      iconImg.style.cssText = `
-        width: 16px !important;
-        height: 16px !important;
-        border-radius: 2px !important;
-        flex-shrink: 0 !important;
-      `;
-      playerContainer.appendChild(iconImg);
-    }
-
-    // Create name span
-    const nameSpan = document.createElement('span');
-    nameSpan.className = 'player-name';
-    nameSpan.style.cssText = `
-      color: ${window.WoW.getClassColor(spec.class)} !important;
-      font-weight: 600 !important;
-      font-size: 0.9em !important;
-    `;
-    nameSpan.textContent = member.profile.name;
-    playerContainer.appendChild(nameSpan);
-
-    return playerContainer;
-  };
+  window.WoW.specMap = SPEC_MAP;
+  window.WoW.specIconMap = SPEC_ICON_MAP;
+  window.WoW.getClassColor = getClassColor;
+  window.WoW.getSpecInfo = getSpecInfo;
+  window.WoW.getSpecIcon = getSpecIcon;
+  window.WoW.createPlayerElement = createPlayerElement;
 </script>

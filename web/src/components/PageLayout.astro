@@ -20,12 +20,10 @@ const { title, description, pageTitle } = Astro.props;
   </head>
   <body>
     <Navigation />
-    
+
     <div class="page-header">
       <h1 class="page-title">{title}</h1>
-      {description && (
-        <p class="page-description">{description}</p>
-      )}
+      {description && <p class="page-description">{description}</p>}
     </div>
 
     <div class="page-container">

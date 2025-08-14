@@ -8,7 +8,7 @@ export interface Props {
 const { label, value, class: className } = Astro.props;
 ---
 
-<div class={`info-item ${className || ''}`.trim()}>
+<div class={`info-item ${className || ""}`.trim()}>
   <span class="info-label">{label}</span>
   <span class="info-value">{value}</span>
 </div>

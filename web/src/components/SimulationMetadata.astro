@@ -1,8 +1,14 @@
 ---
+import {
+  formatDuration,
+  formatRaidBuffs,
+  formatSimulationDate,
+} from "../scripts/utils.js";
+
 export interface Props {
   metadata: {
     name?: string;
-    timestamp: string;
+    timestamp: string | number;
     iterations: number;
     specCount?: number;
     encounterDuration?: number;
@@ -14,31 +20,7 @@ export interface Props {
 
 const { metadata } = Astro.props;
 
-const simulationDate = new Date(metadata.timestamp).toLocaleString('en-US', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  timeZoneName: 'short'
-});
-
-const formatDuration = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s`;
-};
-
-const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
-  const activeBuffs = Object.entries(buffs)
-    .filter(([_, value]) => value !== false && value !== 0)
-    .map(([key, value]) => {
-      // Convert camelCase to readable format
-      const readable = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-      return typeof value === 'number' && value > 1 ? `${readable} (${value})` : readable;
-    });
-  return activeBuffs.join(', ');
-};
+const simulationDate = formatSimulationDate(metadata.timestamp as any);
 ---
 
 <div class="simulation-metadata">
@@ -48,46 +30,60 @@ const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
       <span class="metadata-label">Iterations</span>
       <span class="metadata-value">{metadata.iterations.toLocaleString()}</span>
     </div>
-    
-    {metadata.specCount && (
-      <div class="metadata-item">
-        <span class="metadata-label">Specs Tested</span>
-        <span class="metadata-value">{metadata.specCount}</span>
-      </div>
-    )}
-    
-    {metadata.encounterDuration && (
-      <div class="metadata-item">
-        <span class="metadata-label">Encounter Duration</span>
-        <span class="metadata-value">{formatDuration(metadata.encounterDuration)}</span>
-      </div>
-    )}
-    
-    {metadata.encounterVariation && (
-      <div class="metadata-item">
-        <span class="metadata-label">Duration Variation</span>
-        <span class="metadata-value">±{metadata.encounterVariation}s</span>
-      </div>
-    )}
-    
-    {metadata.targetCount && (
-      <div class="metadata-item">
-        <span class="metadata-label">Target Count</span>
-        <span class="metadata-value">{metadata.targetCount}</span>
-      </div>
-    )}
-    
+
+    {
+      metadata.specCount && (
+        <div class="metadata-item">
+          <span class="metadata-label">Specs Tested</span>
+          <span class="metadata-value">{metadata.specCount}</span>
+        </div>
+      )
+    }
+
+    {
+      metadata.encounterDuration && (
+        <div class="metadata-item">
+          <span class="metadata-label">Encounter Duration</span>
+          <span class="metadata-value">
+            {formatDuration(metadata.encounterDuration)}
+          </span>
+        </div>
+      )
+    }
+
+    {
+      metadata.encounterVariation && (
+        <div class="metadata-item">
+          <span class="metadata-label">Duration Variation</span>
+          <span class="metadata-value">±{metadata.encounterVariation}s</span>
+        </div>
+      )
+    }
+
+    {
+      metadata.targetCount && (
+        <div class="metadata-item">
+          <span class="metadata-label">Target Count</span>
+          <span class="metadata-value">{metadata.targetCount}</span>
+        </div>
+      )
+    }
+
     <div class="metadata-item">
       <span class="metadata-label">Date Simulated</span>
       <span class="metadata-value">{simulationDate}</span>
     </div>
-    
-    {metadata.raidBuffs && (
-      <div class="metadata-item metadata-item-wide">
-        <span class="metadata-label">Active Raid Buffs</span>
-        <span class="metadata-value metadata-value-wrap">{formatRaidBuffs(metadata.raidBuffs)}</span>
-      </div>
-    )}
+
+    {
+      metadata.raidBuffs && (
+        <div class="metadata-item metadata-item-wide">
+          <span class="metadata-label">Active Raid Buffs</span>
+          <span class="metadata-value metadata-value-wrap">
+            {formatRaidBuffs(metadata.raidBuffs)}
+          </span>
+        </div>
+      )
+    }
   </div>
 </div>
 
@@ -99,26 +95,26 @@ const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
     margin-top: 30px;
     border: 1px solid #4a4a4a;
   }
-  
+
   .metadata-title {
     color: var(--highlight-color);
     margin: 0 0 15px 0;
     font-size: 1.2em;
     font-weight: 600;
   }
-  
+
   .metadata-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
   }
-  
+
   .metadata-item {
     display: flex;
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .metadata-label {
     font-size: 0.85em;
     color: #a9a9a9;
@@ -126,23 +122,23 @@ const formatRaidBuffs = (buffs: Record<string, boolean | number>) => {
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   .metadata-value {
     font-size: 1em;
     color: #ffffff;
     font-weight: 600;
   }
-  
+
   .metadata-item-wide {
     grid-column: 1 / -1;
   }
-  
+
   .metadata-value-wrap {
     white-space: normal;
     word-wrap: break-word;
     line-height: 1.4;
   }
-  
+
   @media (max-width: 768px) {
     .metadata-grid {
       grid-template-columns: 1fr;
