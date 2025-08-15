@@ -123,7 +123,12 @@
 
               for run in all_groups:
                   # create a unique identifier for each run using timestamp, duration, and sorted player IDs
-                  player_ids = sorted([member["profile"]["id"] for member in run["members"]])
+                  # support both old format (member["profile"]["id"]) and optimized format (member["id"])
+                  player_ids = []
+                  for member in run["members"]:
+                      member_id = member.get("id") or member.get("profile", {}).get("id", 0)
+                      player_ids.append(member_id)
+                  player_ids = sorted(player_ids)
                   unique_key = (run["completed_timestamp"], run["duration"], tuple(player_ids))
 
                   if unique_key not in seen:
