@@ -46,30 +46,30 @@
 
       singleTarget = {
         apl = "default";
-        p1.gearset = "p1_bis_dw";
-        preRaid.gearset = "p1_prebis_dw";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.xuen;
         glyphs = windwalker.glyphs.default;
       };
 
       multiTarget = {
         apl = "default";
-        p1.gearset = "p1_bis_dw";
-        preRaid.gearset = "p1_prebis_dw";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.rjw;
         glyphs = windwalker.glyphs.default;
       };
 
       cleave = {
         apl = "default";
-        p1.gearset = "p1_bis_dw";
-        preRaid.gearset = "p1_prebis_dw";
+        p1.gearset = "p1_bis";
+        preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.rjw;
         glyphs = windwalker.glyphs.default;
       };
 
       challengeMode = {
-        gearset = "p1_bis_dw";
+        gearset = "p1_bis";
         talents = windwalker.talents.xuen;
         glyphs = windwalker.glyphs.default;
       };
