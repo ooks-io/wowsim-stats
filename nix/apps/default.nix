@@ -1,11 +1,6 @@
 {
   lib,
-  classes,
-  encounter,
-  buffs,
-  debuffs,
   inputs,
-  trinket,
   api,
   simulation,
   ...
@@ -15,23 +10,25 @@
     getDB = pkgs.callPackage ./getDB.nix {inherit inputs;};
     getCMLeaders = import ./challenge-mode-leaderboard.nix {inherit api writers python3Packages;};
     parseCMs = import ./challenge-mode-parser.nix {inherit api writers python3Packages;};
+    teamLeaderboards = import ./team-leaderboard-generator.nix {inherit writers python3Packages;};
+    playerLeaderboards = import ./player-leaderboard-generator.nix {inherit writers python3Packages;};
     # Convert simulation data to apps
     simulationApps =
-      lib.mapAttrs (name: sim: {
+      lib.mapAttrs (_name: sim: {
         type = "app";
         program = "${sim.script}/bin/${sim.metadata.output}-aggregator";
       })
       (simulation.generateMassSimulations pkgs);
 
     raceComparisonApps =
-      lib.mapAttrs (name: raceComp: {
+      lib.mapAttrs (_name: raceComp: {
         type = "app";
         program = "${raceComp.script}/bin/${raceComp.metadata.output}-aggregator";
       })
       (simulation.generateRaceComparisons pkgs);
 
     trinketComparisonApps =
-      lib.mapAttrs (name: trinketComp: {
+      lib.mapAttrs (_name: trinketComp: {
         type = "app";
         program = "${trinketComp.script}/bin/${trinketComp.metadata.output}-aggregator";
       })
@@ -57,6 +54,14 @@
         parseCM = {
           type = "app";
           program = "${parseCMs}/bin/cm-leaderboard-parser";
+        };
+        teamLeaderboards = {
+          type = "app";
+          program = "${teamLeaderboards}/bin/team-leaderboard-generator";
+        };
+        playerLeaderboards = {
+          type = "app";
+          program = "${playerLeaderboards}/bin/player-leaderboard-generator";
         };
         testGroupSim = {
           type = "app";
