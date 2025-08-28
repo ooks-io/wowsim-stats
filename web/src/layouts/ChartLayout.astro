@@ -2,8 +2,8 @@
 import Navigation from "../components/Navigation.astro";
 import Callout from "../components/Callout.astro";
 import ItemDatabase from "../components/ItemDatabase.astro";
-import '../styles/components.scss';
-import '../styles/global.css';
+import "../styles/components.scss";
+import "../styles/global.css";
 
 export interface Props {
   title: string;
@@ -66,8 +66,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         margin: 0 auto;
         padding: 20px;
       }
-
-
 
       .controls-grid {
         display: flex;
@@ -151,12 +149,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       }
     </style>
     <style is:global>
-
-
-
-
-
-
       .chart-bars {
         display: flex;
         flex-direction: column;
@@ -633,9 +625,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         gap: 8px;
       }
 
- 
-
-
       /* Glyph-specific styling */
       .consumable-item-header img {
         flex-shrink: 0;
@@ -873,7 +862,11 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       <div id="chart-container" class="card"></div>
     </div>
 
-    <script type="module" is:inline define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}>
+    <script
+      type="module"
+      is:inline
+      define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}
+    >
       import { initializeChart } from "/scripts/chart-logic.js";
       initializeChart({ mode, fixedClass, fixedSpec, comparisonType });
     </script>

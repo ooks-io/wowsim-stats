@@ -5,15 +5,17 @@ import FormSelect from "../components/FormSelect.astro";
 import LoadingState from "../components/LoadingState.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
 import { DATA_MAP } from "../data/realms.js";
-import '../styles/components.scss';
+import "../styles/components.scss";
 
 export interface Props {
+  initialLeaderboardType?: string;
   initialRegion?: string;
   initialRealm?: string;
   initialDungeon?: string;
 }
 
 const {
+  initialLeaderboardType = "dungeon",
   initialRegion = "",
   initialRealm = "",
   initialDungeon = "",
@@ -181,82 +183,196 @@ const baseUrl = import.meta.env.BASE_URL;
       font-family: "Courier New", monospace;
       font-size: 0.9em;
     }
+
+    /* Checkbox styling */
+    .form-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .checkbox-input {
+      width: 18px;
+      height: 18px;
+      appearance: none;
+      background-color: var(--bg-primary);
+      border: 2px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-input:checked {
+      background-color: var(--highlight-color);
+      border-color: var(--highlight-color);
+    }
+
+    .checkbox-input:checked::after {
+      content: "✓";
+      position: absolute;
+      top: -1px;
+      left: 2px;
+      color: #000;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .checkbox-input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
+    }
+
+    .checkbox-input:hover {
+      border-color: var(--highlight-color);
+    }
+
+    .checkbox-label {
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .checkbox-label:hover {
+      color: var(--highlight-color);
+    }
   </style>
 
   <ControlPanel title="Leaderboard Options">
     <FormSelect
-      id="region"
-      label="Region"
+      id="leaderboard-type"
+      label="Leaderboard Type"
       options={[
-        { value: "", label: "Select Region", selected: initialRegion === "" },
-        { value: "us", label: "US", selected: initialRegion === "us" },
-        { value: "eu", label: "EU", selected: initialRegion === "eu" },
-        { value: "kr", label: "KR", selected: initialRegion === "kr" },
         {
-          value: "global",
-          label: "Global",
-          selected: initialRegion === "global",
+          value: "players",
+          label: "Players",
+          selected: initialLeaderboardType === "players",
+        },
+        {
+          value: "teams",
+          label: "Teams",
+          selected: initialLeaderboardType === "teams",
+        },
+        {
+          value: "dungeon",
+          label: "Individual Dungeons",
+          selected: initialLeaderboardType === "dungeon",
         },
       ]}
     />
-    <FormSelect
-      id="realm"
-      label="Realm"
-      options={[{ value: "", label: "Select Region First", selected: true }]}
-    />
-    <FormSelect
-      id="dungeon"
-      label="Dungeon"
-      options={[
-        { value: "", label: "Select Dungeon", selected: initialDungeon === "" },
-        {
-          value: "2",
-          label: "Temple of the Jade Serpent",
-          selected: initialDungeon === "2",
-        },
-        {
-          value: "56",
-          label: "Stormstout Brewery",
-          selected: initialDungeon === "56",
-        },
-        {
-          value: "57",
-          label: "Gate of the Setting Sun",
-          selected: initialDungeon === "57",
-        },
-        {
-          value: "58",
-          label: "Shado-Pan Monastery",
-          selected: initialDungeon === "58",
-        },
-        {
-          value: "59",
-          label: "Siege of Niuzao Temple",
-          selected: initialDungeon === "59",
-        },
-        {
-          value: "60",
-          label: "Mogu'shan Palace",
-          selected: initialDungeon === "60",
-        },
-        {
-          value: "76",
-          label: "Scholomance",
-          selected: initialDungeon === "76",
-        },
-        {
-          value: "77",
-          label: "Scarlet Halls",
-          selected: initialDungeon === "77",
-        },
-        {
-          value: "78",
-          label: "Scarlet Monastery",
-          selected: initialDungeon === "78",
-        },
-      ]}
-    />
+    <div id="dungeon-selectors" style="display: none;">
+      <FormSelect
+        id="region"
+        label="Region"
+        options={[
+          { value: "", label: "Select Region", selected: initialRegion === "" },
+          { value: "us", label: "US", selected: initialRegion === "us" },
+          { value: "eu", label: "EU", selected: initialRegion === "eu" },
+          { value: "kr", label: "KR", selected: initialRegion === "kr" },
+          {
+            value: "global",
+            label: "Global",
+            selected: initialRegion === "global",
+          },
+        ]}
+      />
+      <FormSelect
+        id="realm"
+        label="Realm"
+        options={[{ value: "", label: "Select Region First", selected: true }]}
+      />
+      <FormSelect
+        id="dungeon"
+        label="Dungeon"
+        options={[
+          {
+            value: "",
+            label: "Select Dungeon",
+            selected: initialDungeon === "",
+          },
+          {
+            value: "2",
+            label: "Temple of the Jade Serpent",
+            selected: initialDungeon === "2",
+          },
+          {
+            value: "56",
+            label: "Stormstout Brewery",
+            selected: initialDungeon === "56",
+          },
+          {
+            value: "57",
+            label: "Gate of the Setting Sun",
+            selected: initialDungeon === "57",
+          },
+          {
+            value: "58",
+            label: "Shado-Pan Monastery",
+            selected: initialDungeon === "58",
+          },
+          {
+            value: "59",
+            label: "Siege of Niuzao Temple",
+            selected: initialDungeon === "59",
+          },
+          {
+            value: "60",
+            label: "Mogu'shan Palace",
+            selected: initialDungeon === "60",
+          },
+          {
+            value: "76",
+            label: "Scholomance",
+            selected: initialDungeon === "76",
+          },
+          {
+            value: "77",
+            label: "Scarlet Halls",
+            selected: initialDungeon === "77",
+          },
+          {
+            value: "78",
+            label: "Scarlet Monastery",
+            selected: initialDungeon === "78",
+          },
+        ]}
+      />
+
+      <!-- Team Filter Toggle -->
+      <div class="form-group">
+        <label for="team-filter" class="form-label">Filter Teams</label>
+        <div class="form-checkbox">
+          <input
+            type="checkbox"
+            id="team-filter"
+            class="checkbox-input"
+            checked
+          />
+          <label for="team-filter" class="checkbox-label"
+            >Show best time per team</label
+          >
+        </div>
+      </div>
+    </div>
   </ControlPanel>
+
+  <div id="teams-callout" class="callout" style="display: none;">
+    <div class="callout-content">
+      <p><strong>Team Leaderboards (Work in Progress)</strong></p>
+      <p>
+        Team rankings identify 3-player cores that have completed ALL 9
+        dungeons. Each team shows their core members plus extended roster.
+        Rankings are based on the sum of their best times across all dungeons.
+      </p>
+      <p>
+        <em
+          >Note: Team detection and ranking algorithms are still being refined.
+          Data may change as we improve team identification logic.</em>
+      </p>
+    </div>
+  </div>
 
   <div id="loading" class="loading-overlay hidden">
     <LoadingState message="Loading Challenge Mode leaderboard data..." />
@@ -315,8 +431,16 @@ const baseUrl = import.meta.env.BASE_URL;
       </div>
     </div>
 
-    <div class="leaderboard-container card-container">
+    <div class="leaderboard-container card-container" id="dungeon-leaderboard">
       <div id="leaderboard-rows"></div>
+    </div>
+
+    <div
+      class="leaderboard-container card"
+      id="team-player-leaderboard"
+      style="display: none;"
+    >
+      <div id="team-rows"></div>
     </div>
   </div>
 </PageLayout>
@@ -394,12 +518,93 @@ const baseUrl = import.meta.env.BASE_URL;
       margin: 5px 0 !important;
     }
   }
+
+  /* Team/Player leaderboard styles */
+  #team-rows {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+
+  #team-rows .leaderboard-row,
+  #team-rows .chart-item-header {
+    display: table-row !important;
+    border-bottom: 1px solid #4a4a4a !important;
+    background-color: #32302f !important;
+    transition: background-color 0.2s ease !important;
+  }
+
+  #team-rows .leaderboard-row:hover,
+  #team-rows .chart-item-header:hover {
+    background-color: rgba(255, 215, 0, 0.05) !important;
+  }
+
+  /* Expandable chart item styles */
+  .chart-item-wrapper {
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .chart-item-header {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .chart-item-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .chart-item-expanded .chart-item-header {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .chart-expand-icon {
+    margin-left: 8px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    user-select: none;
+  }
+
+  .chart-item-expanded .chart-expand-icon {
+    transform: rotate(90deg);
+  }
+
+  .chart-dropdown {
+    margin-top: 12px;
+    padding: 16px;
+    background-color: var(--bg-selection);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
+  }
+
+  .chart-item-expanded .chart-dropdown {
+    display: block;
+    animation: dropdown-expand 0.2s ease-out;
+  }
+
+  @keyframes dropdown-expand {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 </style>
 
 <script
   is:inline
   define:vars={{
     baseUrl,
+    initialLeaderboardType,
     initialRegion,
     initialRealm,
     initialDungeon,
@@ -478,7 +683,7 @@ const baseUrl = import.meta.env.BASE_URL;
 
       // Handle both old format (member.profile.name) and optimized format (member.name)
       let playerName = member.name || member.profile?.name;
-      
+
       // Check if player is from a different realm (for individual realm views only)
       const memberRealmSlug = member.realm_slug || member.profile?.realm?.slug;
       if (
@@ -531,17 +736,64 @@ const baseUrl = import.meta.env.BASE_URL;
     return row;
   }
 
+  function getTeamSignature(members) {
+    // Create a unique signature for the team based on sorted player IDs
+    const playerIds = members
+      .map((member) => {
+        // Handle both old format (member.profile.id) and optimized format (member.id)
+        return member.id || member.profile?.id || 0;
+      })
+      .sort((a, b) => a - b); // Sort IDs to ensure consistent signature
+
+    return playerIds.join("-");
+  }
+
+  function filterUniqueTeams(leaderboardData) {
+    const teamFilter = document.getElementById("team-filter");
+    if (!teamFilter.checked) {
+      return leaderboardData; // Return original data if filter is not active
+    }
+
+    const uniqueTeams = new Map();
+
+    leaderboardData.forEach((run) => {
+      const teamSignature = getTeamSignature(run.members);
+
+      // Keep only the fastest time for each unique team
+      if (
+        !uniqueTeams.has(teamSignature) ||
+        run.duration < uniqueTeams.get(teamSignature).duration
+      ) {
+        uniqueTeams.set(teamSignature, run);
+      }
+    });
+
+    // Convert back to array and sort by duration
+    return Array.from(uniqueTeams.values()).sort(
+      (a, b) => a.duration - b.duration,
+    );
+  }
+
+  // Store original data for re-filtering
+  let originalLeaderboardData = null;
+
   function displayLeaderboard(data) {
     console.log("Displaying leaderboard data:", data);
 
     // Handle both old format (individual realm) and new format (aggregated)
-    const leaderboardData = data.leaderboard || data.leading_groups;
+    let leaderboardData = data.leaderboard || data.leading_groups;
 
     // Check if we have no data
     if (!leaderboardData || leaderboardData.length === 0) {
       showNoData();
       return;
     }
+
+    // Store original data for re-filtering
+    originalLeaderboardData = [...leaderboardData];
+
+    // Apply team filtering if enabled
+    leaderboardData = filterUniqueTeams(leaderboardData);
 
     // Handle dungeon name from both formats
     let dungeonName;
@@ -605,7 +857,9 @@ const baseUrl = import.meta.env.BASE_URL;
     console.log("Creating rows for", leaderboardData.length, "groups");
     leaderboardData.forEach((group, index) => {
       console.log("Creating row for group", index + 1);
-      const row = createLeaderboardRow(group);
+      // Update ranking for filtered display
+      const displayGroup = { ...group, ranking: index + 1 };
+      const row = createLeaderboardRow(displayGroup);
       rowsContainer.appendChild(row);
     });
 
@@ -616,6 +870,28 @@ const baseUrl = import.meta.env.BASE_URL;
     document.getElementById("content").classList.remove("hidden");
 
     console.log("Leaderboard displayed successfully");
+  }
+
+  function refreshLeaderboardDisplay() {
+    if (!originalLeaderboardData) {
+      console.log("No original data to refresh from");
+      return;
+    }
+
+    // Apply team filtering to original data
+    let leaderboardData = filterUniqueTeams(originalLeaderboardData);
+
+    // Update the display with filtered data
+    const rowsContainer = document.getElementById("leaderboard-rows");
+    rowsContainer.innerHTML = "";
+
+    console.log("Refreshing display with", leaderboardData.length, "groups");
+    leaderboardData.forEach((group, index) => {
+      // Update ranking for filtered display
+      const displayGroup = { ...group, ranking: index + 1 };
+      const row = createLeaderboardRow(displayGroup);
+      rowsContainer.appendChild(row);
+    });
   }
 
   function showNoData() {
@@ -879,5 +1155,514 @@ const baseUrl = import.meta.env.BASE_URL;
       updateURL();
       loadLeaderboard();
     });
+
+    // Team filter toggle event listener
+    document.getElementById("team-filter").addEventListener("change", () => {
+      console.log(
+        "Team filter changed to:",
+        document.getElementById("team-filter").checked,
+      );
+      refreshLeaderboardDisplay();
+    });
+
+    // Leaderboard Type change handler
+    document
+      .getElementById("leaderboard-type")
+      .addEventListener("change", () => {
+        const leaderboardType =
+          document.getElementById("leaderboard-type").value;
+        console.log("Leaderboard type changed to:", leaderboardType);
+        handleLeaderboardTypeChange(leaderboardType);
+      });
+
+    // Initialize with the correct leaderboard type
+    if (initialLeaderboardType) {
+      document.getElementById("leaderboard-type").value =
+        initialLeaderboardType;
+      handleLeaderboardTypeChange(initialLeaderboardType);
+    }
   });
+
+  // Handle leaderboard type switching
+  function handleLeaderboardTypeChange(leaderboardType) {
+    const dungeonSelectors = document.getElementById("dungeon-selectors");
+    const dungeonLeaderboard = document.getElementById("dungeon-leaderboard");
+    const teamPlayerLeaderboard = document.getElementById(
+      "team-player-leaderboard",
+    );
+    const teamsCallout = document.getElementById("teams-callout");
+
+    // Update URL
+    updateLeaderboardURL(leaderboardType);
+
+    // Show/hide teams callout
+    if (leaderboardType === "teams") {
+      teamsCallout.style.display = "block";
+    } else {
+      teamsCallout.style.display = "none";
+    }
+
+    if (leaderboardType === "dungeon") {
+      // Show dungeon selectors and dungeon leaderboard
+      dungeonSelectors.style.display = "block";
+      dungeonLeaderboard.style.display = "block";
+      teamPlayerLeaderboard.style.display = "none";
+
+      // Load existing dungeon data if selections are made
+      if (
+        document.getElementById("region").value &&
+        document.getElementById("realm").value &&
+        document.getElementById("dungeon").value
+      ) {
+        loadLeaderboard();
+      }
+    } else {
+      // Hide dungeon selectors and show team/player leaderboard
+      dungeonSelectors.style.display = "none";
+      dungeonLeaderboard.style.display = "none";
+      teamPlayerLeaderboard.style.display = "block";
+
+      // Load team or player data
+      loadTeamPlayerLeaderboard(leaderboardType);
+    }
+  }
+
+  // Update URL based on leaderboard type
+  function updateLeaderboardURL(leaderboardType) {
+    let newURL;
+    if (leaderboardType === "players") {
+      newURL = "/challenge-mode/players";
+    } else if (leaderboardType === "teams") {
+      newURL = "/challenge-mode/teams";
+    } else {
+      newURL = "/challenge-mode/";
+    }
+
+    if (window.location.pathname !== newURL) {
+      window.history.pushState({}, "", newURL);
+    }
+  }
+
+  // Load team/player leaderboard data
+  async function loadTeamPlayerLeaderboard(mode) {
+    showLoading();
+
+    try {
+      const dataPath =
+        mode === "players" ? "player-leaderboards" : "team-leaderboards";
+      const fileName = "best-overall.json";
+      const fullUrl = `${baseUrl}data/${dataPath}/${fileName}`;
+      console.log(`Loading ${mode} leaderboard from:`, fullUrl);
+
+      const response = await fetch(fullUrl);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load ${mode} leaderboard data: ` + response.statusText,
+        );
+      }
+
+      const data = await response.json();
+      console.log(`${mode} leaderboard data loaded:`, data);
+      displayTeamPlayerLeaderboard(data, mode);
+    } catch (error) {
+      console.error(`Error loading ${mode} leaderboard:`, error);
+      showError(`Error loading ${mode} leaderboard data: ` + error.message);
+    }
+  }
+
+  // Display team/player leaderboard
+  function displayTeamPlayerLeaderboard(data, mode) {
+    console.log(`Displaying ${mode} leaderboard data:`, data);
+
+    if (!data.leaderboard || data.leaderboard.length === 0) {
+      showNoData();
+      return;
+    }
+
+    // Update info display - use Challenge Mode element IDs
+    const dungeonNameElement = document.getElementById("dungeon-name");
+    if (dungeonNameElement) {
+      dungeonNameElement.textContent = data.title;
+    }
+
+    // Update period info to show generated timestamp
+    const periodElement = document.getElementById("period");
+    if (periodElement) {
+      periodElement.textContent = data.generated_timestamp
+        ? formatTimestamp(data.generated_timestamp)
+        : "Unknown";
+    }
+
+    const rowsContainer = document.getElementById("team-rows");
+    rowsContainer.innerHTML = "";
+
+    data.leaderboard.forEach((item, index) => {
+      item.ranking = index + 1;
+      const wrapper =
+        mode === "players" ? createPlayerRow(item) : createTeamRow(item);
+      rowsContainer.appendChild(wrapper);
+    });
+
+    hideLoading();
+  }
+
+  // Utility functions
+  function formatDuration(milliseconds) {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const ms = milliseconds % 1000;
+    return (
+      minutes +
+      ":" +
+      seconds.toString().padStart(2, "0") +
+      "." +
+      ms.toString().padStart(3, "0")
+    );
+  }
+
+  function formatTimestamp(timestamp) {
+    return new Date(timestamp).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function hideLoading() {
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("error").classList.add("hidden");
+    document.getElementById("no-data").classList.add("hidden");
+    document.getElementById("content").classList.remove("content-loading");
+    document.getElementById("content").classList.remove("hidden");
+  }
+
+  // Global function for chart item expansion
+  window.toggleChartItem = (element) => {
+    const wrapper = element.closest(".chart-item-wrapper");
+    if (!wrapper) return;
+
+    const isExpanded = wrapper.classList.contains("chart-item-expanded");
+
+    // Close all other expanded items
+    document.querySelectorAll(".chart-item-expanded").forEach((item) => {
+      if (item !== wrapper) {
+        item.classList.remove("chart-item-expanded");
+      }
+    });
+
+    // Toggle current item
+    wrapper.classList.toggle("chart-item-expanded", !isExpanded);
+  };
+
+  function getSpecColor(specId) {
+    // WoW class colors based on spec_id
+    const specColors = {
+      // Death Knight
+      250: "#C41F3B",
+      251: "#C41F3B",
+      252: "#C41F3B",
+      // Druid
+      102: "#FF7D0A",
+      103: "#FF7D0A",
+      104: "#FF7D0A",
+      105: "#FF7D0A",
+      // Hunter
+      253: "#ABD473",
+      254: "#ABD473",
+      255: "#ABD473",
+      // Mage
+      62: "#69CCF0",
+      63: "#69CCF0",
+      64: "#69CCF0",
+      // Monk
+      268: "#00FF96",
+      269: "#00FF96",
+      270: "#00FF96",
+      // Paladin
+      65: "#F58CBA",
+      66: "#F58CBA",
+      70: "#F58CBA",
+      // Priest
+      256: "#FFFFFF",
+      257: "#FFFFFF",
+      258: "#FFFFFF",
+      // Rogue
+      259: "#FFF569",
+      260: "#FFF569",
+      261: "#FFF569",
+      // Shaman
+      262: "#0070DE",
+      263: "#0070DE",
+      264: "#0070DE",
+      // Warlock
+      265: "#9482C9",
+      266: "#9482C9",
+      267: "#9482C9",
+      // Warrior
+      71: "#C79C6E",
+      72: "#C79C6E",
+      73: "#C79C6E",
+    };
+    return specColors[specId] || "#FFFFFF";
+  }
+
+  function createPlayerRow(player) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chart-item-wrapper";
+
+    // Get player spec info for display
+    const spec = player.main_spec_id
+      ? window.WoW.getSpecInfo(player.main_spec_id)
+      : null;
+    const iconUrl = spec ? window.WoW.getSpecIcon(spec.class, spec.spec) : null;
+    const classColor = spec ? window.WoW.getClassColor(spec.class) : "#FFFFFF";
+
+    const iconHtml = iconUrl
+      ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 20px; height: 20px; border-radius: 2px; margin-right: 8px; vertical-align: middle; flex-shrink: 0;">`
+      : "";
+
+    // Create the player details content
+    const playerDetails = createPlayerDetailsContent(player);
+
+    wrapper.innerHTML = `
+      <div class="leaderboard-row chart-item-header" onclick="toggleChartItem(this.parentElement)" style="display: table-row !important; border-bottom: 1px solid #4a4a4a !important; transition: background-color 0.2s ease !important; cursor: pointer;">
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center; width: 80px;">#${player.ranking}</div>
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right; width: 120px; white-space: nowrap;">${formatDuration(player.combined_best_time)}</div>
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; width: 100%;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center;">
+              <span class="chart-expand-icon" style="margin-right: 8px;">▶</span>
+              ${iconHtml}
+              <span style="color: ${classColor}; font-weight: 600; font-size: 1.1em;">${player.name}</span>
+            </div>
+            <span style="color: var(--text-secondary); font-size: 0.9em;">@${player.realm_slug}</span>
+          </div>
+        </div>
+      </div>
+      <div class="chart-dropdown">
+        ${playerDetails}
+      </div>
+    `;
+
+    return wrapper;
+  }
+
+  function createTeamRow(team) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "chart-item-wrapper";
+
+    // Create extended roster display with spec colors
+    const extendedRoster = team.extended_roster
+      .map((member) => {
+        const specColor = member.spec_id
+          ? getSpecColor(member.spec_id)
+          : "#FFFFFF";
+        return `<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">
+        <span style="color: ${specColor}; font-weight: 600; font-size: 0.9em;">${member.name}</span>
+        <span style="color: var(--text-secondary); font-size: 0.8em;">@${member.realm_slug}</span>
+      </span>`;
+      })
+      .join("");
+
+    // Create the team details content
+    const teamDetails = createTeamDetailsContent(team);
+
+    wrapper.innerHTML = `
+      <div class="leaderboard-row chart-item-header" onclick="toggleChartItem(this.parentElement)" style="display: table-row !important; border-bottom: 1px solid #4a4a4a !important; transition: background-color 0.2s ease !important; cursor: pointer;">
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center; width: 80px;">#${team.ranking}</div>
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right; width: 120px;">${formatDuration(team.combined_best_time)}</div>
+        <div style="display: table-cell; padding: 15px 10px; vertical-align: middle; display: flex; align-items: center; overflow: hidden;">
+          <span class="chart-expand-icon" style="margin-right: 8px; flex-shrink: 0;">▶</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; overflow: hidden; min-width: 0;">${extendedRoster}</div>
+        </div>
+      </div>
+      <div class="chart-dropdown">
+        ${teamDetails}
+      </div>
+    `;
+
+    return wrapper;
+  }
+
+  function createPlayerDetailsContent(player) {
+    // Create dungeon run entries styled like Challenge Mode leaderboard rows
+    const dungeonEntries = Object.entries(player.best_runs_per_dungeon || {})
+      .map(([_dungeonSlug, run]) => {
+        // Create team composition with spec icons using all_members data
+        const teamComposition = (run.all_members || [])
+          .map((member) => {
+            const spec = member.spec_id
+              ? window.WoW.getSpecInfo(member.spec_id)
+              : null;
+            const iconUrl = spec
+              ? window.WoW.getSpecIcon(spec.class, spec.spec)
+              : null;
+            const classColor = spec
+              ? window.WoW.getClassColor(spec.class)
+              : "#FFFFFF";
+
+            const iconHtml = iconUrl
+              ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">`
+              : "";
+
+            return `<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">
+          ${iconHtml}
+          <span style="color: ${classColor}; font-weight: 600; font-size: 0.9em;">${member.name}@${member.realm_slug}</span>
+        </span>`;
+          })
+          .join("");
+
+        return `
+        <div style="display: grid; grid-template-columns: 80px 120px 2fr 100px 140px; gap: 20px; align-items: center; padding: 15px 20px; border-bottom: 1px solid #3a3a3a; min-height: 60px;">
+          <div style="font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center;">${run.ranking === "~" ? "~" : "#" + run.ranking}</div>
+          <div style="font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right;">${formatDuration(run.duration)}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-items: center;">${teamComposition}</div>
+          <div style="color: var(--text-primary); text-align: center; font-weight: 600;">${run.dungeon_name}</div>
+          <div style="color: #aaaaaa; font-size: 0.9em; text-align: center;">${formatTimestamp(run.completed_timestamp)}</div>
+        </div>
+      `;
+      })
+      .join("");
+
+    return `
+      <div>
+        <h4 style="color: var(--highlight-color); margin-bottom: 10px;">Best Times Per Dungeon</h4>
+        <div style="border-radius: 6px; overflow: hidden; border: 1px solid #4a4a4a;">
+          <div style="display: grid; grid-template-columns: 80px 120px 2fr 100px 140px; gap: 20px; padding: 15px 20px; background-color: rgba(255, 255, 255, 0.03); border-bottom: 1px solid #4a4a4a; font-weight: 600; color: var(--text-secondary); font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">
+            <div>Global Rank</div>
+            <div style="text-align: right;">Time</div>
+            <div>Team Composition</div>
+            <div style="text-align: center;">Dungeon</div>
+            <div style="text-align: center;">Date</div>
+          </div>
+          ${dungeonEntries}
+        </div>
+      </div>
+    `;
+  }
+
+  function createMemberLookup(team) {
+    // Create a lookup map from member names to their full member data with spec_id
+    const memberLookup = {};
+
+    // Process all runs to build a comprehensive lookup
+    team.all_runs.forEach((run) => {
+      run.members.forEach((member) => {
+        if (!memberLookup[member.name]) {
+          memberLookup[member.name] = {
+            name: member.name,
+            realm_slug: member.realm_slug,
+            spec_id: member.spec_id,
+            id: member.id,
+          };
+        }
+      });
+    });
+
+    return memberLookup;
+  }
+
+  function createTeamComposition(memberNames, memberLookup) {
+    // Create styled team composition similar to Challenge Mode
+    return memberNames
+      .map((memberName) => {
+        const member = memberLookup[memberName];
+        if (!member) {
+          // Fallback if member not found in lookup
+          return `<span style="color: var(--text-primary); margin-right: 8px;">${memberName}</span>`;
+        }
+
+        const spec = member.spec_id
+          ? window.WoW.getSpecInfo(member.spec_id)
+          : null;
+        const iconUrl = spec
+          ? window.WoW.getSpecIcon(spec.class, spec.spec)
+          : null;
+        const classColor = spec
+          ? window.WoW.getClassColor(spec.class)
+          : "#FFFFFF";
+
+        const iconHtml = iconUrl
+          ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">`
+          : "";
+
+        return `<span style="display: inline-flex; align-items: center; margin-right: 8px; gap: 4px;">
+        ${iconHtml}
+        <span style="color: ${classColor}; font-weight: 600; font-size: 0.9em;">${member.name}@${member.realm_slug}</span>
+      </span>`;
+      })
+      .join("");
+  }
+
+  function createTeamDetailsContent(team) {
+    // Create member lookup for this team
+    const memberLookup = createMemberLookup(team);
+
+    // Create core members display with Challenge Mode styling
+    const coreMembers = team.core_members
+      .map((member) => {
+        const spec = member.spec_id
+          ? window.WoW.getSpecInfo(member.spec_id)
+          : null;
+        const iconUrl = spec
+          ? window.WoW.getSpecIcon(spec.class, spec.spec)
+          : null;
+        const classColor = spec
+          ? window.WoW.getClassColor(spec.class)
+          : "#FFFFFF";
+
+        const iconHtml = iconUrl
+          ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 16px; height: 16px; border-radius: 2px; margin-right: 4px; vertical-align: middle; flex-shrink: 0;">`
+          : "";
+
+        return `<span style="display: inline-flex; align-items: center; margin-right: 15px; gap: 4px;">
+        ${iconHtml}
+        <span style="color: ${classColor}; font-weight: 600; font-size: 0.9em;">${member.name}@${member.realm_slug}</span>
+      </span>`;
+      })
+      .join("");
+
+    // Create dungeon run entries styled like Challenge Mode leaderboard rows
+    const dungeonEntries = Object.entries(team.best_runs_per_dungeon || {})
+      .map(([_dungeonSlug, run]) => {
+        const teamComposition = createTeamComposition(
+          run.members,
+          memberLookup,
+        );
+
+        return `
+        <div style="display: grid; grid-template-columns: 80px 120px 2fr 100px 140px; gap: 20px; align-items: center; padding: 15px 20px; border-bottom: 1px solid #3a3a3a; min-height: 60px;">
+          <div style="font-size: 1.2em; font-weight: bold; color: #d8a657; text-align: center;">#${run.ranking}</div>
+          <div style="font-family: 'Courier New', monospace; font-weight: bold; color: #ffffff; text-align: right;">${formatDuration(run.duration)}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-start; align-items: center;">${teamComposition}</div>
+          <div style="color: var(--text-primary); text-align: center; font-weight: 600;">${run.dungeon_name}</div>
+          <div style="color: #aaaaaa; font-size: 0.9em; text-align: center;">${formatTimestamp(run.completed_timestamp)}</div>
+        </div>
+      `;
+      })
+      .join("");
+
+    return `
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: var(--highlight-color); margin-bottom: 10px;">Core Team (3-player consistent core)</h4>
+        <div style="display: flex; flex-wrap: wrap; align-items: center;">${coreMembers}</div>
+      </div>
+      
+      <div>
+        <h4 style="color: var(--highlight-color); margin-bottom: 10px;">Best Times Per Dungeon</h4>
+        <div style="border-radius: 6px; overflow: hidden; border: 1px solid #4a4a4a;">
+          <div style="display: grid; grid-template-columns: 80px 120px 2fr 100px 140px; gap: 20px; padding: 15px 20px; background-color: rgba(255, 255, 255, 0.03); border-bottom: 1px solid #4a4a4a; font-weight: 600; color: var(--text-secondary); font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">
+            <div>Rank</div>
+            <div style="text-align: right;">Time</div>
+            <div>Team Composition</div>
+            <div style="text-align: center;">Dungeon</div>
+            <div style="text-align: center;">Date</div>
+          </div>
+          ${dungeonEntries}
+        </div>
+      </div>
+    `;
+  }
 </script>
