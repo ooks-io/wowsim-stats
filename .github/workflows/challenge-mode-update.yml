@@ -75,6 +75,16 @@ jobs:
           echo "Parsing and aggregating leaderboard data..."
           nix run .#parseCM
 
+      - name: Parse team leaderboard data
+        run: |
+          echo "Parsing and aggregating team leaderboard data..."
+          nix run .#teamLeaderboards
+
+      - name: Parse player leaderboard data
+        run: |
+          echo "Parsing and aggregating player leaderboard data..."
+          nix run .#playerLeaderboards
+
       - name: Check for changes
         id: changes
         run: |
