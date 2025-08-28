@@ -1,5 +1,4 @@
 let
-  inherit (builtins) attrValues;
   # aglity
   terrorInTheMists = {
     celestial = 86890;

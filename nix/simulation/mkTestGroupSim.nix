@@ -3,8 +3,6 @@
   pkgs,
   classes,
   encounter,
-  buffs,
-  debuffs,
   inputs,
   ...
 }: let
@@ -12,7 +10,7 @@
   inherit (lib.sim.raid) mkRaid;
   inherit (lib.sim.encounter) mkEncounter;
   inherit (lib.sim.target) mkTarget;
-  inherit (classes) warlock monk shaman warrior hunter mage paladin;
+  inherit (classes) monk shaman paladin;
 
   testChallengeModeGroup = mkSim {
     type = "SimTypeRaid";

@@ -570,7 +570,7 @@ in {
       // {
         results =
           lib.mapAttrs (
-            name: result:
+            _name: result:
               if result ? loadout
               then
                 result
