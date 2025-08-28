@@ -8,7 +8,18 @@ export async function getStaticPaths() {
 
   const paths = [];
 
-  // 1. Generate individual realm combinations
+  // 1. Add player and team leaderboard routes
+  paths.push({
+    params: { slug: "players" },
+    props: { initialLeaderboardType: "players" },
+  });
+
+  paths.push({
+    params: { slug: "teams" },
+    props: { initialLeaderboardType: "teams" },
+  });
+
+  // 2. Generate individual realm combinations
   for (const [regionKey, regionData] of Object.entries(DATA_MAP)) {
     for (const realmKey of Object.keys(regionData.realms)) {
       for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
@@ -18,6 +29,7 @@ export async function getStaticPaths() {
             slug: `${regionKey}/${realmKey}/${dungeonSlug}`,
           },
           props: {
+            initialLeaderboardType: "dungeon",
             initialRegion: regionKey,
             initialRealm: realmKey,
             initialDungeon: dungeonId,
@@ -27,7 +39,7 @@ export async function getStaticPaths() {
     }
   }
 
-  // 2. Generate regional "all realms" combinations
+  // 3. Generate regional "all realms" combinations
   for (const [regionKey] of Object.entries(DATA_MAP)) {
     for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
       const dungeonSlug = dungeonNameToSlug(dungeonName);
@@ -36,6 +48,7 @@ export async function getStaticPaths() {
           slug: `${regionKey}/all/${dungeonSlug}`,
         },
         props: {
+          initialLeaderboardType: "dungeon",
           initialRegion: regionKey,
           initialRealm: "all",
           initialDungeon: dungeonId,
@@ -44,7 +57,7 @@ export async function getStaticPaths() {
     }
   }
 
-  // 3. Generate global combinations
+  // 4. Generate global combinations
   for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
     const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, "-");
     paths.push({
@@ -52,6 +65,7 @@ export async function getStaticPaths() {
         slug: `global/${dungeonSlug}`,
       },
       props: {
+        initialLeaderboardType: "dungeon",
         initialRegion: "global",
         initialRealm: "global",
         initialDungeon: dungeonId,
@@ -63,8 +77,10 @@ export async function getStaticPaths() {
 }
 
 // Get initial values from props passed by getStaticPaths
-const { initialRegion, initialRealm, initialDungeon } = Astro.props;
+const { initialLeaderboardType, initialRegion, initialRealm, initialDungeon } =
+  Astro.props;
 console.log("Initial values from props:", {
+  initialLeaderboardType,
   initialRegion,
   initialRealm,
   initialDungeon,
@@ -72,6 +88,7 @@ console.log("Initial values from props:", {
 ---
 
 <ChallengeModeLayout
+  initialLeaderboardType={initialLeaderboardType}
   initialRegion={initialRegion}
   initialRealm={initialRealm}
   initialDungeon={initialDungeon}

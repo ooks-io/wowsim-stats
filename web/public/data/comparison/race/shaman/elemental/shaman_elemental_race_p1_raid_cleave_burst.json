@@ -1,1 +1,3303 @@
-{"metadata":{"spec":"elemental","class":"shaman","encounter":"p1_raid_cleave_burst","timestamp":"2025-08-19T02:30:23+10:00","iterations":10000,"encounterDuration":30,"encounterVariation":10,"targetCount":2,"wowsimsCommit":"d56827d","raidBuffs":{"blessingOfMight":true,"bloodlust":true,"darkIntent":true,"leaderOfThePack":true,"legacyOfTheEmperor":true,"moonkinAura":true,"skullBannerCount":2,"stormlashTotemCount":4,"trueshotAura":true,"unholyAura":true}},"results":{"dwarf":{"dps":371085.750272159,"max":547430.7239903377,"min":260901.2418528026,"stdev":39474.26861705302,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceDwarf","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOXeFr68CxsX38yzwvrpBT6zSzDSgLxYrzCTt4s48U5e6AtfcvIwopqpMne7OzAEmRKXCVDUIvJlV+sf16HqhwtTnQQAOxsXteaaWTZ4ZPzjXje1i8gyz4JlVmhnHLeKHeabWugJ3ZpViuzhZZepaYE+ZcaRissrQF5cqLFMBpOLNMwyp+O5ninExXWVqLYhETQOiOFdhqhZkpiEQ/HyNivM1qj6t0Z7ZL+hnxMvlcrlsdolQXr1ILhO6QtrWiPMtueBhB/qaocuX00EMfWS7cruzY5hET1MkKlEv9u7eO4Yp5NpDymfKfnO50eFDt6kqd+j7MSWTmAjjnErytKN9ZOju7emyPe78BnKnDlDJNMauUFN6u+xjbAFMuvQNtaiVC1SijlhvfuxLqsmAI7VWGA/v4a4kA46hRuizCj56TX4A+n3Ad0CXAUXYbqgPOeZ7JNl+fFA+gPwKjbDIF6Ce1UUeqovs7enDh+SuTaFbwxSnMnbW6pxY96LevT24VaaaYPVBJta9ptRgzWbkAT2Eed2PKkxzr7mZpc/3jaGWCtNhx9+p7Kh7GqOmdLL1vT4puzKju3G73IZbAmzoWU5jm9lN1hwm79PRn0zqxP44uvzuoCD1JxqLlhKmOZP+C8xe6tgsqTffILHcNVp3Q8MVG7uaWPfksD6MD8sDmAqT3JN8ySq5SKIh+rEjlNz7i8NW85tXrd6fBuWT+gk0XQdkvmU64wbP7i9ywz9vqcUT/Vnb/ISQ2/W2Vq/29kVenSu7MqYbJt9IT7rK/ZEcmXAdG3uKb7nOrCtKo6UXSy8dHxntHB4deaV07C5Eb0K0E0zSWAQeLCaiZGfx3tlTJr4s7HjGxvVC9jYov/Op8Bw4/0UMv1H8N7DF4o1m3CP5904PtWL2mZ9blzuHGjfFo2d/h1fbHht5/kjn4yPHni0dPwXRvF//X8bcF0FWCkPXrpr4pXAQHo3Sm4XQ5VOH93MBCvJQhD8DAAD//359F3Y="}},"draenei":{"dps":371096.7124169256,"max":547444.8799351699,"min":260908.71384374486,"stdev":39475.294052092584,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceDraenei","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOSfC11cB4+L7eRZ4X92gJ1ZpZhrQF4sVZpJ2cWeeqUtdgWtuXkYUU1WmTndn5gATolJhqhoE3swq/eN6dL1QYerzIAAH4+L2PFPLJs+MH5zrxnYxeYZZ8MwqzYzjFvHDPFNrXYE7s0qxXZysMnUtsKfMOFIxWWXoi0sVlqkAUvHmGYZUfPczxbiYrjK1FkSipgFRnKswVQsy0xAIfr5GxfkaVZ/WaM/sF/Qz4uVyuVw2u0Qor14klwldIW1rxPmWXPCwA33N0OXL6SCGPrJdud3ZMUyipykSlagXe3fvHcMUcu0h5TNlv7nc6PCh21SVO/T9mJJJTIRxTiV52tE+MnT39nTZHnd+A7lTB6hkGmNXqCm9XfYxtgAmXfqGWtTKBSpRR6w3P/Yl1WTAkVorjIf3cFeSAcdQI/RZBR+9Jj8A/T7gO6DLgCJsN9SHHPM9kmw/PigfQH6FRljkC1DP6iIP1UX29vThQ3LXptCtYYpTGTtrdU6se1Hv3h7cKlNNsPogE+teU2qwZjPygB7CvO5HFaa519zM0uf7xlBLhemw4+9UdtQ9jVFTOtn6Xp+UXZnR3bhdbsMtATb0LKexzewmaw6T9+noTyZ1Yn8cXX53UJD6E41FSwnTnEn/BWYvdWyW1JtvkFjuGq27oeGKjV1NrHtyWB/Gh+UBTIVJ7km+ZJVcJNEQ/dgRSu79xWGr+c2rVu9Pg/JJ/QSargMy3zKdcYNn9xe54Z+31OKJ/qxtfkLI7Xpbq1d7+yKvzpVdGdMNk2+kJ13l/kiOTLiOjT3Ft1xn1hWl0dKLpZeOj4x2Do+OvFI6dheiNyHaCSZpLAIPFhNRsrN47+wpE18Wdjxj43ohexuU3/lUeA6c/yKG3yj+G9hi8UYz7pH8e6eHWjH7zM+ty51DjZvi0bO/w6ttj408f6Tz8ZFjz5aOn4Jo3q//L2PuiyArhaFrV038UjgIj0bpzULo8qnD+7kABXkowp8BAAD//3fuF3U="}},"orc":{"dps":384346.6474925758,"max":571812.8673348268,"min":268151.22525493323,"stdev":41834.92669815603,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceOrc","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOfeFr68CxsX38yzwvrpBT6zSzDSgLxYrzCTt4s48U5e6AtfcvIwopqpMne7OzAEmRKXCVDUIvJlV+sf16HqhwtTnQQAOxsXteaaWTZ4ZPzjXje1i8gyz4JlVmhnHLeKHeabWugJ3ZpViuzhZZepaYE+ZcaRissrQF5cqLFMBpOLNMwyp+O5ninExXWVqLYhETQOiOFdhqhZkpiEQ/HyNivM1qj6t0Z7ZL+hnxMvlcrlsdolQXr1ILhO6QtrWiPMtueBhB/qaocuX00EMfWS7cruzY5hET1MkKlEv9u7eO4Yp5NpDymfKfnO50eFDt6kqd+j7MSWTmAjjnErytKN9ZOju7emyPe78BnKnDlDJNMauUFN6u+xjbAFMuvQNtaiVC1SijlhvfuxLqsmAI7VWGA/v4a4kA46hRuizCj56TX4A+n3Ad0CXAUXYbqgPOeZ7JNl+fFA+gPwKjbDIF6Ce1UUeqovs7enDh+SuTaFbwxSnMnbW6pxY96LevT24VaaaYPVBJta9ptRgzWbkAT2Eed2PKkxzr7mZpc/3jaGWCtNhx9+p7Kh7GqOmdLL1vT4puzKju3G73IZbAmzoWU5jm9lN1hwm79PRn0zqxP44uvzuoCD1JxqLlhKmOZP+C8xe6tgsqTffILHcNVp3Q8MVG7uaWPfksD6MD8sDmAqT3JN8ySq5SKIh+rEjlNz7i8NW85tXrd6fBuWT+gk0XQdkvmU64wbP7i9ywz9vqcUT/Vnb/ISQ2/W2Vq/29kVenSu7MqYbJt9IT7rK/ZEcmXAdG3uKb7nOrCtKo6UXSy8dHxntHB4deaV07C5Eb0K0E0zSWAQeLCaiZGfx3tlTJr4s7HjGxvVC9jYov/Op8Bw4/0UMv1H8N7DF4o1m3CP5904PtWL2mZ9blzuHGjfFo2d/h1fbHht5/kjn4yPHni0dPwXRvF//X8bcF0FWCkPXrpr4pXAQHo3Sm4XQ5VOH93MBCvJQhD8DAAD//5i5F3o="}},"tauren":{"dps":371053.05041243386,"max":547388.256155841,"min":260878.8258799764,"stdev":39472.23244728499,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceTauren","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOefC11cB4+L7eRZ4X92gJ1ZpZhrQF4sVZpJ2cWeeqUtdgWtuXkYUU1WmTndn5gATolJhqhoE3swq/eN6dL1QYerzIAAH4+L2PFPLJs+MH5zrxnYxeYZZ8MwqzYzjFvHDPFNrXYE7s0qxXZysMnUtsKfMOFIxWWXoi0sVlqkAUvHmGYZUfPczxbiYrjK1FkSipgFRnKswVQsy0xAIfr5GxfkaVZ/WaM/sF/Qz4uVyuVw2u0Qor14klwldIW1rxPmWXPCwA33N0OXL6SCGPrJdud3ZMUyipykSlagXe3fvHcMUcu0h5TNlv7nc6PCh21SVO/T9mJJJTIRxTiV52tE+MnT39nTZHnd+A7lTB6hkGmNXqCm9XfYxtgAmXfqGWtTKBSpRR6w3P/Yl1WTAkVorjIf3cFeSAcdQI/RZBR+9Jj8A/T7gO6DLgCJsN9SHHPM9kmw/PigfQH6FRljkC1DP6iIP1UX29vThQ3LXptCtYYpTGTtrdU6se1Hv3h7cKlNNsPogE+teU2qwZjPygB7CvO5HFaa519zM0uf7xlBLhemw4+9UdtQ9jVFTOtn6Xp+UXZnR3bhdbsMtATb0LKexzewmaw6T9+noTyZ1Yn8cXX53UJD6E41FSwnTnEn/BWYvdWyW1JtvkFjuGq27oeGKjV1NrHtyWB/Gh+UBTIVJ7km+ZJVcJNEQ/dgRSu79xWGr+c2rVu9Pg/JJ/QSargMy3zKdcYNn9xe54Z+31OKJ/qxtfkLI7Xpbq1d7+yKvzpVdGdMNk2+kJ13l/kiOTLiOjT3Ft1xn1hWl0dKLpZeOj4x2Do+OvFI6dheiNyHaCSZpLAIPFhNRsrN47+wpE18Wdjxj43ohexuU3/lUeA6c/yKG3yj+G9hi8UYz7pH8e6eHWjH7zM+ty51DjZvi0bO/w6ttj408f6Tz8ZFjz5aOn4Jo3q//L2PuiyArhaFrV038UjgIj0bpzULo8qnD+7kABXkowp8BAAD//59IF3s="}},"troll":{"dps":399831.28824067477,"max":592762.3352325099,"min":284557.7425512471,"stdev":42969.059898892774,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceTroll","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOY8JX18FjIvv51ngfXWDnlilmWlAXyxWmEnaxZ15pi51Ba65eRlRTFWZOt2dmQNMiEqFqWoQeDOr9I/r0fVChanPgwAcjIvb80wtmzwzfnCuG9vF5BlmwTOrNDOOW8QP80ytdQXuzCrFdnGyytS1wJ4y40jFZJWhLy5VWKYCSMWbZxhS8d3PFONiusrUWhCJmgZEca7CVC3ITEMg+PkaFedrVH1aoz2zX9DPiJfL5XLZ7BKhvHqRXCZ0hbStEedbcsHDDvQ1Q5cvp4MY+sh25XZnxzCJnqZIVKJe7N29dwxTyLWHlM+U/eZyo8OHblNV7tD3Y0omMRHGOZXkaUf7yNDd29Nle9z5DeROHaCSaYxdoab0dtnH2AKYdOkbalErF6hEHbHe/NiXVJMBR2qtMB7ew11JBhxDjdBnFXz0mvwA9PuA74AuA4qw3VAfcsz3SLL9+KB8APkVGmGRL0A9q4s8VBfZ29OHD8ldm0K3hilOZeys1Tmx7kW9e3twq0w1weqDTKx7TanBms3IA3oI87ofVZjmXnMzS5/vG0MtFabDjr9T2VH3NEZN6WTre31SdmVGd+N2uQ23BNjQs5zGNrObrDlM3qejP5nUif1xdPndQUHqTzQWLSVMcyb9F5i91LFZUm++QWK5a7TuhoYrNnY1se7JYX0YH5YHMBUmuSf5klVykURD9GNHKLn3F4et5jevWr0/Dcon9RNoug7IfMt0xg2e3V/khn/eUosn+rO2+Qkht+ttrV7t7Yu8Old2ZUw3TL6RnnSV+yM5MuE6NvYU33KdWVeURksvll46PjLaOTw68krp2F2I3oRoJ5iksQg8WExEyc7ivbOnTHxZ2PGMjeuF7G1QfudT4Tlw/osYfqP4b2CLxRvNuEfy750easXsMz+3LncONW6KR8/+Dq+2PTby/JHOx0eOPVs6fgqieb/+v4y5L4KsFIauXTXxS+EgPBqlNwuhy6cO7+cCFOShCH8GAAD//6XXF3w="}},"goblin":{"dps":375738.6963804386,"max":580037.261492676,"min":275163.1368814051,"stdev":40660.04454887528,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceGoblin","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzE7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0q+OSL52H3zJnvnu87cz7UAjLwHByBaYAlgJsArxOYJu67hOhfOW8Xvr4CGBffL7DA++o6Pb5GMzOAvliqMJN0iNsLTF3sDlxz8zKimK4ydaonMw+YEJUKU9Ug8GbX6B/XouvFClOfBwE4GBe3FphaMXlm4sB8D3aIqdPMgmfXaGYC28UPC0ytdwfu7BrFDnGiytTVwJ4yE0jFVJWhLy5WWKYCSMWbpxlS8d3PFONipsrUehCJmgFEcbbCVC3IzEAg+LkaFedqVH1ao71zX9DPiJfL5XLZ7DKhvHqBXCJ0lbStE+dbct7DTvQ1Q5evpIMY+sh25nZlxzGJnqZIVKJe7Nu1ZxxTyLWHlM+W/eZyo8OHblNVbtf3Y0omMRHGOZXkaUf7yNDd09tte9z+DeQOHaCSaYxdpqb0dtnH2CKYdPkbalGr56lEHbHe+NiXVJNBR2qtMB7ew11JBh1DjdBvFXz0mvwA9PuA74AuA4qww1AfdMz3SLID+KB8APllGmGRL0I9q4s8WBfZ19uPD8mdd4VuCVOcytgZq3Nyw4t69/XiFplqgtUHmdzwmlKDNZuR+/Uw5vUAqjDNveZmlj7fP45aKkyHnX+nsqPuboya0snW9/qk7MqM7sFtciu2B9jQs5LGNrObrDlM3aejP5nUiX1xdPmdIUHqTzQeLSVMcyb9F5i91LE5Um++SWK5a7TuhoYrNnc1ueHJEX0IH5b7MRUmuSf5slVygURDDGBnKLn3F4et5u9etXp/GpJP6ifQdB2U+ZbpjBs8u7/IDf+8pRZPDGRt8+NCbtNbW73a1x95db7syphumHwzPeEq90dyeNJ1bOwuvuU6c64ojZVeLL10bHSsa2Rs9JXS0TsQvQnRTjBFYxF4qJiIkh3Fe+dOmviysP0ZG9cK2Vug/K6nwrPg/Bcx8kbx38CWitebcY/k3zs13IrZa35uXuoabtwUj5z5HV5te2z0+cNdj48efbZ07CRE8379fxlzbwRZLQxfvWLil8IBeDRKbxRCl08f2scFKMhDEf4MAAD//7mEF38="}},"alliance_pandaren":{"dps":374423.38363588863,"max":551677.5074400217,"min":263142.83913543343,"stdev":39737.926564263136,"loadout":{"consumables":{"flaskIcon":"trade_alchemy_potione5","flaskId":76085,"flaskName":"Flask of the Warm Sun","foodIcon":"inv_misc_food_cooked_mogufishstew","foodId":74650,"foodName":"Mogu Fish Stew","potIcon":"trade_alchemy_potiond4","potId":76093,"potName":"Potion of the Jade Serpent","prepotIcon":"trade_alchemy_potiond4","prepotId":76093,"prepotName":"Potion of the Jade Serpent"},"talentsString":"333322","talents":{"talentString":"333322","talents":[{"choice":3,"icon":"ability_shaman_astralshift","name":"Astral Shift","spellId":108271,"tier":1},{"choice":3,"icon":"ability_shaman_windwalktotem","name":"Windwalk Totem","spellId":108273,"tier":2},{"choice":3,"icon":"ability_shaman_totemrelocation","name":"Totemic Projection","spellId":108287,"tier":3},{"choice":3,"icon":"ability_shaman_echooftheelements","name":"Echo of the Elements","spellId":108283,"tier":4},{"choice":2,"icon":"ability_shaman_ancestralguidance","name":"Ancestral Guidance","spellId":108281,"tier":5},{"choice":2,"icon":"shaman_talent_primalelementalist","name":"Primal Elementalist","spellId":117013,"tier":6}]},"glyphs":{"major1":41539,"major1Icon":"spell_shaman_spiritwalkersgrace","major1Name":"Glyph of Spiritwalker's Grace","major1SpellId":55446},"equipment":{"items":[{"gems":[{"color":1,"icon":"inv_misc_gem_x4_metagem_cut","id":76885,"name":"Burning Primal Diamond","quality":3,"stats":["+216 Intellect"]},{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_helm_mail_raidshaman_l_01","id":87141,"name":"Firebird's Headpiece","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":854,"17":3421,"2":2071,"3":1140,"6":710}},"type":1},{"icon":"trade_archaeology_insect-in-amber","id":86976,"name":"Korven's Amber-Sealed Beetle","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"4":450,"6":550}},"type":2},{"enchant":{"id":4806,"name":"Greater Crane Wing Inscription"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_shoulder_mail_raidshaman_l_01","id":87143,"name":"Firebird's Shoulderwraps","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"11":614,"17":3157,"2":1538,"3":946,"4":667}},"type":3},{"enchant":{"id":4892,"name":"Lightweave Embroidery (Rank 3)"},"icon":"inv_cape_pandaria_d_03","id":90512,"name":"Cloak of Overwhelming Corruption","quality":4,"reforging":{"description":"Mastery -> Spirit","id":162},"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"11":564,"17":1214,"2":1231,"3":821,"7":520}},"type":4},{"enchant":{"id":4419,"name":"Enchant Chest - Glorious Stats"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":6,"icon":"inv_misc_gem_x4_rare_cut_orange","id":76668,"name":"Reckless Vermilion Onyx","quality":3,"stats":["+80 Intellect","+160 Haste"]}],"icon":"inv_chest_mail_raidshaman_l_01","id":86951,"name":"Mail of Screaming Secrets","quality":4,"reforging":{"description":"Spirit -> Haste","id":117},"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":840,"17":4210,"2":2071,"3":1220,"4":840}},"type":5},{"enchant":{"id":4414,"name":"Enchant Bracer - Super Intellect"},"gems":[0],"icon":"inv_bracers_mail_raidshaman_l_01","id":86962,"name":"Bracers of Tempestuous Fury","quality":4,"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"17":1842,"2":1154,"3":769,"4":487,"7":528}},"type":6},{"enchant":{"id":4430,"name":"Enchant Gloves - Greater Haste"},"gems":[0],"icon":"inv_glove_mail_raidshaman_l_01","id":87140,"name":"Firebird's Gloves","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2631,"2":1538,"3":1026,"4":600,"7":733}},"tinker":4898,"type":7},{"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]},{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_belt_mail_raidshaman_l_01","id":87183,"name":"Binder's Chain of Unending Summer","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"17":2368,"2":1538,"3":946,"4":576,"7":684}},"type":8},{"enchant":{"id":4826,"name":"Greater Pearlescent Spellthread"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_robe_mail_raidshaman_l_01","id":87142,"name":"Firebird's Kilt","quality":4,"stats":{"ilvl":509,"randPropPoints":2625,"stats":{"11":880,"17":3684,"2":2071,"3":1300,"7":880}},"type":9},{"enchant":{"id":4429,"name":"Enchant Boots - Pandaren's Step"},"gems":[{"color":2,"icon":"inv_misc_gem_x4_rare_cut_red","id":76694,"name":"Brilliant Primordial Ruby","quality":3,"stats":["+160 Intellect"]}],"icon":"inv_boots_mail_raidshaman_l_01","id":90515,"name":"Lightning Prisoner's Boots","quality":4,"reforging":{"description":"Spirit -> Mastery","id":119},"stats":{"ilvl":516,"randPropPoints":2082,"stats":{"17":2957,"2":1642,"3":1015,"4":507,"7":800}},"type":10},{"icon":"inv_jewelry_ring_148","id":90511,"name":"Watersoul Signet","quality":4,"stats":{"ilvl":516,"randPropPoints":1561,"stats":{"2":1231,"3":821,"4":480,"7":587}},"type":11},{"icon":"inv_jewelry_ring_147","id":86982,"name":"Seal of the Profane","quality":4,"reforging":{"description":"Mastery -> Haste","id":167},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"11":557,"2":1154,"3":769,"4":438}},"type":11},{"icon":"inv_misc_pvp_trinket","id":87175,"name":"Essence of Terror","quality":4,"stats":{"ilvl":509,"randPropPoints":1950,"stats":{"3":1300}},"type":12},{"icon":"inv_inscription_trinket_dragon","id":79331,"name":"Relic of Yu'lon","quality":4,"stats":{"ilvl":476,"randPropPoints":1434,"stats":{"3":956}},"type":12},{"enchant":{"id":4442,"name":"Enchant Weapon - Jade Spirit"},"gems":[{"color":7,"icon":"inv_misc_gem_x4_rare_cut_purple","id":76686,"name":"Purified Imperial Amethyst","quality":3,"stats":["+80 Intellect","+160 Spirit"]}],"icon":"inv_knife_1h_pandaraid_d_02","id":90513,"name":"Regail's Crackling Dagger","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":516,"randPropPoints":1201,"stats":{"11":412,"14":8441,"2":947,"3":552,"6":329},"weaponDamageMax":4671,"weaponDamageMin":2515},"type":13},{"enchant":{"id":4434,"name":"Enchant Off-Hand - Major Intellect"},"icon":"inv_offhand_1h_pandaraid_d_01","id":86960,"name":"Tornado-Summoning Censer","quality":4,"reforging":{"description":"Crit -> Haste","id":145},"stats":{"ilvl":509,"randPropPoints":1463,"stats":{"2":1154,"3":769,"5":390,"6":585}},"type":13}]},"race":"RaceAlliancePandaren","class":"ClassShaman","profession1":"Engineering","profession2":"Tailoring","simLink":"https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJ212dja7HacW00sT1wutyW6TbvOQ3bQIpUiJ4ouID5Guf0QpTSXogxgQBB+aZKvBhgoS0U37IDXgi1AbsqXW0oawYFNDwaLVigpKfYwPMnN347pU8MmXnofdM2e+e77vzPlQC8jA83AEpgAWAW4CvEFgirjvEaJ/43yz8PUVwLj4YZ4F3tfX6fFVmpkG9MVihZmkXdyeZ+piV+Cam1cQxVSVqVPdmTnAhKhUmKoGgTezSv+8Fl0vVJj6IgjAwbi4Nc/Usskz4wfmurFdTJ5mFjyzSjPjuEn8OM/UWlfgzqxSbBcnqkxdDewpM45UTFYZ+uJihWUqgFS8dZohFd//QjEupqtMrQWRqGlAFGcrTNWCzDQEgp+rUXGuRtVnNdoz+yX9nHi5XC6XzS4RyqsXyCVCV0jbGnG+I+c97EBfM3T5cjqIoY9sZ25XdgyT6GmKRCXqxd5de8YwhVx7SPlM2W8uNzp85DZV5Xb9AKZkEhNhnFNJnnG0jwzdPT1dtsft30Hu0AEqmcbYZWpK75R9jC2ASZe+pRa1cp5K1BHrjU98STUZcKTWCuPhZu5KMuAYaoQ+q+Dj1+WHoD8AfBd0GVCE7Yb6oGO+R5Ltx4fkg8gv0wiLfAHqWV3kwbrI3p4+fFjuvCt0S5jiVMbOWJ0T617Uu7cHt8hUE6w+yMS615QarNmM3K+HMK/7UYVp7jU3s/T5vjHUUmE67PgnlR11d2PUlE62vtenZVdmdDduk1txU4ANPctpbDO7yZrD5P06+pNJndgXR5ffGRSk/kRj0VLCNGfSf5HZSx2bJfXmGySWu0brbmi4YmNXE+ueHNaH8BG5H1NhknuSL1klF0g0RD92hJJ7f3PYav7uVav350H5lH4STdcBmW+ZzrjBs/uL3PDvW2rxRH/WNj8u5Da9tdWrvX2RV+fKrozphsk30hOucn8ihydcx8bu4tuuM+uK0mjppdLLx0ZGO4dHR14tHb0D0ZsQ7QSTNBaBB4uJKNlRvG/2pImvCtuftXGtkL0Fyu98OjwLzv8Rw28W/wtssXi9Gfdo/v1TQ62Yvebn5qXOocZN8ciZP+C1tsdHXjjc+cTI0edKx05CNO8398qYeyPISmHo6hUTvxYOwGNReqMQunzq0D4uQEEeivBXAAAA///AExeA"}}}}
+{
+  "metadata": {
+    "spec": "elemental",
+    "class": "shaman",
+    "encounter": "p1_raid_cleave_burst",
+    "timestamp": "2025-08-19T02:30:23+10:00",
+    "iterations": 10000,
+    "encounterDuration": 30,
+    "encounterVariation": 10,
+    "targetCount": 2,
+    "wowsimsCommit": "d56827d",
+    "raidBuffs": {
+      "blessingOfMight": true,
+      "bloodlust": true,
+      "darkIntent": true,
+      "leaderOfThePack": true,
+      "legacyOfTheEmperor": true,
+      "moonkinAura": true,
+      "skullBannerCount": 2,
+      "stormlashTotemCount": 4,
+      "trueshotAura": true,
+      "unholyAura": true
+    }
+  },
+  "results": {
+    "dwarf": {
+      "dps": 371085.750272159,
+      "max": 547430.7239903377,
+      "min": 260901.2418528026,
+      "stdev": 39474.26861705302,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDwarf",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOXeFr68CxsX38yzwvrpBT6zSzDSgLxYrzCTt4s48U5e6AtfcvIwopqpMne7OzAEmRKXCVDUIvJlV+sf16HqhwtTnQQAOxsXteaaWTZ4ZPzjXje1i8gyz4JlVmhnHLeKHeabWugJ3ZpViuzhZZepaYE+ZcaRissrQF5cqLFMBpOLNMwyp+O5ninExXWVqLYhETQOiOFdhqhZkpiEQ/HyNivM1qj6t0Z7ZL+hnxMvlcrlsdolQXr1ILhO6QtrWiPMtueBhB/qaocuX00EMfWS7cruzY5hET1MkKlEv9u7eO4Yp5NpDymfKfnO50eFDt6kqd+j7MSWTmAjjnErytKN9ZOju7emyPe78BnKnDlDJNMauUFN6u+xjbAFMuvQNtaiVC1SijlhvfuxLqsmAI7VWGA/v4a4kA46hRuizCj56TX4A+n3Ad0CXAUXYbqgPOeZ7JNl+fFA+gPwKjbDIF6Ce1UUeqovs7enDh+SuTaFbwxSnMnbW6pxY96LevT24VaaaYPVBJta9ptRgzWbkAT2Eed2PKkxzr7mZpc/3jaGWCtNhx9+p7Kh7GqOmdLL1vT4puzKju3G73IZbAmzoWU5jm9lN1hwm79PRn0zqxP44uvzuoCD1JxqLlhKmOZP+C8xe6tgsqTffILHcNVp3Q8MVG7uaWPfksD6MD8sDmAqT3JN8ySq5SKIh+rEjlNz7i8NW85tXrd6fBuWT+gk0XQdkvmU64wbP7i9ywz9vqcUT/Vnb/ISQ2/W2Vq/29kVenSu7MqYbJt9IT7rK/ZEcmXAdG3uKb7nOrCtKo6UXSy8dHxntHB4deaV07C5Eb0K0E0zSWAQeLCaiZGfx3tlTJr4s7HjGxvVC9jYov/Op8Bw4/0UMv1H8N7DF4o1m3CP5904PtWL2mZ9blzuHGjfFo2d/h1fbHht5/kjn4yPHni0dPwXRvF//X8bcF0FWCkPXrpr4pXAQHo3Sm4XQ5VOH93MBCvJQhD8DAAD//359F3Y="
+      }
+    },
+    "draenei": {
+      "dps": 371096.7124169256,
+      "max": 547444.8799351699,
+      "min": 260908.71384374486,
+      "stdev": 39475.294052092584,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceDraenei",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOSfC11cB4+L7eRZ4X92gJ1ZpZhrQF4sVZpJ2cWeeqUtdgWtuXkYUU1WmTndn5gATolJhqhoE3swq/eN6dL1QYerzIAAH4+L2PFPLJs+MH5zrxnYxeYZZ8MwqzYzjFvHDPFNrXYE7s0qxXZysMnUtsKfMOFIxWWXoi0sVlqkAUvHmGYZUfPczxbiYrjK1FkSipgFRnKswVQsy0xAIfr5GxfkaVZ/WaM/sF/Qz4uVyuVw2u0Qor14klwldIW1rxPmWXPCwA33N0OXL6SCGPrJdud3ZMUyipykSlagXe3fvHcMUcu0h5TNlv7nc6PCh21SVO/T9mJJJTIRxTiV52tE+MnT39nTZHnd+A7lTB6hkGmNXqCm9XfYxtgAmXfqGWtTKBSpRR6w3P/Yl1WTAkVorjIf3cFeSAcdQI/RZBR+9Jj8A/T7gO6DLgCJsN9SHHPM9kmw/PigfQH6FRljkC1DP6iIP1UX29vThQ3LXptCtYYpTGTtrdU6se1Hv3h7cKlNNsPogE+teU2qwZjPygB7CvO5HFaa519zM0uf7xlBLhemw4+9UdtQ9jVFTOtn6Xp+UXZnR3bhdbsMtATb0LKexzewmaw6T9+noTyZ1Yn8cXX53UJD6E41FSwnTnEn/BWYvdWyW1JtvkFjuGq27oeGKjV1NrHtyWB/Gh+UBTIVJ7km+ZJVcJNEQ/dgRSu79xWGr+c2rVu9Pg/JJ/QSargMy3zKdcYNn9xe54Z+31OKJ/qxtfkLI7Xpbq1d7+yKvzpVdGdMNk2+kJ13l/kiOTLiOjT3Ft1xn1hWl0dKLpZeOj4x2Do+OvFI6dheiNyHaCSZpLAIPFhNRsrN47+wpE18Wdjxj43ohexuU3/lUeA6c/yKG3yj+G9hi8UYz7pH8e6eHWjH7zM+ty51DjZvi0bO/w6ttj408f6Tz8ZFjz5aOn4Jo3q//L2PuiyArhaFrV038UjgIj0bpzULo8qnD+7kABXkowp8BAAD//3fuF3U="
+      }
+    },
+    "orc": {
+      "dps": 384346.6474925758,
+      "max": 571812.8673348268,
+      "min": 268151.22525493323,
+      "stdev": 41834.92669815603,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceOrc",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOfeFr68CxsX38yzwvrpBT6zSzDSgLxYrzCTt4s48U5e6AtfcvIwopqpMne7OzAEmRKXCVDUIvJlV+sf16HqhwtTnQQAOxsXteaaWTZ4ZPzjXje1i8gyz4JlVmhnHLeKHeabWugJ3ZpViuzhZZepaYE+ZcaRissrQF5cqLFMBpOLNMwyp+O5ninExXWVqLYhETQOiOFdhqhZkpiEQ/HyNivM1qj6t0Z7ZL+hnxMvlcrlsdolQXr1ILhO6QtrWiPMtueBhB/qaocuX00EMfWS7cruzY5hET1MkKlEv9u7eO4Yp5NpDymfKfnO50eFDt6kqd+j7MSWTmAjjnErytKN9ZOju7emyPe78BnKnDlDJNMauUFN6u+xjbAFMuvQNtaiVC1SijlhvfuxLqsmAI7VWGA/v4a4kA46hRuizCj56TX4A+n3Ad0CXAUXYbqgPOeZ7JNl+fFA+gPwKjbDIF6Ce1UUeqovs7enDh+SuTaFbwxSnMnbW6pxY96LevT24VaaaYPVBJta9ptRgzWbkAT2Eed2PKkxzr7mZpc/3jaGWCtNhx9+p7Kh7GqOmdLL1vT4puzKju3G73IZbAmzoWU5jm9lN1hwm79PRn0zqxP44uvzuoCD1JxqLlhKmOZP+C8xe6tgsqTffILHcNVp3Q8MVG7uaWPfksD6MD8sDmAqT3JN8ySq5SKIh+rEjlNz7i8NW85tXrd6fBuWT+gk0XQdkvmU64wbP7i9ywz9vqcUT/Vnb/ISQ2/W2Vq/29kVenSu7MqYbJt9IT7rK/ZEcmXAdG3uKb7nOrCtKo6UXSy8dHxntHB4deaV07C5Eb0K0E0zSWAQeLCaiZGfx3tlTJr4s7HjGxvVC9jYov/Op8Bw4/0UMv1H8N7DF4o1m3CP5904PtWL2mZ9blzuHGjfFo2d/h1fbHht5/kjn4yPHni0dPwXRvF//X8bcF0FWCkPXrpr4pXAQHo3Sm4XQ5VOH93MBCvJQhD8DAAD//5i5F3o="
+      }
+    },
+    "tauren": {
+      "dps": 371053.05041243386,
+      "max": 547388.256155841,
+      "min": 260878.8258799764,
+      "stdev": 39472.23244728499,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTauren",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOefC11cB4+L7eRZ4X92gJ1ZpZhrQF4sVZpJ2cWeeqUtdgWtuXkYUU1WmTndn5gATolJhqhoE3swq/eN6dL1QYerzIAAH4+L2PFPLJs+MH5zrxnYxeYZZ8MwqzYzjFvHDPFNrXYE7s0qxXZysMnUtsKfMOFIxWWXoi0sVlqkAUvHmGYZUfPczxbiYrjK1FkSipgFRnKswVQsy0xAIfr5GxfkaVZ/WaM/sF/Qz4uVyuVw2u0Qor14klwldIW1rxPmWXPCwA33N0OXL6SCGPrJdud3ZMUyipykSlagXe3fvHcMUcu0h5TNlv7nc6PCh21SVO/T9mJJJTIRxTiV52tE+MnT39nTZHnd+A7lTB6hkGmNXqCm9XfYxtgAmXfqGWtTKBSpRR6w3P/Yl1WTAkVorjIf3cFeSAcdQI/RZBR+9Jj8A/T7gO6DLgCJsN9SHHPM9kmw/PigfQH6FRljkC1DP6iIP1UX29vThQ3LXptCtYYpTGTtrdU6se1Hv3h7cKlNNsPogE+teU2qwZjPygB7CvO5HFaa519zM0uf7xlBLhemw4+9UdtQ9jVFTOtn6Xp+UXZnR3bhdbsMtATb0LKexzewmaw6T9+noTyZ1Yn8cXX53UJD6E41FSwnTnEn/BWYvdWyW1JtvkFjuGq27oeGKjV1NrHtyWB/Gh+UBTIVJ7km+ZJVcJNEQ/dgRSu79xWGr+c2rVu9Pg/JJ/QSargMy3zKdcYNn9xe54Z+31OKJ/qxtfkLI7Xpbq1d7+yKvzpVdGdMNk2+kJ13l/kiOTLiOjT3Ft1xn1hWl0dKLpZeOj4x2Do+OvFI6dheiNyHaCSZpLAIPFhNRsrN47+wpE18Wdjxj43ohexuU3/lUeA6c/yKG3yj+G9hi8UYz7pH8e6eHWjH7zM+ty51DjZvi0bO/w6ttj408f6Tz8ZFjz5aOn4Jo3q//L2PuiyArhaFrV038UjgIj0bpzULo8qnD+7kABXkowp8BAAD//59IF3s="
+      }
+    },
+    "troll": {
+      "dps": 399831.28824067477,
+      "max": 592762.3352325099,
+      "min": 284557.7425512471,
+      "stdev": 42969.059898892774,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceTroll",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzU7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0i+OSL52H3zJnvnu87cz7UAjLwHByFKYBFgFsArxOYIu67hOhfOY8JX18FjIvv51ngfXWDnlilmWlAXyxWmEnaxZ15pi51Ba65eRlRTFWZOt2dmQNMiEqFqWoQeDOr9I/r0fVChanPgwAcjIvb80wtmzwzfnCuG9vF5BlmwTOrNDOOW8QP80ytdQXuzCrFdnGyytS1wJ4y40jFZJWhLy5VWKYCSMWbZxhS8d3PFONiusrUWhCJmgZEca7CVC3ITEMg+PkaFedrVH1aoz2zX9DPiJfL5XLZ7BKhvHqRXCZ0hbStEedbcsHDDvQ1Q5cvp4MY+sh25XZnxzCJnqZIVKJe7N29dwxTyLWHlM+U/eZyo8OHblNV7tD3Y0omMRHGOZXkaUf7yNDd29Nle9z5DeROHaCSaYxdoab0dtnH2AKYdOkbalErF6hEHbHe/NiXVJMBR2qtMB7ew11JBhxDjdBnFXz0mvwA9PuA74AuA4qw3VAfcsz3SLL9+KB8APkVGmGRL0A9q4s8VBfZ29OHD8ldm0K3hilOZeys1Tmx7kW9e3twq0w1weqDTKx7TanBms3IA3oI87ofVZjmXnMzS5/vG0MtFabDjr9T2VH3NEZN6WTre31SdmVGd+N2uQ23BNjQs5zGNrObrDlM3qejP5nUif1xdPndQUHqTzQWLSVMcyb9F5i91LFZUm++QWK5a7TuhoYrNnY1se7JYX0YH5YHMBUmuSf5klVykURD9GNHKLn3F4et5jevWr0/Dcon9RNoug7IfMt0xg2e3V/khn/eUosn+rO2+Qkht+ttrV7t7Yu8Old2ZUw3TL6RnnSV+yM5MuE6NvYU33KdWVeURksvll46PjLaOTw68krp2F2I3oRoJ5iksQg8WExEyc7ivbOnTHxZ2PGMjeuF7G1QfudT4Tlw/osYfqP4b2CLxRvNuEfy750easXsMz+3LncONW6KR8/+Dq+2PTby/JHOx0eOPVs6fgqieb/+v4y5L4KsFIauXTXxS+EgPBqlNwuhy6cO7+cCFOShCH8GAAD//6XXF3w="
+      }
+    },
+    "goblin": {
+      "dps": 375738.6963804386,
+      "max": 580037.261492676,
+      "min": 275163.1368814051,
+      "stdev": 40660.04454887528,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceGoblin",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJzE7O5vdjlOL6aWJ64XWZLdJt3nIblqEUqRE8UXEh0jXP6KUphL0QQwIgg9NstVgQwWJ6KZ9kBrwRagN2VJraUNYsKmhYNFqRQWlPsYHmbm7cV0q+OSL52H3zJnvnu87cz7UAjLwHByBaYAlgJsArxOYJu67hOhfOW8Xvr4CGBffL7DA++o6Pb5GMzOAvliqMJN0iNsLTF3sDlxz8zKimK4ydaonMw+YEJUKU9Ug8GbX6B/XouvFClOfBwE4GBe3FphaMXlm4sB8D3aIqdPMgmfXaGYC28UPC0ytdwfu7BrFDnGiytTVwJ4yE0jFVJWhLy5WWKYCSMWbpxlS8d3PFONipsrUehCJmgFEcbbCVC3IzEAg+LkaFedqVH1ao71zX9DPiJfL5XLZ7DKhvHqBXCJ0lbStE+dbct7DTvQ1Q5evpIMY+sh25nZlxzGJnqZIVKJe7Nu1ZxxTyLWHlM+W/eZyo8OHblNVbtf3Y0omMRHGOZXkaUf7yNDd09tte9z+DeQOHaCSaYxdpqb0dtnH2CKYdPkbalGr56lEHbHe+NiXVJNBR2qtMB7ew11JBh1DjdBvFXz0mvwA9PuA74AuA4qww1AfdMz3SLID+KB8APllGmGRL0I9q4s8WBfZ19uPD8mdd4VuCVOcytgZq3Nyw4t69/XiFplqgtUHmdzwmlKDNZuR+/Uw5vUAqjDNveZmlj7fP45aKkyHnX+nsqPuboya0snW9/qk7MqM7sFtciu2B9jQs5LGNrObrDlM3aejP5nUiX1xdPmdIUHqTzQeLSVMcyb9F5i91LE5Um++SWK5a7TuhoYrNnc1ueHJEX0IH5b7MRUmuSf5slVygURDDGBnKLn3F4et5u9etXp/GpJP6ifQdB2U+ZbpjBs8u7/IDf+8pRZPDGRt8+NCbtNbW73a1x95db7syphumHwzPeEq90dyeNJ1bOwuvuU6c64ojZVeLL10bHSsa2Rs9JXS0TsQvQnRTjBFYxF4qJiIkh3Fe+dOmviysP0ZG9cK2Vug/K6nwrPg/Bcx8kbx38CWitebcY/k3zs13IrZa35uXuoabtwUj5z5HV5te2z0+cNdj48efbZ07CRE8379fxlzbwRZLQxfvWLil8IBeDRKbxRCl08f2scFKMhDEf4MAAD//7mEF38="
+      }
+    },
+    "alliance_pandaren": {
+      "dps": 374423.38363588863,
+      "max": 551677.5074400217,
+      "min": 263142.83913543343,
+      "stdev": 39737.926564263136,
+      "loadout": {
+        "consumables": {
+          "flaskIcon": "trade_alchemy_potione5",
+          "flaskId": 76085,
+          "flaskName": "Flask of the Warm Sun",
+          "foodIcon": "inv_misc_food_cooked_mogufishstew",
+          "foodId": 74650,
+          "foodName": "Mogu Fish Stew",
+          "potIcon": "trade_alchemy_potiond4",
+          "potId": 76093,
+          "potName": "Potion of the Jade Serpent",
+          "prepotIcon": "trade_alchemy_potiond4",
+          "prepotId": 76093,
+          "prepotName": "Potion of the Jade Serpent"
+        },
+        "talentsString": "333322",
+        "talents": {
+          "talentString": "333322",
+          "talents": [
+            {
+              "choice": 3,
+              "icon": "ability_shaman_astralshift",
+              "name": "Astral Shift",
+              "spellId": 108271,
+              "tier": 1
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_windwalktotem",
+              "name": "Windwalk Totem",
+              "spellId": 108273,
+              "tier": 2
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_totemrelocation",
+              "name": "Totemic Projection",
+              "spellId": 108287,
+              "tier": 3
+            },
+            {
+              "choice": 3,
+              "icon": "ability_shaman_echooftheelements",
+              "name": "Echo of the Elements",
+              "spellId": 108283,
+              "tier": 4
+            },
+            {
+              "choice": 2,
+              "icon": "ability_shaman_ancestralguidance",
+              "name": "Ancestral Guidance",
+              "spellId": 108281,
+              "tier": 5
+            },
+            {
+              "choice": 2,
+              "icon": "shaman_talent_primalelementalist",
+              "name": "Primal Elementalist",
+              "spellId": 117013,
+              "tier": 6
+            }
+          ]
+        },
+        "glyphs": {
+          "major1": 41539,
+          "major1Icon": "spell_shaman_spiritwalkersgrace",
+          "major1Name": "Glyph of Spiritwalker's Grace",
+          "major1SpellId": 55446
+        },
+        "equipment": {
+          "items": [
+            {
+              "gems": [
+                {
+                  "color": 1,
+                  "icon": "inv_misc_gem_x4_metagem_cut",
+                  "id": 76885,
+                  "name": "Burning Primal Diamond",
+                  "quality": 3,
+                  "stats": ["+216 Intellect"]
+                },
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_helm_mail_raidshaman_l_01",
+              "id": 87141,
+              "name": "Firebird's Headpiece",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 854,
+                  "17": 3421,
+                  "2": 2071,
+                  "3": 1140,
+                  "6": 710
+                }
+              },
+              "type": 1
+            },
+            {
+              "icon": "trade_archaeology_insect-in-amber",
+              "id": 86976,
+              "name": "Korven's Amber-Sealed Beetle",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "4": 450, "6": 550 }
+              },
+              "type": 2
+            },
+            {
+              "enchant": {
+                "id": 4806,
+                "name": "Greater Crane Wing Inscription"
+              },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_shoulder_mail_raidshaman_l_01",
+              "id": 87143,
+              "name": "Firebird's Shoulderwraps",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "11": 614,
+                  "17": 3157,
+                  "2": 1538,
+                  "3": 946,
+                  "4": 667
+                }
+              },
+              "type": 3
+            },
+            {
+              "enchant": {
+                "id": 4892,
+                "name": "Lightweave Embroidery (Rank 3)"
+              },
+              "icon": "inv_cape_pandaria_d_03",
+              "id": 90512,
+              "name": "Cloak of Overwhelming Corruption",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Spirit", "id": 162 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": {
+                  "11": 564,
+                  "17": 1214,
+                  "2": 1231,
+                  "3": 821,
+                  "7": 520
+                }
+              },
+              "type": 4
+            },
+            {
+              "enchant": {
+                "id": 4419,
+                "name": "Enchant Chest - Glorious Stats"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 6,
+                  "icon": "inv_misc_gem_x4_rare_cut_orange",
+                  "id": 76668,
+                  "name": "Reckless Vermilion Onyx",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Haste"]
+                }
+              ],
+              "icon": "inv_chest_mail_raidshaman_l_01",
+              "id": 86951,
+              "name": "Mail of Screaming Secrets",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Haste", "id": 117 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 840,
+                  "17": 4210,
+                  "2": 2071,
+                  "3": 1220,
+                  "4": 840
+                }
+              },
+              "type": 5
+            },
+            {
+              "enchant": {
+                "id": 4414,
+                "name": "Enchant Bracer - Super Intellect"
+              },
+              "gems": [0],
+              "icon": "inv_bracers_mail_raidshaman_l_01",
+              "id": 86962,
+              "name": "Bracers of Tempestuous Fury",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "17": 1842, "2": 1154, "3": 769, "4": 487, "7": 528 }
+              },
+              "type": 6
+            },
+            {
+              "enchant": {
+                "id": 4430,
+                "name": "Enchant Gloves - Greater Haste"
+              },
+              "gems": [0],
+              "icon": "inv_glove_mail_raidshaman_l_01",
+              "id": 87140,
+              "name": "Firebird's Gloves",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": {
+                  "17": 2631,
+                  "2": 1538,
+                  "3": 1026,
+                  "4": 600,
+                  "7": 733
+                }
+              },
+              "tinker": 4898,
+              "type": 7
+            },
+            {
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                },
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_belt_mail_raidshaman_l_01",
+              "id": 87183,
+              "name": "Binder's Chain of Unending Summer",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "17": 2368, "2": 1538, "3": 946, "4": 576, "7": 684 }
+              },
+              "type": 8
+            },
+            {
+              "enchant": {
+                "id": 4826,
+                "name": "Greater Pearlescent Spellthread"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_robe_mail_raidshaman_l_01",
+              "id": 87142,
+              "name": "Firebird's Kilt",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 2625,
+                "stats": {
+                  "11": 880,
+                  "17": 3684,
+                  "2": 2071,
+                  "3": 1300,
+                  "7": 880
+                }
+              },
+              "type": 9
+            },
+            {
+              "enchant": {
+                "id": 4429,
+                "name": "Enchant Boots - Pandaren's Step"
+              },
+              "gems": [
+                {
+                  "color": 2,
+                  "icon": "inv_misc_gem_x4_rare_cut_red",
+                  "id": 76694,
+                  "name": "Brilliant Primordial Ruby",
+                  "quality": 3,
+                  "stats": ["+160 Intellect"]
+                }
+              ],
+              "icon": "inv_boots_mail_raidshaman_l_01",
+              "id": 90515,
+              "name": "Lightning Prisoner's Boots",
+              "quality": 4,
+              "reforging": { "description": "Spirit -> Mastery", "id": 119 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 2082,
+                "stats": {
+                  "17": 2957,
+                  "2": 1642,
+                  "3": 1015,
+                  "4": 507,
+                  "7": 800
+                }
+              },
+              "type": 10
+            },
+            {
+              "icon": "inv_jewelry_ring_148",
+              "id": 90511,
+              "name": "Watersoul Signet",
+              "quality": 4,
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1561,
+                "stats": { "2": 1231, "3": 821, "4": 480, "7": 587 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_jewelry_ring_147",
+              "id": 86982,
+              "name": "Seal of the Profane",
+              "quality": 4,
+              "reforging": { "description": "Mastery -> Haste", "id": 167 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "11": 557, "2": 1154, "3": 769, "4": 438 }
+              },
+              "type": 11
+            },
+            {
+              "icon": "inv_misc_pvp_trinket",
+              "id": 87175,
+              "name": "Essence of Terror",
+              "quality": 4,
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1950,
+                "stats": { "3": 1300 }
+              },
+              "type": 12
+            },
+            {
+              "icon": "inv_inscription_trinket_dragon",
+              "id": 79331,
+              "name": "Relic of Yu'lon",
+              "quality": 4,
+              "stats": {
+                "ilvl": 476,
+                "randPropPoints": 1434,
+                "stats": { "3": 956 }
+              },
+              "type": 12
+            },
+            {
+              "enchant": { "id": 4442, "name": "Enchant Weapon - Jade Spirit" },
+              "gems": [
+                {
+                  "color": 7,
+                  "icon": "inv_misc_gem_x4_rare_cut_purple",
+                  "id": 76686,
+                  "name": "Purified Imperial Amethyst",
+                  "quality": 3,
+                  "stats": ["+80 Intellect", "+160 Spirit"]
+                }
+              ],
+              "icon": "inv_knife_1h_pandaraid_d_02",
+              "id": 90513,
+              "name": "Regail's Crackling Dagger",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 516,
+                "randPropPoints": 1201,
+                "stats": {
+                  "11": 412,
+                  "14": 8441,
+                  "2": 947,
+                  "3": 552,
+                  "6": 329
+                },
+                "weaponDamageMax": 4671,
+                "weaponDamageMin": 2515
+              },
+              "type": 13
+            },
+            {
+              "enchant": {
+                "id": 4434,
+                "name": "Enchant Off-Hand - Major Intellect"
+              },
+              "icon": "inv_offhand_1h_pandaraid_d_01",
+              "id": 86960,
+              "name": "Tornado-Summoning Censer",
+              "quality": 4,
+              "reforging": { "description": "Crit -> Haste", "id": 145 },
+              "stats": {
+                "ilvl": 509,
+                "randPropPoints": 1463,
+                "stats": { "2": 1154, "3": 769, "5": 390, "6": 585 }
+              },
+              "type": 13
+            }
+          ]
+        },
+        "race": "RaceAlliancePandaren",
+        "class": "ClassShaman",
+        "profession1": "Engineering",
+        "profession2": "Tailoring",
+        "simLink": "https://www.wowsims.com/mop/shaman/elemental/#eJzkUl1oXEUUvmfuzL2zJ212dja7HacW00sT1wutyW6TbvOQ3bQIpUiJ4ouID5Guf0QpTSXogxgQBB+aZKvBhgoS0U37IDXgi1AbsqXW0oawYFNDwaLVigpKfYwPMnN347pU8MmXnofdM2e+e77vzPlQC8jA83AEpgAWAW4CvEFgirjvEaJ/43yz8PUVwLj4YZ4F3tfX6fFVmpkG9MVihZmkXdyeZ+piV+Cam1cQxVSVqVPdmTnAhKhUmKoGgTezSv+8Fl0vVJj6IgjAwbi4Nc/Usskz4wfmurFdTJ5mFjyzSjPjuEn8OM/UWlfgzqxSbBcnqkxdDewpM45UTFYZ+uJihWUqgFS8dZohFd//QjEupqtMrQWRqGlAFGcrTNWCzDQEgp+rUXGuRtVnNdoz+yX9nHi5XC6XzS4RyqsXyCVCV0jbGnG+I+c97EBfM3T5cjqIoY9sZ25XdgyT6GmKRCXqxd5de8YwhVx7SPlM2W8uNzp85DZV5Xb9AKZkEhNhnFNJnnG0jwzdPT1dtsft30Hu0AEqmcbYZWpK75R9jC2ASZe+pRa1cp5K1BHrjU98STUZcKTWCuPhZu5KMuAYaoQ+q+Dj1+WHoD8AfBd0GVCE7Yb6oGO+R5Ltx4fkg8gv0wiLfAHqWV3kwbrI3p4+fFjuvCt0S5jiVMbOWJ0T617Uu7cHt8hUE6w+yMS615QarNmM3K+HMK/7UYVp7jU3s/T5vjHUUmE67PgnlR11d2PUlE62vtenZVdmdDduk1txU4ANPctpbDO7yZrD5P06+pNJndgXR5ffGRSk/kRj0VLCNGfSf5HZSx2bJfXmGySWu0brbmi4YmNXE+ueHNaH8BG5H1NhknuSL1klF0g0RD92hJJ7f3PYav7uVav350H5lH4STdcBmW+ZzrjBs/uL3PDvW2rxRH/WNj8u5Da9tdWrvX2RV+fKrozphsk30hOucn8ihydcx8bu4tuuM+uK0mjppdLLx0ZGO4dHR14tHb0D0ZsQ7QSTNBaBB4uJKNlRvG/2pImvCtuftXGtkL0Fyu98OjwLzv8Rw28W/wtssXi9Gfdo/v1TQ62Yvebn5qXOocZN8ciZP+C1tsdHXjjc+cTI0edKx05CNO8398qYeyPISmHo6hUTvxYOwGNReqMQunzq0D4uQEEeivBXAAAA///AExeA"
+      }
+    }
+  }
+}
