@@ -32,7 +32,7 @@
 
   mkDurationEncounters = durationConfig:
     mapAttrs (
-      name: targets:
+      _name: targets:
         mkEncounter (durationConfig // {inherit targets;})
     )
     targetConfigs;

@@ -2,7 +2,6 @@
   lib,
   pkgs,
   classes,
-  encounter,
   buffs,
   debuffs,
   inputs,
