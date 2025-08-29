@@ -1,8 +1,8 @@
 name: Challenge Mode Leaderboard Update
 
 on:
-  # schedule:
-  #   - cron: '5 */1 * * *'
+  schedule:
+    - cron: '5 */1 * * *'
   workflow_dispatch: 
     inputs:
       force_update:
