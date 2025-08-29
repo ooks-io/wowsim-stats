@@ -246,19 +246,19 @@ const baseUrl = import.meta.env.BASE_URL;
       label="Leaderboard Type"
       options={[
         {
+          value: "dungeon",
+          label: "Dungeons",
+          selected: initialLeaderboardType === "dungeon",
+        },
+        {
           value: "players",
           label: "Players",
           selected: initialLeaderboardType === "players",
         },
         {
           value: "teams",
-          label: "Teams",
+          label: "Teams (Experimental)",
           selected: initialLeaderboardType === "teams",
-        },
-        {
-          value: "dungeon",
-          label: "Individual Dungeons",
-          selected: initialLeaderboardType === "dungeon",
         },
       ]}
     />
@@ -368,9 +368,10 @@ const baseUrl = import.meta.env.BASE_URL;
       </p>
       <p>
         <em
-          >Note: Team detection and ranking algorithms are still being refined.
-          Data may change as we improve team identification logic.</em
-        >
+          >This feature is still being actively developed, teams, particularly
+          ones with large overlapping rosters are still being identified
+          incorrectly.
+        </em>
       </p>
     </div>
   </div>
