@@ -375,77 +375,77 @@ const baseUrl = import.meta.env.BASE_URL;
       </p>
     </div>
   </div>
+</PageLayout>
 
-  <div id="loading" class="loading-overlay hidden">
-    <LoadingState message="Loading Challenge Mode leaderboard data..." />
-  </div>
+<div id="loading" class="loading-overlay hidden">
+  <LoadingState message="Loading Challenge Mode leaderboard data..." />
+</div>
 
-  <div id="error" class="error-overlay hidden">
-    <LoadingState type="error" />
-  </div>
+<div id="error" class="error-overlay hidden">
+  <LoadingState type="error" />
+</div>
 
-  <div id="no-data" class="no-data-message hidden">
-    <div class="card">
-      <div class="no-data-content">
-        <h3 class="section-title-large">No Times Found</h3>
-        <p>
-          No Challenge Mode times were found for this realm and dungeon
-          combination.
-        </p>
-      </div>
+<div id="no-data" class="no-data-message hidden">
+  <div class="card">
+    <div class="no-data-content">
+      <h3 class="section-title-large">No Times Found</h3>
+      <p>
+        No Challenge Mode times were found for this realm and dungeon
+        combination.
+      </p>
     </div>
   </div>
+</div>
 
-  <div id="content" class="hidden">
-    <div class="card">
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="info-label">Dungeon</span>
-          <span class="info-value" id="dungeon-name">Loading...</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Period</span>
-          <span class="info-value" id="period">-</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Realm</span>
-          <span class="info-value" id="realm-name">-</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Period Start</span>
-          <span class="info-value" id="period-start">-</span>
-        </div>
-        <div class="info-item">
-          <span class="info-label">Period End</span>
-          <span class="info-value" id="period-end">-</span>
-        </div>
+<div id="content" class="hidden">
+  <div class="card">
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Dungeon</span>
+        <span class="info-value" id="dungeon-name">Loading...</span>
       </div>
-
-      <div
-        id="cross-realm-note"
-        style="display: none; margin-top: 15px; padding: 10px; background-color: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;"
-      >
-        <p style="margin: 0; font-size: 0.85em; color: var(--text-secondary);">
-          <span style="color: #ff6b6b; font-weight: bold;">*</span> indicates players
-          from other realms. Times with 3+ local players represent the true realm
-          record for Feat of Strength achievement.
-        </p>
+      <div class="info-item">
+        <span class="info-label">Period</span>
+        <span class="info-value" id="period">-</span>
       </div>
-    </div>
-
-    <div class="leaderboard-container card-container" id="dungeon-leaderboard">
-      <div id="leaderboard-rows"></div>
+      <div class="info-item">
+        <span class="info-label">Realm</span>
+        <span class="info-value" id="realm-name">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Period Start</span>
+        <span class="info-value" id="period-start">-</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Period End</span>
+        <span class="info-value" id="period-end">-</span>
+      </div>
     </div>
 
     <div
-      class="leaderboard-container card"
-      id="team-player-leaderboard"
-      style="display: none;"
+      id="cross-realm-note"
+      style="display: none; margin-top: 15px; padding: 10px; background-color: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; border-radius: 4px;"
     >
-      <div id="team-rows"></div>
+      <p style="margin: 0; font-size: 0.85em; color: var(--text-secondary);">
+        <span style="color: #ff6b6b; font-weight: bold;">*</span> indicates players
+        from other realms. Times with 3+ local players represent the true realm record
+        for Feat of Strength achievement.
+      </p>
     </div>
   </div>
-</PageLayout>
+
+  <div class="leaderboard-container card-container" id="dungeon-leaderboard">
+    <div id="leaderboard-rows"></div>
+  </div>
+
+  <div
+    class="leaderboard-container card"
+    id="team-player-leaderboard"
+    style="display: none;"
+  >
+    <div id="team-rows"></div>
+  </div>
+</div>
 
 <style is:global>
   /* Global styles for dynamically generated content */
@@ -1648,7 +1648,7 @@ const baseUrl = import.meta.env.BASE_URL;
 
     return `
       <div style="margin-bottom: 20px;">
-        <h4 style="color: var(--highlight-color); margin-bottom: 10px;">Core Team (3-player consistent core)</h4>
+        <h4 style="color: var(--highlight-color); margin-bottom: 10px;">Identified Core Team </h4>
         <div style="display: flex; flex-wrap: wrap; align-items: center;">${coreMembers}</div>
       </div>
       

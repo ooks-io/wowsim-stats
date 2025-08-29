@@ -231,7 +231,35 @@
                       "all_runs": sorted(all_runs, key=lambda x: x["duration"])
                   }
 
-                  deduplicated.append(merged_team)
+                  # Validate that merged core players appear in most of their best runs
+                  core_participation_count = 0
+                  total_best_runs = len(best_team_runs)
+                  failed_runs = []
+                  
+                  for dungeon_slug, run_data in best_team_runs.items():
+                      # Find actual run to check core participation
+                      run_found = False
+                      for team in similar_teams:
+                          for run in team["all_runs"]:
+                              if run["duration"] == run_data["duration"] and run["completed_timestamp"] == run_data["completed_timestamp"]:
+                                  # Count how many core members participated in this run
+                                  core_in_run = sum(1 for core_id in merged_core_ids if core_id in run["member_ids"])
+                                  if core_in_run >= 2:  # At least 2 of 3 core members
+                                      core_participation_count += 1
+                                  else:
+                                      failed_runs.append(f"{dungeon_slug}: {core_in_run}/3 core members")
+                                  run_found = True
+                                  break
+                          if run_found:
+                              break
+                  
+                  core_participation_rate = core_participation_count / total_best_runs if total_best_runs > 0 else 0
+                  if core_participation_rate >= 0.85 and len(failed_runs) <= 1:  # Allow max 1 failed run
+                      deduplicated.append(merged_team)
+                  else:
+                      print(f"Warning: Rejecting merged team {merged_sig} - core players only appear in {core_participation_rate:.1%} of best runs. Failed runs: {failed_runs}")
+                      # Add individual teams instead of the problematic merged team
+                      deduplicated.extend(similar_teams)
 
           return deduplicated
 
@@ -320,15 +348,18 @@
                   }
 
                   # Track extended rosters - players who run together consistently
-                  # Group runs by overlapping player combinations to identify extended teams
+                  # Use stricter criteria to prevent artificial team merging
                   found_roster = None
                   current_players = set(member_ids)
 
                   # Check if this run matches any existing extended roster
                   for roster_sig, roster_players in extended_rosters.items():
-                      # If 3+ players overlap, consider this part of the same extended roster
                       overlap = len(current_players.intersection(roster_players))
-                      if overlap >= 3:
+                      overlap_percentage = overlap / len(current_players.union(roster_players))
+                      
+                      # More balanced criteria: Allow extended rosters but prevent mega-merging
+                      # Require 3+ overlap but with minimum 35% similarity to prevent distant connections
+                      if overlap >= 3 and overlap_percentage >= 0.35:
                           found_roster = roster_sig
                           # Add new players to the extended roster
                           extended_rosters[roster_sig].update(current_players)
