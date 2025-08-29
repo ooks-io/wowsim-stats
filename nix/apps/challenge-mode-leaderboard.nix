@@ -30,55 +30,25 @@
           text = re.sub(r'[\s\'\W]+', '-', text)
           return text.strip('-')
 
-      def get_current_period_and_dungeons(realm_info, session):
-          # fetch the current period ID and dungeon list
-          region, realm_id, name = realm_info['region'], realm_info['id'], realm_info['name']
-          namespace = f"dynamic-classic-{region}"
-          url = (
-              f"https://{region}.api.blizzard.com/data/wow/connected-realm/"
-              f"{realm_id}/mythic-leaderboard/index?namespace={namespace}"
-          )
+      def get_hardcoded_period_and_dungeons():
+          # hardcoded values since the index endpoint is broken
+          # all records are now in period 1025
+          period_id = "1025"
 
-          try:
-              print(f"  Fetching leaderboard index for {name}...")
-              response = session.get(url, timeout=15)
-              response.raise_for_status()
-              data = response.json()
+          dungeons = [
+              {"id": 2, "name": "Temple of the Jade Serpent", "slug": "temple-of-the-jade-serpent"},
+              {"id": 56, "name": "Stormstout Brewery", "slug": "stormstout-brewery"},
+              {"id": 57, "name": "Gate of the Setting Sun", "slug": "gate-of-the-setting-sun"},
+              {"id": 58, "name": "Shado-Pan Monastery", "slug": "shado-pan-monastery"},
+              {"id": 59, "name": "Siege of Niuzao Temple", "slug": "siege-of-niuzao-temple"},
+              {"id": 60, "name": "Mogu'shan Palace", "slug": "mogu-shan-palace"},
+              {"id": 76, "name": "Scholomance", "slug": "scholomance"},
+              {"id": 77, "name": "Scarlet Halls", "slug": "scarlet-halls"},
+              {"id": 78, "name": "Scarlet Monastery", "slug": "scarlet-monastery"}
+          ]
 
-              href = data["current_leaderboards"][0]["key"]["href"]
-              match = re.search(r"/period/(\d+)", href)
-              if not match:
-                  print(f"  ERROR: Could not parse period ID for {name}.", file=sys.stderr)
-                  return None, None
-              period_id = match.group(1)
-
-              dungeons = []
-              for d in data["current_leaderboards"]:
-                  dungeon_name_field = d["name"]
-                  # check if the name field is a dictionary of localizations
-                  if isinstance(dungeon_name_field, dict):
-                      # if it is, pick the English name for consistency.
-                      # use .get() for safety in case en_US is missing.
-                      name_str = dungeon_name_field.get("en_US", "unknown-dungeon-name")
-                  else:
-                      # otherwise, it's already a string.
-                      name_str = dungeon_name_field
-
-                  dungeons.append({
-                      "id": d["id"],
-                      "name": name_str, # use extracted string name
-                      "slug": slugify(name_str)
-                  })
-
-              print(f"  Found Period: {period_id}, Dungeons: {len(dungeons)}")
-              return period_id, dungeons
-
-          except requests.exceptions.RequestException as e:
-              print(f"  ERROR: API request failed for {name}: {e}", file=sys.stderr)
-              return None, None
-          except (KeyError, IndexError) as e:
-              print(f"  ERROR: Could not parse index for {name}. Details: {e}", file=sys.stderr)
-              return None, None
+          print(f"  Using hardcoded Period: {period_id}, Dungeons: {len(dungeons)}")
+          return period_id, dungeons
 
 
       def get_leaderboard_data(realm_info, dungeon, period_id, session):
@@ -176,12 +146,7 @@
                   f"({realm_info['region'].upper()})"
               )
 
-              period_id, dungeons = get_current_period_and_dungeons(
-                  realm_info, session
-              )
-              if not period_id or not dungeons:
-                  print(f"  Skipping realm {realm_info['name']}.")
-                  continue
+              period_id, dungeons = get_hardcoded_period_and_dungeons()
 
               for dungeon in dungeons:
                   print(f"  - Fetching dungeon: {dungeon['name']}")
