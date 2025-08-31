@@ -1,0 +1,126 @@
+---
+export interface Props {
+  id: string;
+  label: string;
+  options: Array<{ value: string; label: string; selected?: boolean }>;
+  class?: string;
+}
+
+const { id, label, options, class: className } = Astro.props;
+---
+
+<div class={`form-group horizontal-selector ${className || ""}`.trim()}>
+  <label class="form-label">{label}:</label>
+  <div class="horizontal-options" data-selector-id={id}>
+    {
+      options.map((option) => (
+        <button
+          type="button"
+          class={`horizontal-option ${option.selected ? "selected" : ""}`}
+          data-value={option.value}
+          data-selector-target={id}
+        >
+          {option.label}
+        </button>
+      ))
+    }
+  </div>
+  <select id={id} class="form-select" style="display: none;">
+    {
+      options.map((option) => (
+        <option value={option.value} selected={option.selected}>
+          {option.label}
+        </option>
+      ))
+    }
+  </select>
+</div>
+
+<style>
+  .horizontal-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .horizontal-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .horizontal-option {
+    padding: 8px 16px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .horizontal-option:hover {
+    background-color: var(--bg-selection);
+    border-color: var(--highlight-color);
+  }
+
+  .horizontal-option.selected {
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+    color: #000;
+    font-weight: 600;
+  }
+
+  .horizontal-option:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .horizontal-options {
+      gap: 6px;
+    }
+
+    .horizontal-option {
+      padding: 6px 12px;
+      font-size: 0.8em;
+    }
+  }
+</style>
+
+<script>
+  // Handle horizontal option selection
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-selector-target]").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        const button = e.target as HTMLButtonElement;
+        const selectorId = button.dataset.selectorTarget;
+        const value = button.dataset.value;
+
+        if (!selectorId) return;
+
+        // update hidden select
+        const select = document.getElementById(selectorId) as HTMLSelectElement;
+        if (select) {
+          select.value = value || "";
+          // trigger change event
+          select.dispatchEvent(new Event("change"));
+        }
+
+        // update visual state
+        const container = button.closest(".horizontal-options");
+        if (container) {
+          container.querySelectorAll(".horizontal-option").forEach((opt) => {
+            opt.classList.remove("selected");
+          });
+          button.classList.add("selected");
+        }
+      });
+    });
+  });
+</script>
+
