@@ -1,0 +1,89 @@
+.callout {
+  background-color: #2a3a3a;
+  border: 1px solid #458588;
+  border-left: 4px solid #458588;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.callout-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.callout-icon {
+  width: 20px;
+  height: 20px;
+  color: #458588;
+  flex-shrink: 0;
+}
+
+.callout-title {
+  color: #458588;
+  margin: 0;
+  font-size: 1em;
+  font-weight: 600;
+}
+
+.callout-content {
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-left: 30px;
+}
+
+.callout-content p {
+  margin: 0 0 8px 0;
+}
+
+.callout-content p:last-child {
+  margin-bottom: 0;
+}
+
+.callout-content a {
+  color: #458588;
+  text-decoration: none;
+}
+
+.callout-content a:hover {
+  text-decoration: underline;
+}
+
+.callout-content strong {
+  color: #458588;
+}
+
+.callout-content code {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+#content {
+  min-height: 400px;
+  transition: opacity 0.2s ease;
+}
+
+.content-loading {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.no-data-message {
+  margin: 20px 0;
+}
+
+.no-data-content {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.no-data-content p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 1.1em;
+}

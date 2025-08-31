@@ -56,10 +56,6 @@ export const SPEC_MAP = {
   102: { role: "dps", class: "Druid", spec: "Balance" },
 };
 
-// ========================================
-// SPEC ICONS
-// ========================================
-
 export const SPEC_ICON_MAP = {
   // Mage
   "Mage|Frost":
@@ -226,12 +222,12 @@ export const SPEC_OPTIONS = {
 };
 
 /**
- * Get class color for a given class name
+ * get class color for a given class name
  * @param {string} className - The class name (e.g., 'Warrior', 'death_knight')
  * @returns {string} Hex color code
  */
 export function getClassColor(className) {
-  // Normalize class name to lowercase with underscores
+  // normalize class name to lowercase with underscores
   const normalizedClass = className.toLowerCase().replace(/\s+/g, "_");
   return CLASS_COLORS[normalizedClass] || "#ffffff";
 }

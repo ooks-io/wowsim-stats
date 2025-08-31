@@ -93,7 +93,6 @@ const { id, label, options, class: className } = Astro.props;
 </style>
 
 <script>
-  // Handle horizontal option selection
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-selector-target]").forEach((button) => {
       button.addEventListener("click", (e) => {
@@ -103,15 +102,12 @@ const { id, label, options, class: className } = Astro.props;
 
         if (!selectorId) return;
 
-        // update hidden select
         const select = document.getElementById(selectorId) as HTMLSelectElement;
         if (select) {
           select.value = value || "";
-          // trigger change event
           select.dispatchEvent(new Event("change"));
         }
 
-        // update visual state
         const container = button.closest(".horizontal-options");
         if (container) {
           container.querySelectorAll(".horizontal-option").forEach((opt) => {
@@ -123,4 +119,3 @@ const { id, label, options, class: className } = Astro.props;
     });
   });
 </script>
-

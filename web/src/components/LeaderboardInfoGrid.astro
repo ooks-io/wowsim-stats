@@ -1,0 +1,32 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class={`card ${className || ""}`.trim()}>
+  <div class="info-grid">
+    <div class="info-item">
+      <span class="info-label">Dungeon</span>
+      <span class="info-value" id="dungeon-name">Loading...</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Period</span>
+      <span class="info-value" id="period">-</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Realm</span>
+      <span class="info-value" id="realm-name">-</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Period Start</span>
+      <span class="info-value" id="period-start">-</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Period End</span>
+      <span class="info-value" id="period-end">-</span>
+    </div>
+  </div>
+</div>

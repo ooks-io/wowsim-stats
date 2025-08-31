@@ -1,0 +1,185 @@
+---
+import ControlPanel from "./ControlPanel.astro";
+import FormSelect from "./FormSelect.astro";
+import HorizontalSelector from "./HorizontalSelector.astro";
+
+export interface Props {
+  initialLeaderboardType?: string;
+  initialRegion?: string;
+  initialDungeon?: string;
+}
+
+const {
+  initialLeaderboardType = "dungeon",
+  initialRegion = "",
+  initialDungeon = "",
+} = Astro.props;
+---
+
+<ControlPanel title="Leaderboard Options">
+  <FormSelect
+    id="leaderboard-type"
+    label="Leaderboard Type"
+    options={[
+      {
+        value: "dungeon",
+        label: "Dungeons",
+        selected: initialLeaderboardType === "dungeon",
+      },
+      {
+        value: "players",
+        label: "Players",
+        selected: initialLeaderboardType === "players",
+      },
+      {
+        value: "teams",
+        label: "Teams (Experimental)",
+        selected: initialLeaderboardType === "teams",
+      },
+    ]}
+  />
+  <div id="dungeon-selectors" style="display: none;">
+    <FormSelect
+      id="region"
+      label="Region"
+      options={[
+        { value: "", label: "Select Region", selected: initialRegion === "" },
+        { value: "us", label: "US", selected: initialRegion === "us" },
+        { value: "eu", label: "EU", selected: initialRegion === "eu" },
+        { value: "kr", label: "KR", selected: initialRegion === "kr" },
+        {
+          value: "global",
+          label: "Global",
+          selected: initialRegion === "global",
+        },
+      ]}
+    />
+    <FormSelect
+      id="realm"
+      label="Realm"
+      options={[{ value: "", label: "Select Region First", selected: true }]}
+    />
+    <HorizontalSelector
+      id="dungeon"
+      label="Dungeon"
+      options={[
+        {
+          value: "2",
+          label: "Temple of the Jade Serpent",
+          selected: initialDungeon === "2",
+        },
+        {
+          value: "56",
+          label: "Stormstout Brewery",
+          selected: initialDungeon === "56",
+        },
+        {
+          value: "57",
+          label: "Gate of the Setting Sun",
+          selected: initialDungeon === "57",
+        },
+        {
+          value: "58",
+          label: "Shado-Pan Monastery",
+          selected: initialDungeon === "58",
+        },
+        {
+          value: "59",
+          label: "Siege of Niuzao Temple",
+          selected: initialDungeon === "59",
+        },
+        {
+          value: "60",
+          label: "Mogu'shan Palace",
+          selected: initialDungeon === "60",
+        },
+        {
+          value: "76",
+          label: "Scholomance",
+          selected: initialDungeon === "76",
+        },
+        {
+          value: "77",
+          label: "Scarlet Halls",
+          selected: initialDungeon === "77",
+        },
+        {
+          value: "78",
+          label: "Scarlet Monastery",
+          selected: initialDungeon === "78",
+        },
+      ]}
+    />
+
+    <div class="form-group">
+      <label for="team-filter" class="form-label">Filter Teams</label>
+      <div class="form-checkbox">
+        <input
+          type="checkbox"
+          id="team-filter"
+          class="checkbox-input"
+          checked
+        />
+        <label for="team-filter" class="checkbox-label"
+          >Show best time per team</label
+        >
+      </div>
+    </div>
+  </div>
+</ControlPanel>
+
+<style>
+  .form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .checkbox-input {
+    width: 18px;
+    height: 18px;
+    appearance: none;
+    background-color: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .checkbox-input:checked {
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color);
+  }
+
+  .checkbox-input:checked::after {
+    content: "✓";
+    position: absolute;
+    top: -1px;
+    left: 2px;
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .checkbox-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
+  }
+
+  .checkbox-input:hover {
+    border-color: var(--highlight-color);
+  }
+
+  .checkbox-label {
+    font-size: 14px;
+    color: var(--text-primary);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .checkbox-label:hover {
+    color: var(--highlight-color);
+  }
+</style>
