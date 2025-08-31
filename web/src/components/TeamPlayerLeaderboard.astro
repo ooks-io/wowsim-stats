@@ -1,0 +1,95 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div
+  class={`leaderboard-container card ${className || ""}`.trim()}
+  id="team-player-leaderboard"
+  style="display: none;"
+>
+  <div id="team-rows"></div>
+</div>
+
+<style is:global>
+  #team-rows {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    border-spacing: 0;
+    border-collapse: collapse;
+  }
+
+  #team-rows .leaderboard-row,
+  #team-rows .chart-item-header {
+    display: table-row !important;
+    border-bottom: 1px solid #4a4a4a !important;
+    background-color: #32302f !important;
+    transition: background-color 0.2s ease !important;
+  }
+
+  #team-rows .leaderboard-row:hover,
+  #team-rows .chart-item-header:hover {
+    background-color: rgba(255, 215, 0, 0.05) !important;
+  }
+
+  .chart-item-wrapper {
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .chart-item-header {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+
+  .chart-item-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .chart-item-expanded .chart-item-header {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .chart-expand-icon {
+    margin-left: 8px;
+    font-size: 0.8em;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    user-select: none;
+  }
+
+  .chart-item-expanded .chart-expand-icon {
+    transform: rotate(90deg);
+  }
+
+  .chart-dropdown {
+    margin-top: 12px;
+    padding: 16px;
+    background-color: var(--bg-selection);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
+  }
+
+  .chart-item-expanded .chart-dropdown {
+    display: block;
+    animation: dropdown-expand 0.2s ease-out;
+  }
+
+  @keyframes dropdown-expand {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

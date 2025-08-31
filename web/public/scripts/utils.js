@@ -1,6 +1,5 @@
-/**
- * Shared utility functions for WoW Stats application
- */
+// shared utility functions
+
 export function formatDuration(seconds) {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
