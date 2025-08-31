@@ -2,6 +2,7 @@
 import PageLayout from "../components/PageLayout.astro";
 import ControlPanel from "../components/ControlPanel.astro";
 import FormSelect from "../components/FormSelect.astro";
+import HorizontalSelector from "../components/HorizontalSelector.astro";
 import LoadingState from "../components/LoadingState.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
 import { DATA_MAP } from "../data/realms.js";
@@ -283,15 +284,10 @@ const baseUrl = import.meta.env.BASE_URL;
         label="Realm"
         options={[{ value: "", label: "Select Region First", selected: true }]}
       />
-      <FormSelect
+      <HorizontalSelector
         id="dungeon"
         label="Dungeon"
         options={[
-          {
-            value: "",
-            label: "Select Dungeon",
-            selected: initialDungeon === "",
-          },
           {
             value: "2",
             label: "Temple of the Jade Serpent",
