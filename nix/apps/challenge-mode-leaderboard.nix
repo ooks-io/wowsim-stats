@@ -32,8 +32,8 @@
 
       def get_hardcoded_period_and_dungeons():
           # hardcoded values since the index endpoint is broken
-          # all records are now in period 1025
-          period_id = "1025"
+          # all records are now in period 1026
+          period_id = "1026"
 
           dungeons = [
               {"id": 2, "name": "Temple of the Jade Serpent", "slug": "temple-of-the-jade-serpent"},
