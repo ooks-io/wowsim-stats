@@ -669,7 +669,14 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       {description && <p class="page-description">{description}</p>}
     </div>
 
-    <div class="rankings-container">
+    <div
+      class="rankings-container"
+      data-mode={mode}
+      data-fixed-class={fixedClass || ""}
+      data-fixed-spec={fixedSpec || ""}
+      data-comparison-type={comparisonType || ""}
+      data-is-unified={isUnifiedMode ? "true" : "false"}
+    >
       <Callout type="warning">
         <p>
           These benchmarks are built with <a
@@ -913,10 +920,23 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         formatEquipmentSummary,
       }}
     >
+      // Build simulation-specific SPEC_OPTIONS using label slugs (e.g., "Fire" -> "fire")
+      const buildSimSpecOptions = (opts) => {
+        const out = {};
+        for (const [cls, arr] of Object.entries(opts || {})) {
+          out[cls] = (arr || []).map((o) => ({
+            value: String(o.label || '').toLowerCase().replace(/\s+/g, '_'),
+            label: o.label,
+          }));
+        }
+        return out;
+      };
+      const SPEC_OPTIONS_SIM = buildSimSpecOptions(SPEC_OPTIONS);
+
       // Make constants available globally for chart-logic compatibility
       window.WoWConstants = {
         CLASS_COLORS,
-        SPEC_OPTIONS,
+        SPEC_OPTIONS: SPEC_OPTIONS_SIM,
         formatDuration,
         formatRaidBuffs,
         formatSimulationDate,
@@ -929,17 +949,33 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         formatEquipmentSummary,
       };
 
-      import { initializeChart } from "/scripts/chart-logic.js";
-      initializeChart({
-        mode,
-        fixedClass,
-        fixedSpec,
-        comparisonType,
-        isUnifiedMode,
-      });
+      // Defer invocation to a post-include inline script
     </script>
 
     <!-- item database component for reforge data and item utilities -->
     <ItemDatabase />
+    <!-- Load legacy chart logic from public as an ES module after globals are set -->
+    <script type="module" src="/scripts/chart-logic.js"></script>
+    <script type="module" is:inline>
+      // Invoke after legacy module is loaded
+      if (typeof window.initializeChart === 'function') {
+        window.initializeChart({
+          mode: ${JSON.stringify(mode)},
+          fixedClass: ${JSON.stringify(fixedClass || '')} || undefined,
+          fixedSpec: ${JSON.stringify(fixedSpec || '')} || undefined,
+          comparisonType: ${JSON.stringify(comparisonType || '')} || undefined,
+          isUnifiedMode: ${JSON.stringify(!!isUnifiedMode)},
+        });
+      } else if (window?.WoWConstants) {
+        // fallback: try again on next tick
+        setTimeout(() => window.initializeChart && window.initializeChart({
+          mode: ${JSON.stringify(mode)},
+          fixedClass: ${JSON.stringify(fixedClass || '')} || undefined,
+          fixedSpec: ${JSON.stringify(fixedSpec || '')} || undefined,
+          comparisonType: ${JSON.stringify(comparisonType || '')} || undefined,
+          isUnifiedMode: ${JSON.stringify(!!isUnifiedMode)},
+        }), 0);
+      }
+    </script>
   </body>
 </html>
