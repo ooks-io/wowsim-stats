@@ -1,0 +1,224 @@
+---
+import { REALM_DATA } from "../../lib/realms";
+
+export interface Props {
+  initialRegion?: string;
+  initialRealm?: string;
+  initialDungeon?: string;
+  class?: string;
+}
+
+const {
+  initialRegion = "global",
+  initialRealm = "",
+  initialDungeon = "2",
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class={`filter-panel-island ${className || ""}`.trim()}
+  data-initial-region={initialRegion}
+  data-initial-realm={initialRealm}
+  data-initial-dungeon={initialDungeon}
+>
+  <div class="filter-row">
+    <div class="filter-group">
+      <label for="region-select" class="filter-label">Region</label>
+      <select id="region-select" class="filter-select">
+        <option value="global" selected={initialRegion === "global"}
+          >Global</option
+        >
+        <option value="us" selected={initialRegion === "us"}>US</option>
+        <option value="eu" selected={initialRegion === "eu"}>EU</option>
+        <option value="kr" selected={initialRegion === "kr"}>KR</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="realm-select" class="filter-label">Realm</label>
+      <select
+        id="realm-select"
+        class="filter-select"
+        disabled={initialRegion === "global"}
+      >
+        <option value="">Select Region First</option>
+        <option value="all">All Realms</option>
+        <!-- US Realms (hidden by default) -->
+        {
+          Object.entries(REALM_DATA.us)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="us" style="display: none;">
+                {name}
+              </option>
+            ))
+        }
+        <!-- EU Realms (hidden by default) -->
+        {
+          Object.entries(REALM_DATA.eu)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="eu" style="display: none;">
+                {name}
+              </option>
+            ))
+        }
+        <!-- KR Realms (hidden by default) -->
+        {
+          Object.entries(REALM_DATA.kr)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="kr" style="display: none;">
+                {name}
+              </option>
+            ))
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="dungeon-select" class="filter-label">Dungeon</label>
+      <select id="dungeon-select" class="filter-select">
+        <option value="2" selected={initialDungeon === "2"}
+          >Temple of the Jade Serpent</option
+        >
+        <option value="56" selected={initialDungeon === "56"}
+          >Stormstout Brewery</option
+        >
+        <option value="57" selected={initialDungeon === "57"}
+          >Gate of the Setting Sun</option
+        >
+        <option value="58" selected={initialDungeon === "58"}
+          >Shado-Pan Monastery</option
+        >
+        <option value="59" selected={initialDungeon === "59"}
+          >Siege of Niuzao Temple</option
+        >
+        <option value="60" selected={initialDungeon === "60"}
+          >Mogu'shan Palace</option
+        >
+        <option value="76" selected={initialDungeon === "76"}
+          >Scholomance</option
+        >
+        <option value="77" selected={initialDungeon === "77"}
+          >Scarlet Halls</option
+        >
+        <option value="78" selected={initialDungeon === "78"}
+          >Scarlet Monastery</option
+        >
+      </select>
+    </div>
+
+    <div class="filter-group"></div>
+  </div>
+
+  <div id="filter-status" class="filter-status" style="display: none;">
+    <span class="status-text"></span>
+  </div>
+</div>
+
+<script src="../../client/filter-panel.ts"></script>
+<script type="module">
+  console.debug("[FilterPanel.astro] module import requested");
+</script>
+
+<style>
+  .filter-panel-island {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 20px;
+    align-items: end;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .filter-label {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .filter-select {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-select:hover:not(:disabled) {
+    border-color: var(--highlight-color);
+  }
+
+  .filter-select:focus {
+    outline: none;
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+  }
+
+  .filter-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--bg-disabled);
+  }
+
+  .filter-status {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    text-align: center;
+  }
+
+  .filter-status.valid {
+    background-color: rgba(0, 255, 0, 0.1);
+    border-left: 3px solid #00ff00;
+    color: var(--text-secondary);
+  }
+
+  .filter-status.invalid {
+    background-color: rgba(255, 107, 107, 0.1);
+    border-left: 3px solid #ff6b6b;
+    color: #ff6b6b;
+  }
+
+  @media (max-width: 768px) {
+    .filter-row {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .filter-panel-island {
+      padding: 15px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .filter-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .filter-group:last-child {
+      grid-column: span 2;
+    }
+  }
+</style>

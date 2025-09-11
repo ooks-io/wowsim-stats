@@ -1,15 +1,18 @@
-import { CLASS_COLORS, SPEC_OPTIONS } from "./wow-constants.js";
-import {
+// Use globally available constants passed from Astro define:vars
+const {
+  CLASS_COLORS,
+  SPEC_OPTIONS,
   formatDuration,
   formatRaidBuffs,
   formatSimulationDate,
   formatRace,
-} from "./utils.js";
+} = window.WoWConstants;
 export function initializeChart({
   mode,
   fixedClass,
   fixedSpec,
   comparisonType,
+  isUnifiedMode,
 }) {
   console.log("Unified chart script loaded with:", {
     mode,
@@ -63,7 +66,11 @@ export function initializeChart({
 
     // Equipment Summary
     if (loadout.equipment && loadout.equipment.items) {
-      const equipmentSummary = formatEquipmentSummary(loadout.equipment.items);
+      // Use existing ItemDatabase for equipment formatting for now
+      const equipmentSummary =
+        window.EquipmentUtils?.formatEquipmentSummary?.(
+          loadout.equipment.items,
+        ) || [];
       if (equipmentSummary.length > 0) {
         sections.push({
           title: "Equipment",
@@ -239,49 +246,6 @@ export function initializeChart({
     return items;
   };
 
-  const formatEquipmentSummary = (items) => {
-    const slotNames = [
-      "Head",
-      "Neck",
-      "Shoulders",
-      "Back",
-      "Chest",
-      "Wrists",
-      "Hands",
-      "Waist",
-      "Legs",
-      "Feet",
-      "Ring 1",
-      "Ring 2",
-      "Trinket 1",
-      "Trinket 2",
-      "Main Hand",
-      "Off Hand",
-    ];
-
-    const equipment = [];
-    items.forEach((item, index) => {
-      if (item && item.id) {
-        const itemInfo = window.ItemDatabase
-          ? window.ItemDatabase.formatEquipmentItem(item)
-          : {
-              itemId: item.id,
-              itemName: `Item ${item.id}`,
-              itemDetails: [],
-              wowheadUrl: `https://www.wowhead.com/mop-classic/item=${item.id}`,
-            };
-
-        if (itemInfo) {
-          equipment.push({
-            slot: slotNames[index] || `Slot ${index + 1}`,
-            ...itemInfo,
-          });
-        }
-      }
-    });
-    return equipment;
-  };
-
   // Generate loadout dropdown HTML
   const generateLoadoutDropdown = (loadout, _chartData) => {
     const sections = formatLoadout(loadout);
@@ -290,39 +254,55 @@ export function initializeChart({
     const sectionsHtml = sections
       .map((section) => {
         if (section.isEquipment) {
-          // Special handling for equipment
+          // Use unified equipment rendering if available
           const equipmentHtml = section.items
             .map((eq) => {
+              // Convert chart format to unified format
+              const itemData = {
+                slot: eq.slot,
+                item_id: eq.itemId,
+                item_name: eq.itemName,
+                quality: eq.quality,
+                item_icon_slug: eq.iconUrl
+                  ? eq.iconUrl.match(/\/([^\/]+)\.jpg$/)?.[1]
+                  : null,
+                itemDetails: eq.itemDetails, // Pass through existing details
+              };
+
+              // Use global function if available, otherwise fallback
+              if (window.EquipmentUtils?.createItemElement) {
+                return window.EquipmentUtils.createItemElement(itemData, {
+                  isHTML: true,
+                  showIcon: true,
+                });
+              }
+
+              // Fallback to original rendering
               const iconHtml = eq.iconUrl
                 ? `<img src="${eq.iconUrl}" alt="${eq.itemName}" class="equipment-icon" loading="lazy" />`
                 : "";
-
               const qualityClass = eq.quality ? `quality-${eq.quality}` : "";
-
-              // Enhanced tooltip-style details
               const detailsHtml =
-                eq.itemDetails && eq.itemDetails.length > 0
-                  ? `<div class="item-tooltip-details">
-               ${eq.itemDetails.map((detail) => `<div class="equipment-detail">${detail}</div>`).join("")}
-             </div>`
+                eq.itemDetails?.length > 0
+                  ? `<div class="item-tooltip-details">${eq.itemDetails.map((detail) => `<div class="equipment-detail">${detail}</div>`).join("")}</div>`
                   : "";
 
               return `
-          <div class="equipment-slot">
-            <div class="equipment-slot-header">
-              <span class="equipment-slot-name">${eq.slot}</span>
-            </div>
-            <div class="equipment-item-tooltip">
-              <div class="equipment-item-header">
-                ${iconHtml}
-                <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${eq.itemName}</a>
-              </div>
-              <div class="equipment-item-details">
-                ${detailsHtml}
-              </div>
-            </div>
-          </div>
-        `;
+                <div class="equipment-slot">
+                  <div class="equipment-slot-header">
+                    <span class="equipment-slot-name">${eq.slot}</span>
+                  </div>
+                  <div class="equipment-item-tooltip">
+                    <div class="equipment-item-header">
+                      ${iconHtml}
+                      <a href="${eq.wowheadUrl}" target="_blank" class="equipment-item-link ${qualityClass}">${eq.itemName}</a>
+                    </div>
+                    <div class="equipment-item-details">
+                      ${detailsHtml}
+                    </div>
+                  </div>
+                </div>
+              `;
             })
             .join("");
 
@@ -429,7 +409,9 @@ export function initializeChart({
     constructor() {
       this.currentData = null;
       this.isRankingsMode = mode === "rankings";
+      this.isUnifiedMode = mode === "unified";
       this.isFixedClassSpec = fixedClass && fixedSpec;
+      this.currentSimulationMode = "benchmarks";
 
       this.initializeControls();
       this.bindEvents();
@@ -437,7 +419,10 @@ export function initializeChart({
     }
 
     initializeControls() {
-      if (this.isRankingsMode) {
+      if (this.isUnifiedMode) {
+        console.log("Unified mode initialized");
+        this.setupUnifiedMode();
+      } else if (this.isRankingsMode) {
         console.log("Rankings mode initialized");
       } else if (this.isFixedClassSpec) {
         console.log("Fixed class/spec mode:", fixedClass, fixedSpec);
@@ -453,14 +438,30 @@ export function initializeChart({
       }
 
       // Initialize phase options for comparison modes
-      if (!this.isRankingsMode) {
+      if (!this.isRankingsMode || this.isUnifiedMode) {
         this.updatePhaseOptions();
         this.updateTrinketCallout();
       }
     }
 
     bindEvents() {
-      if (!this.isRankingsMode && !this.isFixedClassSpec) {
+      if (this.isUnifiedMode) {
+        // Unified mode event bindings
+        const simulationModeSelect = document.getElementById("simulationMode");
+        if (simulationModeSelect) {
+          simulationModeSelect.addEventListener("change", () => {
+            this.currentSimulationMode = simulationModeSelect.value;
+            this.updateControlVisibility();
+            this.clearData();
+            this.loadData();
+          });
+        }
+      }
+
+      if (
+        (this.isUnifiedMode || !this.isRankingsMode) &&
+        !this.isFixedClassSpec
+      ) {
         // class change updates spec options - comparison mode only
         const classSelect = document.getElementById("class");
         if (classSelect) {
@@ -546,17 +547,21 @@ export function initializeChart({
       const sortBySelect = document.getElementById("sortBy");
       if (!sortBySelect) return;
 
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
       const currentComparisonType = this.getCurrentComparisonType();
       const percentOption = sortBySelect.querySelector(
         'option[value="percent"]',
       );
 
       if (percentOption) {
-        // Show percentage option only for trinket comparisons
-        percentOption.style.display =
-          currentComparisonType === "trinket" ? "" : "none";
+        // Hide percentage option for benchmarks mode or non-trinket comparisons
+        const showPercentOption =
+          !isBenchmarksMode && currentComparisonType === "trinket";
+        percentOption.style.display = showPercentOption ? "" : "none";
 
-        if (currentComparisonType === "trinket") {
+        if (showPercentOption) {
           // Default to percentage for trinket comparisons
           if (sortBySelect.value === "dps" || !sortBySelect.value) {
             sortBySelect.value = "percent";
@@ -580,9 +585,13 @@ export function initializeChart({
       const trinketCallout = document.getElementById("trinket-callout");
       if (!trinketCallout) return;
 
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
       const currentComparisonType = this.getCurrentComparisonType();
 
-      if (currentComparisonType === "trinket") {
+      // Only show trinket callout for trinket comparisons (not for benchmarks or race comparisons)
+      if (!isBenchmarksMode && currentComparisonType === "trinket") {
         trinketCallout.classList.remove("hidden");
       } else {
         trinketCallout.classList.add("hidden");
@@ -599,14 +608,17 @@ export function initializeChart({
       );
 
       if (preRaidOption) {
-        if (!this.isRankingsMode) {
-          // Hide preRaid option for all comparison modes and force p1
+        const showPreRaid =
+          this.isRankingsMode ||
+          (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
+        if (!showPreRaid) {
+          // Hide preRaid option for comparison modes and force p1
           preRaidOption.style.display = "none";
           if (phaseSelect.value === "preRaid") {
             phaseSelect.value = "p1";
           }
         } else {
-          // Show preRaid option for rankings mode
+          // Show preRaid option for rankings/benchmarks mode
           preRaidOption.style.display = "";
         }
       }
@@ -618,7 +630,11 @@ export function initializeChart({
       const duration = document.getElementById("duration").value;
       const phase = document.getElementById("phase").value;
 
-      if (this.isRankingsMode) {
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
+
+      if (isBenchmarksMode) {
         return `dps_${phase}_${encounterType}_${targetCount}_${duration}.json`;
       } else {
         const currentClass = this.getCurrentClass();
@@ -629,7 +645,11 @@ export function initializeChart({
     }
 
     getDataPath() {
-      if (this.isRankingsMode) {
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
+
+      if (isBenchmarksMode) {
         return `/data/rankings/`;
       } else {
         const currentClass = this.getCurrentClass();
@@ -645,15 +665,48 @@ export function initializeChart({
       }
     }
 
+    setupUnifiedMode() {
+      this.updateControlVisibility();
+    }
+
+    updateControlVisibility() {
+      const comparisonControlsRow = document.getElementById(
+        "comparison-controls-row",
+      );
+
+      if (this.currentSimulationMode === "benchmarks") {
+        // Hide the entire comparison controls row for benchmarks
+        if (comparisonControlsRow) {
+          comparisonControlsRow.style.display = "none";
+        }
+      } else {
+        // Show comparison controls row for comparisons
+        if (comparisonControlsRow) {
+          comparisonControlsRow.style.display = "flex";
+        }
+      }
+
+      // Update sort options and other dependent controls
+      this.updateSortOptions();
+    }
+
     async loadInitialData() {
-      if (this.isRankingsMode || this.isFixedClassSpec) {
+      if (
+        this.isRankingsMode ||
+        this.isFixedClassSpec ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks")
+      ) {
         await this.loadData();
       }
       // for dynamic comparison mode, wait for user to select class/spec
     }
 
     async loadData() {
-      if (!this.isRankingsMode) {
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
+
+      if (!isBenchmarksMode) {
         const currentClass = this.getCurrentClass();
         const currentSpec = this.getCurrentSpec();
 
@@ -908,7 +961,11 @@ export function initializeChart({
       const container = document.getElementById("chart-container");
       const sortBy = document.getElementById("sortBy").value;
 
-      if (this.isRankingsMode) {
+      const isBenchmarksMode =
+        this.isRankingsMode ||
+        (this.isUnifiedMode && this.currentSimulationMode === "benchmarks");
+
+      if (isBenchmarksMode) {
         this.renderRankingsChart(container, sortBy);
       } else {
         this.renderComparisonChart(container, sortBy);

@@ -1,0 +1,21 @@
+---
+import PlayerProfileLayout from "../../layouts/PlayerProfileLayout.astro";
+
+// Enable server-side rendering for this dynamic route (SPA behavior)
+export const prerender = false;
+
+// Parse the slug dynamically for client-side routing (SPA mode)
+const slug = Astro.params.slug || "";
+const slugParts = slug.split("/");
+
+// For URLs like /player/{region}/{realm}/{name}
+const region = slugParts[0] || "";
+const realmSlug = slugParts[1] || "";
+const playerName = slugParts[2] || "";
+---
+
+<PlayerProfileLayout
+  region={region}
+  realmSlug={realmSlug}
+  playerName={playerName}
+/>

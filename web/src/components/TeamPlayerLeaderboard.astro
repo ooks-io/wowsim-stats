@@ -12,6 +12,22 @@ const { class: className } = Astro.props;
   style="display: none;"
 >
   <div id="team-rows"></div>
+
+  <!-- pagination Controls -->
+  <div
+    id="team-pagination-controls"
+    class="pagination-container"
+    style="display: none;"
+  >
+    <div class="pagination-info">
+      <span id="team-pagination-text">Showing results</span>
+    </div>
+    <div class="pagination-buttons">
+      <button id="team-prev-page" class="pagination-btn">← Previous</button>
+      <span id="team-page-info" class="page-info">Page 1 of 1</span>
+      <button id="team-next-page" class="pagination-btn">Next →</button>
+    </div>
+  </div>
 </div>
 
 <style is:global>
@@ -91,5 +107,56 @@ const { class: className } = Astro.props;
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+  }
+
+  .pagination-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .pagination-btn {
+    padding: 8px 16px;
+    background-color: var(--highlight-color);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-btn:hover:not(:disabled) {
+    background-color: #e6d55a;
+    transform: translateY(-1px);
+  }
+
+  .pagination-btn:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+  }
+
+  .page-info {
+    color: var(--text-primary);
+    font-weight: 600;
+    min-width: 100px;
+    text-align: center;
   }
 </style>

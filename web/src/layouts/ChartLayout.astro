@@ -2,13 +2,25 @@
 import Navigation from "../components/Navigation.astro";
 import Callout from "../components/Callout.astro";
 import ItemDatabase from "../components/ItemDatabase.astro";
+import LoadingState from "../components/LoadingState.astro";
+import { CLASS_COLORS, SPEC_OPTIONS } from "../lib/wow-constants.ts";
+import {
+  formatDuration,
+  formatRaidBuffs,
+  formatSimulationDate,
+  formatRace,
+} from "../lib/utils.ts";
+import {
+  createItemElement,
+  formatEquipmentSummary,
+} from "../lib/equipment-utils.ts";
 import "../styles/components.scss";
 import "../styles/global.css";
 
 export interface Props {
   title: string;
   description?: string;
-  mode: "rankings" | "comparison";
+  mode: "rankings" | "comparison" | "unified";
   class?: string;
   spec?: string;
   comparisonType?: "race" | "trinket" | "both";
@@ -23,6 +35,7 @@ const {
   comparisonType = "both",
 } = Astro.props;
 const isRankingsMode = mode === "rankings";
+const isUnifiedMode = mode === "unified";
 const isFixedClassSpec = fixedClass && fixedSpec;
 ---
 
@@ -67,10 +80,27 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         padding: 20px;
       }
 
-      .controls-grid {
+      .controls-row {
         display: flex;
         gap: 20px;
         flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      .controls-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .controls-row-1 {
+        justify-content: flex-start;
+      }
+
+      .controls-row-2 {
+        justify-content: flex-start;
+      }
+
+      .controls-row-3 {
+        justify-content: flex-start;
       }
 
       .control-group {
@@ -100,32 +130,6 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       .control-group select:focus {
         outline: none;
         border-color: var(--highlight-color);
-      }
-
-      .loading,
-      .error {
-        text-align: center;
-        padding: 20px;
-        margin: 20px 0;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: #2a2a2a;
-        border-radius: 8px;
-        z-index: 1000;
-        min-width: 200px;
-      }
-
-      .loading {
-        color: var(--text-muted);
-        border: 1px solid var(--border-color);
-      }
-
-      .error {
-        color: var(--highlight-color);
-        background-color: #3a2a2a;
-        border: 1px solid var(--highlight-color);
       }
 
       #metadata-container {
@@ -750,30 +754,50 @@ const isFixedClassSpec = fixedClass && fixedSpec;
       <div class="card">
         <h3 class="card-title">
           {
-            isRankingsMode
+            isUnifiedMode
               ? "Simulation Options"
-              : isFixedClassSpec
+              : isRankingsMode
                 ? "Simulation Options"
-                : "Comparison Options"
+                : isFixedClassSpec
+                  ? "Simulation Options"
+                  : "Comparison Options"
           }
         </h3>
-        <div class="controls-grid">
+
+        <!-- Row 1: Simulation Mode -->
+        {
+          isUnifiedMode && (
+            <div class="controls-row controls-row-1">
+              <div class="control-group">
+                <label for="simulationMode">Simulation Mode:</label>
+                <select id="simulationMode">
+                  <option value="benchmarks">Benchmarks (All Specs)</option>
+                  <option value="comparisons">Comparisons (Single Spec)</option>
+                </select>
+              </div>
+            </div>
+          )
+        }
+
+        <!-- Row 2: Comparison Controls -->
+        <div class="controls-row controls-row-2" id="comparison-controls-row">
           {
-            !isRankingsMode &&
-              comparisonType === "both" &&
-              !isFixedClassSpec && (
-                <div class="control-group">
-                  <label for="comparisonType">Compare:</label>
-                  <select id="comparisonType">
-                    <option value="trinket">Trinkets</option>
-                    <option value="race">Races</option>
-                  </select>
-                </div>
-              )
+            (isUnifiedMode ||
+              (!isRankingsMode &&
+                comparisonType === "both" &&
+                !isFixedClassSpec)) && (
+              <div class="control-group" id="comparison-type-group">
+                <label for="comparisonType">Compare:</label>
+                <select id="comparisonType">
+                  <option value="trinket">Trinkets</option>
+                  <option value="race">Races</option>
+                </select>
+              </div>
+            )
           }
 
           {
-            !isRankingsMode && !isFixedClassSpec && (
+            (isUnifiedMode || (!isRankingsMode && !isFixedClassSpec)) && (
               <>
                 <div class="control-group">
                   <label for="class">Class:</label>
@@ -802,7 +826,10 @@ const isFixedClassSpec = fixedClass && fixedSpec;
               </>
             )
           }
+        </div>
 
+        <!-- Row 3: Simulation Parameters -->
+        <div class="controls-row controls-row-3">
           <div class="control-group">
             <label for="targetCount">Target Count:</label>
             <select id="targetCount">
@@ -850,14 +877,19 @@ const isFixedClassSpec = fixedClass && fixedSpec;
         </div>
       </div>
 
-      <div id="loading" class="loading hidden">
-        {
-          isRankingsMode
-            ? "Loading rankings data..."
-            : "Loading comparison data..."
-        }
+      <div id="loading" class="hidden">
+        <LoadingState
+          mode="overlay"
+          message={isUnifiedMode
+            ? "Loading simulation data..."
+            : isRankingsMode
+              ? "Loading rankings data..."
+              : "Loading comparison data..."}
+        />
       </div>
-      <div id="error" class="error hidden"></div>
+      <div id="error" class="hidden">
+        <LoadingState type="error" mode="overlay" />
+      </div>
 
       <div id="chart-container" class="card"></div>
     </div>
@@ -865,10 +897,46 @@ const isFixedClassSpec = fixedClass && fixedSpec;
     <script
       type="module"
       is:inline
-      define:vars={{ mode, fixedClass, fixedSpec, comparisonType }}
+      define:vars={{
+        mode,
+        fixedClass,
+        fixedSpec,
+        comparisonType,
+        isUnifiedMode,
+        CLASS_COLORS,
+        SPEC_OPTIONS,
+        formatDuration,
+        formatRaidBuffs,
+        formatSimulationDate,
+        formatRace,
+        createItemElement,
+        formatEquipmentSummary,
+      }}
     >
+      // Make constants available globally for chart-logic compatibility
+      window.WoWConstants = {
+        CLASS_COLORS,
+        SPEC_OPTIONS,
+        formatDuration,
+        formatRaidBuffs,
+        formatSimulationDate,
+        formatRace,
+      };
+
+      // Make equipment utils available globally for chart-logic compatibility
+      window.EquipmentUtils = {
+        createItemElement,
+        formatEquipmentSummary,
+      };
+
       import { initializeChart } from "/scripts/chart-logic.js";
-      initializeChart({ mode, fixedClass, fixedSpec, comparisonType });
+      initializeChart({
+        mode,
+        fixedClass,
+        fixedSpec,
+        comparisonType,
+        isUnifiedMode,
+      });
     </script>
 
     <!-- item database component for reforge data and item utilities -->

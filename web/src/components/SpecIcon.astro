@@ -1,4 +1,9 @@
 ---
+import {
+  SPEC_MAP as SPEC_MAP_CANON,
+  SPEC_ICON_MAP as SPEC_ICON_MAP_CANON,
+} from "../lib/wow-constants.ts";
+
 export interface Props {
   specId?: number;
   className?: string;
@@ -9,157 +14,23 @@ export interface Props {
 
 const { specId, className, specName, size = 16, class: cssClass } = Astro.props;
 
-// WoW Specialization ID to role/class mapping (if specId provided)
-const specMap: Record<number, { role: string; class: string; spec: string }> = {
-  // Tank specs
-  73: { role: "tank", class: "Warrior", spec: "Protection" },
-  104: { role: "tank", class: "Druid", spec: "Guardian" },
-  250: { role: "tank", class: "Death Knight", spec: "Blood" },
-  268: { role: "tank", class: "Monk", spec: "Brewmaster" },
-  66: { role: "tank", class: "Paladin", spec: "Protection" },
-
-  // Healer specs
-  65: { role: "healer", class: "Paladin", spec: "Holy" },
-  256: { role: "healer", class: "Priest", spec: "Discipline" },
-  257: { role: "healer", class: "Priest", spec: "Holy" },
-  264: { role: "healer", class: "Shaman", spec: "Restoration" },
-  105: { role: "healer", class: "Druid", spec: "Restoration" },
-  270: { role: "healer", class: "Monk", spec: "Mistweaver" },
-
-  // DPS specs - Physical
-  71: { role: "dps", class: "Warrior", spec: "Arms" },
-  72: { role: "dps", class: "Warrior", spec: "Fury" },
-  70: { role: "dps", class: "Paladin", spec: "Retribution" },
-  255: { role: "dps", class: "Hunter", spec: "Survival" },
-  254: { role: "dps", class: "Hunter", spec: "Marksmanship" },
-  253: { role: "dps", class: "Hunter", spec: "Beast Mastery" },
-  259: { role: "dps", class: "Rogue", spec: "Assassination" },
-  260: { role: "dps", class: "Rogue", spec: "Outlaw" },
-  261: { role: "dps", class: "Rogue", spec: "Subtlety" },
-  251: { role: "dps", class: "Death Knight", spec: "Frost" },
-  252: { role: "dps", class: "Death Knight", spec: "Unholy" },
-  263: { role: "dps", class: "Shaman", spec: "Enhancement" },
-  269: { role: "dps", class: "Monk", spec: "Windwalker" },
-  103: { role: "dps", class: "Druid", spec: "Feral" },
-
-  // DPS specs - Magical
-  262: { role: "dps", class: "Shaman", spec: "Elemental" },
-  62: { role: "dps", class: "Mage", spec: "Arcane" },
-  63: { role: "dps", class: "Mage", spec: "Fire" },
-  64: { role: "dps", class: "Mage", spec: "Frost" },
-  265: { role: "dps", class: "Warlock", spec: "Affliction" },
-  266: { role: "dps", class: "Warlock", spec: "Demonology" },
-  267: { role: "dps", class: "Warlock", spec: "Destruction" },
-  258: { role: "dps", class: "Priest", spec: "Shadow" },
-  102: { role: "dps", class: "Druid", spec: "Balance" },
-};
-
-// Exact icon mappings from your list
-const specIconMap: Record<string, string> = {
-  // Mage
-  "Mage|Frost":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg",
-  "Mage|Fire":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_fire_flamebolt.jpg",
-  "Mage|Arcane":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg",
-
-  // Paladin
-  "Paladin|Holy":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg",
-  "Paladin|Protection":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_paladin_shieldofthetemplar.jpg",
-  "Paladin|Retribution":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg",
-
-  // Death Knight
-  "Death Knight|Blood":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_bloodpresence.jpg",
-  "Death Knight|Frost":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_frostpresence.jpg",
-  "Death Knight|Unholy":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg",
-
-  // Druid
-  "Druid|Balance":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg",
-  "Druid|Feral":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_druid_catform.jpg",
-  "Druid|Guardian":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_racial_bearform.jpg",
-  "Druid|Restoration":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg",
-
-  // Hunter
-  "Hunter|Beast Mastery":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg",
-  "Hunter|Marksmanship":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_focusedaim.jpg",
-  "Hunter|Survival":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_camouflage.jpg",
-
-  // Monk
-  "Monk|Brewmaster":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg",
-  "Monk|Mistweaver":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg",
-  "Monk|Windwalker":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_monk_windwalker_spec.jpg",
-
-  // Priest
-  "Priest|Discipline":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg",
-  "Priest|Holy":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg",
-  "Priest|Shadow":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg",
-
-  // Rogue
-  "Rogue|Subtlety":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_stealth.jpg",
-  "Rogue|Assassination":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_rogue_eviscerate.jpg",
-  "Rogue|Outlaw":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_backstab.jpg",
-
-  // Shaman
-  "Shaman|Elemental":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg",
-  "Shaman|Enhancement":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_shaman_improvedstormstrike.jpg",
-  "Shaman|Restoration":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_nature_magicimmunity.jpg",
-
-  // Warlock
-  "Warlock|Affliction":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_deathcoil.jpg",
-  "Warlock|Destruction":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_rainoffire.jpg",
-  "Warlock|Demonology":
-    "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg",
-
-  // Warrior
-  "Warrior|Arms":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_savageblow.jpg",
-  "Warrior|Fury":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_innerrage.jpg",
-  "Warrior|Protection":
-    "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg",
-};
-
-// Determine class and spec from either specId or direct props
+// determine class and spec from either specId or direct props
 let finalClass = className;
 let finalSpec = specName;
 
-if (specId && specMap[specId]) {
-  const specInfo = specMap[specId];
+if (specId && SPEC_MAP_CANON[specId as keyof typeof SPEC_MAP_CANON]) {
+  const specInfo = SPEC_MAP_CANON[specId as keyof typeof SPEC_MAP_CANON] as {
+    role: string;
+    class: string;
+    spec: string;
+  };
   finalClass = specInfo.class;
   finalSpec = specInfo.spec;
 }
 
-// Get the icon URL
+// get the icon URL
 const iconKey = `${finalClass}|${finalSpec}`;
-const iconUrl = specIconMap[iconKey];
+const iconUrl = SPEC_ICON_MAP_CANON[iconKey];
 ---
 
 {

@@ -32,6 +32,20 @@
   --quality-legendary: #ff8000;
   --quality-artifact: #e6cc80;
   --quality-heirloom: #00ccff;
+
+  /* Player Search Variables */
+  --search-bg: #32302f;
+  --search-border: #4a4a4a;
+  --search-hover: rgba(255, 215, 0, 0.08);
+  --search-selected: rgba(255, 215, 0, 0.12);
+
+  /* Bracket Colors (using item quality colors) */
+  --bracket-artifact: var(--quality-artifact);
+  --bracket-legendary: var(--quality-legendary);
+  --bracket-epic: var(--quality-epic);
+  --bracket-rare: var(--quality-rare);
+  --bracket-uncommon: var(--quality-uncommon);
+  --bracket-common: var(--quality-poor);
 }
 
 body {
@@ -165,6 +179,41 @@ a:hover {
   flex: 1;
 }
 
+/* WoW Class Color Classes */
+.text-death-knight {
+  color: var(--class-death-knight);
+}
+.text-druid {
+  color: var(--class-druid);
+}
+.text-hunter {
+  color: var(--class-hunter);
+}
+.text-mage {
+  color: var(--class-mage);
+}
+.text-monk {
+  color: var(--class-monk);
+}
+.text-paladin {
+  color: var(--class-paladin);
+}
+.text-priest {
+  color: var(--class-priest);
+}
+.text-rogue {
+  color: var(--class-rogue);
+}
+.text-shaman {
+  color: var(--class-shaman);
+}
+.text-warlock {
+  color: var(--class-warlock);
+}
+.text-warrior {
+  color: var(--class-warrior);
+}
+
 /* WoW Item Quality Classes */
 .quality-0,
 .quality-poor {
@@ -223,4 +272,89 @@ a:hover {
   .card {
     padding: 15px;
   }
+}
+
+/* Percentile Bracket Styling */
+.bracket-artifact {
+  color: var(--bracket-artifact);
+}
+.bracket-legendary {
+  color: var(--bracket-legendary);
+}
+.bracket-epic {
+  color: var(--bracket-epic);
+}
+.bracket-rare {
+  color: var(--bracket-rare);
+}
+.bracket-uncommon {
+  color: var(--bracket-uncommon);
+}
+.bracket-common {
+  color: var(--bracket-common);
+}
+
+/* Bracket Badge Styling */
+.bracket-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bracket-badge.bracket-artifact {
+  background-color: rgba(230, 204, 128, 0.15);
+  border: 1px solid var(--bracket-artifact);
+}
+
+.bracket-badge.bracket-legendary {
+  background-color: rgba(255, 128, 0, 0.15);
+  border: 1px solid var(--bracket-legendary);
+}
+
+.bracket-badge.bracket-epic {
+  background-color: rgba(163, 53, 238, 0.15);
+  border: 1px solid var(--bracket-epic);
+}
+
+.bracket-badge.bracket-rare {
+  background-color: rgba(0, 112, 221, 0.15);
+  border: 1px solid var(--bracket-rare);
+}
+
+.bracket-badge.bracket-uncommon {
+  background-color: rgba(30, 255, 0, 0.15);
+  border: 1px solid var(--bracket-uncommon);
+}
+
+.bracket-badge.bracket-common {
+  background-color: rgba(157, 157, 157, 0.15);
+  border: 1px solid var(--bracket-common);
+}
+
+/* Ranking with bracket color */
+.ranking-with-bracket {
+  font-weight: bold;
+}
+
+.ranking-number.bracket-artifact {
+  color: var(--bracket-artifact);
+}
+.ranking-number.bracket-legendary {
+  color: var(--bracket-legendary);
+}
+.ranking-number.bracket-epic {
+  color: var(--bracket-epic);
+}
+.ranking-number.bracket-rare {
+  color: var(--bracket-rare);
+}
+.ranking-number.bracket-uncommon {
+  color: var(--bracket-uncommon);
+}
+.ranking-number.bracket-common {
+  color: var(--bracket-common);
 }

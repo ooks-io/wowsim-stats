@@ -1,0 +1,628 @@
+---
+import "../../styles/player-search.scss";
+
+export interface Props {
+  placeholder?: string;
+  class?: string;
+}
+
+const { placeholder = "Press / to search for players...", class: className } =
+  Astro.props;
+---
+
+<div class={`player-search-island ${className || ""}`.trim()}>
+  <div class="search-container">
+    <div class="search-input-wrapper">
+      <input
+        id="player-search-input"
+        type="text"
+        class="search-input"
+        placeholder={placeholder}
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button id="search-clear" class="search-clear" style="display: none;">
+        ✕
+      </button>
+    </div>
+
+    <div id="search-results" class="search-results" style="display: none;">
+      <div class="search-loading" id="search-loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <span>Searching...</span>
+      </div>
+
+      <div id="search-results-list" class="search-results-list">
+        <!-- results populated dynamically -->
+      </div>
+
+      <div
+        id="search-no-results"
+        class="search-no-results"
+        style="display: none;"
+      >
+        <p>No players found matching your search.</p>
+        <p class="search-hint">
+          Try searching by character name, realm, or region.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../client/player-search.ts"></script>
+<script type="module">
+  console.debug("[PlayerSearch.astro] module import requested");
+</script>
+
+<!--
+<script type="module">
+  import { debounce, buildPlayerProfileURL } from "../../lib/utils.ts";
+  import { getClassColor } from "../../lib/wow-constants.ts";
+  import type {
+    PlayerSearchResult,
+    PlayerSearchIndex,
+    FuseSearchResult,
+  } from "../../lib/types.ts";
+  import Fuse from "fuse.js";
+  import type { IFuseOptions } from "fuse.js";
+
+  class PlayerSearch {
+    container: HTMLElement;
+    searchInput: HTMLInputElement;
+    clearButton: HTMLButtonElement;
+    resultsContainer: HTMLElement;
+    resultsList: HTMLElement;
+    loadingDiv: HTMLElement;
+    noResultsDiv: HTMLElement;
+    playerIndex: PlayerSearchResult[] = [];
+    filteredResults: FuseSearchResult<PlayerSearchResult>[] = [];
+    fuse: Fuse<PlayerSearchResult> | null = null;
+    isIndexLoaded = false;
+    selectedIndex = -1;
+    indexMetadata: any = null;
+
+    constructor(container: HTMLElement) {
+      this.container = container;
+      this.searchInput = container.querySelector(
+        "#player-search-input",
+      ) as HTMLInputElement;
+      this.clearButton = container.querySelector(
+        "#search-clear",
+      ) as HTMLButtonElement;
+      this.resultsContainer = container.querySelector(
+        "#search-results",
+      ) as HTMLElement;
+      this.resultsList = container.querySelector(
+        "#search-results-list",
+      ) as HTMLElement;
+      this.loadingDiv = container.querySelector(
+        "#search-loading",
+      ) as HTMLElement;
+      this.noResultsDiv = container.querySelector(
+        "#search-no-results",
+      ) as HTMLElement;
+
+      this.bindEvents();
+      // Defer loading the index until user focuses or types
+      this.bindGlobalHotkeys();
+    }
+
+    bindEvents() {
+      // debounced search input
+      const debouncedSearch = debounce(
+        (query: string) => this.performSearch(query),
+        300,
+      );
+
+      this.searchInput.addEventListener("input", (e) => {
+        if (!this.isIndexLoaded) {
+          // lazy-load index on first user input
+          this.loadPlayerIndex(1000);
+        }
+        const query = (e.target as HTMLInputElement).value;
+        this.updateClearButton(query);
+        debouncedSearch(query);
+      });
+
+      // clear button
+      this.clearButton.addEventListener("click", () => {
+        this.clearSearch();
+      });
+
+      // keyboard navigation
+      this.searchInput.addEventListener("keydown", (e) => {
+        this.handleKeyboard(e);
+      });
+
+      // click outside to close
+      document.addEventListener("click", (e) => {
+        if (!this.container.contains(e.target as Node)) {
+          this.hideResults();
+        }
+      });
+
+      // focus to show recent results
+      this.searchInput.addEventListener("focus", () => {
+        if (!this.isIndexLoaded) {
+          // lazy-load a smaller index when user focuses
+          this.loadPlayerIndex(1000);
+        }
+        if (this.searchInput.value.length > 0) {
+          this.showResults();
+        }
+      });
+    }
+
+    bindGlobalHotkeys() {
+      // listen for '/' key to focus search input
+      document.addEventListener("keydown", (e) => {
+        // only trigger if '/' is pressed and we're not already in an input/textarea
+        if (
+          e.key === "/" &&
+          !e.ctrlKey &&
+          !e.metaKey &&
+          !e.altKey &&
+          document.activeElement?.tagName !== "INPUT" &&
+          document.activeElement?.tagName !== "TEXTAREA"
+        ) {
+          e.preventDefault();
+          this.searchInput.focus();
+
+          // clear any existing content and show the '/' was pressed
+          this.searchInput.value = "";
+
+          console.log('🔍 Search focused via "/" hotkey');
+        }
+      });
+    }
+
+    async loadPlayerIndex(limit: number = 1000) {
+      try {
+        console.log("🔍 Loading player search index...");
+
+        // try loading from cache first
+        const cachedData = this.loadFromCache();
+        if (cachedData) {
+          console.log("📦 Using cached search index");
+          this.setupSearchIndex(cachedData);
+          return;
+        }
+
+        console.log("🔍 No cache found, will fetch from API...");
+
+        const url = `/api/search/players-index?limit=${limit}`;
+        console.log("📡 Fetching fresh search index from API:", url);
+        const response = await fetch(url);
+        console.log(
+          `📡 Search index API response: ${response.status} ${response.statusText}`,
+        );
+        console.log(
+          `📡 Response headers:`,
+          Array.from(response.headers.entries()),
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(
+            `❌ Search index API failed: ${response.status} ${response.statusText}`,
+            errorText,
+          );
+          throw new Error(
+            `API responded with ${response.status}: ${response.statusText}`,
+          );
+        }
+
+        const data: PlayerSearchIndex = await response.json();
+        if (!data.players || !Array.isArray(data.players)) {
+          throw new Error("Invalid search index format");
+        }
+
+        console.log(`✅ Loaded ${data.players.length} players from API`);
+
+        // save to cache
+        this.saveToCache(data);
+        this.setupSearchIndex(data);
+      } catch (error) {
+        console.error("💥 Failed to load player search index:", error);
+        // fall back to basic player leaderboard for minimal functionality
+        this.loadFallbackIndex();
+      }
+    }
+
+    setupSearchIndex(data: PlayerSearchIndex) {
+      this.playerIndex = data.players;
+      this.indexMetadata = data.metadata;
+      this.isIndexLoaded = true;
+
+      console.log(`📊 Search index loaded: ${this.playerIndex.length} players`);
+      console.log(
+        `🔍 Sample players:`,
+        this.playerIndex.slice(0, 3).map((p) => ({
+          name: p.name,
+          realm: p.realm_name,
+          class: p.class_name,
+          region: p.region,
+          global_ranking: p.global_ranking,
+          global_bracket: p.global_ranking_bracket,
+        })),
+      );
+
+      // initialize Fuse.js with search configuration
+      const fuseOptions: IFuseOptions<PlayerSearchResult> = {
+        keys: [
+          { name: "name", weight: 4 }, // Player name is most important
+          { name: "realm_name", weight: 2 }, // Realm name second
+          { name: "class_name", weight: 1 }, // Class name third
+          { name: "active_spec_name", weight: 1 }, // Spec name fourth
+          { name: "region", weight: 0.5 }, // Region least important
+        ],
+        threshold: 0.6, // more permissive fuzzy matching (0 = exact, 1 = match anything)
+        includeScore: true, // include relevance scores
+        minMatchCharLength: 1, // allow single character searches
+        ignoreLocation: true, // search in entire string, not just beginning
+        findAllMatches: false, // return best matches first
+        shouldSort: true, // sort by relevance
+        includeMatches: true, // include match info for highlighting
+        location: 0, // start search at beginning
+        distance: 100, // how far from location to search
+      };
+
+      this.fuse = new Fuse(this.playerIndex, fuseOptions);
+      console.log(
+        `🔍 Initialized Fuse.js search with ${this.playerIndex.length} players`,
+      );
+    }
+
+    async loadFallbackIndex() {
+      try {
+        console.log("🔄 Loading fallback player index...");
+        const response = await fetch(
+          "/api/leaderboard/players?scope=global&pageSize=1000",
+        );
+        if (!response.ok) {
+          throw new Error("Fallback API failed");
+        }
+
+        const data = await response.json();
+        const fallbackPlayers: PlayerSearchResult[] = (
+          data.leaderboard || []
+        ).map((player: any) => ({
+          id: player.player_id,
+          name: player.name,
+          realm_slug: player.realm_slug,
+          realm_name: player.realm_name,
+          region: player.region,
+          class_name: player.class_name || "Unknown",
+          active_spec_name: player.active_spec_name || "Unknown",
+          global_ranking: player.ranking,
+          global_ranking_bracket: player.global_ranking_bracket,
+          regional_ranking: player.regional_ranking,
+          regional_ranking_bracket: player.regional_ranking_bracket,
+          realm_ranking: player.realm_ranking,
+          realm_ranking_bracket: player.realm_ranking_bracket,
+        }));
+
+        console.log(
+          `🔍 Fallback players sample:`,
+          fallbackPlayers.slice(0, 3).map((p) => ({
+            name: p.name,
+            class: p.class_name,
+            spec: p.active_spec_name,
+          })),
+        );
+
+        const fallbackData: PlayerSearchIndex = {
+          players: fallbackPlayers,
+          metadata: {
+            total_players: fallbackPlayers.length,
+            last_updated: new Date().toISOString(),
+            version: "fallback",
+          },
+        };
+
+        this.setupSearchIndex(fallbackData);
+        console.log(
+          `⚡ Loaded fallback index with ${fallbackPlayers.length} players`,
+        );
+      } catch (error) {
+        console.error("💥 Fallback index also failed:", error);
+        // still set as loaded to prevent infinite loading states
+        this.isIndexLoaded = true;
+      }
+    }
+
+    performSearch(query: string) {
+      if (!query || query.length < 2) {
+        this.hideResults();
+        return;
+      }
+
+      if (!this.isIndexLoaded || !this.fuse) {
+        this.showLoading();
+        return;
+      }
+
+      console.log(`🔎 Fuzzy searching for: "${query}"`);
+
+      // first lets see if we can find exact matches in our index
+      const exactMatches = this.playerIndex.filter((player) =>
+        player.name.toLowerCase().includes(query.toLowerCase()),
+      );
+      console.log(
+        `🎯 Direct matches for "${query}":`,
+        exactMatches.map((p) => ({
+          name: p.name,
+          realm: p.realm_name,
+          class: p.class_name,
+        })),
+      );
+
+      // perform fuzzy search with fuse
+      const fuseResults = this.fuse.search(query, { limit: 10 });
+      this.filteredResults = fuseResults;
+
+      console.log(
+        `📍 Found ${fuseResults.length} Fuse.js results:`,
+        fuseResults.map((r) => ({
+          name: r.item.name,
+          realm: r.item.realm_name,
+          score: r.score?.toFixed(3),
+        })),
+      );
+
+      this.selectedIndex = -1;
+      this.renderResults();
+    }
+
+    renderResults() {
+      this.hideLoading();
+
+      if (this.filteredResults.length === 0) {
+        this.showNoResults();
+        return;
+      }
+
+      const resultsHTML = this.filteredResults
+        .map((result, index) => {
+          const player = result.item;
+          const score = result.score;
+          const classColor = getClassColor(player.class_name || "");
+
+          // use the proper class color directly (no fallback needed since we only include complete players)
+          const displayColor = classColor;
+
+          // debug styling
+          console.log(
+            `🎨 Player: ${player.name}, Class: "${player.class_name}", Color: ${displayColor}`,
+          );
+
+          // get global ranking display with bracket color
+          let globalRankingHtml = "";
+          if (player.global_ranking) {
+            const bracketClass = player.global_ranking_bracket
+              ? `bracket-${player.global_ranking_bracket}`
+              : "bracket-common";
+            globalRankingHtml = `<span class="global-ranking ${bracketClass}">#${player.global_ranking}</span>`;
+          }
+
+          // add relevance indicator for fuzzy matches
+          const relevanceIndicator =
+            score && score > 0.1
+              ? `<span class="search-relevance" title="Search relevance: ${(1 - score).toFixed(2)}">~</span>`
+              : "";
+
+          return `
+          <div class="search-result-item ${index === this.selectedIndex ? "selected" : ""}" 
+               data-index="${index}"
+               data-player-url="${buildPlayerProfileURL(player.region, player.realm_slug, player.name)}"
+               data-relevance="${score?.toFixed(3) || "0.000"}">
+            <div class="search-result-content">
+              <div class="search-player-identity">
+                ${relevanceIndicator}<span class="search-player-name" style="color: ${displayColor};">${player.name}</span>
+                <span class="search-region-badge">${player.region.toUpperCase()}</span>
+                <span class="search-player-realm">${player.realm_name}</span>
+                ${globalRankingHtml}
+              </div>
+            </div>
+          </div>
+        `;
+        })
+        .join("");
+
+      this.resultsList.innerHTML = resultsHTML;
+      this.showResults();
+
+      // bind click events to results
+      this.bindResultEvents();
+    }
+
+    bindResultEvents() {
+      const resultItems = this.resultsList.querySelectorAll(
+        ".search-result-item",
+      );
+      resultItems.forEach((item, index) => {
+        item.addEventListener("click", () => {
+          this.selectResult(index);
+        });
+
+        item.addEventListener("mouseenter", () => {
+          this.selectedIndex = index;
+          this.updateSelection();
+        });
+      });
+    }
+
+    handleKeyboard(e: KeyboardEvent) {
+      if (
+        !this.resultsContainer.style.display ||
+        this.resultsContainer.style.display === "none"
+      ) {
+        return;
+      }
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          this.selectedIndex = Math.min(
+            this.selectedIndex + 1,
+            this.filteredResults.length - 1,
+          );
+          this.updateSelection();
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          this.selectedIndex = Math.max(this.selectedIndex - 1, -1);
+          this.updateSelection();
+          break;
+
+        case "Tab":
+          e.preventDefault();
+          // tab moves forward, shift+tab moves backward
+          if (e.shiftKey) {
+            this.selectedIndex =
+              this.selectedIndex <= 0
+                ? this.filteredResults.length - 1
+                : this.selectedIndex - 1;
+          } else {
+            this.selectedIndex =
+              this.selectedIndex >= this.filteredResults.length - 1
+                ? 0
+                : this.selectedIndex + 1;
+          }
+          this.updateSelection();
+          break;
+
+        case "Enter":
+          e.preventDefault();
+          if (this.selectedIndex >= 0) {
+            this.selectResult(this.selectedIndex);
+          } else if (this.filteredResults.length > 0) {
+            // auto-select first result if no specific selection
+            this.selectResult(0);
+          }
+          break;
+
+        case "Escape":
+          this.hideResults();
+          this.searchInput.blur();
+          break;
+      }
+    }
+
+    updateSelection() {
+      const items = this.resultsList.querySelectorAll(".search-result-item");
+      items.forEach((item, index) => {
+        item.classList.toggle("selected", index === this.selectedIndex);
+      });
+    }
+
+    selectResult(index: number) {
+      const result = this.filteredResults[index];
+      if (result) {
+        const player = result.item;
+        const playerUrl = buildPlayerProfileURL(player.region, player.realm_slug, player.name);
+        console.log(
+          `🎯 Navigating to player: ${player.name} (${player.realm_name})`,
+        );
+        window.location.href = playerUrl;
+      }
+    }
+
+    updateClearButton(query: string) {
+      this.clearButton.style.display = query.length > 0 ? "block" : "none";
+    }
+
+    clearSearch() {
+      this.searchInput.value = "";
+      this.clearButton.style.display = "none";
+      this.hideResults();
+      this.searchInput.focus();
+    }
+
+    showResults() {
+      this.resultsContainer.style.display = "block";
+      this.noResultsDiv.style.display = "none";
+      this.resultsList.style.display = "block";
+    }
+
+    hideResults() {
+      this.resultsContainer.style.display = "none";
+      this.selectedIndex = -1;
+    }
+
+    showLoading() {
+      this.resultsContainer.style.display = "block";
+      this.loadingDiv.style.display = "flex";
+      this.resultsList.style.display = "none";
+      this.noResultsDiv.style.display = "none";
+    }
+
+    hideLoading() {
+      this.loadingDiv.style.display = "none";
+    }
+
+    showNoResults() {
+      this.resultsContainer.style.display = "block";
+      this.noResultsDiv.style.display = "block";
+      this.resultsList.style.display = "none";
+      this.loadingDiv.style.display = "none";
+    }
+
+    // caching methods for performance
+    loadFromCache(): PlayerSearchIndex | null {
+      try {
+        const cached = localStorage.getItem("playerSearchIndex");
+        if (!cached) return null;
+
+        const data = JSON.parse(cached);
+        const cacheTime = new Date(data.metadata.cached_at);
+        const now = new Date();
+        const ageHours =
+          (now.getTime() - cacheTime.getTime()) / (1000 * 60 * 60);
+
+        // cache valid for 24 hours
+        if (ageHours < 24) {
+          console.log(`📦 Cache hit (${ageHours.toFixed(1)}h old)`);
+          return data;
+        } else {
+          console.log(`🗑️ Cache expired (${ageHours.toFixed(1)}h old)`);
+          localStorage.removeItem("playerSearchIndex");
+          return null;
+        }
+      } catch (error) {
+        console.warn("❌ Failed to load from cache:", error);
+        localStorage.removeItem("playerSearchIndex");
+        return null;
+      }
+    }
+
+    saveToCache(data: PlayerSearchIndex) {
+      try {
+        const cacheData = {
+          ...data,
+          metadata: {
+            ...data.metadata,
+            cached_at: new Date().toISOString(),
+          },
+        };
+        localStorage.setItem("playerSearchIndex", JSON.stringify(cacheData));
+        console.log(`💾 Saved ${data.players.length} players to cache`);
+      } catch (error) {
+        console.warn("❌ Failed to save to cache:", error);
+      }
+    }
+  }
+
+  // initialize player search
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector(
+      ".player-search-island",
+    ) as HTMLElement;
+    if (container) {
+      new PlayerSearch(container);
+    }
+  });
+</script>
+-->

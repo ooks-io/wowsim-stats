@@ -1,0 +1,731 @@
+---
+import type { PlayerLeaderboardData } from "../../lib/types";
+import LoadingState from "../LoadingState.astro";
+import { formatDurationMMSS, buildPlayerProfileURL } from "../../lib/utils.ts";
+import "../../styles/best-runs.scss";
+
+export interface Props {
+  initialData?: PlayerLeaderboardData;
+  class?: string;
+}
+
+const { initialData, class: className } = Astro.props;
+
+const players = initialData?.leaderboard || [];
+const pagination = initialData?.pagination;
+---
+
+<div
+  class={`leaderboard-container card-container player-leaderboard-container ${className || ""}`.trim()}
+>
+  <!-- loading State (hidden by default, shown during api calls) -->
+  <div id="loading-container" style="display: none;">
+    <LoadingState message="Loading player rankings..." />
+  </div>
+
+  <!-- error State (hidden by default) -->
+  <div id="error-container" style="display: none;">
+    <LoadingState type="error" message="" />
+  </div>
+
+  <!-- player leaderboard content -->
+  <div id="player-leaderboard-content">
+    {
+      players.length > 0 ? (
+        <div id="player-leaderboard-rows" class="leaderboard-table">
+          {players.map((player: any, index: number) => {
+            const rank = pagination?.currentPage
+              ? (pagination.currentPage - 1) * 25 + index + 1
+              : index + 1;
+            const combinedTime = player.combined_best_time
+              ? formatDurationMMSS(player.combined_best_time)
+              : "—";
+
+            return (
+              <div class="leaderboard-table-row">
+                <div class="leaderboard-cell leaderboard-cell--rank">
+                  #{rank}
+                </div>
+                <div class="leaderboard-cell leaderboard-cell--time">
+                  {combinedTime}
+                </div>
+                <div class="leaderboard-cell leaderboard-cell--spec-icon">
+                  <div
+                    class="spec-icon-placeholder"
+                    data-spec-id={player.main_spec_id || 0}
+                  />
+                </div>
+                <div class="leaderboard-cell leaderboard-cell--content">
+                  <a
+                    href={buildPlayerProfileURL(
+                      player.region,
+                      player.realm_slug,
+                      player.name,
+                    )}
+                    class="player-link"
+                    data-class={player.class_name}
+                    style="font-weight: 600; font-size: 1.0em; text-decoration: none;"
+                  >
+                    {player.name}
+                  </a>
+                </div>
+                <div class="leaderboard-cell leaderboard-cell--meta">
+                  {player.realm_name || player.realm_slug}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <p>No player rankings available.</p>
+          <p>Player data is updated regularly based on challenge mode runs.</p>
+        </div>
+      )
+    }
+  </div>
+
+  <!-- pagination controls (always present, hidden by default) -->
+  <div class="pagination-container" style="display: none;">
+    <div class="pagination-info">
+      <span></span>
+    </div>
+    <div class="pagination-buttons">
+      <button id="prev-page" class="pagination-btn"> Previous </button>
+      <span class="page-info"></span>
+      <button id="next-page" class="pagination-btn"> Next </button>
+    </div>
+  </div>
+</div>
+<script src="../../client/player-leaderboard.ts"></script>
+<script type="module">
+  console.log("[PlayerLeaderboard.astro] module import requested");
+  window.addEventListener(
+    "playerLeaderboard:ready",
+    () => {
+      console.log(
+        "[PlayerLeaderboard.astro] playerLeaderboard:ready event observed",
+      );
+    },
+    { once: true },
+  );
+</script>
+
+<!--
+  // NOTE: Client script temporarily simplified to avoid TS syntax in browser.
+  // Full functionality can be reintroduced after converting to plain JS.
+
+  // (removed unused helper typings)
+
+  class PlayerLeaderboard {
+    constructor(container) {
+      console.log("🚀 PlayerLeaderboard constructor called");
+      this.container = container;
+      this.currentPage = 1;
+      this.isInitialized = false;
+
+      console.log("📊 Initial state:", {
+        containerId: container.id || container.className,
+        currentPage: this.currentPage,
+        isInitialized: this.isInitialized,
+        hasInitialData: !!container.querySelector(
+          "#player-leaderboard-rows .leaderboard-table-row",
+        ),
+      });
+
+      this.bindPaginationEvents();
+      this.setupSpecIcons();
+      this.setupClassColors();
+
+      // defer auto-loading to avoid race conditions
+      this.initialize();
+    }
+
+    initialize() {
+      console.log("🔧 Initialize called");
+
+      // check if we have initial data
+      const hasInitialData = this.container.querySelector("#player-leaderboard-rows .leaderboard-table-row");
+      const urlPage = this.getPageFromURL();
+
+      console.log("📋 Initialize state check:", {
+        hasInitialData: !!hasInitialData,
+        urlPage,
+        currentPage: this.currentPage,
+        isInitialized: this.isInitialized,
+      });
+
+      if (!hasInitialData) {
+        console.log("⏳ No initial data, scheduling load with delay...");
+        // use a small delay to ensure DOM is fully ready
+        setTimeout(() => {
+          if (!this.isInitialized) {
+            console.log("🔄 Delayed initialization executing");
+            this.isInitialized = true;
+
+            // check url for page parameter
+            const urlPage = this.getPageFromURL();
+            console.log("📖 Loading data for URL page:", urlPage);
+            this.loadPlayerData(urlPage);
+          } else {
+            console.log(
+              "⚠️ Delayed initialization skipped - already initialized",
+            );
+          }
+        }, 100);
+      } else {
+        console.log("✅ Has initial data, binding events and syncing URL");
+        this.isInitialized = true;
+        // initial data exists, no expandable events needed
+
+        // sync current page with url if different
+        if (urlPage !== this.currentPage) {
+          console.log("🔄 URL page differs from current, loading:", {
+            urlPage,
+            currentPage: this.currentPage,
+          });
+          this.loadPlayerData(urlPage);
+        } else {
+          console.log("✨ URL and current page match, showing pagination");
+          // still need to show pagination for initial data
+          this.showPaginationIfNeeded();
+        }
+      }
+
+      // listen for browser back/forward navigation
+      window.addEventListener("popstate", (e) => {
+        console.log("🔙 Popstate event fired:", e.state);
+        const urlPage = this.getPageFromURL();
+        if (urlPage !== this.currentPage) {
+          console.log("🔄 Popstate loading page:", {
+            urlPage,
+            currentPage: this.currentPage,
+          });
+          this.loadPlayerData(urlPage);
+        }
+      });
+    }
+
+    bindPaginationEvents() {
+      // pagination button events (one-time setup)
+      const paginationContainer = this.container.querySelector(".pagination-container");
+      const prevBtn = this.container.querySelector("#prev-page");
+      const nextBtn = this.container.querySelector("#next-page");
+
+      console.log("🔗 Binding pagination events:", {
+        paginationContainer: !!paginationContainer,
+        prevBtn: !!prevBtn,
+        nextBtn: !!nextBtn,
+        containerHTML: this.container.innerHTML.includes("pagination-container")
+          ? "Has pagination HTML"
+          : "No pagination HTML",
+      });
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          console.log("⬅️ Previous page button clicked");
+          this.previousPage();
+        });
+      }
+
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          console.log("➡️ Next page button clicked");
+          this.nextPage();
+        });
+      }
+    }
+
+
+    setupSpecIcons() {
+      const iconPlaceholders = this.container.querySelectorAll(
+        ".spec-icon-placeholder",
+      );
+      iconPlaceholders.forEach((placeholder: Element) => {
+        const htmlElement = placeholder as HTMLElement;
+        const specId = parseInt(htmlElement.dataset.specId || "");
+        if (specId) {
+          const spec = getSpecInfo(specId);
+          const iconUrl = spec ? getSpecIcon(spec.class, spec.spec) : null;
+
+          if (iconUrl) {
+            const img = document.createElement("img");
+            img.src = iconUrl;
+            img.alt = `${spec.spec} ${spec.class}`;
+            img.style.cssText =
+              "width: 20px; height: 20px; border-radius: 2px; border: 1px solid #444;";
+            placeholder.appendChild(img);
+          }
+        }
+      });
+    }
+
+    setupClassColors() {
+      const playerLinks = this.container.querySelectorAll(".player-link");
+      playerLinks.forEach((link) => {
+        const htmlLink = link as HTMLElement;
+        const className = htmlLink.dataset.class;
+        if (className) {
+          const classColor = getClassColor(className);
+          htmlLink.style.color = classColor;
+        }
+      });
+    }
+
+
+
+    async previousPage() {
+      if (this.currentPage > 1) {
+        const targetPage = this.currentPage - 1;
+        await this.loadPlayerData(targetPage);
+      }
+    }
+
+    async nextPage() {
+      const targetPage = this.currentPage + 1;
+      await this.loadPlayerData(targetPage);
+    }
+
+    async loadPlayerData(targetPage = this.currentPage) {
+      console.log("🔄 loadPlayerData called:", {
+        targetPage,
+        currentPage: this.currentPage,
+      });
+
+      try {
+        this.showLoading();
+
+        const apiUrl = `/api/leaderboard/players?scope=global&page=${targetPage}&pageSize=25`;
+        console.log("📡 Fetching:", apiUrl);
+
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        console.log("📨 API Response received:", {
+          hasLeaderboard: !!(data.leaderboard && data.leaderboard.length > 0),
+          pagination: data.pagination,
+          leaderboardCount: data.leaderboard?.length || 0,
+          targetPage,
+          responsePage: data.pagination?.currentPage,
+        });
+
+        if (data.leaderboard && data.leaderboard.length > 0) {
+          // update internal state from API response (source of truth)
+          const previousPage = this.currentPage;
+          this.currentPage = data.pagination?.currentPage || targetPage;
+
+          console.log("📊 Page state updated:", {
+            previousPage,
+            currentPage: this.currentPage,
+          });
+
+          // update url to reflect current page
+          this.updateURLWithPage(this.currentPage);
+
+          this.renderPlayerData(data);
+          this.updatePagination(data.pagination);
+        } else {
+          console.log("❌ No leaderboard data, showing empty state");
+          this.showEmptyState();
+        }
+      } catch (error) {
+        console.error("💥 Failed to load player data:", error);
+        this.showError("Failed to load player rankings");
+      } finally {
+        this.hideLoading();
+      }
+    }
+
+    showLoading() {
+      const loading = this.container.querySelector(
+        "#loading-container",
+      ) as HTMLElement;
+      const content = this.container.querySelector(
+        "#player-leaderboard-content",
+      ) as HTMLElement;
+      const error = this.container.querySelector(
+        "#error-container",
+      ) as HTMLElement;
+
+      if (loading) (loading as HTMLElement).style.display = "block";
+      if (content) (content as HTMLElement).style.display = "none";
+      if (error) (error as HTMLElement).style.display = "none";
+    }
+
+    hideLoading() {
+      const loading = this.container.querySelector(
+        "#loading-container",
+      ) as HTMLElement;
+      const content = this.container.querySelector(
+        "#player-leaderboard-content",
+      ) as HTMLElement;
+
+      if (loading) (loading as HTMLElement).style.display = "none";
+      if (content) (content as HTMLElement).style.display = "block";
+    }
+
+    showError(message: string) {
+      const errorContainer = this.container.querySelector(
+        "#error-container",
+      ) as HTMLElement;
+      const errorMessage = errorContainer?.querySelector(
+        ".loading-message",
+      ) as HTMLElement;
+      const loading = this.container.querySelector(
+        "#loading-container",
+      ) as HTMLElement;
+      const content = this.container.querySelector(
+        "#player-leaderboard-content",
+      ) as HTMLElement;
+
+      if (errorMessage) errorMessage.textContent = message;
+      if (errorContainer)
+        (errorContainer as HTMLElement).style.display = "block";
+      if (loading) (loading as HTMLElement).style.display = "none";
+      if (content) (content as HTMLElement).style.display = "none";
+    }
+
+    renderPlayerData(data: any) {
+      const players = data.leaderboard || [];
+
+      if (players.length === 0) {
+        this.showEmptyState();
+        return;
+      }
+
+      // target the specific rows container, not the entire content div
+      let rowsContainer = this.container.querySelector(
+        "#player-leaderboard-rows",
+      ) as HTMLElement;
+
+      // if rows container doesn't exist, create the full structure
+      if (!rowsContainer) {
+        const contentDiv = this.container.querySelector(
+          "#player-leaderboard-content",
+        ) as HTMLElement;
+        if (contentDiv) {
+          contentDiv.innerHTML =
+            '<div id="player-leaderboard-rows" class="leaderboard-table"></div>';
+          rowsContainer = contentDiv.querySelector(
+            "#player-leaderboard-rows",
+          ) as HTMLElement;
+        }
+      }
+
+      const rowsHTML = players
+        .map((player: any, index: number) => {
+          const rank = data.pagination?.currentPage
+            ? (data.pagination.currentPage - 1) * 25 + index + 1
+            : index + 1;
+          const combinedTime = player.combined_best_time
+            ? formatDurationMMSS(player.combined_best_time)
+            : "—";
+
+          return `
+          <div class="player-row-wrapper">
+            <div class="leaderboard-table-row">
+              <div class="leaderboard-cell leaderboard-cell--rank">#${rank}</div>
+              <div class="leaderboard-cell leaderboard-cell--time">${combinedTime}</div>
+              <div class="leaderboard-cell leaderboard-cell--spec-icon">
+                <div class="spec-icon-placeholder" data-spec-id="${player.main_spec_id || 0}"></div>
+              </div>
+              <div class="leaderboard-cell leaderboard-cell--content">
+                <a 
+                  href="${buildPlayerProfileURL(player.region, player.realm_slug, player.name)}"
+                  class="player-link"
+                  data-class="${player.class_name}"
+                  style="font-weight: 600; font-size: 1.0em; text-decoration: none;"
+                >
+                  ${player.name}
+                </a>
+              </div>
+              <div class="leaderboard-cell leaderboard-cell--meta">
+                ${player.realm_name || player.realm_slug}
+              </div>
+            </div>
+          </div>
+        `;
+        })
+        .join("");
+
+      // only replace the rows content, preserving the container structure
+      if (rowsContainer) {
+        rowsContainer.innerHTML = rowsHTML;
+      }
+
+      // no expandable events needed
+      this.setupSpecIcons();
+      this.setupClassColors();
+    }
+
+    showEmptyState() {
+      const contentDiv = this.container.querySelector(
+        "#player-leaderboard-content",
+      ) as HTMLElement;
+      if (contentDiv) {
+        contentDiv.innerHTML = `
+          <div class="empty-state">
+            <p>No player rankings available.</p>
+            <p>Player data is updated regularly based on challenge mode runs.</p>
+          </div>
+        `;
+      }
+    }
+
+    updatePagination(pagination: any) {
+      console.log("📄 updatePagination called:", pagination);
+
+      const paginationContainer = this.container.querySelector(
+        ".pagination-container",
+      ) as HTMLElement;
+
+      if (!paginationContainer) {
+        console.warn("⚠️ Pagination container not found in DOM");
+        console.log(
+          "🔍 Available elements:",
+          this.container.querySelectorAll('[class*="pagination"]'),
+        );
+        return;
+      }
+
+      // debug current container visibility
+      const parentSection = this.container.closest(
+        ".content-section",
+      ) as HTMLElement;
+      console.log("👁️ Container visibility check:", {
+        containerDisplay: getComputedStyle(this.container).display,
+        containerVisibility: getComputedStyle(this.container).visibility,
+        parentSectionClasses: parentSection?.className,
+        parentSectionDisplay: parentSection
+          ? getComputedStyle(parentSection).display
+          : "N/A",
+      });
+
+      if (!pagination) {
+        console.warn("⚠️ No pagination data provided, hiding container");
+        (paginationContainer as HTMLElement).style.display = "none";
+        return;
+      }
+
+      console.log("✅ Showing pagination container with data:", {
+        currentPage: pagination.currentPage,
+        totalPages: pagination.totalPages,
+        hasPrevPage: pagination.hasPrevPage,
+        hasNextPage: pagination.hasNextPage,
+      });
+
+      // always show pagination container when we have pagination data
+      if (paginationContainer) {
+        (paginationContainer as HTMLElement).style.display = "flex";
+      }
+
+      // debug pagination container visibility after setting
+      console.log("🔍 Pagination container styles after update:", {
+        display: (paginationContainer as HTMLElement).style.display,
+        computedDisplay: getComputedStyle(paginationContainer).display,
+        visible:
+          (paginationContainer as HTMLElement).offsetWidth > 0 &&
+          (paginationContainer as HTMLElement).offsetHeight > 0,
+        offsetParent: !!(paginationContainer as HTMLElement).offsetParent,
+      });
+
+      const infoSpan = paginationContainer?.querySelector(
+        ".pagination-info span",
+      ) as HTMLElement;
+      const prevBtn = paginationContainer?.querySelector(
+        "#prev-page",
+      ) as HTMLButtonElement;
+      const nextBtn = paginationContainer?.querySelector(
+        "#next-page",
+      ) as HTMLButtonElement;
+      const pageInfo = paginationContainer?.querySelector(
+        ".page-info",
+      ) as HTMLElement;
+
+      console.log("🔍 Pagination elements found:", {
+        infoSpan: !!infoSpan,
+        prevBtn: !!prevBtn,
+        nextBtn: !!nextBtn,
+        pageInfo: !!pageInfo,
+      });
+
+      if (infoSpan) {
+        infoSpan.textContent = `Showing page ${pagination.currentPage || 1} of ${pagination.totalPages || 1} (${pagination.totalPlayers || 0} total players)`;
+      }
+
+      if (prevBtn) {
+        (prevBtn as HTMLButtonElement).disabled = !pagination.hasPrevPage;
+        console.log("⬅️ Previous button updated:", {
+          disabled: !pagination.hasPrevPage,
+          visible: prevBtn.offsetWidth > 0 && prevBtn.offsetHeight > 0,
+        });
+      }
+      if (nextBtn) {
+        (nextBtn as HTMLButtonElement).disabled = !pagination.hasNextPage;
+        console.log("➡️ Next button updated:", {
+          disabled: !pagination.hasNextPage,
+          visible: nextBtn.offsetWidth > 0 && nextBtn.offsetHeight > 0,
+        });
+      }
+      if (pageInfo) {
+        pageInfo.textContent = `Page ${pagination.currentPage || 1} of ${pagination.totalPages || 1}`;
+      }
+    }
+
+    // public method to reset to page 1 (for tab switching)
+    resetToFirstPage() {
+      console.log("🔄 resetToFirstPage called");
+      this.currentPage = 1;
+      this.updateURLWithPage(1); // Clean URL for page 1
+      this.loadPlayerData(1);
+    }
+
+    // public method to refresh current page
+    refreshCurrentPage() {
+      console.log("🔄 refreshCurrentPage called");
+
+      // debug visibility before refresh
+      const parentSection = this.container.closest(
+        ".content-section",
+      ) as HTMLElement;
+      const paginationContainer = this.container.querySelector(
+        ".pagination-container",
+      ) as HTMLElement;
+
+      console.log("🔍 refreshCurrentPage visibility check:", {
+        parentSectionClasses: parentSection?.className,
+        parentSectionDisplay: parentSection
+          ? getComputedStyle(parentSection).display
+          : "N/A",
+        paginationDisplay: paginationContainer
+          ? (paginationContainer as HTMLElement).style.display
+          : "N/A",
+        paginationVisible: paginationContainer
+          ? (paginationContainer as HTMLElement).offsetWidth > 0 &&
+            (paginationContainer as HTMLElement).offsetHeight > 0
+          : false,
+      });
+
+      this.loadPlayerData(this.currentPage);
+    }
+
+    // add method to show pagination if needed
+    showPaginationIfNeeded() {
+      console.log("👀 showPaginationIfNeeded called");
+      const paginationContainer = this.container.querySelector(
+        ".pagination-container",
+      ) as HTMLElement;
+      if (paginationContainer) {
+        (paginationContainer as HTMLElement).style.display = "flex";
+        console.log("✅ Pagination container shown");
+      } else {
+        console.log("⚠️ No pagination container found to show");
+      }
+    }
+
+    // url state management methods
+    getPageFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pageParam = urlParams.get("page");
+      const result = pageParam ? Math.max(1, parseInt(pageParam)) : 1;
+      console.log("📖 getPageFromURL:", {
+        pageParam,
+        result,
+        currentURL: window.location.href,
+      });
+      return result;
+    }
+
+    updateURLWithPage(page) {
+      console.log("🔗 updateURLWithPage called:", {
+        page,
+        previousURL: window.location.href,
+      });
+
+      const url = new URL(window.location.href);
+
+      if (page === 1) {
+        // remove page parameter for page 1 (cleaner urls)
+        url.searchParams.delete("page");
+        console.log("🧹 Cleaned URL for page 1");
+      } else {
+        url.searchParams.set("page", page.toString());
+        console.log("📝 Set page parameter to:", page);
+      }
+
+      // update url without triggering page reload
+      window.history.pushState({ page }, "", url);
+      console.log("✅ URL updated to:", url.href);
+    }
+  }
+
+  // initialize the player leaderboard
+  document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector(".player-leaderboard-container");
+    if (container) {
+      const leaderboard = new PlayerLeaderboard(container);
+      window.playerLeaderboard = leaderboard;
+    }
+  });
+-->
+
+<style>
+  .pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+  }
+
+  .pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+  }
+
+  .pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .pagination-btn {
+    padding: 8px 16px;
+    background-color: var(--highlight-color);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-btn:hover:not(:disabled) {
+    background-color: #e6d55a;
+    transform: translateY(-1px);
+  }
+
+  .pagination-btn:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .page-info {
+    color: var(--text-primary);
+    font-weight: 600;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .pagination-container {
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+  }
+</style>
