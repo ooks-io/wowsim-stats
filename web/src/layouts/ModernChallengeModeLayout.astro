@@ -1,4 +1,5 @@
 ---
+// main layout for all challenge mode leaderboards
 import PageLayout from "../components/PageLayout.astro";
 import FilterPanel from "../components/islands/FilterPanel.astro";
 import LeaderboardTable from "../components/islands/LeaderboardTable.astro";
@@ -42,23 +43,26 @@ if (
     // Load initial leaderboard data from static files
     const staticPath = buildStaticLeaderboardPath(
       initialRegion,
-      initialRealm || "all", 
+      initialRealm || "all",
       parseInt(initialDungeon),
-      1
+      1,
     );
     const origin = Astro.url?.origin || Astro.site || "";
     console.log(`[Leaderboard] Fetching: ${origin}${staticPath}`);
     console.log(`[Leaderboard] Origin: ${origin}`);
     console.log(`[Leaderboard] Static path: ${staticPath}`);
-    
+
     const response = await fetch(`${origin}${staticPath}`);
     console.log(`[Leaderboard] Response status: ${response.status}`);
-    
+
     if (response.ok) {
       initialData = await response.json();
       console.log(`[Leaderboard] Data loaded successfully`);
     } else {
-      console.warn(`[Leaderboard] Static leaderboard file not found (${response.status}):`, staticPath);
+      console.warn(
+        `[Leaderboard] Static leaderboard file not found (${response.status}):`,
+        staticPath,
+      );
       initialData = undefined;
     }
   } catch (error) {
