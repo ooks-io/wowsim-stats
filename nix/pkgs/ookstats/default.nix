@@ -24,7 +24,7 @@ in
     version = "0.1.0";
     src = ./src;
 
-    vendorHash = null;
+    vendorHash = "sha256-o4h4etGvTukPC/EixnCP+Ik++odm4ckozexkUB6Sv5g=";
 
     nativeBuildInputs = [gcc installShellFiles makeWrapper];
 
