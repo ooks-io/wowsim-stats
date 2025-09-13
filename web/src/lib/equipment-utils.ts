@@ -325,14 +325,18 @@ function buildIconHtml(
 export function formatEquipmentSummary(items: any[]): any[] {
   const equipment: any[] = [];
   items.forEach((item, index) => {
-    if (item && item.id) {
+    if (item) {
+      const id = item.id || item.itemId || item.item_id;
+      if (!id) return;
       const itemInfo = (window as any).ItemDatabase?.formatEquipmentItem?.(
-        item,
+        { ...item, id },
       ) || {
-        itemId: item.id,
-        itemName: `Item ${item.id}`,
+        itemId: id,
+        itemName: item.name || item.item_name || `Item ${id}`,
         itemDetails: [],
-        wowheadUrl: getWowheadUrl(item.id),
+        wowheadUrl: getWowheadUrl(id),
+        iconUrl: item.icon ? getZamimgIconUrl(item.icon, 'large') : undefined,
+        quality: item.quality || null,
       };
 
       if (itemInfo) {

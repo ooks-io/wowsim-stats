@@ -40,22 +40,63 @@ export function formatSimulationDate(timestamp: string | number): string {
 export function formatRaidBuffs(
   buffs: Record<string, boolean | number>,
 ): string {
+  const MINOR_WORDS = new Set([
+    "of",
+    "the",
+    "and",
+    "to",
+    "for",
+    "a",
+    "an",
+    "in",
+    "on",
+    "with",
+    "vs",
+  ]);
+
+  const normalize = (key: string): string => {
+    if (!key) return "";
+    let s = String(key);
+    // Drop trailing Count (e.g., skullBannerCount -> skullBanner)
+    s = s.replace(/Count$/i, "");
+    // Replace underscores with spaces and split camelCase
+    s = s.replace(/_/g, " ");
+    s = s.replace(/([a-z])([A-Z])/g, "$1 $2");
+    // Collapse whitespace
+    s = s.replace(/\s+/g, " ").trim().toLowerCase();
+    // Title-case while keeping minor words lowercase
+    const words = s.split(" ");
+    const out = words.map((w, i) => {
+      if (i > 0 && MINOR_WORDS.has(w)) return w;
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    });
+    return out.join(" ");
+  };
+
   const activeBuffs = Object.entries(buffs)
     .filter(([_, value]) => value !== false && value !== 0)
     .map(([key, value]) => {
-      const readable = key
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, (str) => str.toUpperCase());
-      return typeof value === "number" && value > 1
-        ? `${readable} (${value})`
-        : readable;
+      const name = normalize(key);
+      return typeof value === "number" && value > 1 ? `${name} (${value})` : name;
     });
   return activeBuffs.join(", ");
 }
 
 export function formatRace(race: string): string {
   if (!race) return "Unknown";
-  return race.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+  let s = String(race).trim();
+  // Strip common enum prefixes like "RaceOrc" -> "Orc"
+  if (/^Race[A-Z]/.test(s)) s = s.replace(/^Race/, "");
+  // Replace underscores with spaces and split CamelCase into words
+  s = s.replace(/_/g, " ");
+  s = s.replace(/([a-z])([A-Z])/g, "$1 $2");
+  // Normalize extra whitespace
+  s = s.replace(/\s+/g, " ").trim();
+  // Title case each word
+  s = s
+    .toLowerCase()
+    .replace(/\b\w/g, (l) => l.toUpperCase());
+  return s;
 }
 
 // DOM utilities
