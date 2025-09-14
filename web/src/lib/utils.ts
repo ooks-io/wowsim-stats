@@ -99,6 +99,20 @@ export function formatRace(race: string): string {
   return s;
 }
 
+// General string helpers
+export function toTitleCase(input: string): string {
+  if (!input) return "";
+  const s = String(input).replace(/[_-]+/g, " ").trim().toLowerCase();
+  return s.replace(/\b\w/g, (l) => l.toUpperCase());
+}
+
+export function slugifyLabel(input: string): string {
+  return String(input || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "_");
+}
+
 // DOM utilities
 export function createElement(
   tag: string,
@@ -194,31 +208,7 @@ export function handleAPIError(error: Error, context: string): void {
   console.warn(`User-friendly error: ${errorMessage}`);
 }
 
-// Loading state utilities
-export function showLoadingState(
-  containerId: string,
-  message: string = "Loading...",
-): void {
-  const container = document.getElementById(containerId);
-  if (container) {
-    container.innerHTML = `
-      <div class="loading-state">
-        <div class="loading-spinner"></div>
-        <div class="loading-message">${message}</div>
-      </div>
-    `;
-  }
-}
-
-export function hideLoadingState(containerId: string): void {
-  const container = document.getElementById(containerId);
-  if (container) {
-    const loadingState = container.querySelector(".loading-state");
-    if (loadingState) {
-      loadingState.remove();
-    }
-  }
-}
+// (Removed legacy loading state helpers in favor of <LoadingState /> component)
 
 // Debouncing utility for search inputs
 export function debounce<T extends (...args: any[]) => void>(

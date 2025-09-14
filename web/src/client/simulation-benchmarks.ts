@@ -1,7 +1,8 @@
-import { buildRankingsUrl } from './sim-chart/paths';
+import { buildRankingsUrl, PARAM } from './sim-chart/paths';
 import { renderRankingsMetadataHTML } from './sim-chart/render/meta';
 import { renderRankingsChartHTML } from './sim-chart/render/charts';
 import { formatRaidBuffs as utilFormatRaidBuffs } from '../lib/utils';
+import { showLoading, hideLoading, renderError, clearContent } from './sim-chart/ui';
 
 function getParam(name: string, fallback?: string) {
   const url = new URL(window.location.href);
@@ -12,10 +13,10 @@ async function init() {
   console.info('[sim] benchmarks init start');
   const params = {
     mode: 'rankings' as const,
-    phase: getParam('phase', 'p1'),
-    encounterType: getParam('encounter', 'raid'),
-    targetCount: getParam('targets', 'single'),
-    duration: getParam('duration', 'long'),
+    phase: getParam(PARAM.phase, 'p1'),
+    encounterType: getParam(PARAM.encounter, 'raid'),
+    targetCount: getParam(PARAM.targets, 'single'),
+    duration: getParam(PARAM.duration, 'long'),
   };
   const url = buildRankingsUrl(params);
   const chartEl = document.getElementById('chart-container') as HTMLElement | null;
@@ -24,28 +25,17 @@ async function init() {
   const errorEl = document.getElementById('error') as HTMLElement | null;
 
   // show loading
-  if (loadingEl) loadingEl.classList.remove('hidden');
-  if (errorEl) errorEl.classList.add('hidden');
-  if (chartEl) chartEl.style.opacity = '0.5';
-  if (metaEl) metaEl.style.opacity = '0.5';
+  showLoading(metaEl, chartEl, loadingEl as any, errorEl);
 
   const resp = await fetch(url);
   if (!resp.ok) {
     console.error('[sim] benchmarks fetch failed', resp.status, resp.statusText);
-    if (loadingEl) loadingEl.classList.add('hidden');
-    if (errorEl) {
-      errorEl.textContent = `Error loading data: ${resp.status} ${resp.statusText}`;
-      errorEl.classList.remove('hidden');
-    }
-    if (chartEl) chartEl.innerHTML = '';
-    if (metaEl) metaEl.innerHTML = '';
-    if (chartEl) chartEl.style.opacity = '1';
-    if (metaEl) metaEl.style.opacity = '1';
+    renderError(errorEl, `Error loading data: ${resp.status} ${resp.statusText}`, metaEl, chartEl, loadingEl as any);
+    clearContent(metaEl, chartEl);
     return;
   }
   const data = await resp.json();
-  if (loadingEl) loadingEl.classList.add('hidden');
-  if (errorEl) errorEl.classList.add('hidden');
+  hideLoading(metaEl, chartEl, loadingEl as any, errorEl);
   const fmt = {
     formatDuration: (window as any).WoWConstants?.formatDuration || ((s: number) => `${Math.floor(s/60)}m ${s%60}s`),
     formatSimulationDate: (window as any).WoWConstants?.formatSimulationDate || ((d: any) => String(d)),
@@ -53,14 +43,13 @@ async function init() {
   };
   if (metaEl) metaEl.innerHTML = renderRankingsMetadataHTML(data.metadata, fmt);
   const CLASS_COLORS: Record<string, string> = (window as any).WoWConstants?.CLASS_COLORS || {};
-  const sort = getParam('sort', 'dps');
+  const sort = getParam(PARAM.sort, 'dps');
   if (chartEl) {
     chartEl.innerHTML = renderRankingsChartHTML(data, sort, CLASS_COLORS);
     chartEl.querySelectorAll('.chart-item-wrapper .chart-item-header').forEach((el) => {
       el.addEventListener('click', () => (el.parentElement as HTMLElement | null)?.classList.toggle('chart-item-expanded'));
     });
-    chartEl.style.opacity = '1';
-    if (metaEl) metaEl.style.opacity = '1';
+    // Final styles are handled in hideLoading
   }
 }
 

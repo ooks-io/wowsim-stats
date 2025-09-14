@@ -73,11 +73,12 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
 </div>
 
 <script type="module" is:inline define:vars={{ mode, comparisonType, selectedClass, selectedSpec }}>
-  function getParam(name, fallback) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name) || fallback;
-  }
+  const K = (window.SimURL && window.SimURL.PARAM) || { phase:'phase', encounter:'encounter', targets:'targets', duration:'duration', sort:'sort', type:'type', class:'class', spec:'spec' };
+  const getParam = (name, fallback) => (window.SimURL && typeof window.SimURL.getParam === 'function') ? window.SimURL.getParam(name, fallback) : (fallback || '');
   function pushParams(params, pathOverride) {
+    if (window.SimURL && typeof window.SimURL.pushParams === 'function') {
+      return window.SimURL.pushParams(params, pathOverride);
+    }
     const url = new URL(window.location.href);
     if (pathOverride) url.pathname = pathOverride;
     Object.entries(params).forEach(([k, v]) => {
@@ -87,7 +88,9 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
     window.history.pushState({}, '', url.toString());
     window.dispatchEvent(new CustomEvent('simulation:statechange'));
   }
-  function titleCase(s) { return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()); }
+  const toTitle = (s) => (window.WoWConstants && window.WoWConstants.toTitleCase)
+    ? window.WoWConstants.toTitleCase(s)
+    : String(s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   function initControls() {
     const phase = document.getElementById('phase');
     const encounter = document.getElementById('encounter');
@@ -98,17 +101,17 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
     const specSel = document.getElementById('spec');
 
     // hydrate from URL
-    phase && (phase.value = getParam('phase', 'p1'));
-    encounter && (encounter.value = getParam('encounter', 'raid'));
-    targets && (targets.value = getParam('targets', 'single'));
-    duration && (duration.value = getParam('duration', 'long'));
+    phase && (phase.value = getParam(K.phase, 'p1'));
+    encounter && (encounter.value = getParam(K.encounter, 'raid'));
+    targets && (targets.value = getParam(K.targets, 'single'));
+    duration && (duration.value = getParam(K.duration, 'long'));
     const sortDefault = (mode === 'comparison' && comparisonType === 'trinket') ? 'percent' : 'dps';
-    sort && (sort.value = getParam('sort', sortDefault));
+    sort && (sort.value = getParam(K.sort, sortDefault));
 
     if (classSel && specSel && mode === 'comparison') {
       const SPEC_OPTIONS = (window.WoWConstants && window.WoWConstants.SPEC_OPTIONS) || {};
       // Populate classes
-      classSel.innerHTML = '<option value="">Select Class</option>' + Object.keys(SPEC_OPTIONS).map(cls => `<option value="${cls}">${titleCase(cls)}</option>`).join('');
+      classSel.innerHTML = '<option value="">Select Class</option>' + Object.keys(SPEC_OPTIONS).map(cls => `<option value="${cls}">${toTitle(cls)}</option>`).join('');
       if (selectedClass) classSel.value = selectedClass;
 
       const fillSpecs = () => {
@@ -121,7 +124,7 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       fillSpecs();
       // hydrate comparison type select
       const cmpTypeSel = document.getElementById('cmpType');
-      const currentType = (getParam('type', ''));
+      const currentType = (getParam(K.type, ''));
       if (cmpTypeSel) cmpTypeSel.value = currentType;
       // show/hide percent option based on type
       const sortSel0 = document.getElementById('sort');
@@ -140,27 +143,18 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
           if (cmpTypeSel.value !== 'trinket' && sortSel && sortSel.value === 'percent') sortSel.value = 'dps';
           if (cmpTypeSel.value === 'trinket' && sortSel && (!sortSel.value || sortSel.value === 'dps')) sortSel.value = 'percent';
         }
-        // reflect in URL
-        const phaseEl = document.getElementById('phase');
-        const encounterEl = document.getElementById('encounter');
-        const targetsEl = document.getElementById('targets');
-        const durationEl = document.getElementById('duration');
+        // reflect in URL via shared helper
         const base = '/simulation/comparison';
-        const url = new URL(window.location.href);
-        url.pathname = base;
-        const params = {
-          class: (classSel && classSel.value) || getParam('class',''),
-          spec: (specSel && specSel.value) || getParam('spec',''),
+        pushParams({
+          class: (classSel && classSel.value) || getParam(K.class,''),
+          spec: (specSel && specSel.value) || getParam(K.spec,''),
           type: cmpTypeSel.value,
-          phase: phaseEl && phaseEl.value,
-          encounter: encounterEl && encounterEl.value,
-          targets: targetsEl && targetsEl.value,
-          duration: durationEl && durationEl.value,
-          sort: sortSel && sortSel.value
-        };
-        Object.entries(params).forEach(function([k,v]){ if (v == null || v === '') url.searchParams.delete(k); else url.searchParams.set(k, String(v)); });
-        window.history.pushState({}, '', url.toString());
-        window.dispatchEvent(new CustomEvent('simulation:statechange'));
+          phase: phase?.value,
+          encounter: encounter?.value,
+          targets: targets?.value,
+          duration: duration?.value,
+          sort: (sortSel && sortSel['value']) || undefined,
+        }, base);
       });
       classSel.addEventListener('change', () => {
         fillSpecs();
@@ -212,10 +206,10 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       const base = mode === 'comparison' ? '/simulation/comparison' : '/simulation/benchmark';
       const common = { phase: phase?.value, encounter: encounter?.value, targets: targets?.value, duration: duration?.value, sort: sort?.value };
       if (mode === 'comparison') {
-        const cls = (classSel && classSel.value) || getParam('class', '');
-        const spc = (specSel && specSel.value) || getParam('spec', '');
+        const cls = (classSel && classSel.value) || getParam(K.class, '');
+        const spc = (specSel && specSel.value) || getParam(K.spec, '');
         const cmpTypeSel = document.getElementById('cmpType');
-        const typ = (cmpTypeSel && cmpTypeSel.value) || getParam('type', '');
+        const typ = (cmpTypeSel && cmpTypeSel.value) || getParam(K.type, '');
         pushParams({ ...common, class: cls, spec: spc, type: typ }, base);
       } else {
         pushParams(common, base);

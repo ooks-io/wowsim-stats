@@ -1,3 +1,6 @@
+import { formatRace as utilFormatRace } from "../../lib/utils";
+import { renderEquipmentIconsCompact } from "../../lib/equipment-utils";
+
 function wzIconSmall(slug?: string | null) {
   return slug
     ? `https://wow.zamimg.com/images/wow/icons/small/${slug}.jpg`
@@ -106,24 +109,10 @@ export function formatConsumables(c: any) {
 export function formatLoadout(loadout: any) {
   if (!loadout) return [] as any[];
   const sections: any[] = [];
-  const fmtRaceGlobal = (window as any).WoWConstants?.formatRace as
-    | ((r: string) => string)
-    | undefined;
-  const fmtRaceLocal = (race: string) => {
-    if (!race) return "Unknown";
-    let s = String(race).trim();
-    if (/^Race[A-Z]/.test(s)) s = s.replace(/^Race/, "");
-    s = s.replace(/_/g, " ");
-    s = s.replace(/([a-z])([A-Z])/g, "$1 $2");
-    s = s.replace(/\s+/g, " ").trim();
-    s = s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
-    return s;
-  };
   if (loadout.race || loadout.profession1 || loadout.profession2) {
     const items: any[] = [];
-    const fmtRace = fmtRaceGlobal || fmtRaceLocal;
     if (loadout.race)
-      items.push({ label: "Race", value: fmtRace(loadout.race) });
+      items.push({ label: "Race", value: utilFormatRace(loadout.race) });
     if (loadout.profession1)
       items.push({ label: "Profession 1", value: loadout.profession1 });
     if (loadout.profession2)
@@ -176,72 +165,18 @@ export function generateLoadoutDropdown(loadout: any): string {
     return "quality-common";
   };
 
-  const renderEquipmentCompact = (items: any[]) => {
-    if (!Array.isArray(items) || items.length === 0) return "";
-    const cells = items
-      .map((it: any) => {
-        const id = it.id || it.item_id || it.itemId;
-        if (!id) return "";
-        const href = `https://www.wowhead.com/mop-classic/item=${id}`;
-        const title = it.name || it.item_name || `Item ${id}`;
-        const qClass = toQualityClass(it.quality);
-        const iconSlug = it.icon || it.item_icon_slug || null;
-        const img = iconSlug
-          ? iconSlug.startsWith?.("http")
-            ? iconSlug
-            : `https://wow.zamimg.com/images/wow/icons/large/${iconSlug}.jpg`
-          : it.iconUrl || "";
-        // Build gem/enchant badges from either enriched enchantments or raw gems
-        let badgeHtml = "";
-        if (Array.isArray(it.enchantments)) {
-          const egems = it.enchantments.filter(
-            (e: any) => e && e.gem_icon_slug,
-          );
-          if (egems.length) {
-            badgeHtml = `<div class="gem-stack">${egems
-              .slice(0, 3)
-              .map(
-                (g: any) =>
-                  `<img class="gem-badge" src="https://wow.zamimg.com/images/wow/icons/small/${g.gem_icon_slug}.jpg" alt="${g.gem_name || "Gem"}" title="${g.gem_name || g.display_string || "Gem"}" />`,
-              )
-              .join("")}</div>`;
-          }
-        } else if (Array.isArray(it.gems)) {
-          const ggems = it.gems.filter(
-            (g: any) => g && typeof g === "object" && g.icon,
-          );
-          if (ggems.length) {
-            badgeHtml = `<div class="gem-stack">${ggems
-              .slice(0, 3)
-              .map(
-                (g: any) =>
-                  `<img class="gem-badge" src="https://wow.zamimg.com/images/wow/icons/small/${g.icon}.jpg" alt="${g.name || "Gem"}" title="${(g.stats && g.stats.join(", ")) || g.name || "Gem"}" />`,
-              )
-              .join("")}</div>`;
-          }
-        }
-        return `
-          <a href="${href}" class="equip-icon-wrap ${qClass}" title="${title}" target="_blank" rel="noopener noreferrer">
-            <div class="equip-icon-inner">
-              ${img ? `<img class="equip-icon" src="${img}" alt="${title}" loading="lazy" />` : `<div class="equip-icon placeholder" aria-label="${title}"></div>`}
-              ${badgeHtml}
-            </div>
-          </a>`;
-      })
-      .join("");
-    return `<div class="equipment-compact"><div class="equipment-icon-grid">${cells}</div></div>`;
-  };
+  // compact equipment icon grid is now centralized in equipment-utils
 
   const sectionsHtml = sections
     .map((section: any) => {
       if (section.isEquipment) {
-        const compact = renderEquipmentCompact(
+        const compact = renderEquipmentIconsCompact(
           loadout?.equipment?.items || section.items || [],
         );
         return `
         <div class="loadout-section">
           <h4 class="loadout-title">${section.title}</h4>
-          ${compact}
+          <div class="loadout-item">${compact}</div>
         </div>`;
       } else {
         const itemsHtml = section.items

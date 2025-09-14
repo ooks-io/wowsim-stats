@@ -12,6 +12,17 @@ export type PathParams = {
   unifiedSelection?: 'benchmarks' | 'comparisons' | string | null;
 };
 
+export const PARAM = {
+  phase: 'phase',
+  encounter: 'encounter',
+  targets: 'targets',
+  duration: 'duration',
+  sort: 'sort',
+  type: 'type',
+  class: 'class',
+  spec: 'spec',
+} as const;
+
 export function buildRankingsUrl(params: PathParams): string {
   const phase = params.phase || 'p1';
   const encounter = params.encounterType || 'raid';

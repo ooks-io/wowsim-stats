@@ -1,7 +1,8 @@
-import { buildComparisonUrl } from './sim-chart/paths';
+import { buildComparisonUrl, PARAM } from './sim-chart/paths';
 import { renderComparisonMetadataHTML } from './sim-chart/render/meta';
 import { renderComparisonChartHTML } from './sim-chart/render/charts';
 import { formatRaidBuffs as utilFormatRaidBuffs } from '../lib/utils';
+import { showLoading, hideLoading, renderError, clearContent, updateComparisonUI } from './sim-chart/ui';
 
 function getParam(name: string, fallback?: string) {
   const url = new URL(window.location.href);
@@ -10,28 +11,27 @@ function getParam(name: string, fallback?: string) {
 
 async function init() {
   console.info('[sim] comparison init start');
-  const classSlug = getParam('class', '');
-  const specSlug = getParam('spec', '');
+  const classSlug = getParam(PARAM.class, '');
+  const specSlug = getParam(PARAM.spec, '');
   const cmpTypeSel = document.getElementById('cmpType') as HTMLSelectElement | null;
-  const comparisonType = ((cmpTypeSel?.value as any) || getParam('type', '')) as 'trinket' | 'race' | '';
+  const comparisonType = ((cmpTypeSel?.value as any) || getParam(PARAM.type, '')) as 'trinket' | 'race' | '';
 
   const params = {
     mode: 'comparison' as const,
     classSlug,
     specSlug,
     comparisonType,
-    phase: getParam('phase', 'p1'),
-    encounterType: getParam('encounter', 'raid'),
-    targetCount: getParam('targets', 'single'),
-    duration: getParam('duration', 'long'),
+    phase: getParam(PARAM.phase, 'p1'),
+    encounterType: getParam(PARAM.encounter, 'raid'),
+    targetCount: getParam(PARAM.targets, 'single'),
+    duration: getParam(PARAM.duration, 'long'),
   };
-  const sortBy = getParam('sort', comparisonType === 'trinket' ? 'percent' : 'dps');
+  const sortBy = getParam(PARAM.sort, comparisonType === 'trinket' ? 'percent' : 'dps');
   const chartEl = document.getElementById('chart-container') as HTMLElement | null;
   const metaEl = document.getElementById('metadata-container') as HTMLElement | null;
   const loadingEl = document.getElementById('loading');
   const errorEl = document.getElementById('error') as HTMLElement | null;
-  const trinketCallout = document.getElementById('trinket-callout');
-  if (trinketCallout) trinketCallout.classList.toggle('hidden', comparisonType !== 'trinket');
+  updateComparisonUI(comparisonType);
   // Require comparison type and class/spec selection before loading
   if (!comparisonType || !classSlug || !specSlug) {
     if (metaEl) metaEl.innerHTML = '';
@@ -42,28 +42,17 @@ async function init() {
   const url = buildComparisonUrl(params);
 
   // Show loading state
-  if (loadingEl) loadingEl.classList.remove('hidden');
-  if (errorEl) errorEl.classList.add('hidden');
-  if (chartEl) chartEl.style.opacity = '0.5';
-  if (metaEl) metaEl.style.opacity = '0.5';
+  showLoading(metaEl, chartEl, loadingEl as any, errorEl);
 
   const resp = await fetch(url);
   if (!resp.ok) {
     console.error('[sim] comparison fetch failed', resp.status, resp.statusText, url);
-    if (loadingEl) loadingEl.classList.add('hidden');
-    if (errorEl) {
-      errorEl.textContent = `Error loading data: ${resp.status} ${resp.statusText}`;
-      errorEl.classList.remove('hidden');
-    }
-    if (metaEl) metaEl.innerHTML = '';
-    if (chartEl) chartEl.innerHTML = '';
-    if (chartEl) chartEl.style.opacity = '1';
-    if (metaEl) metaEl.style.opacity = '1';
+    renderError(errorEl, `Error loading data: ${resp.status} ${resp.statusText}`, metaEl, chartEl, loadingEl as any);
+    clearContent(metaEl, chartEl);
     return;
   }
   const data = await resp.json();
-  if (loadingEl) loadingEl.classList.add('hidden');
-  if (errorEl) errorEl.classList.add('hidden');
+  hideLoading(metaEl, chartEl, loadingEl as any, errorEl);
 
   const fmt = {
     formatDuration: (window as any).WoWConstants?.formatDuration || ((s: number) => `${Math.floor(s/60)}m ${s%60}s`),
@@ -80,8 +69,7 @@ async function init() {
     chartEl.querySelectorAll('.chart-item-wrapper .chart-item-header').forEach((el) => {
       el.addEventListener('click', () => (el.parentElement as HTMLElement | null)?.classList.toggle('chart-item-expanded'));
     });
-    chartEl.style.opacity = '1';
-    if (metaEl) metaEl.style.opacity = '1';
+    // Final styles are handled in hideLoading
   }
 }
 

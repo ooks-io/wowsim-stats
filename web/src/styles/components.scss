@@ -111,6 +111,7 @@ $font-weight-bold: 700;
 .chart-item-header:hover { background: rgba(255,255,255,0.05); }
 .chart-expand-icon { margin-left: 8px; font-size: 0.8em; color: var(--text-muted); transition: transform 0.2s ease; user-select: none; }
 .chart-item-expanded .chart-expand-icon { transform: rotate(90deg); }
+.chart-item-wrapper { border-radius: 6px; }
 .chart-dropdown { grid-column: 1 / -1; margin-top: 12px; padding: 16px; background-color: var(--bg-selection); border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); display: none; }
 .chart-item-expanded .chart-dropdown { display: block; animation: dropdown-expand 0.2s ease-out; }
 @keyframes dropdown-expand { from { opacity: 0; transform: translateY(-8px);} to { opacity: 1; transform: translateY(0);} }
@@ -119,7 +120,13 @@ $font-weight-bold: 700;
 .loadout-section { margin-bottom: 20px; }
 .loadout-title { color: var(--highlight-color); font-size: $font-size-md; font-weight: $font-weight-semibold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .loadout-grid { @include responsive-grid(200px, $spacing-lg); }
-.loadout-item { @include flex-column(3px); }
+.loadout-item { 
+  @include flex-column(6px);
+  padding: 10px; 
+  background-color: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.08); 
+  border-radius: 6px; 
+}
 .loadout-label { font-size: $font-size-sm; color: var(--text-muted); font-weight: $font-weight-medium; text-transform: uppercase; letter-spacing: 0.5px; }
 .loadout-value { font-size: $font-size-base; color: var(--text-primary); font-weight: $font-weight-medium; }
 .equipment-grid { @include responsive-grid(220px, $spacing-lg); }
@@ -130,11 +137,50 @@ $font-weight-bold: 700;
 .item-tooltip-details { margin-top: 6px; }
 .equipment-detail { font-size: $font-size-base; color: var(--text-secondary); }
 .talents-list, .glyphs-list { @include flex-column(4px); }
+.loadout-item .talents-list, .loadout-item .glyphs-list { 
+  padding: 6px; 
+  background-color: rgba(255,255,255,0.02); 
+  border: 1px solid rgba(255,255,255,0.05); 
+  border-radius: 4px; 
+}
 .talent-line, .glyph-line { display: flex; align-items: center; gap: 6px; }
 .talent-icon-inline, .glyph-icon-inline { width: 16px; height: 16px; border-radius: 2px; flex-shrink: 0; }
 .talent-name, .glyph-name { color: #fff; font-weight: bold; font-size: 14px; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 .talent-link, .glyph-link { color: #fff; font-weight: bold; font-size: 14px; text-decoration: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
 .talent-link:hover, .glyph-link:hover { text-decoration: underline; }
+
+/* Loadout buttons */
+.loadout-button {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.loadout-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--highlight-color);
+}
+.wowsim-button {
+  background-color: var(--bg-primary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+}
+.wowsim-button:hover {
+  background-color: var(--bg-selection);
+  border-color: var(--highlight-color);
+  color: var(--highlight-color);
+}
 
 .form-group {
   @include flex-column();
@@ -431,3 +477,12 @@ $font-weight-bold: 700;
     }
   }
 }
+
+// ========================================
+// Tabs (shared)
+// ========================================
+.leaderboard-nav { margin-bottom: 30px; }
+.nav-tabs { display: flex; gap: 2px; background-color: var(--bg-primary); border-radius: 8px; padding: 4px; border: 1px solid var(--border-color); }
+.nav-tab { flex: 1; padding: 12px 20px; background: none; border: none; color: var(--text-secondary); font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+.nav-tab:hover { color: var(--text-primary); background-color: rgba(255,255,255,0.06); }
+.nav-tab.active { background-color: var(--highlight-color); color: #000; font-weight: 600; }

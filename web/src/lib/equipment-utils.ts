@@ -399,3 +399,77 @@ export function getZamimgIconUrl(
 ): string {
   return `https://wow.zamimg.com/images/wow/icons/${size}/${itemId}.jpg`;
 }
+
+// Compact equipment icon grid (used by loadout dropdowns)
+export function renderEquipmentIconsCompact(items: any[]): string {
+  if (!Array.isArray(items) || items.length === 0) return "";
+
+  const toQualityClass = (q: any) => {
+    const map: Record<string, string> = {
+      "0": "quality-poor",
+      "1": "quality-common",
+      "2": "quality-uncommon",
+      "3": "quality-rare",
+      "4": "quality-epic",
+      "5": "quality-legendary",
+      "6": "quality-artifact",
+      "7": "quality-heirloom",
+    };
+    if (typeof q === "number") return map[String(q)] || "quality-common";
+    if (typeof q === "string") {
+      const s = q.toLowerCase();
+      if (s.startsWith("quality-")) return s;
+      return map[s] || `quality-${s}`;
+    }
+    return "quality-common";
+  };
+
+  const cells = items
+    .map((it: any) => {
+      const id = it.id || it.item_id || it.itemId;
+      if (!id) return "";
+      const href = getWowheadUrl(id);
+      const title = it.name || it.item_name || `Item ${id}`;
+      const qClass = toQualityClass(it.quality);
+      const iconSlug = it.icon || it.item_icon_slug || null;
+      const img = iconSlug
+        ? (iconSlug.startsWith?.("http") ? iconSlug : getZamimgIconUrl(iconSlug, "large"))
+        : it.iconUrl || "";
+
+      let badgeHtml = "";
+      if (Array.isArray(it.enchantments)) {
+        const egems = it.enchantments.filter((e: any) => e && e.gem_icon_slug);
+        if (egems.length) {
+          badgeHtml = `<div class=\"gem-stack\">${egems
+            .slice(0, 3)
+            .map(
+              (g: any) =>
+                `<img class=\"gem-badge\" src=\"${getZamimgIconUrl(g.gem_icon_slug, "small")}\" alt=\"${g.gem_name || "Gem"}\" title=\"${g.gem_name || g.display_string || "Gem"}\" />`,
+            )
+            .join("")}</div>`;
+        }
+      } else if (Array.isArray(it.gems)) {
+        const ggems = it.gems.filter((g: any) => g && typeof g === "object" && g.icon);
+        if (ggems.length) {
+          badgeHtml = `<div class=\"gem-stack\">${ggems
+            .slice(0, 3)
+            .map(
+              (g: any) =>
+                `<img class=\"gem-badge\" src=\"${getZamimgIconUrl(g.icon, "small")}\" alt=\"${g.name || "Gem"}\" title=\"${(g.stats && g.stats.join(", ")) || g.name || "Gem"}\" />`,
+            )
+            .join("")}</div>`;
+        }
+      }
+
+      return `
+        <a href="${href}" class="equip-icon-wrap ${qClass}" title="${title}" target="_blank" rel="noopener noreferrer">
+          <div class="equip-icon-inner">
+            ${img ? `<img class="equip-icon" src="${img}" alt="${title}" loading="lazy" />` : `<div class="equip-icon placeholder" aria-label="${title}"></div>`}
+            ${badgeHtml}
+          </div>
+        </a>`;
+    })
+    .join("");
+
+  return `<div class=\"equipment-compact\"><div class=\"equipment-icon-grid\">${cells}</div></div>`;
+}

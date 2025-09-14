@@ -5,7 +5,7 @@ import {
   getSpecInfo,
   getSpecIcon,
 } from "../lib/client-utils.ts";
-import { buildPlayerProfileURL } from "../lib/utils.ts";
+import { buildPlayerProfileURL, dungeonIdToSlug } from "../lib/utils.ts";
 
 class LeaderboardTable {
   private container: HTMLElement;
@@ -61,8 +61,8 @@ class LeaderboardTable {
     dungeonId: number,
     page = 1,
   ): Promise<any> {
-    // Convert dungeon ID to slug
-    const dungeonSlug = this.dungeonIdToSlug(dungeonId);
+    // Convert dungeon ID to slug via shared util
+    const dungeonSlug = dungeonIdToSlug(dungeonId);
 
     let url: string;
     if (region === "global") {
@@ -90,25 +90,7 @@ class LeaderboardTable {
     return response.json();
   }
 
-  private dungeonIdToSlug(dungeonId: number): string {
-    const dungeonMap: Record<number, string> = {
-      2: "temple-of-the-jade-serpent",
-      56: "stormstout-brewery",
-      57: "gate-of-the-setting-sun",
-      58: "shado-pan-monastery",
-      59: "siege-of-niuzao-temple",
-      60: "mogu-shan-palace",
-      76: "scholomance",
-      77: "scarlet-halls",
-      78: "scarlet-monastery",
-    };
-
-    const slug = dungeonMap[dungeonId];
-    if (!slug) {
-      throw new Error(`Unknown dungeon ID: ${dungeonId}`);
-    }
-    return slug;
-  }
+  // dungeonIdToSlug now provided by shared utils
 
   public async loadLeaderboard(
     newRegion?: string,
