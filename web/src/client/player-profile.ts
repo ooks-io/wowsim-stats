@@ -65,18 +65,6 @@ class PlayerProfileManager {
     this.debugInfo.push(info);
   }
 
-  private showDebugInfo() {
-    const debugContainer = this.container.querySelector(
-      ".debug-info",
-    ) as HTMLElement;
-    if (debugContainer) {
-      debugContainer.style.display = "block";
-      debugContainer.innerHTML = this.debugInfo
-        .map((info) => `<div>${info}</div>`)
-        .join("");
-    }
-  }
-
   private async loadPlayerProfile() {
     try {
       this.showLoading();
@@ -305,7 +293,6 @@ class PlayerProfileManager {
       const messageEl = error.querySelector(".loading-message");
       if (messageEl) messageEl.textContent = message;
     }
-    this.showDebugInfo();
   }
 
   private showContent() {
