@@ -1,0 +1,15 @@
+---
+import SimulationLayout from "../../layouts/SimulationLayout.astro";
+---
+
+<SimulationLayout title="Simulations" description="Redirecting...">
+  <div class="card">
+    <p>Redirecting to benchmarks...</p>
+  </div>
+  <script is:inline>
+    (function () {
+      var url = new URL(window.location.href);
+      window.location.replace("/simulation/benchmark" + url.search);
+    })();
+  </script>
+</SimulationLayout>

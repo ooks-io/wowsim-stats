@@ -1,10 +1,15 @@
 ---
-import ChartLayout from "../layouts/ChartLayout.astro";
-import "../styles/global.css";
+import SimulationLayout from "../layouts/SimulationLayout.astro";
 ---
 
-<ChartLayout
-  title="Performance Comparisons"
-  description="Compare races and trinkets within each specialization"
-  mode="comparison"
-/>
+<SimulationLayout title="Simulations" description="Redirecting...">
+  <div class="card">
+    <p>Redirecting to benchmarks...</p>
+  </div>
+  <script is:inline>
+    (function () {
+      var url = new URL(window.location.href);
+      window.location.replace("/simulation/benchmark" + url.search);
+    })();
+  </script>
+</SimulationLayout>

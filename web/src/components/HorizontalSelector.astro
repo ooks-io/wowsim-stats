@@ -94,24 +94,25 @@ const { id, label, options, class: className } = Astro.props;
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("[data-selector-target]").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const button = e.target as HTMLButtonElement;
-        const selectorId = button.dataset.selectorTarget;
-        const value = button.dataset.value;
+    document.querySelectorAll("[data-selector-target]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const button = e.currentTarget;
+        if (!(button instanceof HTMLElement)) return;
 
+        const selectorId = button.getAttribute("data-selector-target");
+        const value = button.getAttribute("data-value") || "";
         if (!selectorId) return;
 
-        const select = document.getElementById(selectorId) as HTMLSelectElement;
-        if (select) {
-          select.value = value || "";
+        const select = document.getElementById(selectorId);
+        if (select && select instanceof HTMLSelectElement) {
+          select.value = value;
           select.dispatchEvent(new Event("change"));
         }
 
         const container = button.closest(".horizontal-options");
         if (container) {
           container.querySelectorAll(".horizontal-option").forEach((opt) => {
-            opt.classList.remove("selected");
+            if (opt instanceof HTMLElement) opt.classList.remove("selected");
           });
           button.classList.add("selected");
         }

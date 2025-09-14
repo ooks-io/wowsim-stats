@@ -11,6 +11,21 @@ const { class: className } = Astro.props;
   id="dungeon-leaderboard"
 >
   <div id="leaderboard-rows"></div>
+
+  <div
+    id="pagination-controls"
+    class="pagination-container"
+    style="display: none;"
+  >
+    <div class="pagination-info">
+      <span id="pagination-text"></span>
+    </div>
+    <div class="pagination-buttons">
+      <button id="prev-page" class="pagination-btn" disabled>Previous</button>
+      <span id="page-info"></span>
+      <button id="next-page" class="pagination-btn" disabled>Next</button>
+    </div>
+  </div>
 </div>
 
 <div
@@ -33,6 +48,57 @@ const { class: className } = Astro.props;
   #leaderboard-rows {
     display: table;
     width: 100%;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: var(--bg-secondary);
+    border-radius: 6px;
+  }
+
+  .pagination-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .pagination-btn {
+    padding: 8px 16px;
+    background-color: var(--highlight-color);
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-btn:hover:not(:disabled) {
+    background-color: #e6d55a;
+    transform: translateY(-1px);
+  }
+
+  .pagination-btn:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+  }
+
+  #page-info {
+    color: var(--text-primary);
+    font-weight: 600;
+    min-width: 100px;
+    text-align: center;
   }
 
   @media (max-width: 1024px) {

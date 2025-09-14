@@ -1,0 +1,109 @@
+---
+import "./PlayerEquipment.scss";
+import {
+  getOrderedEquipment,
+  processEquipmentEnchantments,
+  getQualityColorClass,
+  getZamimgIconUrl,
+  getWowheadUrl,
+} from "../lib/equipment-utils.ts";
+
+export interface Props {
+  equipment?: Record<string, any> | null;
+  className?: string;
+  showTitle?: boolean;
+  title?: string;
+}
+
+const {
+  equipment = null,
+  className = "",
+  showTitle = true,
+  title = "Current Equipment",
+} = Astro.props;
+
+// Process equipment data server-side (order + enrich)
+let orderedEquipment: any[] = [];
+if (equipment && Object.keys(equipment).length > 0) {
+  try {
+    orderedEquipment = processEquipmentEnchantments(
+      getOrderedEquipment(equipment),
+    );
+  } catch (error) {
+    console.error("Error processing equipment:", error);
+  }
+}
+---
+
+<div class={`player-equipment ${className}`.trim()}>
+  <div class="equipment-section">
+    {showTitle && <h3 class="equipment-title">{title}</h3>}
+    {
+      !equipment || Object.keys(equipment).length === 0 ? (
+        <div class="no-equipment">
+          <p>No equipment data available</p>
+        </div>
+      ) : (
+        <div class="equipment-compact">
+          <div class="equipment-icon-grid">
+            {orderedEquipment.map((item: any) => {
+              const iconSlug = item.item_icon_slug || item.icon || "";
+              const iconUrl = iconSlug
+                ? getZamimgIconUrl(iconSlug, "large")
+                : "";
+              const qualityClass = getQualityColorClass(
+                item.quality || "COMMON",
+              );
+              const itemId = item.item_id || item.id;
+              const href = itemId ? getWowheadUrl(itemId) : undefined;
+              const title = item.item_name || item.name || "Item";
+              const gems = (item.enchantments || []).filter(
+                (e: any) => e.gem_icon_slug,
+              );
+              return (
+                <a
+                  href={href}
+                  class={`equip-icon-wrap ${qualityClass}`}
+                  title={title}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div class="equip-icon-inner">
+                    {iconUrl ? (
+                      <img
+                        class="equip-icon"
+                        src={iconUrl}
+                        alt={title}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div class="equip-icon placeholder" aria-label={title} />
+                    )}
+                    {gems && gems.length > 0 && (
+                      <div class="gem-stack" aria-hidden="true">
+                        {gems.slice(0, 3).map((g: any) => {
+                          const gUrl = g.gem_icon_slug
+                            ? getZamimgIconUrl(g.gem_icon_slug, "small")
+                            : "";
+                          const gAlt = g.gem_name || g.display_string || "Gem";
+                          return (
+                            <img
+                              class="gem-badge"
+                              src={gUrl}
+                              alt={gAlt}
+                              title={gAlt}
+                            />
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )
+    }
+  </div>
+</div>

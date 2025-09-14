@@ -42,7 +42,7 @@ in
 
       if [ -f "$output_file" ]; then
         echo ""
-        echo "✅ Full trinket comparison completed successfully!"
+        echo "[OK] Full trinket comparison completed successfully!"
         echo ""
 
         echo "=== Final Results Summary ==="
@@ -60,11 +60,11 @@ in
         echo ""
         echo "Output written to: $output_file"
         echo ""
-        echo "✅ Full trinket comparison test completed!"
+        echo "[OK] Full trinket comparison test completed!"
         echo ""
         echo "You can now examine the complete JSON output or run individual tests again."
       else
-        echo "❌ Trinket comparison aggregation failed!"
+        echo "[ERROR] Trinket comparison aggregation failed!"
         exit 1
       fi
     '';

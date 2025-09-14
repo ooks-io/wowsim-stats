@@ -1,0 +1,83 @@
+---
+import SimulationLayout from "../../layouts/SimulationLayout.astro";
+import LoadingState from "../../components/LoadingState.astro";
+import SimulationControls from "../../components/SimulationControls.astro";
+import Callout from "../../components/Callout.astro";
+---
+
+<SimulationLayout title="Simulations" description="Benchmarks and comparisons">
+  <Callout type="warning">
+    <p>
+      These benchmarks are built with <a
+        href="https://wowsims.com/mop"
+        target="_blank"
+        rel="noopener noreferrer">wowsims</a
+      > which is currently still in <strong>alpha</strong> with bug fixes and updates
+      coming daily.
+    </p>
+    <p>
+      Beyond that, there are a number of issues with using simulation rankings
+      to guide your decisions:
+    </p>
+    <ul>
+      <li>
+        <strong>Simulation Bias</strong>: Certain specs are favoured in
+        stationary, target dummy scenarios, e.g., Arcane & Boomkin
+      </li>
+      <li>
+        <strong>Fight Length Impact</strong>: In a 5:00 encounter, a 3:00 burst
+        spec will be unfavoured compared to a 3:30 fight
+      </li>
+      <li>
+        <strong>Incomplete APLs/spec implementation</strong>: Not all specs have
+        been optimized for every type of encounters (short duration, high target
+        count)
+      </li>
+    </ul>
+    <p>
+      Simulation rankings, such as these, should never be used as anything more
+      than a novelty/something interesting to look at.
+    </p>
+  </Callout>
+  <nav class="leaderboard-nav">
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-mode="benchmark">Benchmarks</button>
+      <button class="nav-tab" data-mode="comparison">Comparisons</button>
+    </div>
+  </nav>
+
+  <SimulationControls mode="benchmarks" />
+
+  <div id="loading" class="hidden">
+    <LoadingState mode="overlay" message="Loading rankings data..." />
+  </div>
+  <div id="error" class="hidden">
+    <LoadingState type="error" mode="overlay" />
+  </div>
+  <div id="metadata-container"></div>
+  <div id="chart-container" class="card"></div>
+
+  <!-- Use processed TS module so Astro bundles for prod -->
+  <script src="../../client/simulation-benchmarks.ts"></script>
+
+  <script is:inline>
+    (function () {
+      var tabs = document.querySelectorAll(".nav-tab");
+      function goto(mode) {
+        var url = new URL(window.location.href);
+        var qs = url.search;
+        if (mode === "benchmark")
+          window.location.assign("/simulation/benchmark" + qs);
+        if (mode === "comparison")
+          window.location.assign("/simulation/comparison" + qs);
+      }
+      tabs.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var el = e.currentTarget || e.target;
+          var m = el && el.dataset ? el.dataset.mode : null;
+          if (m) goto(m);
+        });
+      });
+    })();
+  </script>
+</SimulationLayout>

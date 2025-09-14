@@ -26,7 +26,7 @@ interface Props {
 
 const { item } = Astro.props;
 
-// Slot type mappings (based on WoW equipment slot types)
+// slot type mappings (based on WoW equipment slot types)
 const slotNames: { [key: number]: string } = {
   1: "Head",
   2: "Neck",
@@ -57,7 +57,7 @@ const slotNames: { [key: number]: string } = {
   28: "Relic",
 };
 
-// Stat name mappings (from itemDatabase.nix)
+// stat name mappings (from itemDatabase.nix)
 const statNames: { [key: string]: string } = {
   "0": "Strength",
   "1": "Agility",
@@ -76,21 +76,21 @@ const statNames: { [key: string]: string } = {
 
 // Quality color classes
 const qualityColors: { [key: number]: string } = {
-  0: "quality-0", // Poor (Gray)
-  1: "quality-1", // Common (White)
-  2: "quality-2", // Uncommon (Green)
-  3: "quality-3", // Rare (Blue)
-  4: "quality-4", // Epic (Purple)
-  5: "quality-5", // Legendary (Orange)
-  6: "quality-6", // Artifact (Light Red)
-  7: "quality-7", // Heirloom (Gold)
+  0: "quality-0", // poor (gray)
+  1: "quality-1", // common (white)
+  2: "quality-2", // uncommon (green)
+  3: "quality-3", // rare (blue)
+  4: "quality-4", // epic (purple)
+  5: "quality-5", // legendary (orange)
+  6: "quality-6", // artifact (light gold)
+  7: "quality-7", // Heirloom (gold)
 };
 
 const slotName = item.type ? slotNames[item.type] || "Unknown" : "";
 const qualityClass =
   item.quality !== undefined ? qualityColors[item.quality] || "" : "";
 
-// Parse item stats
+// parse item stats
 const itemStats: string[] = [];
 let armorValue = 0;
 
@@ -98,7 +98,7 @@ if (item.stats?.stats) {
   Object.entries(item.stats.stats).forEach(([statId, value]) => {
     if (value > 0) {
       if (statId === "17") {
-        armorValue = value; // Armor
+        armorValue = value; // armor
       } else {
         const statName = statNames[statId];
         if (statName) {
@@ -295,29 +295,28 @@ if (item.stats?.stats) {
     margin-bottom: 1px;
   }
 
-  /* Quality colors - matching WoW item quality */
   .quality-0 {
     color: #9d9d9d;
-  } /* Poor (Gray) */
+  }
   .quality-1 {
     color: #ffffff;
-  } /* Common (White) */
+  }
   .quality-2 {
     color: #1eff00;
-  } /* Uncommon (Green) */
+  }
   .quality-3 {
     color: #0070dd;
-  } /* Rare (Blue) */
+  }
   .quality-4 {
     color: #a335ee;
-  } /* Epic (Purple) */
+  }
   .quality-5 {
     color: #ff8000;
-  } /* Legendary (Orange) */
+  }
   .quality-6 {
     color: #e6cc80;
-  } /* Artifact (Light Red) */
+  }
   .quality-7 {
     color: #00ccff;
-  } /* Heirloom (Gold) */
+  }
 </style>

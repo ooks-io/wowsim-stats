@@ -1,0 +1,94 @@
+---
+import Navigation from "../components/Navigation.astro";
+import "../styles/components.scss";
+import "../styles/global.css";
+import "../components/PlayerEquipment.scss";
+import { CLASS_COLORS, SPEC_OPTIONS } from "../lib/wow-constants.ts";
+import { buildSimSpecOptions } from "../lib/sim-specs.ts";
+import {
+  formatDuration,
+  formatRaidBuffs,
+  formatSimulationDate,
+  formatRace,
+  toTitleCase,
+  slugifyLabel,
+} from "../lib/utils.ts";
+import {
+  createItemElement,
+  formatEquipmentSummary,
+} from "../lib/equipment-utils.ts";
+import ItemDatabase from "../components/ItemDatabase.astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = "Simulations", description = "Benchmarks and comparisons" } =
+  Astro.props;
+const SPEC_OPTIONS_SIM = buildSimSpecOptions(SPEC_OPTIONS);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <!-- Shared URL helpers for sim pages -->
+    <script src="../client/url-utils.ts"></script>
+  </head>
+  <body>
+    <Navigation />
+    <div class="page-header">
+      <h1 class="page-title">{title}</h1>
+      {description && <p class="page-description">{description}</p>}
+    </div>
+    <!-- Expose WoWConstants before any page scripts run -->
+    <script
+      type="module"
+      is:inline
+      define:vars={{
+        CLASS_COLORS,
+        SPEC_OPTIONS: SPEC_OPTIONS_SIM,
+        formatDuration,
+        formatRaidBuffs,
+        formatSimulationDate,
+        formatRace,
+        toTitleCase,
+        slugifyLabel,
+      }}
+    >
+      window.WoWConstants = {
+        CLASS_COLORS,
+        SPEC_OPTIONS,
+        formatDuration,
+        formatRaidBuffs,
+        formatSimulationDate,
+        formatRace,
+        toTitleCase,
+        slugifyLabel,
+      };
+    </script>
+    <!-- Item database utilities (optional) -->
+    <ItemDatabase />
+    <div class="page-container rankings-container">
+      <slot />
+    </div>
+    <style>
+      .page-header {
+        text-align: center;
+        padding: 30px 20px;
+      }
+      .page-title {
+        margin: 0 0 10px 0;
+        font-size: 2.2em;
+        font-weight: 700;
+      }
+      .page-description {
+        color: var(--text-secondary);
+      }
+      /* container spacing is provided by global .page-container */
+    </style>
+  </body>
+</html>

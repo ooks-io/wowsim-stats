@@ -1,93 +1,41 @@
 ---
-import ChallengeModeLayout from "../../layouts/ChallengeModeLayout.astro";
-import { DATA_MAP } from "../../data/realms.js";
-import { DUNGEON_MAP, dungeonNameToSlug } from "../../scripts/wow-constants.js";
+import ModernChallengeModeLayout from "../../layouts/ModernChallengeModeLayout.astro";
+import { dungeonSlugToId } from "../../lib/wow-constants";
 
-export async function getStaticPaths() {
-  const dungeonNames = DUNGEON_MAP;
+// Enable server-side rendering for this dynamic route (SPA behavior)
+export const prerender = false;
 
-  const paths = [];
+// Parse the slug dynamically for client-side routing (SPA mode)
+const slug = Astro.params.slug || "";
+const slugParts = slug.split("/");
 
-  // 1. Add player and team leaderboard routes
-  paths.push({
-    params: { slug: "players" },
-    props: { initialLeaderboardType: "players" },
-  });
+let initialLeaderboardType = "dungeon";
+let initialRegion = "global";
+let initialRealm = "";
+let initialDungeon = "2"; // Default dungeon
 
-  paths.push({
-    params: { slug: "teams" },
-    props: { initialLeaderboardType: "teams" },
-  });
-
-  // 2. Generate individual realm combinations
-  for (const [regionKey, regionData] of Object.entries(DATA_MAP)) {
-    for (const realmKey of Object.keys(regionData.realms)) {
-      for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-        const dungeonSlug = dungeonNameToSlug(dungeonName);
-        paths.push({
-          params: {
-            slug: `${regionKey}/${realmKey}/${dungeonSlug}`,
-          },
-          props: {
-            initialLeaderboardType: "dungeon",
-            initialRegion: regionKey,
-            initialRealm: realmKey,
-            initialDungeon: dungeonId,
-          },
-        });
-      }
-    }
+// Parse different URL patterns
+if (slugParts.length === 1) {
+  // /challenge-mode/players or /challenge-mode/teams
+  if (slugParts[0] === "players" || slugParts[0] === "teams") {
+    initialLeaderboardType = slugParts[0];
   }
-
-  // 3. Generate regional "all realms" combinations
-  for (const [regionKey] of Object.entries(DATA_MAP)) {
-    for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-      const dungeonSlug = dungeonNameToSlug(dungeonName);
-      paths.push({
-        params: {
-          slug: `${regionKey}/all/${dungeonSlug}`,
-        },
-        props: {
-          initialLeaderboardType: "dungeon",
-          initialRegion: regionKey,
-          initialRealm: "all",
-          initialDungeon: dungeonId,
-        },
-      });
-    }
+} else if (slugParts.length === 2) {
+  // /challenge-mode/global/dungeon-slug
+  if (slugParts[0] === "global") {
+    initialRegion = "global";
+    initialRealm = "";
+    initialDungeon = dungeonSlugToId(slugParts[1]) || "2";
   }
-
-  // 4. Generate global combinations
-  for (const [dungeonId, dungeonName] of Object.entries(dungeonNames)) {
-    const dungeonSlug = dungeonName.toLowerCase().replace(/[^a-z0-9]/g, "-");
-    paths.push({
-      params: {
-        slug: `global/${dungeonSlug}`,
-      },
-      props: {
-        initialLeaderboardType: "dungeon",
-        initialRegion: "global",
-        initialRealm: "global",
-        initialDungeon: dungeonId,
-      },
-    });
-  }
-
-  return paths;
+} else if (slugParts.length === 3) {
+  // /challenge-mode/region/realm/dungeon-slug or /challenge-mode/region/all/dungeon-slug
+  initialRegion = slugParts[0];
+  initialRealm = slugParts[1];
+  initialDungeon = dungeonSlugToId(slugParts[2]) || "2";
 }
-
-// Get initial values from props passed by getStaticPaths
-const { initialLeaderboardType, initialRegion, initialRealm, initialDungeon } =
-  Astro.props;
-console.log("Initial values from props:", {
-  initialLeaderboardType,
-  initialRegion,
-  initialRealm,
-  initialDungeon,
-});
 ---
 
-<ChallengeModeLayout
+<ModernChallengeModeLayout
   initialLeaderboardType={initialLeaderboardType}
   initialRegion={initialRegion}
   initialRealm={initialRealm}

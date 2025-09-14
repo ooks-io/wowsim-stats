@@ -1,6 +1,7 @@
 ---
 import Navigation from "./Navigation.astro";
 import "../styles/global.css";
+import PlayerSearch from "./islands/PlayerSearch.astro";
 
 export interface Props {
   title: string;
@@ -8,7 +9,7 @@ export interface Props {
   pageTitle?: string;
 }
 
-const { title, description, pageTitle } = Astro.props;
+const { title, pageTitle } = Astro.props;
 ---
 
 <html lang="en">
@@ -21,9 +22,11 @@ const { title, description, pageTitle } = Astro.props;
   <body>
     <Navigation />
 
-    <div class="page-header">
-      <h1 class="page-title">{title}</h1>
-      {description && <p class="page-description">{description}</p>}
+    <!-- Player Search Bar -->
+    <div class="search-section">
+      <div class="search-container">
+        <PlayerSearch />
+      </div>
     </div>
 
     <div class="page-container">
@@ -31,3 +34,26 @@ const { title, description, pageTitle } = Astro.props;
     </div>
   </body>
 </html>
+
+<style is:global>
+  /* Search Section Styles */
+  .search-section {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 20px;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: 1200px; /* match page content width */
+    margin: 0 auto;
+    padding: 0 20px; /* align with content padding */
+  }
+
+  /* Make page container wider to match search */
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+</style>
