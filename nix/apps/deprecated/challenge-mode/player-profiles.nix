@@ -209,21 +209,21 @@
                           insert_player_summary(cursor, player_id, summary_data, media_data, timestamp)
                           profiles_updated += 1
                           avatar_status = " (with avatar)" if media_data else ""
-                          print(f"  ✓ {player_name}: Summary updated{avatar_status}")
+                          print(f"  [OK] {player_name}: Summary updated{avatar_status}")
 
                       if equipment_data:
                           items_count = insert_player_equipment(cursor, player_id, equipment_data, timestamp)
                           equipment_updated += items_count
-                          print(f"  ✓ {player_name}: Equipment updated ({items_count} items)")
+                          print(f"  [OK] {player_name}: Equipment updated ({items_count} items)")
 
                   # Commit after each batch
                   conn.commit()
-                  print(f"  → Batch saved ({profiles_updated}/{len(players)} profiles, {equipment_updated} items)")
+                  print(f"  -> Batch saved ({profiles_updated}/{len(players)} profiles, {equipment_updated} items)")
 
                   # Small delay between batches to be respectful
                   await asyncio.sleep(0.5)
 
-              print(f"\n✓ Player profile fetching complete!")
+              print(f"\n[OK] Player profile fetching complete!")
               print(f"  Updated {profiles_updated} player profiles")
               print(f"  Updated {equipment_updated} equipment items")
               return profiles_updated, equipment_updated

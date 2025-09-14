@@ -111,7 +111,7 @@
           """, (current_timestamp,))
 
           profiles_count = cursor.rowcount
-          print(f"✓ Created {profiles_count} player profiles")
+          print(f"[OK] Created {profiles_count} player profiles")
 
           # step 4: determine main spec for each player based on best runs
           print("Step 4: Computing main specs...")
@@ -230,7 +230,7 @@
               WHERE has_complete_coverage = 1 AND realm_ranking IS NOT NULL
           """, (current_timestamp,))
 
-          print(f"✓ Computed rankings for {qualified_count} qualified players")
+          print(f"[OK] Computed rankings for {qualified_count} qualified players")
           return qualified_count
 
       def main():

@@ -34,7 +34,7 @@ var processAllCmd = &cobra.Command{
 			return fmt.Errorf("run ranking processing failed: %w", err)
 		}
 
-		fmt.Printf("\n🎉 Complete data processing finished!\n")
+		fmt.Printf("\n[OK] Complete data processing finished!\n")
 		fmt.Printf("\nNext steps:\n")
 		fmt.Printf("  1. Run 'ookstats generate api --out web/public' to update JSON files\n")
 		fmt.Printf("  2. Build and deploy the website\n")
@@ -329,7 +329,7 @@ func computeGlobalRankings(tx *sql.Tx) error {
 		return err
 	}
 
-	fmt.Printf("✓ Computed global rankings with percentile brackets (all and filtered)\n")
+fmt.Printf("[OK] Computed global rankings with percentile brackets (all and filtered)\n")
 	return nil
 }
 
@@ -511,7 +511,7 @@ func computeRegionalRankings(tx *sql.Tx) error {
 		}
 	}
 
-	fmt.Printf("✓ Computed regional rankings with percentile brackets for %d regions\n", len(regions))
+fmt.Printf("[OK] Computed regional rankings with percentile brackets for %d regions\n", len(regions))
 	return nil
 }
 
@@ -693,7 +693,7 @@ func computeRealmRankings(tx *sql.Tx) error {
 		return err
 	}
 
-	fmt.Printf("✓ Computed realm rankings with percentile brackets for %d realms\n", len(realmIDs))
+fmt.Printf("[OK] Computed realm rankings with percentile brackets for %d realms\n", len(realmIDs))
 	return nil
 }
 
@@ -760,7 +760,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 
 	var bestRunsCount int
 	tx.QueryRow("SELECT COUNT(*) FROM player_best_runs").Scan(&bestRunsCount)
-	fmt.Printf("✓ Computed %d best runs with rankings in single query\n", bestRunsCount)
+fmt.Printf("[OK] Computed %d best runs with rankings in single query\n", bestRunsCount)
 
 fmt.Printf("Step 3: Creating player profiles...\n")
 	_, err = tx.Exec(`
@@ -797,7 +797,7 @@ fmt.Printf("Step 3: Creating player profiles...\n")
 
 	var profilesCount int
 	tx.QueryRow("SELECT COUNT(*) FROM player_profiles").Scan(&profilesCount)
-	fmt.Printf("✓ Created %d player profiles\n", profilesCount)
+fmt.Printf("[OK] Created %d player profiles\n", profilesCount)
 
 	// step 4: determine main spec for each player based on best runs
 	fmt.Printf("Step 4: Computing main specs...\n")
@@ -822,7 +822,7 @@ fmt.Printf("Step 3: Creating player profiles...\n")
 	if err != nil {
 		return 0, err
 	}
-	fmt.Printf("✓ Updated main specs\n")
+fmt.Printf("[OK] Updated main specs\n")
 
 	return profilesCount, nil
 }
@@ -1032,7 +1032,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		return 0, err
 	}
 
-	fmt.Printf("✓ Computed rankings with percentile brackets for %d qualified players\n", qualifiedCount)
+fmt.Printf("[OK] Computed rankings with percentile brackets for %d qualified players\n", qualifiedCount)
 	return qualifiedCount, nil
 }
 

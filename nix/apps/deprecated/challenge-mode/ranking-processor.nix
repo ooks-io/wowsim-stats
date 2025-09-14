@@ -111,7 +111,7 @@
                   FROM filtered_runs
               """, (dungeon_id, dungeon_id, dungeon_id, int(time.time() * 1000)))
 
-          print("✓ Computed global rankings (all and filtered)")
+          print("[OK] Computed global rankings (all and filtered)")
 
       def compute_regional_rankings(cursor):
           # compute regional rankings for all runs
@@ -179,7 +179,7 @@
                       FROM filtered_runs
                   """, (dungeon_id, region, dungeon_id, region, dungeon_id, f"{region}_filtered", int(time.time() * 1000)))
 
-          print(f"✓ Computed regional rankings for {len(regions)} regions")
+          print(f"[OK] Computed regional rankings for {len(regions)} regions")
 
       def compute_realm_rankings(cursor):
           # compute realm rankings for all runs

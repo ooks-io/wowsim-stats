@@ -33,7 +33,7 @@ class PlayerProfileManager {
     this.realmSlug = container.dataset.realm || "";
     this.playerName = container.dataset.player || "";
 
-    console.log("🎮 PlayerProfile initialized:", {
+    console.log("[INFO] PlayerProfile initialized:", {
       region: this.region,
       realmSlug: this.realmSlug,
       playerName: this.playerName,
@@ -73,12 +73,12 @@ class PlayerProfileManager {
       const staticPath = buildStaticPlayerProfilePath(this.region, this.realmSlug, this.playerName);
       this.addDebugInfo(`Fetching: ${staticPath}`);
 
-      console.log("📥 Fetching player data from:", staticPath);
+      console.log("[INFO] Fetching player data from:", staticPath);
       
       const response = await fetch(staticPath);
       this.addDebugInfo(`Response status: ${response.status}`);
 
-      console.log("📊 Response status:", response.status);
+      console.log("[INFO] Response status:", response.status);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -91,13 +91,13 @@ class PlayerProfileManager {
       }
 
       const data: PlayerData = await response.json();
-      console.log("✅ Player data loaded successfully:", data);
+      console.log("[INFO] Player data loaded successfully:", data);
       this.addDebugInfo("Data loaded successfully");
       
       this.renderPlayerProfile(data);
       this.showContent();
     } catch (error: any) {
-      console.error("❌ Error loading player profile:", error);
+      console.error("[ERROR] Error loading player profile:", error);
       this.addDebugInfo(`Fetch error: ${error.message}`);
       this.showError(error.message);
     }
@@ -108,24 +108,24 @@ class PlayerProfileManager {
     if (!contentContainer) return;
 
     // Handle both possible field names and log the data structure for debugging
-    console.log("🔍 Player data structure:", data);
+    console.log("[INFO] Player data structure:", data);
     const player: any = (data as any).Player || (data as any).player;
     const equipment: Record<string, any> = (data as any).Equipment || (data as any).equipment || {};
     const bestRuns: Record<string, any> = (data as any).BestRuns || (data as any).bestRuns || {};
 
     if (!player) {
-      console.error("❌ No player data found in response:", data);
+      console.error("[ERROR] No player data found in response:", data);
       this.addDebugInfo("No player data found in response");
       this.addDebugInfo(`Data keys: ${Object.keys(data).join(", ")}`);
       this.showError("Player data is missing from response");
       return;
     }
 
-    console.log("✅ Player object:", player);
+    console.log("[INFO] Player object:", player);
 
     // Build header markup matching PlayerHeader styles
     const avatar = player.avatar_url ? `${player.avatar_url}` : "";
-    const combined = player.combined_best_time ? formatDurationMMSS(player.combined_best_time) : "—";
+    const combined = player.combined_best_time ? formatDurationMMSS(player.combined_best_time) : "-";
     const guild = player.guild_name ? `&lt;${player.guild_name}&gt;` : "";
     const globalRank = player.global_ranking;
     const regRank = player.regional_ranking;
@@ -143,7 +143,7 @@ class PlayerProfileManager {
           <h1 class="player-name text-${(player.class_name || "common").toLowerCase()}">${player.name}</h1>
           ${guild ? `<div class="guild-name">${guild}</div>` : ""}
           <div class="character-details">${player.race_name || ""} ${player.active_spec_name || player.spec_name || ""} ${player.class_name || ""}</div>
-          <div class="item-level">Item Level: ${player.equipped_item_level ?? "—"} equipped / ${player.average_item_level ?? "—"} average</div>
+          <div class="item-level">Item Level: ${player.equipped_item_level ?? "-"} equipped / ${player.average_item_level ?? "-"} average</div>
         </div>
         <div class="combined-time-column">
           <div class="stat-label">Combined Time</div>
@@ -151,15 +151,15 @@ class PlayerProfileManager {
         </div>
         <div class="ranking-column">
           <div class="stat-label">Global Rank</div>
-          <div class="stat-value">${globalRank ? formatRank(globalRank, globalBracket) : "—"}</div>
+          <div class="stat-value">${globalRank ? formatRank(globalRank, globalBracket) : "-"}</div>
         </div>
         <div class="ranking-column">
           <div class="stat-label">${(player.region || "").toUpperCase()} Rank</div>
-          <div class="stat-value">${regRank ? formatRank(regRank, regBracket) : "—"}</div>
+          <div class="stat-value">${regRank ? formatRank(regRank, regBracket) : "-"}</div>
         </div>
         <div class="ranking-column">
           <div class="stat-label">${player.realm_name || player.realm_slug} Rank</div>
-          <div class="stat-value">${realmRank ? formatRank(realmRank, realmBracket) : "—"}</div>
+          <div class="stat-value">${realmRank ? formatRank(realmRank, realmBracket) : "-"}</div>
         </div>
         <div class="ranking-column">
           <div class="stat-label">Total Runs</div>

@@ -39,7 +39,7 @@ const pagination = initialData?.pagination;
               : index + 1;
             const combinedTime = player.combined_best_time
               ? formatDurationMMSS(player.combined_best_time)
-              : "—";
+              : "-";
 
             return (
               <div class="leaderboard-table-row">
@@ -119,12 +119,12 @@ const pagination = initialData?.pagination;
 
   class PlayerLeaderboard {
     constructor(container) {
-      console.log("🚀 PlayerLeaderboard constructor called");
+      console.log("[INFO] PlayerLeaderboard constructor called");
       this.container = container;
       this.currentPage = 1;
       this.isInitialized = false;
 
-      console.log("📊 Initial state:", {
+      console.log("[INFO] Initial state:", {
         containerId: container.id || container.className,
         currentPage: this.currentPage,
         isInitialized: this.isInitialized,
@@ -142,13 +142,13 @@ const pagination = initialData?.pagination;
     }
 
     initialize() {
-      console.log("🔧 Initialize called");
+      console.log("[INFO] Initialize called");
 
       // check if we have initial data
       const hasInitialData = this.container.querySelector("#player-leaderboard-rows .leaderboard-table-row");
       const urlPage = this.getPageFromURL();
 
-      console.log("📋 Initialize state check:", {
+      console.log("[INFO] Initialize state check:", {
         hasInitialData: !!hasInitialData,
         urlPage,
         currentPage: this.currentPage,
@@ -156,37 +156,37 @@ const pagination = initialData?.pagination;
       });
 
       if (!hasInitialData) {
-        console.log("⏳ No initial data, scheduling load with delay...");
+        console.log("[INFO] No initial data, scheduling load with delay...");
         // use a small delay to ensure DOM is fully ready
         setTimeout(() => {
           if (!this.isInitialized) {
-            console.log("🔄 Delayed initialization executing");
+            console.log("[INFO] Delayed initialization executing");
             this.isInitialized = true;
 
             // check url for page parameter
             const urlPage = this.getPageFromURL();
-            console.log("📖 Loading data for URL page:", urlPage);
+            console.log("[INFO] Loading data for URL page:", urlPage);
             this.loadPlayerData(urlPage);
           } else {
             console.log(
-              "⚠️ Delayed initialization skipped - already initialized",
+              "[WARN] Delayed initialization skipped - already initialized",
             );
           }
         }, 100);
       } else {
-        console.log("✅ Has initial data, binding events and syncing URL");
+        console.log("[OK] Has initial data, binding events and syncing URL");
         this.isInitialized = true;
         // initial data exists, no expandable events needed
 
         // sync current page with url if different
         if (urlPage !== this.currentPage) {
-          console.log("🔄 URL page differs from current, loading:", {
+          console.log("[INFO] URL page differs from current, loading:", {
             urlPage,
             currentPage: this.currentPage,
           });
           this.loadPlayerData(urlPage);
         } else {
-          console.log("✨ URL and current page match, showing pagination");
+          console.log("[INFO] URL and current page match, showing pagination");
           // still need to show pagination for initial data
           this.showPaginationIfNeeded();
         }
@@ -194,10 +194,10 @@ const pagination = initialData?.pagination;
 
       // listen for browser back/forward navigation
       window.addEventListener("popstate", (e) => {
-        console.log("🔙 Popstate event fired:", e.state);
+        console.log("[INFO] Popstate event fired:", e.state);
         const urlPage = this.getPageFromURL();
         if (urlPage !== this.currentPage) {
-          console.log("🔄 Popstate loading page:", {
+          console.log("[INFO] Popstate loading page:", {
             urlPage,
             currentPage: this.currentPage,
           });
@@ -212,7 +212,7 @@ const pagination = initialData?.pagination;
       const prevBtn = this.container.querySelector("#prev-page");
       const nextBtn = this.container.querySelector("#next-page");
 
-      console.log("🔗 Binding pagination events:", {
+      console.log("[INFO] Binding pagination events:", {
         paginationContainer: !!paginationContainer,
         prevBtn: !!prevBtn,
         nextBtn: !!nextBtn,
@@ -223,14 +223,14 @@ const pagination = initialData?.pagination;
 
       if (prevBtn) {
         prevBtn.addEventListener("click", () => {
-          console.log("⬅️ Previous page button clicked");
+          console.log("[INFO] Previous page button clicked");
           this.previousPage();
         });
       }
 
       if (nextBtn) {
         nextBtn.addEventListener("click", () => {
-          console.log("➡️ Next page button clicked");
+          console.log("[INFO] Next page button clicked");
           this.nextPage();
         });
       }
@@ -287,7 +287,7 @@ const pagination = initialData?.pagination;
     }
 
     async loadPlayerData(targetPage = this.currentPage) {
-      console.log("🔄 loadPlayerData called:", {
+      console.log("[INFO] loadPlayerData called:", {
         targetPage,
         currentPage: this.currentPage,
       });
@@ -296,12 +296,12 @@ const pagination = initialData?.pagination;
         this.showLoading();
 
         const apiUrl = `/api/leaderboard/players?scope=global&page=${targetPage}&pageSize=25`;
-        console.log("📡 Fetching:", apiUrl);
+        console.log("[INFO] Fetching:", apiUrl);
 
         const response = await fetch(apiUrl);
         const data = await response.json();
 
-        console.log("📨 API Response received:", {
+        console.log("[INFO] API Response received:", {
           hasLeaderboard: !!(data.leaderboard && data.leaderboard.length > 0),
           pagination: data.pagination,
           leaderboardCount: data.leaderboard?.length || 0,
@@ -314,7 +314,7 @@ const pagination = initialData?.pagination;
           const previousPage = this.currentPage;
           this.currentPage = data.pagination?.currentPage || targetPage;
 
-          console.log("📊 Page state updated:", {
+          console.log("[INFO] Page state updated:", {
             previousPage,
             currentPage: this.currentPage,
           });
@@ -325,11 +325,11 @@ const pagination = initialData?.pagination;
           this.renderPlayerData(data);
           this.updatePagination(data.pagination);
         } else {
-          console.log("❌ No leaderboard data, showing empty state");
+          console.log("[WARN] No leaderboard data, showing empty state");
           this.showEmptyState();
         }
       } catch (error) {
-        console.error("💥 Failed to load player data:", error);
+        console.error("[ERROR] Failed to load player data:", error);
         this.showError("Failed to load player rankings");
       } finally {
         this.hideLoading();
@@ -419,7 +419,7 @@ const pagination = initialData?.pagination;
             : index + 1;
           const combinedTime = player.combined_best_time
             ? formatDurationMMSS(player.combined_best_time)
-            : "—";
+            : "-";
 
           return `
           <div class="player-row-wrapper">
@@ -473,16 +473,16 @@ const pagination = initialData?.pagination;
     }
 
     updatePagination(pagination: any) {
-      console.log("📄 updatePagination called:", pagination);
+      console.log("[INFO] updatePagination called:", pagination);
 
       const paginationContainer = this.container.querySelector(
         ".pagination-container",
       ) as HTMLElement;
 
       if (!paginationContainer) {
-        console.warn("⚠️ Pagination container not found in DOM");
+        console.warn("[WARN] Pagination container not found in DOM");
         console.log(
-          "🔍 Available elements:",
+          "[INFO] Available elements:",
           this.container.querySelectorAll('[class*="pagination"]'),
         );
         return;
@@ -492,7 +492,7 @@ const pagination = initialData?.pagination;
       const parentSection = this.container.closest(
         ".content-section",
       ) as HTMLElement;
-      console.log("👁️ Container visibility check:", {
+      console.log("[INFO] Container visibility check:", {
         containerDisplay: getComputedStyle(this.container).display,
         containerVisibility: getComputedStyle(this.container).visibility,
         parentSectionClasses: parentSection?.className,
@@ -502,12 +502,12 @@ const pagination = initialData?.pagination;
       });
 
       if (!pagination) {
-        console.warn("⚠️ No pagination data provided, hiding container");
+        console.warn("[WARN] No pagination data provided, hiding container");
         (paginationContainer as HTMLElement).style.display = "none";
         return;
       }
 
-      console.log("✅ Showing pagination container with data:", {
+      console.log("[OK] Showing pagination container with data:", {
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,
         hasPrevPage: pagination.hasPrevPage,
@@ -520,7 +520,7 @@ const pagination = initialData?.pagination;
       }
 
       // debug pagination container visibility after setting
-      console.log("🔍 Pagination container styles after update:", {
+      console.log("[INFO] Pagination container styles after update:", {
         display: (paginationContainer as HTMLElement).style.display,
         computedDisplay: getComputedStyle(paginationContainer).display,
         visible:
@@ -542,7 +542,7 @@ const pagination = initialData?.pagination;
         ".page-info",
       ) as HTMLElement;
 
-      console.log("🔍 Pagination elements found:", {
+      console.log("[INFO] Pagination elements found:", {
         infoSpan: !!infoSpan,
         prevBtn: !!prevBtn,
         nextBtn: !!nextBtn,
@@ -555,14 +555,14 @@ const pagination = initialData?.pagination;
 
       if (prevBtn) {
         (prevBtn as HTMLButtonElement).disabled = !pagination.hasPrevPage;
-        console.log("⬅️ Previous button updated:", {
+        console.log("[INFO] Previous button updated:", {
           disabled: !pagination.hasPrevPage,
           visible: prevBtn.offsetWidth > 0 && prevBtn.offsetHeight > 0,
         });
       }
       if (nextBtn) {
         (nextBtn as HTMLButtonElement).disabled = !pagination.hasNextPage;
-        console.log("➡️ Next button updated:", {
+        console.log("[INFO] Next button updated:", {
           disabled: !pagination.hasNextPage,
           visible: nextBtn.offsetWidth > 0 && nextBtn.offsetHeight > 0,
         });
@@ -574,7 +574,7 @@ const pagination = initialData?.pagination;
 
     // public method to reset to page 1 (for tab switching)
     resetToFirstPage() {
-      console.log("🔄 resetToFirstPage called");
+      console.log("[INFO] resetToFirstPage called");
       this.currentPage = 1;
       this.updateURLWithPage(1); // Clean URL for page 1
       this.loadPlayerData(1);
@@ -582,7 +582,7 @@ const pagination = initialData?.pagination;
 
     // public method to refresh current page
     refreshCurrentPage() {
-      console.log("🔄 refreshCurrentPage called");
+      console.log("[INFO] refreshCurrentPage called");
 
       // debug visibility before refresh
       const parentSection = this.container.closest(
@@ -592,7 +592,7 @@ const pagination = initialData?.pagination;
         ".pagination-container",
       ) as HTMLElement;
 
-      console.log("🔍 refreshCurrentPage visibility check:", {
+      console.log("[INFO] refreshCurrentPage visibility check:", {
         parentSectionClasses: parentSection?.className,
         parentSectionDisplay: parentSection
           ? getComputedStyle(parentSection).display
@@ -611,15 +611,15 @@ const pagination = initialData?.pagination;
 
     // add method to show pagination if needed
     showPaginationIfNeeded() {
-      console.log("👀 showPaginationIfNeeded called");
+      console.log("[INFO] showPaginationIfNeeded called");
       const paginationContainer = this.container.querySelector(
         ".pagination-container",
       ) as HTMLElement;
       if (paginationContainer) {
         (paginationContainer as HTMLElement).style.display = "flex";
-        console.log("✅ Pagination container shown");
+        console.log("[OK] Pagination container shown");
       } else {
-        console.log("⚠️ No pagination container found to show");
+        console.log("[WARN] No pagination container found to show");
       }
     }
 
@@ -628,7 +628,7 @@ const pagination = initialData?.pagination;
       const urlParams = new URLSearchParams(window.location.search);
       const pageParam = urlParams.get("page");
       const result = pageParam ? Math.max(1, parseInt(pageParam)) : 1;
-      console.log("📖 getPageFromURL:", {
+      console.log("[INFO] getPageFromURL:", {
         pageParam,
         result,
         currentURL: window.location.href,
@@ -637,7 +637,7 @@ const pagination = initialData?.pagination;
     }
 
     updateURLWithPage(page) {
-      console.log("🔗 updateURLWithPage called:", {
+      console.log("[INFO] updateURLWithPage called:", {
         page,
         previousURL: window.location.href,
       });
@@ -647,15 +647,15 @@ const pagination = initialData?.pagination;
       if (page === 1) {
         // remove page parameter for page 1 (cleaner urls)
         url.searchParams.delete("page");
-        console.log("🧹 Cleaned URL for page 1");
+        console.log("[INFO] Cleaned URL for page 1");
       } else {
         url.searchParams.set("page", page.toString());
-        console.log("📝 Set page parameter to:", page);
+        console.log("[INFO] Set page parameter to:", page);
       }
 
       // update url without triggering page reload
       window.history.pushState({ page }, "", url);
-      console.log("✅ URL updated to:", url.href);
+      console.log("[OK] URL updated to:", url.href);
     }
   }
 

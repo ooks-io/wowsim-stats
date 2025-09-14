@@ -62,8 +62,8 @@ const avatarUrl = player.avatar_url
       {player.class_name}
     </div>
     <div class="item-level">
-      Item Level: {player.equipped_item_level || "—"} equipped / {
-        player.average_item_level || "—"
+      Item Level: {player.equipped_item_level || "-"} equipped / {
+        player.average_item_level || "-"
       } average
     </div>
   </div>
@@ -76,7 +76,7 @@ const avatarUrl = player.avatar_url
       {
         player.combined_best_time
           ? formatDurationMMSS(player.combined_best_time)
-          : "—"
+          : "-"
       }
     </div>
   </div>

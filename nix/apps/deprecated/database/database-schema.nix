@@ -260,7 +260,7 @@
           cursor.execute("CREATE INDEX IF NOT EXISTS idx_equipment_enchantments_equipment ON player_equipment_enchantments(equipment_id)")
           cursor.execute("CREATE INDEX IF NOT EXISTS idx_items_id ON items(id)")
 
-          print("✓ Complete database schema created with all tables and indexes")
+          print("[OK] Complete database schema created with all tables and indexes")
 
       def main():
           print("=== Database Schema Creation Script ===")
@@ -281,7 +281,7 @@
               cursor.execute("VACUUM")
               print("Database optimized")
 
-              print("\n✓ Database schema setup complete!")
+              print("\n[OK] Database schema setup complete!")
               print("Next steps:")
               print("  1. Run 'nix run .#getCM' to populate challenge mode data")
               print("  2. Run 'nix run .#rankingProcessor' to compute rankings")

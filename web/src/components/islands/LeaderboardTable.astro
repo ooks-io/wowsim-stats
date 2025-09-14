@@ -191,7 +191,7 @@ const pagination = initialData?.pagination;
         this.currentPage = targetPage;
       }
 
-      console.log("📊 LeaderboardTable.loadLeaderboard called:", {
+      console.log("[INFO] LeaderboardTable.loadLeaderboard called:", {
         region: this.region,
         realm: this.realm,
         dungeon: this.dungeon,
@@ -308,17 +308,17 @@ const pagination = initialData?.pagination;
       );
 
       if (!paginationContainer) {
-        console.warn("⚠️ Dungeon leaderboard pagination container not found");
+        console.warn("[WARN] Dungeon leaderboard pagination container not found");
         return;
       }
 
       if (!pagination || pagination.totalPages <= 1) {
-        console.log("🙈 Hiding dungeon pagination - no data or single page");
+        console.log("[INFO] Hiding dungeon pagination - no data or single page");
         paginationContainer.style.display = "none";
         return;
       }
 
-      console.log("✅ Showing dungeon pagination container:", {
+      console.log("[OK] Showing dungeon pagination container:", {
         currentPage: pagination.currentPage,
         totalPages: pagination.totalPages,
         totalRuns: pagination.totalRuns,
@@ -336,13 +336,13 @@ const pagination = initialData?.pagination;
 
       if (prevBtn) {
         prevBtn.disabled = !pagination.hasPrevPage;
-        console.log("⬅️ Dungeon prev button updated:", {
+        console.log("[INFO] Dungeon prev button updated:", {
           disabled: !pagination.hasPrevPage,
         });
       }
       if (nextBtn) {
         nextBtn.disabled = !pagination.hasNextPage;
-        console.log("➡️ Dungeon next button updated:", {
+        console.log("[INFO] Dungeon next button updated:", {
           disabled: !pagination.hasNextPage,
         });
       }

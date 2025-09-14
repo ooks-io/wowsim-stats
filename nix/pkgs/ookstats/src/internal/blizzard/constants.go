@@ -26,7 +26,7 @@ func GetFallbackPeriods() []string {
     return []string{"1026", "1025", "1024", "1023", "1022", "1021", "1020"}
 }
 
-// GetGlobalPeriods returns a global sweep order newest → oldest
+// GetGlobalPeriods returns a global sweep order newest -> oldest
 func GetGlobalPeriods() []string {
     return []string{"1027", "1026", "1025", "1024", "1023"}
 }

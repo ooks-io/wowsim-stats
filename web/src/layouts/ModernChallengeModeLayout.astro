@@ -154,7 +154,7 @@ if (
     // Tab switching functionality
     class LeaderboardTabs {
       constructor() {
-        console.log("🎛️ LeaderboardTabs initialized");
+        console.log("[INFO] LeaderboardTabs initialized");
         this.bindEvents();
         this.updateActiveSection();
         this.setupPopstateHandler();
@@ -162,14 +162,14 @@ if (
 
       bindEvents() {
         const navTabs = document.querySelectorAll(".nav-tab");
-        console.log("🔗 Binding tab events to", navTabs.length, "tabs");
+        console.log("[INFO] Binding tab events to", navTabs.length, "tabs");
 
         navTabs.forEach((tab) => {
           tab.addEventListener("click", (e) => {
             const button = e.target;
             const type =
               button && button.dataset ? button.dataset.type : undefined;
-            console.log("🖱️ Tab clicked:", type);
+            console.log("[INFO] Tab clicked:", type);
             if (type) {
               this.switchTab(type);
             }
@@ -179,7 +179,7 @@ if (
 
       switchTab(type, updateHistory = true) {
         console.log(
-          "🔄 Switching to tab:",
+          "[INFO] Switching to tab:",
           type,
           "updateHistory:",
           updateHistory,
@@ -199,11 +199,11 @@ if (
           if (el.id === `${type}-section`) {
             el.classList.remove("hidden");
             el.classList.add("active");
-            console.log("✅ Showing section:", section.id);
+            console.log("[INFO] Showing section:", section.id);
           } else {
             el.classList.add("hidden");
             el.classList.remove("active");
-            console.log("🙈 Hiding section:", section.id);
+            console.log("[INFO] Hiding section:", section.id);
           }
         });
 
@@ -212,7 +212,7 @@ if (
           if (type === "players") {
             // Always update to players URL when switching to players tab
             const newURL = "/challenge-mode/players";
-            console.log("🔗 Updating URL to players:", newURL);
+            console.log("[INFO] Updating URL to players:", newURL);
             window.history.pushState({}, "", newURL);
           } else if (type === "dungeon") {
             // For dungeon tab, only update if we're on a generic URL
@@ -220,16 +220,16 @@ if (
             if (currentPath === "/challenge-mode/players") {
               // Coming from players tab, go to generic dungeon URL
               const newURL = "/challenge-mode";
-              console.log("🔗 Updating URL from players to dungeon:", newURL);
+              console.log("[INFO] Updating URL from players to dungeon:", newURL);
               window.history.pushState({}, "", newURL);
             } else {
               // Preserve specific dungeon URLs (e.g., /challenge-mode/us/arugal/scarlet-monastery)
-              console.log("🔒 Preserving specific dungeon URL:", currentPath);
+              console.log("[INFO] Preserving specific dungeon URL:", currentPath);
             }
           }
         } else {
           console.log(
-            "📍 Not updating history - responding to browser navigation",
+            "[INFO] Not updating history - responding to browser navigation",
           );
         }
 
@@ -239,13 +239,13 @@ if (
 
       updateActiveSection(fromPopstate = false) {
         const path = window.location.pathname;
-        console.log("📍 Current path:", path, "fromPopstate:", fromPopstate);
+        console.log("[INFO] Current path:", path, "fromPopstate:", fromPopstate);
 
         if (path.includes("/players")) {
-          console.log("🎯 Activating players tab from URL");
+          console.log("[INFO] Activating players tab from URL");
           this.switchTab("players", !fromPopstate);
         } else {
-          console.log("🎯 Activating dungeon tab from URL");
+          console.log("[INFO] Activating dungeon tab from URL");
           this.switchTab("dungeon", !fromPopstate);
         }
       }
@@ -253,7 +253,7 @@ if (
       setupPopstateHandler() {
         window.addEventListener("popstate", () => {
           console.log(
-            "🔙 LeaderboardTabs popstate event - URL changed to:",
+            "[INFO] LeaderboardTabs popstate event - URL changed to:",
             window.location.href,
           );
           this.updateActiveSection(true);
@@ -261,16 +261,16 @@ if (
       }
 
       async loadSectionContent(type) {
-        console.log("📝 Loading section content for:", type);
+        console.log("[INFO] Loading section content for:", type);
 
         if (type === "players") {
           // Notify PlayerLeaderboard component that it's now visible
-          console.log("👀 PlayerLeaderboard section is now visible");
+          console.log("[INFO] PlayerLeaderboard section is now visible");
 
           const tryRefresh = () => {
             const pl = window && window["playerLeaderboard"];
             if (pl && typeof pl.refreshCurrentPage === "function") {
-              console.log("🔄 Refreshing PlayerLeaderboard after tab switch");
+              console.log("[INFO] Refreshing PlayerLeaderboard after tab switch");
               pl.refreshCurrentPage();
               return true;
             }
@@ -280,12 +280,12 @@ if (
           // Attempt immediately; if not ready, try to kick init and wait for ready event
           if (!tryRefresh()) {
             console.warn(
-              "⚠️ PlayerLeaderboard not ready, waiting for event...",
+              "[WARN] PlayerLeaderboard not ready, waiting for event...",
             );
             try {
               const maybeInit = window["__initPlayerLeaderboard"];
               if (typeof maybeInit === "function") {
-                console.log("🛠️ Invoking __initPlayerLeaderboard()");
+                console.log("[INFO] Invoking __initPlayerLeaderboard()");
                 maybeInit();
               }
             } catch {}

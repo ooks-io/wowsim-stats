@@ -172,7 +172,7 @@ func syncTable(localDB, remoteDB *sql.DB, tableName string) error {
 		rowCount++
 	}
 
-	fmt.Printf("  → Synced %d rows\n", rowCount)
+fmt.Printf("  -> Synced %d rows\n", rowCount)
 	return nil
 }
 

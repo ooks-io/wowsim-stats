@@ -20,7 +20,7 @@ var testCmd = &cobra.Command{
 		}
 		defer db.Close()
 
-		fmt.Println("✓ Connected to Turso database successfully")
+		fmt.Println("[OK] Connected to Turso database successfully")
 
 		// test a simple query to verify the connection works
 		rows, err := db.Query("SELECT 1 as test")
@@ -29,8 +29,8 @@ var testCmd = &cobra.Command{
 		}
 		defer rows.Close()
 
-		fmt.Println("✓ Database query test passed")
-		fmt.Println("✓ Connection test complete!")
+		fmt.Println("[OK] Database query test passed")
+		fmt.Println("[OK] Connection test complete!")
 
 		return nil
 	},

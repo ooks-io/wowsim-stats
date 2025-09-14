@@ -22,7 +22,7 @@ const { placeholder = "Press / to search for players...", class: className } =
         spellcheck="false"
       />
       <button id="search-clear" class="search-clear" style="display: none;">
-        ✕
+        x
       </button>
     </div>
 
@@ -172,40 +172,40 @@ const { placeholder = "Press / to search for players...", class: className } =
           // clear any existing content and show the '/' was pressed
           this.searchInput.value = "";
 
-          console.log('🔍 Search focused via "/" hotkey');
+          console.log('[INFO] Search focused via "/" hotkey');
         }
       });
     }
 
     async loadPlayerIndex(limit: number = 1000) {
       try {
-        console.log("🔍 Loading player search index...");
+        console.log("[INFO] Loading player search index...");
 
         // try loading from cache first
         const cachedData = this.loadFromCache();
         if (cachedData) {
-          console.log("📦 Using cached search index");
+          console.log("[INFO] Using cached search index");
           this.setupSearchIndex(cachedData);
           return;
         }
 
-        console.log("🔍 No cache found, will fetch from API...");
+        console.log("[INFO] No cache found, will fetch from API...");
 
         const url = `/api/search/players-index?limit=${limit}`;
-        console.log("📡 Fetching fresh search index from API:", url);
+        console.log("[INFO] Fetching fresh search index from API:", url);
         const response = await fetch(url);
         console.log(
-          `📡 Search index API response: ${response.status} ${response.statusText}`,
+          `[INFO] Search index API response: ${response.status} ${response.statusText}`,
         );
         console.log(
-          `📡 Response headers:`,
+          `[INFO] Response headers:`,
           Array.from(response.headers.entries()),
         );
 
         if (!response.ok) {
           const errorText = await response.text();
           console.error(
-            `❌ Search index API failed: ${response.status} ${response.statusText}`,
+            `[ERROR] Search index API failed: ${response.status} ${response.statusText}`,
             errorText,
           );
           throw new Error(
@@ -218,13 +218,13 @@ const { placeholder = "Press / to search for players...", class: className } =
           throw new Error("Invalid search index format");
         }
 
-        console.log(`✅ Loaded ${data.players.length} players from API`);
+        console.log(`[OK] Loaded ${data.players.length} players from API`);
 
         // save to cache
         this.saveToCache(data);
         this.setupSearchIndex(data);
       } catch (error) {
-        console.error("💥 Failed to load player search index:", error);
+        console.error("[ERROR] Failed to load player search index:", error);
         // fall back to basic player leaderboard for minimal functionality
         this.loadFallbackIndex();
       }
@@ -235,9 +235,9 @@ const { placeholder = "Press / to search for players...", class: className } =
       this.indexMetadata = data.metadata;
       this.isIndexLoaded = true;
 
-      console.log(`📊 Search index loaded: ${this.playerIndex.length} players`);
+      console.log(`[INFO] Search index loaded: ${this.playerIndex.length} players`);
       console.log(
-        `🔍 Sample players:`,
+        `[INFO] Sample players:`,
         this.playerIndex.slice(0, 3).map((p) => ({
           name: p.name,
           realm: p.realm_name,
@@ -270,13 +270,13 @@ const { placeholder = "Press / to search for players...", class: className } =
 
       this.fuse = new Fuse(this.playerIndex, fuseOptions);
       console.log(
-        `🔍 Initialized Fuse.js search with ${this.playerIndex.length} players`,
+        `[INFO] Initialized Fuse.js search with ${this.playerIndex.length} players`,
       );
     }
 
     async loadFallbackIndex() {
       try {
-        console.log("🔄 Loading fallback player index...");
+        console.log("[INFO] Loading fallback player index...");
         const response = await fetch(
           "/api/leaderboard/players?scope=global&pageSize=1000",
         );
@@ -304,7 +304,7 @@ const { placeholder = "Press / to search for players...", class: className } =
         }));
 
         console.log(
-          `🔍 Fallback players sample:`,
+          `[INFO] Fallback players sample:`,
           fallbackPlayers.slice(0, 3).map((p) => ({
             name: p.name,
             class: p.class_name,
@@ -323,10 +323,10 @@ const { placeholder = "Press / to search for players...", class: className } =
 
         this.setupSearchIndex(fallbackData);
         console.log(
-          `⚡ Loaded fallback index with ${fallbackPlayers.length} players`,
+          `[INFO] Loaded fallback index with ${fallbackPlayers.length} players`,
         );
       } catch (error) {
-        console.error("💥 Fallback index also failed:", error);
+        console.error("[ERROR] Fallback index also failed:", error);
         // still set as loaded to prevent infinite loading states
         this.isIndexLoaded = true;
       }
@@ -343,14 +343,14 @@ const { placeholder = "Press / to search for players...", class: className } =
         return;
       }
 
-      console.log(`🔎 Fuzzy searching for: "${query}"`);
+      console.log(`[INFO] Fuzzy searching for: "${query}"`);
 
       // first lets see if we can find exact matches in our index
       const exactMatches = this.playerIndex.filter((player) =>
         player.name.toLowerCase().includes(query.toLowerCase()),
       );
       console.log(
-        `🎯 Direct matches for "${query}":`,
+        `[INFO] Direct matches for "${query}":`,
         exactMatches.map((p) => ({
           name: p.name,
           realm: p.realm_name,
@@ -363,7 +363,7 @@ const { placeholder = "Press / to search for players...", class: className } =
       this.filteredResults = fuseResults;
 
       console.log(
-        `📍 Found ${fuseResults.length} Fuse.js results:`,
+        `[INFO] Found ${fuseResults.length} Fuse.js results:`,
         fuseResults.map((r) => ({
           name: r.item.name,
           realm: r.item.realm_name,
@@ -394,7 +394,7 @@ const { placeholder = "Press / to search for players...", class: className } =
 
           // debug styling
           console.log(
-            `🎨 Player: ${player.name}, Class: "${player.class_name}", Color: ${displayColor}`,
+            `[INFO] Player: ${player.name}, Class: "${player.class_name}", Color: ${displayColor}`,
           );
 
           // get global ranking display with bracket color
@@ -524,7 +524,7 @@ const { placeholder = "Press / to search for players...", class: className } =
         const player = result.item;
         const playerUrl = buildPlayerProfileURL(player.region, player.realm_slug, player.name);
         console.log(
-          `🎯 Navigating to player: ${player.name} (${player.realm_name})`,
+          `[INFO] Navigating to player: ${player.name} (${player.realm_name})`,
         );
         window.location.href = playerUrl;
       }
@@ -584,15 +584,15 @@ const { placeholder = "Press / to search for players...", class: className } =
 
         // cache valid for 24 hours
         if (ageHours < 24) {
-          console.log(`📦 Cache hit (${ageHours.toFixed(1)}h old)`);
+          console.log(`[INFO] Cache hit (${ageHours.toFixed(1)}h old)`);
           return data;
         } else {
-          console.log(`🗑️ Cache expired (${ageHours.toFixed(1)}h old)`);
+          console.log(`[INFO] Cache expired (${ageHours.toFixed(1)}h old)`);
           localStorage.removeItem("playerSearchIndex");
           return null;
         }
       } catch (error) {
-        console.warn("❌ Failed to load from cache:", error);
+        console.warn("[ERROR] Failed to load from cache:", error);
         localStorage.removeItem("playerSearchIndex");
         return null;
       }
@@ -608,9 +608,9 @@ const { placeholder = "Press / to search for players...", class: className } =
           },
         };
         localStorage.setItem("playerSearchIndex", JSON.stringify(cacheData));
-        console.log(`💾 Saved ${data.players.length} players to cache`);
+        console.log(`[INFO] Saved ${data.players.length} players to cache`);
       } catch (error) {
-        console.warn("❌ Failed to save to cache:", error);
+        console.warn("[ERROR] Failed to save to cache:", error);
       }
     }
   }

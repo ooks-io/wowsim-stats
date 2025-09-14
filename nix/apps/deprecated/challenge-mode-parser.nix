@@ -289,7 +289,7 @@
 
                   size_reduction = original_count - len(optimized_groups)
                   if size_reduction > 0:
-                      print(f"  Optimized {file_path}: {original_count} → {len(optimized_groups)} records (-{size_reduction})")
+                      print(f"  Optimized {file_path}: {original_count} -> {len(optimized_groups)} records (-{size_reduction})")
                   else:
                       print(f"  Minified {file_path}: {len(optimized_groups)} records")
 
@@ -300,7 +300,7 @@
 
           print(f"\nIndividual file optimization complete:")
           print(f"  Files processed: {success_count}/{len(leaderboard_files)}")
-          print(f"  Total size reduction: {total_original_size:,} → {total_optimized_size:,} bytes")
+          print(f"  Total size reduction: {total_original_size:,} -> {total_optimized_size:,} bytes")
 
           if total_original_size > 0:
               reduction_percent = ((total_original_size - total_optimized_size) / total_original_size) * 100

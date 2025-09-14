@@ -336,9 +336,9 @@
                   total_players += realm_players
 
                   if realm_runs > 0:
-                      print(f"  ✓ Realm totals: {realm_runs} new runs, {realm_players} new players")
+                      print(f"  [OK] Realm totals: {realm_runs} new runs, {realm_players} new players")
                   else:
-                      print(f"  → No new data for this realm")
+                      print(f"  -> No new data for this realm")
 
               # update fetch metadata
               update_fetch_metadata(cursor, "challenge_mode_leaderboard", total_runs, total_players)

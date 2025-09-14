@@ -336,7 +336,7 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 
 	go func() {
 		defer wg.Done()
-		fmt.Printf("🔧 Batch processor goroutine started\n")
+		fmt.Printf("[INFO] Batch processor goroutine started\n")
 
 		batch := make([]blizzard.FetchResult, 0, 10) // Process in batches of 10
 		batchNumber := 0
@@ -345,24 +345,24 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 			select {
 			case result, ok := <-batchChan:
 				if !ok {
-					fmt.Printf("📞 Batch channel closed, processing final batch...\n")
+					fmt.Printf("[INFO] Batch channel closed, processing final batch...\n")
 					// channel closed, process remaining batch
 					if len(batch) > 0 {
 						batchNumber++
-						fmt.Printf("🔄 Processing final batch %d with %d items...\n", batchNumber, len(batch))
+						fmt.Printf("[INFO] Processing final batch %d with %d items...\n", batchNumber, len(batch))
 						runs, players, err := ds.processBatch(batch)
 						if err != nil {
-							fmt.Printf("❌ Final batch %d failed: %v\n", batchNumber, err)
+							fmt.Printf("[ERROR] Final batch %d failed: %v\n", batchNumber, err)
 						} else {
 							totalRuns += runs
 							totalPlayers += players
 							if runs > 0 || players > 0 {
-								fmt.Printf("✅ Final batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
+								fmt.Printf("[OK] Final batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
 									batchNumber, runs, players, totalRuns, totalPlayers)
 							}
 						}
 					}
-					fmt.Printf("🏁 Batch processor goroutine ending\n")
+					fmt.Printf("[INFO] Batch processor goroutine ending\n")
 					return
 				}
 
@@ -373,12 +373,12 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 					batchNumber++
 					runs, players, err := ds.processBatch(batch)
 					if err != nil {
-						fmt.Printf("❌ Batch %d failed: %v\n", batchNumber, err)
+						fmt.Printf("[ERROR] Batch %d failed: %v\n", batchNumber, err)
 					} else {
 						totalRuns += runs
 						totalPlayers += players
 						if runs > 0 || players > 0 {
-							fmt.Printf("⚡ Batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
+							fmt.Printf("[INFO] Batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
 								batchNumber, runs, players, totalRuns, totalPlayers)
 						}
 					}
@@ -386,14 +386,14 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 				}
 
 			case <-ctx.Done():
-				fmt.Printf("⚠️ Batch processor context cancelled\n")
+				fmt.Printf("[WARN] Batch processor context cancelled\n")
 				return
 			}
 		}
 	}()
 
 	// forward results to batch processor with progress tracking
-	fmt.Printf("🔄 Starting to process API results...\n")
+	fmt.Printf("[INFO] Starting to process API results...\n")
 	for result := range results {
 		processedCount++
 
@@ -401,36 +401,36 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
             errorCount++
             // Suppress noisy 404s unless verbose is enabled
             if verbose {
-                fmt.Printf("🚫 API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
+                fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
             } else if !strings.Contains(strings.ToLower(result.Error.Error()), "404") {
-                fmt.Printf("🚫 API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
+                fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
             }
             continue
         }
 
 		// show periodic progress
 		if processedCount%10 == 0 {
-			fmt.Printf("📈 Progress: %d requests processed, %d errors, queued for batch processing...\n", processedCount, errorCount)
+			fmt.Printf("[INFO] Progress: %d requests processed, %d errors, queued for batch processing...\n", processedCount, errorCount)
 		}
 
 		select {
 		case batchChan <- result:
 		case <-ctx.Done():
-			fmt.Printf("⚠️ Context cancelled, stopping processing\n")
+			fmt.Printf("[WARN] Context cancelled, stopping processing\n")
 			close(batchChan)
 			wg.Wait()
-			fmt.Printf("\n📊 Final stats: %d requests processed, %d errors, %d runs, %d players\n",
+			fmt.Printf("\n[INFO] Final stats: %d requests processed, %d errors, %d runs, %d players\n",
 				processedCount, errorCount, totalRuns, totalPlayers)
 			return totalRuns, totalPlayers, ctx.Err()
 		}
 	}
 
-	fmt.Printf("🏁 Finished processing all API results, closing batch channel...\n")
+	fmt.Printf("[INFO] Finished processing all API results, closing batch channel...\n")
 
 	close(batchChan)
 	wg.Wait()
 
-	fmt.Printf("\n📊 Final stats: %d requests processed, %d errors, %d runs, %d players\n",
+	fmt.Printf("\n[INFO] Final stats: %d requests processed, %d errors, %d runs, %d players\n",
 		processedCount, errorCount, totalRuns, totalPlayers)
 
 	return totalRuns, totalPlayers, nil
@@ -442,7 +442,7 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
         return 0, 0, nil
     }
 
-    // Pre-scan batch to decide which items actually need writes (local diff → insert-new)
+    // Pre-scan batch to decide which items actually need writes (local diff -> insert-new)
     type batchItem struct {
         idx         int
         r           blizzard.RealmInfo
@@ -489,7 +489,7 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
         needsWrite := maxCT > 0 && maxCT > minCT
 
         if !needsWrite {
-            fmt.Printf("    ↷ Skip %s/%s: up-to-date (minCT=%d, maxCT=%d)\n", res.RealmInfo.Name, res.Dungeon.Name, minCT, maxCT)
+            fmt.Printf("    [SKIP] %s/%s: up-to-date (minCT=%d, maxCT=%d)\n", res.RealmInfo.Name, res.Dungeon.Name, minCT, maxCT)
         }
         items = append(items, batchItem{
             idx:         i + 1,
@@ -537,14 +537,14 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
         }
         totalRuns += runs
         totalPlayers += players
-        fmt.Printf("    • Batch item %d: %s/%s → +%d runs, +%d players in %dms\n",
+        fmt.Printf("    - Batch item %d: %s/%s -> +%d runs, +%d players in %dms\n",
             it.idx, it.r.Name, it.d.Name, runs, players, time.Since(itemStart).Milliseconds())
     }
 
     if err := tx.Commit(); err != nil {
         return 0, 0, fmt.Errorf("failed to commit batch transaction: %w", err)
     }
-    fmt.Printf("    ✓ Batch committed in %dms (total +%d runs, +%d players)\n",
+    fmt.Printf("    [OK] Batch committed in %dms (total +%d runs, +%d players)\n",
         time.Since(startBatch).Milliseconds(), totalRuns, totalPlayers)
     return totalRuns, totalPlayers, nil
 }
@@ -593,7 +593,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
     var existingMax sql.NullInt64
     if err := tx.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax); err == nil {
         if existingMax.Valid && maxCT > 0 && existingMax.Int64 >= maxCT {
-            fmt.Printf("    ↷ Skip %s/%s: existingMax=%d >= maxCT=%d (DB)\n", realmInfo.Name, dungeon.Name, existingMax.Int64, maxCT)
+            fmt.Printf("    [SKIP] %s/%s: existingMax=%d >= maxCT=%d (DB)\n", realmInfo.Name, dungeon.Name, existingMax.Int64, maxCT)
             return 0, 0, nil
         }
     }
@@ -602,7 +602,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
         return 0, 0, fmt.Errorf("failed to read fetch marker: %w", err)
     }
     if marker >= maxCT && maxCT > 0 {
-        fmt.Printf("    ↷ Skip %s/%s: up-to-date (marker=%d, maxCT=%d)\n", realmInfo.Name, dungeon.Name, marker, maxCT)
+        fmt.Printf("    [SKIP] %s/%s: up-to-date (marker=%d, maxCT=%d)\n", realmInfo.Name, dungeon.Name, marker, maxCT)
         return 0, 0, nil
     }
 

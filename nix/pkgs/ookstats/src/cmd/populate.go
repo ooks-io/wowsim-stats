@@ -217,7 +217,7 @@ func populateItems(db *sql.DB, wowsimsDBPath string) error {
 		return fmt.Errorf("failed to commit items: %w", err)
 	}
 
-	fmt.Printf("✓ Successfully inserted %d items\n", insertCount)
+fmt.Printf("[OK] Successfully inserted %d items\n", insertCount)
 	return nil
 }
 

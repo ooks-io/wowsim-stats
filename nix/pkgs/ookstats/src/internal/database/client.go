@@ -23,7 +23,7 @@ func SetDBPath(path string) {
 
 // DBConnString returns the libsql connection string for the local SQLite file
 func DBConnString() string {
-    // Priority: explicit override → env vars → default
+    // Priority: explicit override -> env vars -> default
     if dbPathOverride != "" {
         if strings.HasPrefix(dbPathOverride, "file:") || strings.Contains(dbPathOverride, "://") {
             return dbPathOverride
@@ -140,7 +140,7 @@ func Connect() (*sql.DB, error) {
             time.Sleep(200 * time.Millisecond)
         }
 
-        fmt.Printf("✓ Embedded replica connected (file: %s)\n", dbFile)
+        fmt.Printf("[OK] Embedded replica connected (file: %s)\n", dbFile)
         return db, nil
     }
 
@@ -162,7 +162,7 @@ func Connect() (*sql.DB, error) {
         return nil, fmt.Errorf("failed to configure database: %w", err)
     }
 
-    fmt.Printf("✓ Local libSQL database connected\n")
+    fmt.Printf("[OK] Local libSQL database connected\n")
     return db, nil
 }
 
@@ -208,12 +208,12 @@ func configureDatabaseSettings(db *sql.DB, dsn string) error {
 
 	// check if we're in WAL mode (embedded replica should already be in WAL mode)
 	var journalMode string
-    err := db.QueryRow("PRAGMA journal_mode").Scan(&journalMode)
+	err := db.QueryRow("PRAGMA journal_mode").Scan(&journalMode)
 	if err == nil {
-		fmt.Printf("✓ Database journal mode: %s\n", journalMode)
+		fmt.Printf("[OK] Database journal mode: %s\n", journalMode)
 	}
 
-	fmt.Printf("✓ Database configured\n")
+	fmt.Printf("[OK] Database configured\n")
 	return nil
 }
 
@@ -403,7 +403,7 @@ func EnsureCompleteSchema(db *sql.DB) error {
 		}
 	}
 	
-	fmt.Printf("✓ All tables created\n")
+fmt.Printf("[OK] All tables created\n")
 	
 	// Create indexes
 	return ensureRecommendedIndexes(db)
@@ -432,6 +432,6 @@ func ensureRecommendedIndexes(db *sql.DB) error {
         }
     }
     
-    fmt.Printf("✓ All indexes ensured\n")
+    fmt.Printf("[OK] All indexes ensured\n")
     return nil
 }

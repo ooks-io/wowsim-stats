@@ -1028,7 +1028,7 @@ export async function getPlayerSearchIndex(
 ) {
   try {
     console.log(
-      `🔍 Generating player search index: limit=${limit}, offset=${offset}`,
+      `[INFO] Generating player search index: limit=${limit}, offset=${offset}`,
     );
 
     // Only include players with complete coverage (those who have player profiles)

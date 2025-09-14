@@ -155,7 +155,7 @@ var fetchCMCmd = &cobra.Command{
 
         // pre-populate reference data (optimized): insert all dungeons once, then batch insert realms
         fmt.Printf("Pre-populating reference data...\n")
-        fmt.Printf("  • Ensuring dungeons (%d)\n", len(dungeons))
+        fmt.Printf("  - Ensuring dungeons (%d)\n", len(dungeons))
         // ensure slugs are set on realmInfo entries
         for realmSlug, realmInfo := range allRealms {
             realmInfo.Slug = realmSlug
@@ -164,12 +164,12 @@ var fetchCMCmd = &cobra.Command{
         if err := dbService.EnsureDungeonsOnce(dungeons); err != nil {
             return fmt.Errorf("failed to ensure dungeons: %w", err)
         }
-        fmt.Printf("  ✓ Dungeons ensured\n")
-        fmt.Printf("  • Ensuring realms (%d)\n", len(allRealms))
+        fmt.Printf("  [OK] Dungeons ensured\n")
+        fmt.Printf("  - Ensuring realms (%d)\n", len(allRealms))
         if err := dbService.EnsureRealmsBatch(allRealms); err != nil {
             return fmt.Errorf("failed to ensure realms: %w", err)
         }
-        fmt.Printf("  ✓ Realms ensured\n")
+        fmt.Printf("  [OK] Realms ensured\n")
         fmt.Printf("Reference data populated for %d realms and %d dungeons\n", len(allRealms), len(dungeons))
 
         // Determine mode and periods
@@ -183,7 +183,7 @@ var fetchCMCmd = &cobra.Command{
         totalPlayers := 0
 
         if sweep && !fallbackMode {
-            // Global sweep: iterate periods newest→oldest, fetch all realms×dungeons per period
+            // Global sweep: iterate periods newest->oldest, fetch all realms x dungeons per period
             var periods []string
             if strings.TrimSpace(periodsCSV) != "" {
                 for _, p := range strings.Split(periodsCSV, ",") { if v := strings.TrimSpace(p); v != "" { periods = append(periods, v) } }
@@ -196,7 +196,7 @@ var fetchCMCmd = &cobra.Command{
                 res := client.FetchAllRealmsConcurrent(ctx, allRealms, dungeons, period)
                 runs, players, berr := dbService.BatchProcessFetchResults(ctx, res)
                 if berr != nil { fmt.Printf("Batch errors in period %s: %v\n", period, berr) }
-                fmt.Printf("Period %s → inserted runs: %d, new players: %d\n", period, runs, players)
+                fmt.Printf("Period %s -> inserted runs: %d, new players: %d\n", period, runs, players)
                 totalRuns += runs
                 totalPlayers += players
             }
@@ -319,14 +319,14 @@ var fetchProfilesCmd = &cobra.Command{
 				processedCount++
 
 				if result.Error != nil {
-					fmt.Printf("  ❌ %s (%s): %v\n", result.PlayerName, result.Region, result.Error)
+					fmt.Printf("  [ERROR] %s (%s): %v\n", result.PlayerName, result.Region, result.Error)
 					continue
 				}
 
 				// insert profile data
 				profiles, equipment, err := dbService.InsertPlayerProfileData(result, timestamp)
 				if err != nil {
-					fmt.Printf("  ❌ %s (%s): DB error - %v\n", result.PlayerName, result.Region, err)
+					fmt.Printf("  [ERROR] %s (%s): DB error - %v\n", result.PlayerName, result.Region, err)
 					continue
 				}
 
@@ -346,7 +346,7 @@ var fetchProfilesCmd = &cobra.Command{
 				}
 
 				if len(statusParts) > 0 {
-					fmt.Printf("  ✅ %s (%s): %s\n", result.PlayerName, result.Region, strings.Join(statusParts, ", "))
+					fmt.Printf("  [OK] %s (%s): %s\n", result.PlayerName, result.Region, strings.Join(statusParts, ", "))
 				}
 			}
 
@@ -354,19 +354,19 @@ var fetchProfilesCmd = &cobra.Command{
 			totalEquipment += batchEquipment
 
 			elapsed := time.Since(startTime)
-			fmt.Printf("  → Batch %d complete: %d profiles, %d items (Total: %d/%d players, %.1f players/min)\n",
+			fmt.Printf("  -> Batch %d complete: %d profiles, %d items (Total: %d/%d players, %.1f players/min)\n",
 				batchNumber, batchProfiles, batchEquipment, processedCount, len(players),
 				float64(processedCount)/elapsed.Minutes())
 
 			// small delay between batches to be respectful to the API
 			if i+batchSize < len(players) {
-				fmt.Printf("  ⏳ Waiting 1 second before next batch...\n")
+				fmt.Printf("  [INFO] Waiting 1 second before next batch...\n")
 				time.Sleep(1 * time.Second)
 			}
 		}
 
 		elapsed := time.Since(startTime)
-		fmt.Printf("\n✅ Player profile fetching complete!\n")
+		fmt.Printf("\n[OK] Player profile fetching complete!\n")
 		fmt.Printf("   Processed: %d/%d players in %v\n", processedCount, len(players), elapsed)
 		fmt.Printf("   Updated: %d player profiles\n", totalProfiles)
 		fmt.Printf("   Updated: %d equipment items\n", totalEquipment)
@@ -399,7 +399,7 @@ func init() {
 	fetchCMCmd.Flags().String("realms", "", "Comma-separated realm slugs to include")
     fetchCMCmd.Flags().String("dungeons", "", "Comma-separated dungeon IDs or slugs to include")
     // period strategy
-    fetchCMCmd.Flags().Bool("sweep-periods", true, "Sweep periods globally (newest→oldest) and insert any new runs")
+    fetchCMCmd.Flags().Bool("sweep-periods", true, "Sweep periods globally (newest->oldest) and insert any new runs")
     fetchCMCmd.Flags().String("periods", "", "Comma-separated period IDs to sweep (overrides default)")
     fetchCMCmd.Flags().Bool("fallback-mode", false, "Use per-dungeon fallback mode instead of global sweep")
 

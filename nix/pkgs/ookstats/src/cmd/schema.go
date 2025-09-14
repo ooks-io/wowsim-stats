@@ -34,7 +34,7 @@ var schemaInitCmd = &cobra.Command{
 			return fmt.Errorf("failed to initialize schema: %w", err)
 		}
 
-		fmt.Printf("\n✅ Database schema initialization complete!\n")
+		fmt.Printf("\n[OK] Database schema initialization complete!\n")
 		fmt.Printf("Database ready at: %s\n", database.DBFilePath())
 
 		return nil

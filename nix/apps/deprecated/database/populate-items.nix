@@ -87,7 +87,7 @@ writers.writePython3Bin "populate-items" {
                   print(f"Processed {insert_count} items...")
 
           conn.commit()
-          print(f"✓ Successfully inserted {insert_count} items")
+          print(f"[OK] Successfully inserted {insert_count} items")
 
       except Exception as e:
           print(f"Error populating items: {e}")

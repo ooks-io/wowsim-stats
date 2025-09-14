@@ -259,7 +259,7 @@ func generatePlayers(db *sql.DB, out string, version string) error {
     if err != nil {
         return fmt.Errorf("load players: %w", err)
     }
-    fmt.Printf("✓ Loaded %d players with complete coverage\n", len(players))
+    fmt.Printf("[OK] Loaded %d players with complete coverage\n", len(players))
 
     if len(players) == 0 {
         fmt.Println("No players with complete coverage found")
@@ -272,21 +272,21 @@ func generatePlayers(db *sql.DB, out string, version string) error {
     if err != nil {
         return fmt.Errorf("load best runs: %w", err)
     }
-    fmt.Printf("✓ Loaded best runs for %d players (%d total runs)\n", len(bestRunsMap), len(allRunIDs))
+    fmt.Printf("[OK] Loaded best runs for %d players (%d total runs)\n", len(bestRunsMap), len(allRunIDs))
 
     fmt.Printf("Loading team members...\n")
     teamMembersMap, err := loadAllTeamMembers(db, allRunIDs)
     if err != nil {
         return fmt.Errorf("load team members: %w", err)
     }
-    fmt.Printf("✓ Loaded team members for %d runs\n", len(teamMembersMap))
+    fmt.Printf("[OK] Loaded team members for %d runs\n", len(teamMembersMap))
 
     fmt.Printf("Loading equipment data...\n")
     equipmentMap, enchantmentsMap, err := loadAllEquipment(db, getPlayerIDs(players))
     if err != nil {
         return fmt.Errorf("load equipment: %w", err)
     }
-    fmt.Printf("✓ Loaded equipment for %d players\n", len(equipmentMap))
+    fmt.Printf("[OK] Loaded equipment for %d players\n", len(equipmentMap))
 
     // Step 3: Process players concurrently
     fmt.Printf("Generating JSON files concurrently...\n")
@@ -626,7 +626,7 @@ func generatePlayerJSONsConcurrently(players []PlayerData, bestRunsMap map[int64
                     return
                 }
                 if (item.index+1)%500 == 0 {
-                    fmt.Printf("  … %d players generated\n", item.index+1)
+                    fmt.Printf("  ... %d players generated\n", item.index+1)
                 }
             }
         }()
@@ -652,7 +652,7 @@ func generatePlayerJSONsConcurrently(players []PlayerData, bestRunsMap map[int64
     }
     
     elapsed := time.Since(startTime)
-    fmt.Printf("✓ Generated %d player JSON files in %v\n", len(players), elapsed)
+    fmt.Printf("[OK] Generated %d player JSON files in %v\n", len(players), elapsed)
     return nil
 }
 
@@ -928,7 +928,7 @@ func generateLeaderboards(db *sql.DB, out string, pageSize int, regions []string
             }
         }
     }
-    fmt.Println("✓ Leaderboards generated")
+    fmt.Println("[OK] Leaderboards generated")
     return nil
 }
 
@@ -1142,7 +1142,7 @@ func generatePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
     for _, reg := range regions {
         if err := writeScope("regional", reg); err != nil { return err }
     }
-    fmt.Println("✓ Player leaderboards generated")
+    fmt.Println("[OK] Player leaderboards generated")
     return nil
 }
 
@@ -1214,7 +1214,7 @@ func generateSearchIndex(db *sql.DB, out string, shardSize int) error {
     }
     if err := rows.Err(); err != nil { return err }
     if err := flush(); err != nil { return err }
-    fmt.Printf("✓ Generated search index: %d players in %d shards\n", count, shard)
+    fmt.Printf("[OK] Generated search index: %d players in %d shards\n", count, shard)
     return nil
 }
 

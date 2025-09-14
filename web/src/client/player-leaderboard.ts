@@ -161,7 +161,7 @@ class PlayerLeaderboardClient {
         : index + 1;
       const combinedTime = player.combined_best_time
         ? this.formatDuration(player.combined_best_time)
-        : "—";
+        : "-";
       const row = document.createElement("div");
       const classColor = player.class_name
         ? getClassColor(player.class_name)

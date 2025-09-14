@@ -56,7 +56,7 @@ var buildCmd = &cobra.Command{
                     }
                 }
             } else {
-                fmt.Printf("--from-scratch requested but DSN is not a local file (%s) — skipping deletion.\n", dbPath)
+                fmt.Printf("--from-scratch requested but DSN is not a local file (%s) - skipping deletion.\n", dbPath)
             }
         }
 
@@ -124,7 +124,7 @@ var buildCmd = &cobra.Command{
         } else {
             periods = blizzard.GetGlobalPeriods()
         }
-        fmt.Printf("Sweeping periods (newest → oldest): %v\n", periods)
+        fmt.Printf("Sweeping periods (newest -> oldest): %v\n", periods)
 
         totalRuns := 0
         totalPlayers := 0
@@ -140,7 +140,7 @@ var buildCmd = &cobra.Command{
             if err != nil {
                 fmt.Printf("Batch processing errors in period %s: %v\n", period, err)
             }
-            fmt.Printf("Period %s → inserted runs: %d, new players: %d\n", period, runs, players)
+            fmt.Printf("Period %s -> inserted runs: %d, new players: %d\n", period, runs, players)
             totalRuns += runs
             totalPlayers += players
         }
@@ -245,14 +245,14 @@ func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
         batchItems := 0
         for res := range results {
             processed++
-            if res.Error != nil { fmt.Printf("  ❌ %s (%s): %v\n", res.PlayerName, res.Region, res.Error); continue }
+            if res.Error != nil { fmt.Printf("  [ERROR] %s (%s): %v\n", res.PlayerName, res.Region, res.Error); continue }
             profs, items, err := dbService.InsertPlayerProfileData(res, ts)
-            if err != nil { fmt.Printf("  ❌ %s (%s): DB error - %v\n", res.PlayerName, res.Region, err); continue }
+            if err != nil { fmt.Printf("  [ERROR] %s (%s): DB error - %v\n", res.PlayerName, res.Region, err); continue }
             batchProfiles += profs; batchItems += items
         }
         totalProfiles += batchProfiles
         totalItems += batchItems
-        fmt.Printf("  → Batch complete: %d profiles, %d items (Total %d/%d)\n", batchProfiles, batchItems, processed, len(players))
+        fmt.Printf("  -> Batch complete: %d profiles, %d items (Total %d/%d)\n", batchProfiles, batchItems, processed, len(players))
         if i+batchSize < len(players) { time.Sleep(1 * time.Second) }
     }
 
@@ -282,7 +282,7 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regio
     // search index
     if err := generateSearchIndex(db, filepath.Join(base, "search"), shardSize); err != nil { return err }
 
-    fmt.Println("✓ Static API generated")
+    fmt.Println("[OK] Static API generated")
     return nil
 }
 
@@ -328,6 +328,6 @@ func init() {
     buildCmd.Flags().Int("shard-size", 5000, "Search index shard size")
     buildCmd.Flags().String("wowsims-db", "", "Optional path to WoWSims items JSON for item enrichment")
     buildCmd.Flags().Bool("skip-profiles", false, "Skip fetching player detailed profiles")
-    buildCmd.Flags().String("periods", "", "Comma-separated period IDs to sweep (default: newest→oldest set)")
+    buildCmd.Flags().String("periods", "", "Comma-separated period IDs to sweep (default: newest->oldest set)")
     buildCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 }
