@@ -206,7 +206,12 @@ export function renderBestRunsWithWrapper(
 ): string {
   const { showSectionWrapper = false } = options;
 
-  const tableHTML = renderBestRunsTable(bestRuns, options, playerRegion, playerRealmSlug);
+  const tableHTML = renderBestRunsTable(
+    bestRuns,
+    options,
+    playerRegion,
+    playerRealmSlug,
+  );
 
   if (showSectionWrapper) {
     return `

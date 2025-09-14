@@ -77,7 +77,9 @@ class LeaderboardTable {
     if (!response.ok) {
       // Provide user-friendly error messages based on status codes
       if (response.status === 404) {
-        throw new Error("Leaderboard data not found. This combination of region, realm, and dungeon may not have any recorded runs yet.");
+        throw new Error(
+          "Leaderboard data not found. This combination of region, realm, and dungeon may not have any recorded runs yet.",
+        );
       } else if (response.status >= 500) {
         throw new Error("Server error occurred. Please try again later.");
       } else {

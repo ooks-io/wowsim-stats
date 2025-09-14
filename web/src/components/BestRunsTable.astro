@@ -22,11 +22,16 @@ const {
 } = Astro.props;
 
 // Use the shared renderer to generate the HTML
-const tableHTML = renderBestRunsWithWrapper(bestRuns || {}, {
-  mode,
-  showSectionWrapper,
-  className,
-}, playerRegion, playerRealmSlug);
+const tableHTML = renderBestRunsWithWrapper(
+  bestRuns || {},
+  {
+    mode,
+    showSectionWrapper,
+    className,
+  },
+  playerRegion,
+  playerRealmSlug,
+);
 ---
 
 <div set:html={tableHTML} />

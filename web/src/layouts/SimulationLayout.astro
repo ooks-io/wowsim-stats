@@ -13,7 +13,10 @@ import {
   toTitleCase,
   slugifyLabel,
 } from "../lib/utils.ts";
-import { createItemElement, formatEquipmentSummary } from "../lib/equipment-utils.ts";
+import {
+  createItemElement,
+  formatEquipmentSummary,
+} from "../lib/equipment-utils.ts";
 import ItemDatabase from "../components/ItemDatabase.astro";
 
 export interface Props {
@@ -21,7 +24,8 @@ export interface Props {
   description?: string;
 }
 
-const { title = "Simulations", description = "Benchmarks and comparisons" } = Astro.props;
+const { title = "Simulations", description = "Benchmarks and comparisons" } =
+  Astro.props;
 const SPEC_OPTIONS_SIM = buildSimSpecOptions(SPEC_OPTIONS);
 ---
 
@@ -86,6 +90,5 @@ const SPEC_OPTIONS_SIM = buildSimSpecOptions(SPEC_OPTIONS);
       }
       /* container spacing is provided by global .page-container */
     </style>
-    
   </body>
 </html>

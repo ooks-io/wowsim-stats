@@ -328,14 +328,15 @@ export function formatEquipmentSummary(items: any[]): any[] {
     if (item) {
       const id = item.id || item.itemId || item.item_id;
       if (!id) return;
-      const itemInfo = (window as any).ItemDatabase?.formatEquipmentItem?.(
-        { ...item, id },
-      ) || {
+      const itemInfo = (window as any).ItemDatabase?.formatEquipmentItem?.({
+        ...item,
+        id,
+      }) || {
         itemId: id,
         itemName: item.name || item.item_name || `Item ${id}`,
         itemDetails: [],
         wowheadUrl: getWowheadUrl(id),
-        iconUrl: item.icon ? getZamimgIconUrl(item.icon, 'large') : undefined,
+        iconUrl: item.icon ? getZamimgIconUrl(item.icon, "large") : undefined,
         quality: item.quality || null,
       };
 
@@ -433,7 +434,9 @@ export function renderEquipmentIconsCompact(items: any[]): string {
       const qClass = toQualityClass(it.quality);
       const iconSlug = it.icon || it.item_icon_slug || null;
       const img = iconSlug
-        ? (iconSlug.startsWith?.("http") ? iconSlug : getZamimgIconUrl(iconSlug, "large"))
+        ? iconSlug.startsWith?.("http")
+          ? iconSlug
+          : getZamimgIconUrl(iconSlug, "large")
         : it.iconUrl || "";
 
       let badgeHtml = "";
@@ -449,7 +452,9 @@ export function renderEquipmentIconsCompact(items: any[]): string {
             .join("")}</div>`;
         }
       } else if (Array.isArray(it.gems)) {
-        const ggems = it.gems.filter((g: any) => g && typeof g === "object" && g.icon);
+        const ggems = it.gems.filter(
+          (g: any) => g && typeof g === "object" && g.icon,
+        );
         if (ggems.length) {
           badgeHtml = `<div class=\"gem-stack\">${ggems
             .slice(0, 3)

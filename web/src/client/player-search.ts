@@ -213,7 +213,7 @@ class PlayerSearchClient {
       if (total > firstPlayers.length) {
         const totalShards = Math.ceil(total / shardSize);
         for (let s = 1; s < totalShards; s++) {
-          const shardNum = s.toString().padStart(3, '0');
+          const shardNum = s.toString().padStart(3, "0");
           const url = `/api/search/players-${shardNum}.json`;
           try {
             const res = await fetch(url);

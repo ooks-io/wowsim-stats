@@ -1,10 +1,10 @@
 import type { LeaderboardData, PlayerProfileData, BestRun } from "./types";
-import { 
-  buildLeaderboardURL, 
+import {
+  buildLeaderboardURL,
   buildPlayerProfileURL,
   buildStaticLeaderboardPath,
   buildStaticPlayerLeaderboardPath,
-  buildStaticPlayerProfilePath
+  buildStaticPlayerProfilePath,
 } from "./utils";
 
 // api base configuration (always use relative paths for Netlify/SSR)

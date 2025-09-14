@@ -220,11 +220,17 @@ if (
             if (currentPath === "/challenge-mode/players") {
               // Coming from players tab, go to generic dungeon URL
               const newURL = "/challenge-mode";
-              console.log("[INFO] Updating URL from players to dungeon:", newURL);
+              console.log(
+                "[INFO] Updating URL from players to dungeon:",
+                newURL,
+              );
               window.history.pushState({}, "", newURL);
             } else {
               // Preserve specific dungeon URLs (e.g., /challenge-mode/us/arugal/scarlet-monastery)
-              console.log("[INFO] Preserving specific dungeon URL:", currentPath);
+              console.log(
+                "[INFO] Preserving specific dungeon URL:",
+                currentPath,
+              );
             }
           }
         } else {
@@ -239,7 +245,12 @@ if (
 
       updateActiveSection(fromPopstate = false) {
         const path = window.location.pathname;
-        console.log("[INFO] Current path:", path, "fromPopstate:", fromPopstate);
+        console.log(
+          "[INFO] Current path:",
+          path,
+          "fromPopstate:",
+          fromPopstate,
+        );
 
         if (path.includes("/players")) {
           console.log("[INFO] Activating players tab from URL");
@@ -270,7 +281,9 @@ if (
           const tryRefresh = () => {
             const pl = window && window["playerLeaderboard"];
             if (pl && typeof pl.refreshCurrentPage === "function") {
-              console.log("[INFO] Refreshing PlayerLeaderboard after tab switch");
+              console.log(
+                "[INFO] Refreshing PlayerLeaderboard after tab switch",
+              );
               pl.refreshCurrentPage();
               return true;
             }

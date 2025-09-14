@@ -63,7 +63,7 @@ class PlayerLeaderboardClient {
 
   private async fetchData(page: number) {
     let url: string;
-    
+
     if (this.scope === "global") {
       url = `/api/leaderboard/players/global/${page}.json`;
     } else if (this.region) {
@@ -71,18 +71,24 @@ class PlayerLeaderboardClient {
     } else {
       url = `/api/leaderboard/players/global/${page}.json`;
     }
-    
+
     console.log("[PlayerLeaderboard] fetching:", url);
     const res = await fetch(url);
     console.log("[PlayerLeaderboard] response:", res.status, res.statusText);
     if (!res.ok) {
       // Provide user-friendly error messages based on status codes
       if (res.status === 404) {
-        throw new Error("Player rankings not found. No players have complete coverage for this scope yet.");
+        throw new Error(
+          "Player rankings not found. No players have complete coverage for this scope yet.",
+        );
       } else if (res.status >= 500) {
-        throw new Error("Server error occurred while loading player rankings. Please try again later.");
+        throw new Error(
+          "Server error occurred while loading player rankings. Please try again later.",
+        );
       } else {
-        throw new Error(`Failed to load player rankings: ${res.status} ${res.statusText}`);
+        throw new Error(
+          `Failed to load player rankings: ${res.status} ${res.statusText}`,
+        );
       }
     }
     const data = await res.json();
@@ -188,7 +194,6 @@ class PlayerLeaderboardClient {
       rows.appendChild(row);
     });
 
-
     // pagination
     const paginationContainer = this.container.querySelector(
       ".pagination-container",
@@ -231,7 +236,6 @@ class PlayerLeaderboardClient {
       }
     });
   }
-
 
   private async load(page: number, opts: { preserveScroll?: boolean } = {}) {
     const prevScrollY = window.scrollY;

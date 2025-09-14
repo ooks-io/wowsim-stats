@@ -5,14 +5,16 @@ type Formatters = {
 };
 
 export function renderRankingsMetadataHTML(metadata: any, fmt: Formatters) {
-  const simulationDate = metadata.timestamp ? fmt.formatSimulationDate(metadata.timestamp) : '';
+  const simulationDate = metadata.timestamp
+    ? fmt.formatSimulationDate(metadata.timestamp)
+    : "";
   return `
     <div class="card">
       <h3 class="card-title">DPS Rankings Details</h3>
       <div class="info-grid">
         <div class="info-item"><span class="info-label">Simulation Type</span><span class="info-value">DPS Rankings</span></div>
         <div class="info-item"><span class="info-label">Iterations</span><span class="info-value">${metadata.iterations?.toLocaleString?.() || metadata.iterations}</span></div>
-        <div class="info-item"><span class="info-label">Specs Tested</span><span class="info-value">${metadata.specCount ?? ''}</span></div>
+        <div class="info-item"><span class="info-label">Specs Tested</span><span class="info-value">${metadata.specCount ?? ""}</span></div>
         <div class="info-item"><span class="info-label">Encounter Duration</span><span class="info-value">${fmt.formatDuration(metadata.encounterDuration)}</span></div>
         <div class="info-item"><span class="info-label">Duration Variation</span><span class="info-value">±${metadata.encounterVariation}s</span></div>
         <div class="info-item"><span class="info-label">Target Count</span><span class="info-value">${metadata.targetCount}</span></div>
@@ -31,9 +33,19 @@ export function renderRankingsMetadataHTML(metadata: any, fmt: Formatters) {
     </div>`;
 }
 
-export function renderComparisonMetadataHTML(metadata: any, currentClass: string, currentSpec: string, label: 'Race'|'Trinket', fmt: Formatters) {
-  const simulationDate = metadata.timestamp ? fmt.formatSimulationDate(metadata.timestamp) : '';
-  const itemCount = metadata?.itemsTested ?? (metadata?.results ? Object.keys(metadata.results).length : '');
+export function renderComparisonMetadataHTML(
+  metadata: any,
+  currentClass: string,
+  currentSpec: string,
+  label: "Race" | "Trinket",
+  fmt: Formatters,
+) {
+  const simulationDate = metadata.timestamp
+    ? fmt.formatSimulationDate(metadata.timestamp)
+    : "";
+  const itemCount =
+    metadata?.itemsTested ??
+    (metadata?.results ? Object.keys(metadata.results).length : "");
   return `
     <div class="card">
       <h3 class="card-title">${label} Comparison Details</h3>

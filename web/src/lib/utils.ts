@@ -77,7 +77,9 @@ export function formatRaidBuffs(
     .filter(([_, value]) => value !== false && value !== 0)
     .map(([key, value]) => {
       const name = normalize(key);
-      return typeof value === "number" && value > 1 ? `${name} (${value})` : name;
+      return typeof value === "number" && value > 1
+        ? `${name} (${value})`
+        : name;
     });
   return activeBuffs.join(", ");
 }
@@ -93,9 +95,7 @@ export function formatRace(race: string): string {
   // Normalize extra whitespace
   s = s.replace(/\s+/g, " ").trim();
   // Title case each word
-  s = s
-    .toLowerCase()
-    .replace(/\b\w/g, (l) => l.toUpperCase());
+  s = s.toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
   return s;
 }
 

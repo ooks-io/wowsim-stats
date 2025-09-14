@@ -1,7 +1,17 @@
-import { formatDurationFromMs, buildStaticPlayerProfilePath, formatDurationMMSS } from "../lib/utils";
+import {
+  formatDurationFromMs,
+  buildStaticPlayerProfilePath,
+  formatDurationMMSS,
+} from "../lib/utils";
 import { formatRankingWithBracket as formatRank } from "../lib/client-utils.ts";
 import { renderBestRunsWithWrapper } from "../lib/bestRunsRenderer";
-import { getOrderedEquipment, processEquipmentEnchantments, getZamimgIconUrl, getWowheadUrl, getQualityColorClass } from "../lib/equipment-utils";
+import {
+  getOrderedEquipment,
+  processEquipmentEnchantments,
+  getZamimgIconUrl,
+  getWowheadUrl,
+  getQualityColorClass,
+} from "../lib/equipment-utils";
 import "./best-runs-decorate";
 
 interface PlayerData {
@@ -56,11 +66,13 @@ class PlayerProfileManager {
   }
 
   private showDebugInfo() {
-    const debugContainer = this.container.querySelector(".debug-info") as HTMLElement;
+    const debugContainer = this.container.querySelector(
+      ".debug-info",
+    ) as HTMLElement;
     if (debugContainer) {
       debugContainer.style.display = "block";
       debugContainer.innerHTML = this.debugInfo
-        .map(info => `<div>${info}</div>`)
+        .map((info) => `<div>${info}</div>`)
         .join("");
     }
   }
@@ -68,13 +80,19 @@ class PlayerProfileManager {
   private async loadPlayerProfile() {
     try {
       this.showLoading();
-      this.addDebugInfo(`Loading player: ${this.region}/${this.realmSlug}/${this.playerName}`);
+      this.addDebugInfo(
+        `Loading player: ${this.region}/${this.realmSlug}/${this.playerName}`,
+      );
 
-      const staticPath = buildStaticPlayerProfilePath(this.region, this.realmSlug, this.playerName);
+      const staticPath = buildStaticPlayerProfilePath(
+        this.region,
+        this.realmSlug,
+        this.playerName,
+      );
       this.addDebugInfo(`Fetching: ${staticPath}`);
 
       console.log("[INFO] Fetching player data from:", staticPath);
-      
+
       const response = await fetch(staticPath);
       this.addDebugInfo(`Response status: ${response.status}`);
 
@@ -82,18 +100,22 @@ class PlayerProfileManager {
 
       if (!response.ok) {
         if (response.status === 404) {
-          throw new Error(`Player "${this.playerName}" not found. Only players with complete coverage (9/9 recorded dungeons) are included.`);
+          throw new Error(
+            `Player "${this.playerName}" not found. Only players with complete coverage (9/9 recorded dungeons) are included.`,
+          );
         } else {
           const errorText = await response.text();
           this.addDebugInfo(`Error response: ${errorText.substring(0, 100)}`);
-          throw new Error(`Failed to load player data: ${response.status} ${response.statusText}`);
+          throw new Error(
+            `Failed to load player data: ${response.status} ${response.statusText}`,
+          );
         }
       }
 
       const data: PlayerData = await response.json();
       console.log("[INFO] Player data loaded successfully:", data);
       this.addDebugInfo("Data loaded successfully");
-      
+
       this.renderPlayerProfile(data);
       this.showContent();
     } catch (error: any) {
@@ -110,8 +132,10 @@ class PlayerProfileManager {
     // Handle both possible field names and log the data structure for debugging
     console.log("[INFO] Player data structure:", data);
     const player: any = (data as any).Player || (data as any).player;
-    const equipment: Record<string, any> = (data as any).Equipment || (data as any).equipment || {};
-    const bestRuns: Record<string, any> = (data as any).BestRuns || (data as any).bestRuns || {};
+    const equipment: Record<string, any> =
+      (data as any).Equipment || (data as any).equipment || {};
+    const bestRuns: Record<string, any> =
+      (data as any).BestRuns || (data as any).bestRuns || {};
 
     if (!player) {
       console.error("[ERROR] No player data found in response:", data);
@@ -125,7 +149,9 @@ class PlayerProfileManager {
 
     // Build header markup matching PlayerHeader styles
     const avatar = player.avatar_url ? `${player.avatar_url}` : "";
-    const combined = player.combined_best_time ? formatDurationMMSS(player.combined_best_time) : "-";
+    const combined = player.combined_best_time
+      ? formatDurationMMSS(player.combined_best_time)
+      : "-";
     const guild = player.guild_name ? `&lt;${player.guild_name}&gt;` : "";
     const globalRank = player.global_ranking;
     const regRank = player.regional_ranking;
@@ -147,7 +173,7 @@ class PlayerProfileManager {
         </div>
         <div class="combined-time-column">
           <div class="stat-label">Combined Time</div>
-          <div class="stat-value combined-time-value ${globalBracket ? `bracket-${globalBracket}` : ''}">${combined}</div>
+          <div class="stat-value combined-time-value ${globalBracket ? `bracket-${globalBracket}` : ""}">${combined}</div>
         </div>
         <div class="ranking-column">
           <div class="stat-label">Global Rank</div>
@@ -172,7 +198,12 @@ class PlayerProfileManager {
     const equipmentHTML = this.renderEquipmentCompact(equipment);
 
     // Build best runs table using shared renderer for consistent markup/styles
-    const bestRunsHTML = renderBestRunsWithWrapper(bestRuns, { showSectionWrapper: true }, player.region, player.realm_slug);
+    const bestRunsHTML = renderBestRunsWithWrapper(
+      bestRuns,
+      { showSectionWrapper: true },
+      player.region,
+      player.realm_slug,
+    );
 
     const profileHTML = `${headerHTML}${equipmentHTML}${bestRunsHTML}`;
     (contentContainer as HTMLElement).innerHTML = profileHTML;
@@ -180,7 +211,9 @@ class PlayerProfileManager {
     // Decorate best runs (spec icons and colors) if helper is available
     const decorate = (window as any).__decorateBestRuns;
     if (typeof decorate === "function") {
-      try { decorate(contentContainer as HTMLElement); } catch {}
+      try {
+        decorate(contentContainer as HTMLElement);
+      } catch {}
     }
   }
 
@@ -214,21 +247,32 @@ class PlayerProfileManager {
         const itemId = item.item_id || item.id;
         const href = itemId ? getWowheadUrl(itemId) : undefined;
         const title = item.item_name || item.name || "Item";
-        const gems = (item.enchantments || []).filter((e: any) => e.gem_icon_slug);
+        const gems = (item.enchantments || []).filter(
+          (e: any) => e.gem_icon_slug,
+        );
 
         return `
           <a ${href ? `href="${href}"` : ""} class="equip-icon-wrap ${qualityClass}" title="${title}" target="_blank" rel="noopener noreferrer">
             <div class="equip-icon-inner">
               ${iconUrl ? `<img class="equip-icon" src="${iconUrl}" alt="${title}" loading="lazy" />` : `<div class="equip-icon placeholder" aria-label="${title}"></div>`}
-              ${gems && gems.length > 0 ? `
+              ${
+                gems && gems.length > 0
+                  ? `
                 <div class="gem-stack" aria-hidden="true">
-                  ${gems.slice(0, 3).map((g: any) => {
-                    const gUrl = g.gem_icon_slug ? getZamimgIconUrl(g.gem_icon_slug, "small") : "";
-                    const gAlt = g.gem_name || g.display_string || "Gem";
-                    return `<img class=\"gem-badge\" src=\"${gUrl}\" alt=\"${gAlt}\" title=\"${gAlt}\" />`;
-                  }).join("")}
+                  ${gems
+                    .slice(0, 3)
+                    .map((g: any) => {
+                      const gUrl = g.gem_icon_slug
+                        ? getZamimgIconUrl(g.gem_icon_slug, "small")
+                        : "";
+                      const gAlt = g.gem_name || g.display_string || "Gem";
+                      return `<img class=\"gem-badge\" src=\"${gUrl}\" alt=\"${gAlt}\" title=\"${gAlt}\" />`;
+                    })
+                    .join("")}
                 </div>
-              ` : ""}
+              `
+                  : ""
+              }
             </div>
           </a>
         `;
@@ -272,7 +316,7 @@ class PlayerProfileManager {
 
   private hideAll() {
     const states = ["#profile-loading", "#profile-error", "#profile-content"];
-    states.forEach(selector => {
+    states.forEach((selector) => {
       const el = this.container.querySelector(selector);
       if (el) (el as HTMLElement).style.display = "none";
     });
