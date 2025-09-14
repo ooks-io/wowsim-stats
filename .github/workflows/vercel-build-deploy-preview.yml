@@ -49,7 +49,7 @@ jobs:
 
       - name: Build API
         run: |
-          nix develop -c ookstats build \
+          nix run . build -- \
             --out web/public \
             --from-scratch \
             --regions us,eu,kr \
