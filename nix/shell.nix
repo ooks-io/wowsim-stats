@@ -2,16 +2,20 @@
   perSystem = {
     pkgs,
     inputs',
+    config,
     ...
   }: {
-    devShells.default = pkgs.mkShellNoCC {
+    devShells.default = pkgs.mkShell {
       name = "project devshell";
       packages = builtins.attrValues {
         inherit
           (inputs'.wowsims.packages)
           wowsimcli
           ;
-        inherit (pkgs) nodejs just;
+        inherit (pkgs) nodejs just sqlite turso-cli go gcc pkg-config sqld yarn;
+        inherit (pkgs.python3Packages) python requests;
+        inherit (config.packages) ookstats;
+        inherit (pkgs.nodePackages) vercel;
       };
     };
   };

@@ -214,7 +214,7 @@
         statNames[reforge.s1 as keyof typeof statNames] || reforge.s1;
       const toStat =
         statNames[reforge.s2 as keyof typeof statNames] || reforge.s2;
-      return ` [${fromStat} → ${toStat}]`;
+      return ` [${fromStat} -> ${toStat}]`;
     },
 
     // Generate Wowhead URL for items
@@ -261,7 +261,7 @@
           const toStat =
             statNames[reforge.s2 as keyof typeof statNames] || reforge.s2;
           details.push(
-            `<div class="item-reforge">Reforged ${fromStat} → ${toStat}</div>`,
+            `<div class="item-reforge">Reforged ${fromStat} -> ${toStat}</div>`,
           );
         }
       }

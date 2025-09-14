@@ -1,0 +1,88 @@
+---
+import SimulationLayout from "../../layouts/SimulationLayout.astro";
+import LoadingState from "../../components/LoadingState.astro";
+import SimulationControls from "../../components/SimulationControls.astro";
+import Callout from "../../components/Callout.astro";
+---
+
+<SimulationLayout title="Simulations" description="Benchmarks and comparisons">
+  <nav class="leaderboard-nav">
+    <div class="nav-tabs">
+      <button class="nav-tab" data-mode="benchmark">Benchmarks</button>
+      <button class="nav-tab active" data-mode="comparison">Comparisons</button>
+    </div>
+  </nav>
+
+  <SimulationControls mode="comparison" />
+  <div id="loading" class="hidden">
+    <LoadingState mode="overlay" message="Loading comparison data..." />
+  </div>
+  <div id="error" class="hidden">
+    <LoadingState type="error" mode="overlay" />
+  </div>
+  <div id="trinket-callout" class="hidden">
+    <Callout type="note">
+      <p>
+        <em>Trinket rankings are still a work-in-progress.</em>
+      </p>
+      <p><strong>Current Implementation</strong>:</p>
+      <p>
+        We take the selected phase's bis profile gearset, remove the trinkets,
+        and simulate to get the <strong>baseline</strong> result. We then generate
+        a gearset for each trinket and compare the results against the baseline.
+      </p>
+      <p>
+        This implementation comes with some caveats that can scew the results:
+      </p>
+      <ul>
+        <li>
+          We <strong>don't</strong> re-reforge the gearset for every trinket
+        </li>
+        <li>
+          Ideally every trinket would come with it's own optimized gearset
+        </li>
+        <li>
+          This is simulating the trinkets <strong>individually</strong>, not in
+          pairs
+        </li>
+        <li>
+          Like all other simulations, keep in mind WoWSims is still in
+          <strong>alpha</strong> so not all spec/trinket implementations are complete
+        </li>
+      </ul>
+      <p>
+        With all that in mind, you should only consider this list as a
+        <em>rough approximation</em> of the value of each individual trinket.
+      </p>
+      <p>
+        In the future we will reforge the gearset for each trinket to get a more
+        accurate value.
+      </p>
+    </Callout>
+  </div>
+  <div id="metadata-container"></div>
+  <div id="chart-container" class="card"></div>
+
+  <!-- Use processed TS module so Astro bundles for prod -->
+  <script src="../../client/simulation-comparison.ts"></script>
+
+  <script is:inline>
+    (function () {
+      // Mode tabs
+      var tabs = document.querySelectorAll(".nav-tabs .nav-tab");
+      function goto(mode) {
+        var url = new URL(window.location.href);
+        var qs = url.search;
+        if (mode === "benchmark")
+          window.location.assign("/simulation/benchmark" + qs);
+      }
+      tabs.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          var el = e.currentTarget || e.target;
+          var m = el && el.dataset ? el.dataset.mode : null;
+          if (m) goto(m);
+        });
+      });
+    })();
+  </script>
+</SimulationLayout>

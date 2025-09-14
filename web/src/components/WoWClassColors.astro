@@ -1,17 +1,25 @@
 ---
-
+import {
+  SPEC_MAP,
+  SPEC_ICON_MAP,
+  getClassColor,
+  getSpecInfo,
+  getSpecIcon,
+  createPlayerElement,
+} from "../lib/wow-constants.ts";
 ---
 
-<script type="module" is:inline>
-  import {
+<script
+  is:inline
+  define:vars={{
     SPEC_MAP,
     SPEC_ICON_MAP,
     getClassColor,
     getSpecInfo,
     getSpecIcon,
     createPlayerElement,
-  } from "/scripts/wow-constants.js";
-
+  }}
+>
   window.WoW = window.WoW || {};
   window.WoW.specMap = SPEC_MAP;
   window.WoW.specIconMap = SPEC_ICON_MAP;

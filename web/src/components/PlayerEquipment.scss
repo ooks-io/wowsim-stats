@@ -1,0 +1,165 @@
+/* ========================================
+ * PLAYER EQUIPMENT COMPONENT STYLES
+ * ========================================*/
+
+.player-equipment {
+  width: 100%;
+}
+
+.equipment-section {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+}
+
+.equipment-title {
+  color: var(--highlight-color);
+  margin: 0 0 20px 0;
+  font-size: 1.3em;
+  font-weight: 600;
+}
+
+/* Compact icon-only layout */
+.equipment-compact {
+  width: 100%;
+}
+
+.equipment-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+  grid-auto-rows: 44px;
+  gap: 16px; /* extra space so gem badges can sit just to the right */
+}
+
+.equip-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+  overflow: visible; /* allow gem badges to overflow to the right */
+  background: rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  position: relative;
+}
+
+.equip-icon-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.equip-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  display: block;
+}
+
+.equip-icon.placeholder {
+  width: 44px;
+  height: 44px;
+  background: var(--bg-primary);
+}
+
+/* Map quality classes to border colors */
+.equip-icon-wrap.quality-poor {
+  border-color: #9d9d9d;
+}
+.equip-icon-wrap.quality-common {
+  border-color: #ffffff;
+}
+.equip-icon-wrap.quality-uncommon {
+  border-color: #1eff00;
+}
+.equip-icon-wrap.quality-rare {
+  border-color: #0070dd;
+}
+.equip-icon-wrap.quality-epic {
+  border-color: #a335ee;
+}
+.equip-icon-wrap.quality-legendary {
+  border-color: #ff8000;
+}
+.equip-icon-wrap.quality-artifact {
+  border-color: #e6cc80;
+}
+.equip-icon-wrap.quality-heirloom {
+  border-color: #00ccff;
+}
+
+/* Gem badges attached on the right */
+.gem-stack {
+  position: absolute;
+  right: -8px; /* outside the icon, visually attached */
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 2;
+}
+
+.gem-badge {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Loading and Error States */
+.equipment-loading,
+.equipment-error,
+.no-equipment {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.equipment-error {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.2);
+}
+
+.equipment-loading {
+  color: var(--highlight-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .equipment-section {
+    padding: 16px;
+  }
+
+  .equipment-title {
+    font-size: 1.1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .equipment-slot {
+    padding: 8px;
+  }
+
+  .equipment-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .equipment-item-link {
+    font-size: 13px;
+  }
+}

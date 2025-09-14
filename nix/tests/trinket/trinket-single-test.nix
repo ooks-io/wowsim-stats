@@ -42,7 +42,7 @@ in
       trinket_result=$(nix build --no-link --print-out-paths ${trinketTest.simulations.${testTrinketName}})
 
       if [ -f "$trinket_result" ]; then
-        echo "✅ Trinket simulation completed successfully!"
+        echo "[OK] Trinket simulation completed successfully!"
         echo ""
 
         echo "=== Trinket Results ==="
@@ -67,11 +67,11 @@ in
         jq -r '.loadout.equipment.items[13]' "$trinket_result"
 
         echo ""
-        echo "✅ Single trinket test completed!"
+        echo "[OK] Single trinket test completed!"
         echo ""
         echo "Next: Run 'nix run .#trinket-comparison-test' to test the full comparison with aggregation"
       else
-        echo "❌ Trinket simulation failed!"
+        echo "[ERROR] Trinket simulation failed!"
         exit 1
       fi
     '';
