@@ -370,10 +370,11 @@ func loadAllBestRuns(db *sql.DB, playerIDs []int64) (map[int64][]BestRunData, []
                    WHEN realm_rankings.realm_ranking = 1 THEN 'artifact'
                    ELSE 
                        CASE 
-                           WHEN (CAST(realm_rankings.total_in_realm_dungeon - realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-                           WHEN (CAST(realm_rankings.total_in_realm_dungeon - realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-                           WHEN (CAST(realm_rankings.total_in_realm_dungeon - realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-                           WHEN (CAST(realm_rankings.total_in_realm_dungeon - realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
                            ELSE 'common'
                        END
                END as realm_percentile_bracket

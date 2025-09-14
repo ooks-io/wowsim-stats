@@ -209,25 +209,29 @@ func computeGlobalRankings(tx *sql.Tx) error {
 		UPDATE run_rankings 
 		SET percentile_bracket = (
 			CASE 
-				WHEN counts.ranking = 1 THEN 'artifact'
+				WHEN counts.duration = counts.min_duration THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
 		)
 		FROM (
 			SELECT 
-				run_id,
-				dungeon_id,
-				ranking,
-				COUNT(*) OVER (PARTITION BY dungeon_id) as total_in_dungeon
-			FROM run_rankings 
-			WHERE ranking_type = 'global' AND ranking_scope = 'all'
+				rr.run_id,
+				rr.dungeon_id,
+				rr.ranking,
+				cr.duration,
+				MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id) as min_duration,
+				COUNT(*) OVER (PARTITION BY rr.dungeon_id) as total_in_dungeon
+			FROM run_rankings rr
+			INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+			WHERE rr.ranking_type = 'global' AND rr.ranking_scope = 'all'
 		) counts
 		WHERE run_rankings.run_id = counts.run_id 
 		AND run_rankings.dungeon_id = counts.dungeon_id
@@ -300,25 +304,29 @@ func computeGlobalRankings(tx *sql.Tx) error {
 		UPDATE run_rankings 
 		SET percentile_bracket = (
 			CASE 
-				WHEN counts.ranking = 1 THEN 'artifact'
+				WHEN counts.duration = counts.min_duration THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.total_in_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
 		)
 		FROM (
 			SELECT 
-				run_id,
-				dungeon_id,
-				ranking,
-				COUNT(*) OVER (PARTITION BY dungeon_id) as total_in_dungeon
-			FROM run_rankings 
-			WHERE ranking_type = 'global' AND ranking_scope = 'filtered'
+				rr.run_id,
+				rr.dungeon_id,
+				rr.ranking,
+				cr.duration,
+				MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id) as min_duration,
+				COUNT(*) OVER (PARTITION BY rr.dungeon_id) as total_in_dungeon
+			FROM run_rankings rr
+			INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+			WHERE rr.ranking_type = 'global' AND rr.ranking_scope = 'filtered'
 		) counts
 		WHERE run_rankings.run_id = counts.run_id 
 		AND run_rankings.dungeon_id = counts.dungeon_id
@@ -386,25 +394,29 @@ func computeRegionalRankings(tx *sql.Tx) error {
 			UPDATE run_rankings 
 			SET percentile_bracket = (
 				CASE 
-					WHEN counts.ranking = 1 THEN 'artifact'
+					WHEN counts.duration = counts.min_duration THEN 'artifact'
 					ELSE 
 						CASE 
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 							ELSE 'common'
 						END
 				END
 			)
 			FROM (
 				SELECT 
-					run_id,
-					dungeon_id,
-					ranking,
-					COUNT(*) OVER (PARTITION BY dungeon_id, ranking_scope) as total_in_region_dungeon
-				FROM run_rankings 
-				WHERE ranking_type = 'regional' AND ranking_scope = ?
+					rr.run_id,
+					rr.dungeon_id,
+					rr.ranking,
+					cr.duration,
+					MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as min_duration,
+					COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as total_in_region_dungeon
+				FROM run_rankings rr
+				INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+				WHERE rr.ranking_type = 'regional' AND rr.ranking_scope = ?
 			) counts
 			WHERE run_rankings.run_id = counts.run_id 
 			AND run_rankings.dungeon_id = counts.dungeon_id
@@ -481,25 +493,29 @@ func computeRegionalRankings(tx *sql.Tx) error {
 			UPDATE run_rankings 
 			SET percentile_bracket = (
 				CASE 
-					WHEN counts.ranking = 1 THEN 'artifact'
+					WHEN counts.duration = counts.min_duration THEN 'artifact'
 					ELSE 
 						CASE 
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-							WHEN (CAST(counts.total_in_region_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_region_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 							ELSE 'common'
 						END
 				END
 			)
 			FROM (
 				SELECT 
-					run_id,
-					dungeon_id,
-					ranking,
-					COUNT(*) OVER (PARTITION BY dungeon_id, ranking_scope) as total_in_region_dungeon
-				FROM run_rankings 
-				WHERE ranking_type = 'regional' AND ranking_scope = ?
+					rr.run_id,
+					rr.dungeon_id,
+					rr.ranking,
+					cr.duration,
+					MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as min_duration,
+					COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as total_in_region_dungeon
+				FROM run_rankings rr
+				INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+				WHERE rr.ranking_type = 'regional' AND rr.ranking_scope = ?
 			) counts
 			WHERE run_rankings.run_id = counts.run_id 
 			AND run_rankings.dungeon_id = counts.dungeon_id
@@ -626,26 +642,30 @@ func computeRealmRankings(tx *sql.Tx) error {
 		UPDATE run_rankings 
 		SET percentile_bracket = (
 			CASE 
-				WHEN counts.ranking = 1 THEN 'artifact'
+				WHEN counts.duration = counts.min_duration THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
 		)
 		FROM (
 			SELECT 
-				run_id,
-				dungeon_id,
-				ranking_scope,
-				ranking,
-				COUNT(*) OVER (PARTITION BY dungeon_id, ranking_scope) as total_in_realm_dungeon
-			FROM run_rankings 
-			WHERE ranking_type = 'realm' AND ranking_scope NOT LIKE '%_filtered'
+				rr.run_id,
+				rr.dungeon_id,
+				rr.ranking_scope,
+				rr.ranking,
+				cr.duration,
+				MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as min_duration,
+				COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as total_in_realm_dungeon
+			FROM run_rankings rr
+			INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+			WHERE rr.ranking_type = 'realm' AND rr.ranking_scope NOT LIKE '%_filtered'
 		) counts
 		WHERE run_rankings.run_id = counts.run_id 
 		AND run_rankings.dungeon_id = counts.dungeon_id
@@ -662,26 +682,30 @@ func computeRealmRankings(tx *sql.Tx) error {
 		UPDATE run_rankings 
 		SET percentile_bracket = (
 			CASE 
-				WHEN counts.ranking = 1 THEN 'artifact'
+				WHEN counts.duration = counts.min_duration THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.total_in_realm_dungeon - counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_realm_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
 		)
 		FROM (
 			SELECT 
-				run_id,
-				dungeon_id,
-				ranking_scope,
-				ranking,
-				COUNT(*) OVER (PARTITION BY dungeon_id, ranking_scope) as total_in_realm_dungeon
-			FROM run_rankings 
-			WHERE ranking_type = 'realm' AND ranking_scope LIKE '%_filtered'
+				rr.run_id,
+				rr.dungeon_id,
+				rr.ranking_scope,
+				rr.ranking,
+				cr.duration,
+				MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as min_duration,
+				COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.ranking_scope) as total_in_realm_dungeon
+			FROM run_rankings rr
+			INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+			WHERE rr.ranking_type = 'realm' AND rr.ranking_scope LIKE '%_filtered'
 		) counts
 		WHERE run_rankings.run_id = counts.run_id 
 		AND run_rankings.dungeon_id = counts.dungeon_id
@@ -884,19 +908,20 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		UPDATE player_profiles 
 		SET global_ranking_bracket = (
 			CASE 
-				WHEN player_profiles.global_ranking = 1 THEN 'artifact'
+				WHEN player_profiles.combined_best_time = (SELECT MIN(combined_best_time) FROM player_profiles WHERE has_complete_coverage = 1) THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(? - player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(? - player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(? - player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(? - player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(player_profiles.global_ranking AS REAL) / CAST(? AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
 		)
 		WHERE has_complete_coverage = 1 AND global_ranking IS NOT NULL
-	`, qualifiedCount, qualifiedCount, qualifiedCount, qualifiedCount, qualifiedCount, qualifiedCount)
+	`, qualifiedCount, qualifiedCount, qualifiedCount, qualifiedCount, qualifiedCount)
 	if err != nil {
 		return 0, err
 	}
@@ -940,13 +965,14 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		UPDATE player_profiles 
 		SET regional_ranking_bracket = (
 			CASE 
-				WHEN counts.regional_ranking = 1 THEN 'artifact'
+				WHEN counts.combined_best_time = counts.regional_min_time THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.regional_total - counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.regional_total - counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.regional_total - counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.regional_total - counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.regional_ranking AS REAL) / CAST(counts.regional_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
@@ -955,6 +981,8 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			SELECT 
 				pp.player_id,
 				pp.regional_ranking,
+				pp.combined_best_time,
+				MIN(pp.combined_best_time) OVER (PARTITION BY r.region) as regional_min_time,
 				COUNT(*) OVER (PARTITION BY r.region) as regional_total
 			FROM player_profiles pp
 			INNER JOIN realms r ON pp.realm_id = r.id
@@ -1005,13 +1033,14 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		UPDATE player_profiles 
 		SET realm_ranking_bracket = (
 			CASE 
-				WHEN counts.realm_ranking = 1 THEN 'artifact'
+				WHEN counts.combined_best_time = counts.realm_min_time THEN 'artifact'
 				ELSE 
 					CASE 
-						WHEN (CAST(counts.realm_total - counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) >= 95.0 THEN 'legendary'
-						WHEN (CAST(counts.realm_total - counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) >= 80.0 THEN 'epic'  
-						WHEN (CAST(counts.realm_total - counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) >= 60.0 THEN 'rare'
-						WHEN (CAST(counts.realm_total - counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) >= 40.0 THEN 'uncommon'
+						WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 20.0 THEN 'epic'  
+						WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
 						ELSE 'common'
 					END
 			END
@@ -1020,6 +1049,9 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			SELECT 
 				player_id,
 				realm_ranking,
+				combined_best_time,
+				realm_id,
+				MIN(combined_best_time) OVER (PARTITION BY realm_id) as realm_min_time,
 				COUNT(*) OVER (PARTITION BY realm_id) as realm_total
 			FROM player_profiles
 			WHERE has_complete_coverage = 1 AND realm_ranking IS NOT NULL

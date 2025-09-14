@@ -1,6 +1,7 @@
 // WoW item quality colors for percentile brackets (CSS variables)
 export const BRACKET_COLORS = {
   artifact: "var(--bracket-artifact)", // Artifact (orange/gold)
+  excellent: "var(--bracket-excellent)", // Excellent (pink)
   legendary: "var(--bracket-legendary)", // Legendary (orange)
   epic: "var(--bracket-epic)", // Epic (purple)
   rare: "var(--bracket-rare)", // Rare (blue)
@@ -34,9 +35,9 @@ export function getBracketClass(bracket: string | null | undefined): string {
   return `bracket-${bracket}`;
 }
 
-// Check if bracket is high tier (legendary or artifact)
+// Check if bracket is high tier (excellent, legendary or artifact)
 export function isHighTierBracket(bracket: string | null | undefined): boolean {
-  return bracket === "legendary" || bracket === "artifact";
+  return bracket === "artifact" || bracket === "excellent" || bracket === "legendary";
 }
 
 // Get bracket rank priority (lower number = higher priority)
@@ -44,16 +45,18 @@ export function getBracketPriority(bracket: string | null | undefined): number {
   switch (bracket) {
     case "artifact":
       return 1;
-    case "legendary":
+    case "excellent":
       return 2;
-    case "epic":
+    case "legendary":
       return 3;
-    case "rare":
+    case "epic":
       return 4;
-    case "uncommon":
+    case "rare":
       return 5;
+    case "uncommon":
+      return 6;
     case "common":
     default:
-      return 6;
+      return 7;
   }
 }

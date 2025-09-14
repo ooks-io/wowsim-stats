@@ -41,6 +41,7 @@
 
   /* Bracket Colors (using item quality colors) */
   --bracket-artifact: var(--quality-artifact);
+  --bracket-excellent: #e268a8;
   --bracket-legendary: var(--quality-legendary);
   --bracket-epic: var(--quality-epic);
   --bracket-rare: var(--quality-rare);
@@ -278,6 +279,9 @@ a:hover {
 .bracket-artifact {
   color: var(--bracket-artifact);
 }
+.bracket-excellent {
+  color: var(--bracket-excellent);
+}
 .bracket-legendary {
   color: var(--bracket-legendary);
 }
@@ -308,6 +312,11 @@ a:hover {
 .bracket-badge.bracket-artifact {
   background-color: rgba(230, 204, 128, 0.15);
   border: 1px solid var(--bracket-artifact);
+}
+
+.bracket-badge.bracket-excellent {
+  background-color: rgba(226, 104, 168, 0.15);
+  border: 1px solid var(--bracket-excellent);
 }
 
 .bracket-badge.bracket-legendary {
@@ -342,6 +351,9 @@ a:hover {
 
 .ranking-number.bracket-artifact {
   color: var(--bracket-artifact);
+}
+.ranking-number.bracket-excellent {
+  color: var(--bracket-excellent);
 }
 .ranking-number.bracket-legendary {
   color: var(--bracket-legendary);

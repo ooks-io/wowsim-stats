@@ -20,16 +20,16 @@
 
       # Test with one realm - EU Argent Dawn (connected realm 4477)
       TEST_REALM = {
-          "id": 4476,
-          "name": "Gehennas",
-          "region": "eu"
+          "id": 4669,
+          "name": "Arugal",
+          "region": "us"
       }
 
       # Test single dungeon for detailed analysis
-      TEST_DUNGEON = {"id": 2, "name": "Gate"}  # Change this to test different dungeons
+      TEST_DUNGEON = {"id": 77, "name": "Halls"}  # Change this to test different dungeons
 
       API_TOKEN = os.getenv("BLIZZARD_API_TOKEN")
-      PERIOD_RANGE = range(1000, 1029)  # Test periods 1-1027
+      PERIOD_RANGE = range(1023, 1029)  # Test periods 1-1027
       MAX_CONCURRENT = 75  # 75 concurrent requests per batch
       BATCH_SIZE = 75  # 75 requests per batch
 
