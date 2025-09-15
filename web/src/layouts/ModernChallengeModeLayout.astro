@@ -22,12 +22,12 @@ const {
   initialDungeon = "2",
 } = Astro.props;
 
-// Don't load initial data - let the user make selections first
+// let the user make selections first
 let initialData: any = undefined;
 let pageTitle = "Challenge Mode Leaderboards";
 let dungeonName = "";
 
-// Only load initial data if we have meaningful URL parameters
+// load initial data if we have meaningful URL parameters
 if (
   initialLeaderboardType === "dungeon" &&
   initialRegion &&
@@ -40,7 +40,7 @@ if (
     dungeonName = getDungeonName(parseInt(initialDungeon));
     pageTitle = `${dungeonName} - ${initialRegion === "global" ? "Global" : initialRegion.toUpperCase()} Leaderboard`;
 
-    // Load initial leaderboard data from static files
+    // load initial leaderboard data from static files
     const staticPath = buildStaticLeaderboardPath(
       initialRegion,
       initialRealm || "all",
@@ -82,10 +82,6 @@ if (
     <header class="challenge-header">
       <div class="header-content">
         <h1 class="page-title">Challenge Mode Leaderboards</h1>
-        <p class="page-subtitle">
-          Compete for the fastest dungeon clear times in Mists of Pandaria
-          Classic
-        </p>
       </div>
     </header>
 
@@ -107,9 +103,7 @@ if (
       </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="challenge-content">
-      <!-- Dungeon Leaderboard Section -->
       <section
         id="dungeon-section"
         class={`content-section ${initialLeaderboardType === "dungeon" ? "active" : "hidden"}`}
@@ -133,7 +127,6 @@ if (
         />
       </section>
 
-      <!-- Player Rankings Section -->
       <section
         id="players-section"
         class={`content-section ${initialLeaderboardType === "players" ? "active" : "hidden"}`}
@@ -142,7 +135,6 @@ if (
           <h2>Player Rankings</h2>
         </div>
 
-        <!-- Player leaderboard re-enabled -->
         <div class="player-leaderboard-wrapper">
           <PlayerLeaderboard />
         </div>
@@ -151,7 +143,7 @@ if (
   </div>
 
   <script type="module">
-    // Tab switching functionality
+    // tab switching functionality
     class LeaderboardTabs {
       constructor() {
         console.log("[INFO] LeaderboardTabs initialized");
@@ -185,7 +177,7 @@ if (
           updateHistory,
         );
 
-        // Update active tab
+        // update active tab
         document.querySelectorAll(".nav-tab").forEach((tab) => {
           const htmlTab = tab;
           const t =
@@ -193,7 +185,7 @@ if (
           htmlTab.classList.toggle("active", t === type);
         });
 
-        // Update active section
+        // update active section
         document.querySelectorAll(".content-section").forEach((section) => {
           const el = section;
           if (el.id === `${type}-section`) {
@@ -207,18 +199,18 @@ if (
           }
         });
 
-        // Update URL only if not responding to browser navigation
+        // update URL only if not responding to browser navigation
         if (updateHistory) {
           if (type === "players") {
-            // Always update to players URL when switching to players tab
+            // always update to players URL when switching to players tab
             const newURL = "/challenge-mode/players";
             console.log("[INFO] Updating URL to players:", newURL);
             window.history.pushState({}, "", newURL);
           } else if (type === "dungeon") {
-            // For dungeon tab, only update if we're on a generic URL
+            // for dungeon tab, only update if we're on a generic URL
             const currentPath = window.location.pathname;
             if (currentPath === "/challenge-mode/players") {
-              // Coming from players tab, go to generic dungeon URL
+              // coming from players tab, go to generic dungeon URL
               const newURL = "/challenge-mode";
               console.log(
                 "[INFO] Updating URL from players to dungeon:",
@@ -226,7 +218,7 @@ if (
               );
               window.history.pushState({}, "", newURL);
             } else {
-              // Preserve specific dungeon URLs (e.g., /challenge-mode/us/arugal/scarlet-monastery)
+              // preserve specific dungeon URLs
               console.log(
                 "[INFO] Preserving specific dungeon URL:",
                 currentPath,
@@ -239,7 +231,7 @@ if (
           );
         }
 
-        // Load content if needed
+        // load content if needed
         this.loadSectionContent(type);
       }
 
@@ -275,7 +267,7 @@ if (
         console.log("[INFO] Loading section content for:", type);
 
         if (type === "players") {
-          // Notify PlayerLeaderboard component that it's now visible
+          // notify PlayerLeaderboard component that it's now visible
           console.log("[INFO] PlayerLeaderboard section is now visible");
 
           const tryRefresh = () => {
@@ -290,7 +282,7 @@ if (
             return false;
           };
 
-          // Attempt immediately; if not ready, try to kick init and wait for ready event
+          // attempt immediately, if not ready, try to kick init and wait for ready event
           if (!tryRefresh()) {
             console.warn(
               "[WARN] PlayerLeaderboard not ready, waiting for event...",
@@ -314,19 +306,19 @@ if (
       }
     }
 
-    // Initialize when DOM is ready
+    // initialize when DOM is ready
     document.addEventListener("DOMContentLoaded", () => {
       new LeaderboardTabs();
     });
   </script>
 
-  <!-- Ensure Player Leaderboard client module is loaded regardless of tab timing -->
+  <!-- ensure Player Leaderboard client module is loaded regardless of tab timing -->
   <script src="../client/player-leaderboard.ts"></script>
-  <script type="module">
-    console.log(
-      "[ModernChallengeLayout] player-leaderboard module import requested",
-    );
-  </script>
+  <!-- <script type="module"> -->
+  <!--   console.log( -->
+  <!--     "[ModernChallengeLayout] player-leaderboard module import requested", -->
+  <!--   ); -->
+  <!-- </script> -->
 
   <style>
     .challenge-mode-layout {

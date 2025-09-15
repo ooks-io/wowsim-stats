@@ -1,16 +1,8 @@
-/* ========================================
- * PLAYER SEARCH COMPONENT STYLES
- * ========================================*/
-
-// Search container and input
 .player-search-island {
   position: relative;
   width: 100%;
 }
 
-.search-container {
-  position: relative;
-}
 
 .search-input-wrapper {
   position: relative;
@@ -58,7 +50,7 @@
   background-color: var(--bg-hover);
 }
 
-// Search results dropdown
+// search results dropdown
 .search-results {
   position: absolute;
   top: 100%;
@@ -96,7 +88,7 @@
   overflow-y: auto;
 }
 
-// Individual search result items
+// individual search result items
 .search-result-item {
   display: flex;
   justify-content: space-between;
@@ -164,7 +156,7 @@
   margin-left: auto;
 }
 
-// No results and other states
+// no results and other states
 .search-no-results {
   padding: 20px 16px;
   text-align: center;
@@ -189,17 +181,18 @@
   font-weight: normal;
 }
 
-// Animations
+// animations
 @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
 
-// Custom scrollbar
+// scrollbar
 .search-results-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -217,17 +210,31 @@
   background: var(--text-muted);
 }
 
-// Mobile responsive
+// mobile responsive
 @media (max-width: 768px) {
-  .player-search-island {
-    max-width: 100%;
+  .search-input {
+    padding: 14px 40px 14px 16px;
+    font-size: 1em;
+    min-height: 44px;
+    /* iOS touch target */
   }
 
-  .player-details {
-    font-size: 0.75em;
+  .search-results {
+    max-height: 70vh;
+    /* Prevent covering entire screen */
   }
 
-  .player-ranking {
-    font-size: 0.75em;
+  .search-result-item {
+    padding: 12px;
+  }
+
+  .search-player-identity {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .global-ranking {
+    margin-left: 0;
+    margin-top: 4px;
   }
 }

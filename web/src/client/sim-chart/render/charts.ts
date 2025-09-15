@@ -1,6 +1,7 @@
 import { calculateBarWidth, sortItems, type SortBy } from "../sorting";
 import { generateLoadoutDropdown } from "../loadout";
-import { formatRace as utilFormatRace } from "../../../lib/utils";
+import { formatRace as utilFormatRace, toTitleCase } from "../../../lib/utils";
+import { getSpecIcon } from "../../../lib/client-utils";
 
 type Item = {
   label: string;
@@ -11,6 +12,8 @@ type Item = {
   percent?: number;
   color?: string;
   loadout?: any;
+  className?: string;
+  specName?: string;
 };
 
 export function renderRankingsChartHTML(
@@ -35,6 +38,8 @@ export function renderRankingsChartHTML(
         stdev: specData.stdev,
         color: barColor,
         loadout: specData.loadout || null,
+        className: String(className),
+        specName: String(specName),
       });
     }
   }
@@ -56,8 +61,20 @@ export function renderRankingsChartHTML(
       const width = calculateBarWidth(mval, max, min).toFixed(1);
       const displayRaw = String(sortBy) === "stdev" ? it.stdev : mval;
       const display = Math.round(displayRaw).toLocaleString();
-      const tooltip = display;
-      const colorStyle = it.color ? `style=\"color: ${it.color};\"` : "";
+      const tooltip = `${it.label}: ${display}`;
+
+      let specIcon = "";
+
+      if (it.className && it.specName) {
+        const properClassName = toTitleCase(it.className);
+        const properSpecName = toTitleCase(it.specName);
+
+        const iconUrl = getSpecIcon(properClassName, properSpecName);
+        if (iconUrl) {
+          specIcon = `<img src="${iconUrl}" alt="${properSpecName}" class="spec-icon" style="width: 24px; height: 24px; border-radius: 2px;" />`;
+        }
+      }
+
       const dropdownHtml = generateLoadoutDropdown(it.loadout);
       const hasDropdown = dropdownHtml && dropdownHtml.length > 0;
       return `
@@ -65,8 +82,7 @@ export function renderRankingsChartHTML(
         <div class="chart-item-header" title="${tooltip}">
           <div class="chart-item">
             <div class="chart-labels">
-              <span class="chart-rank">#${idx + 1}</span>
-              <span class="chart-label" ${colorStyle}>${it.label}</span>
+              ${specIcon}
             </div>
             <div class="chart-bar-container">
               <div class="chart-bar-track">
@@ -138,7 +154,7 @@ export function renderComparisonChartHTML(
       iconData,
     });
   }
-  // For races there is no baseline; percent sorting/display isn't meaningful
+
   const effectiveSort: SortBy =
     comparisonType === "race" && String(sortBy) === "percent" ? "dps" : sortBy;
   sortItems(items, effectiveSort);
@@ -194,7 +210,7 @@ export function renderComparisonChartHTML(
       return `
       <div class="chart-item-wrapper" data-index="${idx}">
         <div class="chart-item-header">
-          <div class="chart-item">
+          <div class="chart-item chart-item-comparison">
             <div class="chart-labels">
               <span class="chart-rank">#${idx + 1}</span>
               ${labelContent}

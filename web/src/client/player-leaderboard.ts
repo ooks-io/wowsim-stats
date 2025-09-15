@@ -1,5 +1,3 @@
-// Minimal client module for Player Leaderboard functionality
-
 import { buildPlayerProfileURL } from "../lib/utils.ts";
 import {
   getClassColor,
@@ -76,7 +74,6 @@ class PlayerLeaderboardClient {
     const res = await fetch(url);
     console.log("[PlayerLeaderboard] response:", res.status, res.statusText);
     if (!res.ok) {
-      // Provide user-friendly error messages based on status codes
       if (res.status === 404) {
         throw new Error(
           "Player rankings not found. No players have complete coverage for this scope yet.",
@@ -178,6 +175,8 @@ class PlayerLeaderboardClient {
         player.name,
       );
       row.className = "leaderboard-table-row";
+      row.dataset.rank = `#${rank}`;
+      row.dataset.time = combinedTime;
       row.innerHTML = `
         <div class="leaderboard-cell leaderboard-cell--rank">#${rank}</div>
         <div class="leaderboard-cell leaderboard-cell--time">${combinedTime}</div>
@@ -190,7 +189,21 @@ class PlayerLeaderboardClient {
             ${player.name}
           </a>
         </div>
-        <div class="leaderboard-cell leaderboard-cell--meta">${player.realm_name || player.realm_slug}</div>`;
+        <div class="leaderboard-cell leaderboard-cell--meta">${player.realm_name || player.realm_slug}</div>
+        <div class="mobile-player-info">
+          <div class="mobile-player-spec">
+            <div class="spec-icon-placeholder" data-spec-id="${player.main_spec_id || 0}"></div>
+            <div>
+              <a href="${profileUrl}" class="player-link mobile-player-name" data-class="${player.class_name || ""}"
+                style="color: ${classColor}; text-decoration: none;">
+                ${player.name}
+              </a>
+              <div class="mobile-player-realm">
+                ${player.realm_name || player.realm_slug}
+              </div>
+            </div>
+          </div>
+        </div>`;
       rows.appendChild(row);
     });
 

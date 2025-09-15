@@ -22,38 +22,39 @@ const { title, pageTitle } = Astro.props;
   <body>
     <Navigation />
 
-    <!-- Player Search Bar -->
     <div class="search-section">
       <div class="search-container">
         <PlayerSearch />
       </div>
     </div>
 
-    <div class="page-container">
-      <slot />
-    </div>
+    <slot />
   </body>
 </html>
 
 <style is:global>
-  /* Search Section Styles */
   .search-section {
-    background-color: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 15px 20px;
-  }
-
-  .search-container {
-    width: 100%;
-    max-width: 1200px; /* match page content width */
-    margin: 0 auto;
-    padding: 0 20px; /* align with content padding */
-  }
-
-  /* Make page container wider to match search */
-  .page-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+  }
+
+  .search-container {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .search-section {
+      padding: 15px;
+    }
+
+    .search-container {
+      padding: 16px;
+      margin-bottom: 20px;
+    }
   }
 </style>

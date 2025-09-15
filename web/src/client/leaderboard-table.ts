@@ -83,7 +83,7 @@ class LeaderboardTable {
       } else if (response.status >= 500) {
         throw new Error("Server error occurred. Please try again later.");
       } else {
-        const errorText = await response.text();
+        // const errorText = await response.text();
         throw new Error(
           `Failed to load leaderboard: ${response.status} ${response.statusText}`,
         );
@@ -91,8 +91,6 @@ class LeaderboardTable {
     }
     return response.json();
   }
-
-  // dungeonIdToSlug now provided by shared utils
 
   public async loadLeaderboard(
     newRegion?: string,
@@ -220,14 +218,63 @@ class LeaderboardTable {
         </span>`;
       });
 
+      // Create mobile-friendly team structure
+      const mobileTeamHTML = membersSorted
+        .map((member: any) => {
+          const specId = member.spec_id || member.specialization?.id;
+          const spec = specId ? getSpecInfo(specId) : null;
+          const iconUrl = spec ? getSpecIcon(spec.class, spec.spec) : null;
+          const classColor = spec ? getClassColor(spec.class) : "#FFFFFF";
+
+          const memberRealmSlug =
+            member.realm_slug || member.profile?.realm?.slug;
+          let crossRealmIndicator = "";
+          if (
+            isIndividualRealmView &&
+            memberRealmSlug &&
+            memberRealmSlug !== currentRealm
+          ) {
+            crossRealmIndicator =
+              '<span style="color: #ff6b6b; font-weight: bold; margin-left: 2px;">*</span>';
+          }
+
+          const memberRegion = member.region || "us";
+          const profileUrl = buildPlayerProfileURL(
+            memberRegion,
+            memberRealmSlug,
+            member.name,
+          );
+
+          return `
+          <div class="mobile-team-member">
+            ${iconUrl && spec ? `<img src="${iconUrl}" alt="${spec.spec} ${spec.class}" style="width: 16px; height: 16px; border-radius: 2px; border: 1px solid #444;">` : ""}
+            <a href="${profileUrl}" style="color: ${classColor}; text-decoration: none;">
+              ${member.name}${crossRealmIndicator}
+            </a>
+          </div>
+        `;
+        })
+        .join("");
+
       const row = document.createElement("div");
       row.className = "leaderboard-table-row";
       row.dataset.runId = String(run.id);
+
       row.innerHTML = `
         <div class="leaderboard-cell leaderboard-cell--rank">#${rank}</div>
         <div class="leaderboard-cell leaderboard-cell--time">${duration}</div>
         <div class="leaderboard-cell leaderboard-cell--content">${teamHTML}</div>
         <div class="leaderboard-cell leaderboard-cell--meta">${timestamp}</div>
+        <div class="mobile-card-header">
+          <div class="mobile-time">${duration}</div>
+          <div class="mobile-rank">#${rank}</div>
+        </div>
+        <div class="mobile-date">${timestamp}</div>
+        <div class="mobile-team-container">
+          <div class="mobile-team-members">
+            ${mobileTeamHTML}
+          </div>
+        </div>
       `;
       rowsContainer?.appendChild(row);
     });
@@ -249,14 +296,14 @@ class LeaderboardTable {
       this.container.querySelector<HTMLButtonElement>("#next-page");
     if (prevBtn) prevBtn.disabled = !pagination.hasPrevPage;
     if (nextBtn) nextBtn.disabled = !pagination.hasNextPage;
-    // Left-side info line
+
     const info = this.container.querySelector(
       ".pagination-info span",
     ) as HTMLElement | null;
     if (info) {
       info.textContent = `Showing page ${pagination.currentPage} of ${pagination.totalPages} (${pagination.totalRuns} total runs)`;
     }
-    // Center page indicator between buttons
+
     const pageInfo = this.container.querySelector(
       ".page-info",
     ) as HTMLElement | null;
