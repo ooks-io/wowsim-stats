@@ -80,14 +80,71 @@ const { id, label, options, class: className } = Astro.props;
   }
 
   /* Mobile responsiveness */
+  @media (max-width: 480px) {
+    .horizontal-options {
+      gap: 8px;
+      justify-content: stretch;
+    }
+
+    .horizontal-option {
+      flex: 1;
+      padding: 12px 8px;
+      font-size: 0.75em;
+      text-align: center;
+      min-height: 44px; /* iOS minimum touch target */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.2;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    /* Stack options in 2 columns for very small screens */
+    .horizontal-selector[data-selector-id="dungeon"] .horizontal-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .horizontal-selector[data-selector-id="dungeon"] .horizontal-option {
+      flex: none;
+      padding: 10px 6px;
+      font-size: 0.7em;
+    }
+  }
+
   @media (max-width: 768px) {
     .horizontal-options {
       gap: 6px;
     }
 
     .horizontal-option {
-      padding: 6px 12px;
+      padding: 8px 12px;
       font-size: 0.8em;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* For dungeon selector with many options, use smaller buttons */
+    .horizontal-selector[data-selector-id="dungeon"] .horizontal-option {
+      padding: 6px 8px;
+      font-size: 0.75em;
+      flex: 1;
+      min-width: 0; /* Allow shrinking */
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .horizontal-options {
+      gap: 8px;
+    }
+
+    .horizontal-option {
+      padding: 8px 14px;
+      font-size: 0.85em;
     }
   }
 </style>

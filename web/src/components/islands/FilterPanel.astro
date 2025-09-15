@@ -44,7 +44,6 @@ const {
       >
         <option value="">Select Region First</option>
         <option value="all">All Realms</option>
-        <!-- US Realms (hidden by default) -->
         {
           Object.entries(REALM_DATA.us)
             .sort((a, b) => a[1].localeCompare(b[1]))
@@ -54,7 +53,6 @@ const {
               </option>
             ))
         }
-        <!-- EU Realms (hidden by default) -->
         {
           Object.entries(REALM_DATA.eu)
             .sort((a, b) => a[1].localeCompare(b[1]))
@@ -64,7 +62,6 @@ const {
               </option>
             ))
         }
-        <!-- KR Realms (hidden by default) -->
         {
           Object.entries(REALM_DATA.kr)
             .sort((a, b) => a[1].localeCompare(b[1]))
@@ -119,9 +116,9 @@ const {
 </div>
 
 <script src="../../client/filter-panel.ts"></script>
-<script type="module">
-  console.debug("[FilterPanel.astro] module import requested");
-</script>
+<!-- <script> -->
+<!--   console.debug("[FilterPanel] module import requested"); -->
+<!-- </script> -->
 
 <style>
   .filter-panel-island {
@@ -200,6 +197,28 @@ const {
     color: #ff6b6b;
   }
 
+  @media (max-width: 480px) {
+    .filter-row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .filter-panel-island {
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-select {
+      padding: 12px 14px;
+      font-size: 1em;
+      min-height: 44px; /* iOS minimum touch target */
+    }
+
+    .filter-label {
+      font-size: 0.85em;
+    }
+  }
+
   @media (max-width: 768px) {
     .filter-row {
       grid-template-columns: 1fr;
@@ -209,16 +228,38 @@ const {
     .filter-panel-island {
       padding: 15px;
     }
+
+    .filter-select {
+      padding: 11px 13px;
+      min-height: 42px;
+    }
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 900px) and (min-width: 769px) {
     .filter-row {
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 16px;
+    }
+
+    .filter-group:nth-child(3) {
+      grid-column: span 2;
     }
 
     .filter-group:last-child {
       grid-column: span 2;
+      justify-self: center;
+    }
+  }
+
+  @media (max-width: 1200px) and (min-width: 901px) {
+    .filter-row {
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 15px;
+    }
+
+    .filter-group:last-child {
+      grid-column: span 3;
+      justify-self: center;
     }
   }
 </style>

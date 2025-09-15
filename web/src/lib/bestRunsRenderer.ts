@@ -52,11 +52,11 @@ export function renderBestRunsRow(
     `<div class="runs-cell runs-cell--time">${duration}</div>`,
   ];
 
-  // Team composition (always included). Support SSR (team_members) and API (all_members)
+  // team composition
   const rawMembers = ((run as any).all_members ||
     (run as any).team_members ||
     []) as any[];
-  // Order members by role: tank, healer, dps
+  // order members by role: tank, healer, dps
   const roleOrder: Record<string, number> = { tank: 0, healer: 1, dps: 2 };
   const membersSorted = [...rawMembers].sort((a, b) => {
     const aSpec = a.spec_id || a.specialization?.id;
@@ -100,7 +100,6 @@ export function renderBestRunsRow(
     </div>
   `);
 
-  // Rankings (prefer filtered and scope-specific percentile brackets when available)
   const globalRankingValue =
     typeof (run as any).global_ranking_filtered === "number" &&
     (run as any).global_ranking_filtered > 0
@@ -157,7 +156,119 @@ export function renderBestRunsRow(
     );
   }
 
-  return `<div class="best-runs-row">${cells.join("")}</div>`;
+  // generate mobile card structure
+  const mobileCardHeader = `
+    <div class="mobile-card-header">
+      <div class="mobile-dungeon-info">
+        ${iconUrl ? `<img class="dungeon-icon" src="${iconUrl}" alt="${run.dungeon_name}" />` : ""}
+        <span class="dungeon-name">${run.dungeon_name}</span>
+      </div>
+      <div class="mobile-time">${duration}</div>
+    </div>
+  `;
+
+  let mobileRankingsContent = `
+    <div class="mobile-rank-item">
+      <span class="mobile-rank-label">Global</span>
+      <div class="mobile-rank-value">
+        <a class="rank-link" href="${globalURL}">${globalRankHTML}</a>
+      </div>
+    </div>
+  `;
+
+  if (mode === "full") {
+    // recalculate rankings for mobile (since they're scoped to the full mode block)
+    const regionalBracket =
+      (run as any).regional_percentile_bracket || run.percentile_bracket || "";
+    const realmBracket =
+      (run as any).realm_percentile_bracket || run.percentile_bracket || "";
+    const regionalRankingValue =
+      typeof (run as any).regional_ranking_filtered === "number" &&
+      (run as any).regional_ranking_filtered > 0
+        ? (run as any).regional_ranking_filtered
+        : run.regional_ranking;
+    const realmRankingValue =
+      typeof (run as any).realm_ranking_filtered === "number" &&
+      (run as any).realm_ranking_filtered > 0
+        ? (run as any).realm_ranking_filtered
+        : run.realm_ranking;
+    const regionalRankHTML = formatRankingWithBracket(
+      regionalRankingValue,
+      regionalBracket,
+    );
+    const realmRankHTML = formatRankingWithBracket(
+      realmRankingValue,
+      realmBracket,
+    );
+    const region = playerRegion || "";
+    const realmSlug = playerRealmSlug || "";
+    const regionalURL = region
+      ? buildLeaderboardURL(region, "all", dungeonSlug)
+      : "#";
+    const realmURL =
+      region && realmSlug
+        ? buildLeaderboardURL(region, realmSlug, dungeonSlug)
+        : "#";
+
+    mobileRankingsContent += `
+      <div class="mobile-rank-item">
+        <span class="mobile-rank-label">Region</span>
+        <div class="mobile-rank-value">
+          <a class="rank-link" href="${regionalURL}">${regionalRankHTML}</a>
+        </div>
+      </div>
+      <div class="mobile-rank-item">
+        <span class="mobile-rank-label">Realm</span>
+        <div class="mobile-rank-value">
+          <a class="rank-link" href="${realmURL}">${realmRankHTML}</a>
+        </div>
+      </div>
+    `;
+  }
+
+  const mobileRankings = `
+    <div class="mobile-rankings">
+      ${mobileRankingsContent}
+    </div>
+  `;
+
+  const mobileTeam = `
+    <div class="mobile-team">
+      <div class="mobile-team-label">Team</div>
+      <div class="mobile-team-composition">
+        ${membersSorted
+          .map((member) => {
+            const memberRegion = member.region || "us";
+            const memberRealm = member.realm_slug || "unknown";
+            const memberName = member.name || "Unknown";
+            const profileUrl = buildPlayerProfileURL(
+              memberRegion,
+              memberRealm,
+              memberName,
+            );
+
+            return `
+            <div class="mobile-team-member">
+              <div class="spec-icon-placeholder" data-spec-id="${member.spec_id || 0}"></div>
+              <a href="${profileUrl}" class="member-link" data-spec-id="${member.spec_id || 0}">
+                ${memberName}
+              </a>
+            </div>
+          `;
+          })
+          .join("")}
+      </div>
+    </div>
+  `;
+
+  const mobileCardBody = `
+    <div class="mobile-card-body">
+      ${mobileRankings}
+      ${mobileTeam}
+    </div>
+  `;
+
+  return `<div class="best-runs-row">${cells.join("")}${mobileCardHeader}${mobileCardBody}</div>`;
 }
 
 export function renderBestRunsTable(
@@ -168,7 +279,6 @@ export function renderBestRunsTable(
 ): string {
   const { mode = "full", className = "" } = options;
 
-  // Convert to array if needed
   const runsArray = Array.isArray(bestRuns)
     ? bestRuns
     : Object.values(bestRuns || {});
@@ -225,7 +335,6 @@ export function renderBestRunsWithWrapper(
   return `<div class="best-runs-container">${tableHTML}</div>`;
 }
 
-// CSS classes that should be shared between components
 export const BEST_RUNS_CSS_CLASSES = {
   container: "best-runs-container",
   profileSection: "profile-section",
@@ -244,7 +353,6 @@ export const BEST_RUNS_CSS_CLASSES = {
   noRuns: "no-runs-message",
 };
 
-// Grid template columns for different modes
 export const GRID_TEMPLATES = {
   full: "200px 120px 2fr 100px 100px 100px",
   compact: "150px 100px 80px",

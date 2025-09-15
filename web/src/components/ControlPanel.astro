@@ -36,9 +36,33 @@ const { title, class: className } = Astro.props;
     flex-wrap: wrap;
   }
 
+  @media (max-width: 480px) {
+    .controls {
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .controls-title {
+      font-size: 1.1em;
+      margin-bottom: 12px;
+    }
+
+    .controls-grid {
+      flex-direction: column;
+      gap: 15px;
+    }
+  }
+
   @media (max-width: 768px) {
     .controls-grid {
       flex-direction: column;
+      gap: 18px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .controls-grid {
+      gap: 15px;
     }
   }
 </style>

@@ -149,7 +149,7 @@ export const SPEC_OPTIONS = {
   ],
   rogue: [
     { value: "259", label: "Assassination" },
-    { value: "260", label: "Outlaw" },
+    { value: "260", label: "Combat" },
     { value: "261", label: "Subtlety" },
   ],
   shaman: [
@@ -169,9 +169,7 @@ export const SPEC_OPTIONS = {
   ],
 } as const;
 
-// SPEC_ICON_MAP for spec icons from Zamimg
 export const SPEC_ICON_MAP: Record<string, string> = {
-  // Mage
   "Mage|Frost":
     "https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg",
   "Mage|Fire":
@@ -179,7 +177,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Mage|Arcane":
     "https://wow.zamimg.com/images/wow/icons/large/spell_holy_magicalsentry.jpg",
 
-  // Paladin
   "Paladin|Holy":
     "https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg",
   "Paladin|Protection":
@@ -187,7 +184,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Paladin|Retribution":
     "https://wow.zamimg.com/images/wow/icons/large/spell_holy_auraoflight.jpg",
 
-  // Death Knight
   "Death Knight|Blood":
     "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_bloodpresence.jpg",
   "Death Knight|Frost":
@@ -195,7 +191,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Death Knight|Unholy":
     "https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg",
 
-  // Druid
   "Druid|Balance":
     "https://wow.zamimg.com/images/wow/icons/large/spell_nature_starfall.jpg",
   "Druid|Feral":
@@ -205,7 +200,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Druid|Restoration":
     "https://wow.zamimg.com/images/wow/icons/large/spell_nature_healingtouch.jpg",
 
-  // Hunter
   "Hunter|Beast Mastery":
     "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg",
   "Hunter|Marksmanship":
@@ -213,7 +207,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Hunter|Survival":
     "https://wow.zamimg.com/images/wow/icons/large/ability_hunter_camouflage.jpg",
 
-  // Monk
   "Monk|Brewmaster":
     "https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg",
   "Monk|Windwalker":
@@ -221,7 +214,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Monk|Mistweaver":
     "https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg",
 
-  // Priest
   "Priest|Discipline":
     "https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg",
   "Priest|Holy":
@@ -229,15 +221,13 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Priest|Shadow":
     "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg",
 
-  // Rogue
   "Rogue|Subtlety":
     "https://wow.zamimg.com/images/wow/icons/large/ability_stealth.jpg",
   "Rogue|Assassination":
     "https://wow.zamimg.com/images/wow/icons/large/ability_rogue_eviscerate.jpg",
-  "Rogue|Outlaw":
+  "Rogue|Combat":
     "https://wow.zamimg.com/images/wow/icons/large/ability_backstab.jpg",
 
-  // Shaman
   "Shaman|Elemental":
     "https://wow.zamimg.com/images/wow/icons/large/spell_nature_lightning.jpg",
   "Shaman|Enhancement":
@@ -245,7 +235,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Shaman|Restoration":
     "https://wow.zamimg.com/images/wow/icons/large/spell_nature_magicimmunity.jpg",
 
-  // Warlock
   "Warlock|Affliction":
     "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_deathcoil.jpg",
   "Warlock|Destruction":
@@ -253,7 +242,6 @@ export const SPEC_ICON_MAP: Record<string, string> = {
   "Warlock|Demonology":
     "https://wow.zamimg.com/images/wow/icons/large/spell_shadow_metamorphosis.jpg",
 
-  // Warrior
   "Warrior|Arms":
     "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_savageblow.jpg",
   "Warrior|Fury":
@@ -262,7 +250,7 @@ export const SPEC_ICON_MAP: Record<string, string> = {
     "https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg",
 };
 
-// Helper function to create player element with class colors and spec info
+// create player element with class colors and spec info
 export function createPlayerElement(player: {
   name: string;
   class_name?: string;
