@@ -15,11 +15,9 @@ let initialRealm = "";
 let initialDungeon = "2"; // Default dungeon
 
 // Parse different URL patterns
-if (slugParts.length === 1) {
-  // /challenge-mode/players or /challenge-mode/teams
-  if (slugParts[0] === "players" || slugParts[0] === "teams") {
-    initialLeaderboardType = slugParts[0];
-  }
+if (slugParts.length >= 1 && (slugParts[0] === "players" || slugParts[0] === "teams")) {
+  // Any /challenge-mode/players[...] or /challenge-mode/teams[...] path should land on that tab
+  initialLeaderboardType = slugParts[0];
 } else if (slugParts.length === 2) {
   // /challenge-mode/global/dungeon-slug
   if (slugParts[0] === "global") {

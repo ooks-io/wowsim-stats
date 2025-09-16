@@ -6,6 +6,7 @@ import LeaderboardTable from "../components/islands/LeaderboardTable.astro";
 import { getDungeonName } from "../lib/wow-constants.ts";
 import { buildStaticLeaderboardPath } from "../lib/utils.ts";
 import PlayerLeaderboard from "../components/islands/PlayerLeaderboard.astro";
+import PlayerFilterPanel from "../components/islands/PlayerFilterPanel.astro";
 import "../styles/components.scss";
 
 export interface Props {
@@ -136,6 +137,7 @@ if (
         </div>
 
         <div class="player-leaderboard-wrapper">
+          <PlayerFilterPanel />
           <PlayerLeaderboard />
         </div>
       </section>
@@ -158,13 +160,13 @@ if (
 
         navTabs.forEach((tab) => {
           tab.addEventListener("click", (e) => {
-            const button = e.target;
-            const type =
-              button && button.dataset ? button.dataset.type : undefined;
+            e.preventDefault();
+            const el = e.currentTarget;
+            const type = el && el.getAttribute
+              ? el.getAttribute("data-type")
+              : undefined;
             console.log("[INFO] Tab clicked:", type);
-            if (type) {
-              this.switchTab(type);
-            }
+            if (type) this.switchTab(type);
           });
         });
       }
@@ -202,27 +204,43 @@ if (
         // update URL only if not responding to browser navigation
         if (updateHistory) {
           if (type === "players") {
-            // always update to players URL when switching to players tab
-            const newURL = "/challenge-mode/players";
-            console.log("[INFO] Updating URL to players:", newURL);
+            const current = window.location.pathname + window.location.search;
+            let newURL = current;
+            if (!current.startsWith("/challenge-mode/players")) {
+              // Try to restore last players URL from sessionStorage, else derive from current filter state
+              const last = sessionStorage.getItem("lastPlayersPath");
+              if (last && last.startsWith("/challenge-mode/players")) {
+                newURL = last;
+              } else {
+                // Build from client state if available
+                const w = window;
+                const pl = (w).playerLeaderboard;
+                if (pl) {
+                  const scope = pl["scope"] || "global";
+                  const region = (pl["region"] || "").toLowerCase();
+                  const realm = (pl["realmSlug"] || "").toLowerCase();
+                  const cls = (pl["classKey"] || "").toLowerCase();
+                  if (scope === "global") newURL = `/challenge-mode/players/global${cls ? "/" + cls : ""}`;
+                  else if (scope === "regional") newURL = `/challenge-mode/players/${region}${cls ? "/" + cls : ""}`;
+                  else newURL = `/challenge-mode/players/${region}/${realm}${cls ? "/" + cls : ""}`;
+                } else {
+                  newURL = "/challenge-mode/players";
+                }
+              }
+            }
+            console.log("[INFO] Switching to players URL:", newURL);
             window.history.pushState({}, "", newURL);
           } else if (type === "dungeon") {
-            // for dungeon tab, only update if we're on a generic URL
-            const currentPath = window.location.pathname;
-            if (currentPath === "/challenge-mode/players") {
-              // coming from players tab, go to generic dungeon URL
+            // If currently on any players path, remember it and go to base dungeon URL
+            const currentPath = window.location.pathname + window.location.search;
+            if (currentPath.startsWith("/challenge-mode/players")) {
+              try { sessionStorage.setItem("lastPlayersPath", currentPath); } catch {}
               const newURL = "/challenge-mode";
-              console.log(
-                "[INFO] Updating URL from players to dungeon:",
-                newURL,
-              );
+              console.log("[INFO] Switching to dungeon URL:", newURL);
               window.history.pushState({}, "", newURL);
             } else {
-              // preserve specific dungeon URLs
-              console.log(
-                "[INFO] Preserving specific dungeon URL:",
-                currentPath,
-              );
+              // preserve specific dungeon URLs if already there
+              console.log("[INFO] Preserving specific dungeon URL:", currentPath);
             }
           }
         } else {
