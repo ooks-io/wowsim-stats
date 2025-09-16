@@ -37,13 +37,11 @@ class FilterPanel {
     if (initDungeon) this.dungeonSelect.value = initDungeon;
 
     this.initializeFromURL();
-    // If URL didn't drive an initial load, auto-load current selection once table is ready
-    if (!this.didInitFromURL) {
+    // If URL didn't drive an initial load, only auto-load if the dungeon section is active
+    if (!this.didInitFromURL && this.isDungeonSectionActive()) {
       const region = this.regionSelect.value;
       const dungeon = this.dungeonSelect.value;
-      if (region && dungeon) {
-        this.loadWhenReady(1);
-      }
+      if (region && dungeon) this.loadWhenReady(1);
     }
   }
 
@@ -54,6 +52,17 @@ class FilterPanel {
     });
     this.realmSelect.addEventListener("change", () => this.loadLeaderboard());
     this.dungeonSelect.addEventListener("change", () => this.loadLeaderboard());
+  }
+
+  private isDungeonSectionActive(): boolean {
+    try {
+      const section = this.container.closest("#dungeon-section") as
+        | HTMLElement
+        | null;
+      return !!section && section.classList.contains("active");
+    } catch {
+      return false;
+    }
   }
 
   private updateRealmOptions() {

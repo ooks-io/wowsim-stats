@@ -13,6 +13,7 @@ class LeaderboardTable {
   private realm: string;
   private dungeon: string;
   private currentPage = 1;
+  private lastRenderWasEmpty = false;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -131,6 +132,8 @@ class LeaderboardTable {
     } catch (error) {
       this.showError(error as Error);
       console.error("Leaderboard loading error:", error);
+      // Treat error state as empty for transition tracking
+      this.lastRenderWasEmpty = true;
     } finally {
       this.hideLoading();
     }
@@ -141,14 +144,59 @@ class LeaderboardTable {
       "#leaderboard-content",
     ) as HTMLElement | null;
     if (!content) return;
-    if (!data.leading_groups || data.leading_groups.length === 0) {
+
+    const hasData = data.leading_groups && data.leading_groups.length > 0;
+    
+    console.log(`[LeaderboardTable] Rendering leaderboard - hasData: ${hasData}, lastRenderWasEmpty: ${this.lastRenderWasEmpty}`);
+    
+    // Always reset all UI elements first
+    const paginationContainer = this.container.querySelector(
+      ".pagination-container",
+    ) as HTMLElement | null;
+    if (paginationContainer) {
+      paginationContainer.style.display = "none";
+    }
+
+    const crossRealmNote = this.container.querySelector(
+      "#cross-realm-note",
+    ) as HTMLElement | null;
+    if (crossRealmNote) {
+      crossRealmNote.style.display = "none";
+    }
+
+    // Clear all loading/error states
+    this.hideLoading();
+    const errorContainer = this.container.querySelector("#error-container") as HTMLElement | null;
+    if (errorContainer) {
+      errorContainer.style.display = "none";
+    }
+
+    // Ensure content is visible (in case it was hidden by error state)
+    content.style.display = "";
+
+    // Always clear existing content completely to ensure clean slate
+    content.innerHTML = "";
+    
+    if (!hasData) {
+      console.log(`[LeaderboardTable] Showing empty state`);
       content.innerHTML = `
         <div class="empty-state">
           <p>No runs found for this leaderboard.</p>
           <p>Try selecting a different region, realm, or dungeon.</p>
         </div>
       `;
+      this.lastRenderWasEmpty = true;
       return;
+    }
+
+    // Force DOM cleanup when transitioning from empty/error to populated
+    if (this.lastRenderWasEmpty) {
+      console.log(`[LeaderboardTable] Transitioning from empty/error to populated - forcing DOM reflow`);
+      // Force reflow to ensure DOM is clean
+      content.offsetHeight;
+      // Additional cleanup - remove any residual event listeners
+      const oldRows = this.container.querySelectorAll('.leaderboard-table-row');
+      oldRows.forEach(row => row.remove());
     }
 
     content.innerHTML =
@@ -156,6 +204,14 @@ class LeaderboardTable {
     const rowsContainer = content.querySelector(
       "#leaderboard-rows",
     ) as HTMLElement | null;
+    
+    if (!rowsContainer) {
+      console.error(`[LeaderboardTable] Failed to create rowsContainer`);
+      return;
+    }
+    
+    console.log(`[LeaderboardTable] About to render ${data.leading_groups.length} runs`);
+    this.lastRenderWasEmpty = false;
     data.leading_groups.forEach((run: any, index: number) => {
       const rank = run.ranking || (this.currentPage - 1) * 25 + index + 1;
       const duration = formatDurationMMSS(run.duration);
@@ -278,6 +334,8 @@ class LeaderboardTable {
       `;
       rowsContainer?.appendChild(row);
     });
+    
+    console.log(`[LeaderboardTable] Completed rendering ${data.leading_groups.length} runs`);
   }
 
   private updatePagination(pagination: any) {

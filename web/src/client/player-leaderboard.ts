@@ -1,4 +1,4 @@
-import { buildPlayerProfileURL } from "../lib/utils.ts";
+import { buildPlayerProfileURL, buildStaticPlayerLeaderboardPath } from "../lib/utils.ts";
 import {
   getClassColor,
   getSpecInfo,
@@ -11,8 +11,10 @@ class PlayerLeaderboardClient {
   private error: HTMLElement | null;
   private loading: HTMLElement | null;
   private currentPage = 1;
-  private scope: "global" | "regional" = "global";
+  private scope: "global" | "regional" | "realm" = "global";
   private region: string | null = null;
+  private realmSlug: string | null = null;
+  private classKey: string | null = null;
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -27,16 +29,77 @@ class PlayerLeaderboardClient {
     ) as HTMLElement | null;
 
     this.bindPagination();
-    // initial load
-    this.refreshCurrentPage();
+    // initial load only if players section is active; otherwise the layout will trigger refresh on tab switch
+    if (this.isPlayersSectionActive()) {
+      this.refreshCurrentPage();
+    }
+  }
+
+  private isPlayersSectionActive(): boolean {
+    try {
+      const section = this.container.closest("#players-section") as
+        | HTMLElement
+        | null;
+      return !!section && section.classList.contains("active");
+    } catch {
+      return false;
+    }
   }
 
   public refreshCurrentPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const pageParam = urlParams.get("page");
-    this.currentPage = pageParam ? Math.max(1, parseInt(pageParam)) : 1;
+    const { scope, region, realm, klass, page } = this.parsePlayersPath();
+    this.currentPage = page || 1;
+    this.scope = scope;
+    this.region = region || null;
+    this.realmSlug = realm || null;
+    this.classKey = klass || null;
     this.load(this.currentPage).catch((e) =>
       console.error("Player leaderboard load error:", e),
+    );
+  }
+
+  private parsePlayersPath(): { scope: "global" | "regional" | "realm"; region?: string; realm?: string; klass?: string; page?: number } {
+    const path = window.location.pathname.replace(/\/+$/, "");
+    const parts = path.split("/").filter(Boolean);
+    const url = new URL(window.location.href);
+    const page = parseInt(url.searchParams.get("page") || "1", 10);
+    const pageNum = isNaN(page) || page <= 1 ? undefined : page;
+    if (parts.length >= 2 && parts[0] === "challenge-mode" && parts[1] === "players") {
+      const rest = parts.slice(2);
+      if (rest.length === 0) return { scope: "global", page: pageNum };
+      if (rest[0] === "global") return { scope: "global", klass: rest[1], page: pageNum };
+      const region = rest[0];
+      if (rest.length === 1) return { scope: "regional", region, page: pageNum };
+      if (rest.length === 2) {
+        const second = rest[1];
+        if (/^[a-z_]+$/.test(second)) return { scope: "regional", region, klass: second, page: pageNum };
+        return { scope: "realm", region, realm: second, page: pageNum };
+      }
+      return { scope: "realm", region, realm: rest[1], klass: rest[2], page: pageNum };
+    }
+    // Fallback to query params
+    const regionQ = url.searchParams.get("region") || undefined;
+    const realmQ = url.searchParams.get("realm") || undefined;
+    const klassQ = url.searchParams.get("class") || undefined;
+    if (!regionQ) return { scope: "global", klass: klassQ, page: pageNum };
+    if (realmQ) return { scope: "realm", region: regionQ, realm: realmQ, klass: klassQ, page: pageNum };
+    return { scope: "regional", region: regionQ, klass: klassQ, page: pageNum };
+  }
+
+  public setFilters(opts: {
+    scope: "global" | "regional" | "realm";
+    region?: string;
+    realmSlug?: string;
+    classKey?: string;
+    page?: number;
+  }) {
+    this.scope = opts.scope;
+    this.region = opts.region || null;
+    this.realmSlug = opts.realmSlug || null;
+    this.classKey = opts.classKey || null;
+    this.currentPage = Math.max(1, opts.page || 1);
+    this.load(this.currentPage).catch((e) =>
+      console.error("Player leaderboard setFilters error:", e),
     );
   }
 
@@ -50,25 +113,22 @@ class PlayerLeaderboardClient {
     prevBtn?.addEventListener("click", () => {
       if (this.currentPage > 1) {
         this.currentPage--;
-        this.load(this.currentPage, { preserveScroll: false });
+        this.load(this.currentPage);
       }
     });
     nextBtn?.addEventListener("click", () => {
       this.currentPage++;
-      this.load(this.currentPage, { preserveScroll: false });
+      this.load(this.currentPage);
     });
   }
 
   private async fetchData(page: number) {
-    let url: string;
-
-    if (this.scope === "global") {
-      url = `/api/leaderboard/players/global/${page}.json`;
-    } else if (this.region) {
-      url = `/api/leaderboard/players/${this.region}/${page}.json`;
-    } else {
-      url = `/api/leaderboard/players/global/${page}.json`;
-    }
+    const url = buildStaticPlayerLeaderboardPath(
+      this.scope,
+      this.region || undefined,
+      page,
+      { realmSlug: this.realmSlug || undefined, classKey: this.classKey || undefined },
+    );
 
     console.log("[PlayerLeaderboard] fetching:", url);
     const res = await fetch(url);
@@ -256,6 +316,13 @@ class PlayerLeaderboardClient {
     try {
       const data = await this.fetchData(page);
       this.render(data);
+      // Update URL to reflect current filters + page
+      try {
+        // Keep current path; only update page param to reflect pagination
+        const url = new URL(window.location.href);
+        if (this.currentPage > 1) url.searchParams.set("page", String(this.currentPage)); else url.searchParams.delete("page");
+        window.history.replaceState({}, "", url.toString());
+      } catch {}
     } catch (e: any) {
       this.showError(String(e?.message || e));
     } finally {

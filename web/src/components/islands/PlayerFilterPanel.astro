@@ -1,0 +1,98 @@
+---
+import { REALM_DATA } from "../../lib/realms";
+import { CLASS_COLORS } from "../../lib/wow-constants";
+
+export interface Props {
+  initialRegion?: string;
+  initialRealm?: string;
+  initialClass?: string;
+  class?: string;
+}
+
+const {
+  initialRegion = "global",
+  initialRealm = "",
+  initialClass = "",
+  class: className,
+} = Astro.props;
+---
+
+<div
+  class={`player-filter-panel ${className || ""}`.trim()}
+  data-initial-region={initialRegion}
+  data-initial-realm={initialRealm}
+  data-initial-class={initialClass}
+>
+  <div class="filter-row">
+    <div class="filter-group">
+      <label for="player-region-select" class="filter-label">Region</label>
+      <select id="player-region-select" class="filter-select">
+        <option value="global" selected={initialRegion === "global"}>Global</option>
+        <option value="us" selected={initialRegion === "us"}>US</option>
+        <option value="eu" selected={initialRegion === "eu"}>EU</option>
+        <option value="kr" selected={initialRegion === "kr"}>KR</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="player-realm-select" class="filter-label">Realm</label>
+      <select id="player-realm-select" class="filter-select" disabled={initialRegion === "global"}>
+        <option value="all">All Realms</option>
+        {
+          Object.entries(REALM_DATA.us)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="us" style="display: none;">{name}</option>
+            ))
+        }
+        {
+          Object.entries(REALM_DATA.eu)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="eu" style="display: none;">{name}</option>
+            ))
+        }
+        {
+          Object.entries(REALM_DATA.kr)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="kr" style="display: none;">{name}</option>
+            ))
+        }
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="player-class-select" class="filter-label">Class</label>
+      <select id="player-class-select" class="filter-select">
+        <option value="">All Classes</option>
+        {
+          Object.keys(CLASS_COLORS)
+            .sort()
+            .map((key) => {
+              const label = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+              return <option value={key} selected={initialClass === key}>{label}</option>;
+            })
+        }
+      </select>
+    </div>
+  </div>
+</div>
+
+<script src="../../client/player-filter-panel.ts"></script>
+
+<style>
+  .player-filter-panel {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .filter-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .filter-group { display: flex; flex-direction: column; gap: 6px; }
+  .filter-label { color: var(--text-secondary); font-size: 0.85em; font-weight: 500; text-transform: uppercase; }
+  .filter-select { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 10px; }
+  @media (max-width: 768px) { .filter-row { grid-template-columns: 1fr; } }
+</style>
+

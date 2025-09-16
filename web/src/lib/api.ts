@@ -60,12 +60,13 @@ export async function fetchRealmLeaderboard(
 }
 
 export async function fetchPlayerLeaderboard(
-  scope: string = "global",
+  scope: "global" | "regional" | "realm" = "global",
   region?: string,
   page: number = 1,
   pageSize: number = 25,
+  opts?: { realmSlug?: string; classKey?: string },
 ): Promise<any> {
-  const url = `${API_BASE}${buildStaticPlayerLeaderboardPath(scope, region, page)}`;
+  const url = `${API_BASE}${buildStaticPlayerLeaderboardPath(scope, region, page, opts)}`;
   console.log("Fetching player leaderboard:", url);
   return apiRequest(url);
 }

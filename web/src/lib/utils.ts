@@ -172,6 +172,30 @@ export function buildPlayerProfileURL(
   return `/player/${region}/${realmSlug}/${playerName.toLowerCase()}`;
 }
 
+// Build Players tab URL path from filters
+export function buildPlayersLeaderboardURL(
+  scope: "global" | "regional" | "realm",
+  opts?: { region?: string; realmSlug?: string; classKey?: string; page?: number },
+): string {
+  const cls = (opts?.classKey || "").toLowerCase();
+  const reg = (opts?.region || "").toLowerCase();
+  const realm = (opts?.realmSlug || "").toLowerCase();
+  let path = "/challenge-mode/players";
+  if (scope === "global") {
+    if (cls) path += `/global/${cls}`; else path += `/global`;
+  } else if (scope === "regional") {
+    if (reg) path += `/${reg}`; else path += `/us`;
+    if (cls) path += `/${cls}`;
+  } else if (scope === "realm") {
+    if (reg) path += `/${reg}`;
+    if (realm) path += `/${realm}`;
+    if (cls) path += `/${cls}`;
+  }
+  const page = opts?.page || 1;
+  if (page > 1) path += `?page=${page}`;
+  return path;
+}
+
 // Form utilities
 export function getFormValue(elementId: string): string {
   const element = document.getElementById(elementId) as
@@ -291,15 +315,39 @@ export function buildStaticLeaderboardPath(
 }
 
 export function buildStaticPlayerLeaderboardPath(
-  scope: string,
+  scope: "global" | "regional" | "realm",
   region?: string,
   page: number = 1,
+  opts?: { realmSlug?: string; classKey?: string },
 ): string {
-  if (scope === "regional" && region) {
-    return `/api/leaderboard/players/regional/${region}/${page}.json`;
-  } else {
+  const cls = (opts?.classKey || "").toLowerCase();
+  const realm = (opts?.realmSlug || "").toLowerCase();
+
+  // Class-filtered variants
+  if (cls) {
+    if (scope === "global") {
+      return `/api/leaderboard/players/class/${cls}/global/${page}.json`;
+    }
+    if (scope === "regional" && region) {
+      return `/api/leaderboard/players/class/${cls}/regional/${region}/${page}.json`;
+    }
+    if (scope === "realm" && region && realm) {
+      return `/api/leaderboard/players/class/${cls}/realm/${region}/${realm}/${page}.json`;
+    }
+  }
+
+  // Unfiltered
+  if (scope === "global") {
     return `/api/leaderboard/players/global/${page}.json`;
   }
+  if (scope === "regional" && region) {
+    return `/api/leaderboard/players/regional/${region}/${page}.json`;
+  }
+  if (scope === "realm" && region && realm) {
+    return `/api/leaderboard/players/realm/${region}/${realm}/${page}.json`;
+  }
+  // Fallback to global
+  return `/api/leaderboard/players/global/${page}.json`;
 }
 
 export function buildStaticPlayerProfilePath(
