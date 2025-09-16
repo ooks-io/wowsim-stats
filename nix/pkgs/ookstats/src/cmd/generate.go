@@ -10,6 +10,7 @@ import (
     "strings"
     "sync"
     "time"
+    "unicode"
 
     "github.com/spf13/cobra"
     _ "github.com/tursodatabase/go-libsql"
@@ -789,29 +790,50 @@ func generateSinglePlayerJSON(player PlayerData, bestRunsMap map[int64][]BestRun
 }
 
 // safeSlugName converts an arbitrary player name to a safe lowercase filename without path separators.
+// It preserves Unicode letters/numbers (including diacritics), matching frontend expectations
+// that URLs may contain non-ASCII characters. Only path separators are removed and spaces -> '-'.
 func safeSlugName(s string) string {
     s = strings.ToLower(strings.TrimSpace(s))
     // replace path separators explicitly
     s = strings.ReplaceAll(s, "/", "-")
     s = strings.ReplaceAll(s, "\\", "-")
-    // allow a-z, 0-9, '-', '_' only; replace spaces with '-'
+    // allow unicode letters/digits and '-', '_' ; replace spaces with '-'
     out := make([]rune, 0, len(s))
     for _, r := range s {
-        switch {
-        case r >= 'a' && r <= 'z':
-            out = append(out, r)
-        case r >= '0' && r <= '9':
-            out = append(out, r)
-        case r == '-' || r == '_':
-            out = append(out, r)
-        case r == ' ':
+        if r == ' ' {
             out = append(out, '-')
-        default:
-            // drop other runes
+            continue
+        }
+        if r == '-' || r == '_' {
+            out = append(out, r)
+            continue
+        }
+        // Keep unicode letters and digits; drop other punctuation/symbols
+        if unicode.IsLetter(r) || unicode.IsDigit(r) {
+            out = append(out, r)
+            continue
+        }
+        // else: drop
+    }
+    // collapse multiple dashes
+    cleaned := make([]rune, 0, len(out))
+    prevDash := false
+    for _, r := range out {
+        if r == '-' {
+            if !prevDash { cleaned = append(cleaned, r) }
+            prevDash = true
+        } else {
+            cleaned = append(cleaned, r)
+            prevDash = false
         }
     }
-    if len(out) == 0 { return "player" }
-    return string(out)
+    if len(cleaned) == 0 { return "player" }
+    // trim leading/trailing '-'
+    i := 0
+    j := len(cleaned)
+    for i < j && cleaned[i] == '-' { i++ }
+    for j > i && cleaned[j-1] == '-' { j-- }
+    return string(cleaned[i:j])
 }
 
 func writeJSONFile(path string, v any) error {
