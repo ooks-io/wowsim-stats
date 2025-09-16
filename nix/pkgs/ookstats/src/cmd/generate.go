@@ -784,23 +784,77 @@ func generateSinglePlayerJSON(player PlayerData, bestRunsMap map[int64][]BestRun
     if err := os.MkdirAll(dir, 0o755); err != nil {
         return fmt.Errorf("mkdir player dir: %w", err)
     }
-    fname := filepath.Join(dir, strings.ToLower(pj.Name)+".json")
+    fname := filepath.Join(dir, safeSlugName(pj.Name)+".json")
     return writeJSONFile(fname, page)
 }
 
+// safeSlugName converts an arbitrary player name to a safe lowercase filename without path separators.
+func safeSlugName(s string) string {
+    s = strings.ToLower(strings.TrimSpace(s))
+    // replace path separators explicitly
+    s = strings.ReplaceAll(s, "/", "-")
+    s = strings.ReplaceAll(s, "\\", "-")
+    // allow a-z, 0-9, '-', '_' only; replace spaces with '-'
+    out := make([]rune, 0, len(s))
+    for _, r := range s {
+        switch {
+        case r >= 'a' && r <= 'z':
+            out = append(out, r)
+        case r >= '0' && r <= '9':
+            out = append(out, r)
+        case r == '-' || r == '_':
+            out = append(out, r)
+        case r == ' ':
+            out = append(out, '-')
+        default:
+            // drop other runes
+        }
+    }
+    if len(out) == 0 { return "player" }
+    return string(out)
+}
+
 func writeJSONFile(path string, v any) error {
-    tmp := path + ".tmp"
-    f, err := os.Create(tmp)
-    if err != nil { return fmt.Errorf("create %s: %w", tmp, err) }
-    enc := json.NewEncoder(f)
+    // Ensure parent directory exists (robust for all callers)
+    if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+        return fmt.Errorf("mkdir %s: %w", filepath.Dir(path), err)
+    }
+
+    // Create a temp file in the target directory to avoid cross-filesystem issues
+    tmpFile, err := os.CreateTemp(filepath.Dir(path), ".tmp-*.json")
+    if err != nil {
+        return fmt.Errorf("create temp for %s: %w", path, err)
+    }
+    tmp := tmpFile.Name()
+
+    enc := json.NewEncoder(tmpFile)
     enc.SetEscapeHTML(false)
     enc.SetIndent("", "  ")
     if err := enc.Encode(v); err != nil {
-        f.Close(); os.Remove(tmp)
+        tmpFile.Close()
+        os.Remove(tmp)
         return fmt.Errorf("encode json %s: %w", path, err)
     }
-    if err := f.Close(); err != nil { os.Remove(tmp); return err }
-    if err := os.Rename(tmp, path); err != nil { os.Remove(tmp); return fmt.Errorf("rename %s: %w", path, err) }
+    // Flush to disk
+    if err := tmpFile.Sync(); err != nil {
+        tmpFile.Close()
+        os.Remove(tmp)
+        return fmt.Errorf("sync temp %s: %w", tmp, err)
+    }
+    if err := tmpFile.Close(); err != nil {
+        os.Remove(tmp)
+        return fmt.Errorf("close temp %s: %w", tmp, err)
+    }
+
+    // Atomic replace; add a short retry in case of transient fs race
+    if err := os.Rename(tmp, path); err != nil {
+        // Retry once after ensuring parent dir again
+        _ = os.MkdirAll(filepath.Dir(path), 0o755)
+        if err2 := os.Rename(tmp, path); err2 != nil {
+            os.Remove(tmp)
+            return fmt.Errorf("rename %s: %w", path, err2)
+        }
+    }
     return nil
 }
 
@@ -1142,6 +1196,243 @@ func generatePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
     if len(regions) == 0 { regions = []string{"us","eu","kr"} }
     for _, reg := range regions {
         if err := writeScope("regional", reg); err != nil { return err }
+    }
+    // realm scope (per region -> realm)
+    for _, reg := range regions {
+        rrows, err := db.Query(`SELECT slug FROM realms WHERE region = ? ORDER BY slug`, reg)
+        if err != nil { return fmt.Errorf("players realms list: %w", err) }
+        slugs := []string{}
+        for rrows.Next() { var s string; if err := rrows.Scan(&s); err != nil { rrows.Close(); return err }; slugs = append(slugs, s) }
+        rrows.Close()
+        for _, rslug := range slugs {
+            dir := filepath.Join(out, "players", "realm", reg, rslug)
+            if err := os.MkdirAll(dir, 0o755); err != nil { return err }
+            // count total
+            var total int
+            if err := db.QueryRow(`
+                SELECT COUNT(*)
+                FROM players p
+                JOIN realms r ON p.realm_id = r.id
+                JOIN player_profiles pp ON p.id = pp.player_id
+                LEFT JOIN player_details pd ON p.id = pd.player_id
+                WHERE r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+            `, reg, rslug).Scan(&total); err != nil { return fmt.Errorf("players total (realm): %w", err) }
+            pages := (total + pageSize - 1) / pageSize
+            for p := 1; p <= pages; p++ {
+                offset := (p-1) * pageSize
+                rows, err := db.Query(`
+                    SELECT p.id, p.name, r.slug, r.name, r.region,
+                           COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+                           pp.combined_best_time, pp.dungeons_completed, pp.total_runs
+                    FROM players p
+                    JOIN realms r ON p.realm_id = r.id
+                    JOIN player_profiles pp ON p.id = pp.player_id
+                    LEFT JOIN player_details pd ON p.id = pd.player_id
+                    WHERE r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                    ORDER BY pp.combined_best_time ASC, p.name ASC
+                    LIMIT ? OFFSET ?
+                `, reg, rslug, pageSize, offset)
+                if err != nil { return err }
+                type PlayerRow struct {
+                    ID int64; Name string; RealmSlug string; RealmName string; Region string; ClassName string; ActiveSpecName string; MainSpecID sql.NullInt64; CombinedBestTime sql.NullInt64; DungeonsCompleted int; TotalRuns int
+                }
+                list := []map[string]any{}
+                for rows.Next() {
+                    var r PlayerRow
+                    if err := rows.Scan(&r.ID, &r.Name, &r.RealmSlug, &r.RealmName, &r.Region, &r.ClassName, &r.ActiveSpecName, &r.MainSpecID, &r.CombinedBestTime, &r.DungeonsCompleted, &r.TotalRuns); err != nil { rows.Close(); return err }
+                    obj := map[string]any{
+                        "player_id": r.ID,
+                        "name": r.Name,
+                        "realm_slug": r.RealmSlug,
+                        "realm_name": r.RealmName,
+                        "region": r.Region,
+                        "class_name": r.ClassName,
+                        "active_spec_name": r.ActiveSpecName,
+                        "dungeons_completed": r.DungeonsCompleted,
+                        "total_runs": r.TotalRuns,
+                    }
+                    if r.MainSpecID.Valid { obj["main_spec_id"] = int(r.MainSpecID.Int64) }
+                    if r.CombinedBestTime.Valid { obj["combined_best_time"] = r.CombinedBestTime.Int64 }
+                    list = append(list, obj)
+                }
+                rows.Close()
+                page := map[string]any{
+                    "leaderboard": list,
+                    "title": strings.ToUpper(reg) + "/" + rslug + " Player Rankings",
+                    "generated_timestamp": time.Now().UnixMilli(),
+                    "pagination": map[string]any{
+                        "currentPage": p,
+                        "pageSize": pageSize,
+                        "totalPlayers": total,
+                        "totalPages": pages,
+                        "hasNextPage": p < pages,
+                        "hasPrevPage": p > 1,
+                        "totalRuns": total,
+                    },
+                }
+                if err := writeJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil { return err }
+            }
+        }
+    }
+
+    // class-filtered variants
+    classKeys := []string{"death_knight","druid","hunter","mage","monk","paladin","priest","rogue","shaman","warlock","warrior"}
+
+    // helper to write class-scoped pages
+    writeClassScope := func(scope string, region string, realmSlug string, classKey string) error {
+        var dir string
+        if scope == "global" {
+            dir = filepath.Join(out, "players", "class", classKey, "global")
+        } else if scope == "regional" {
+            dir = filepath.Join(out, "players", "class", classKey, "regional", region)
+        } else {
+            dir = filepath.Join(out, "players", "class", classKey, "realm", region, realmSlug)
+        }
+        if err := os.MkdirAll(dir, 0o755); err != nil { return err }
+
+        // totals
+        var total int
+        if scope == "global" {
+            if err := db.QueryRow(`
+                SELECT COUNT(*)
+                FROM players p
+                JOIN player_profiles pp ON p.id = pp.player_id
+                LEFT JOIN player_details pd ON p.id = pd.player_id
+                WHERE pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                  AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+            `, classKey).Scan(&total); err != nil { return fmt.Errorf("players total (class global): %w", err) }
+        } else if scope == "regional" {
+            if err := db.QueryRow(`
+                SELECT COUNT(*)
+                FROM players p
+                JOIN realms r ON p.realm_id = r.id
+                JOIN player_profiles pp ON p.id = pp.player_id
+                LEFT JOIN player_details pd ON p.id = pd.player_id
+                WHERE r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                  AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+            `, region, classKey).Scan(&total); err != nil { return fmt.Errorf("players total (class regional): %w", err) }
+        } else {
+            if err := db.QueryRow(`
+                SELECT COUNT(*)
+                FROM players p
+                JOIN realms r ON p.realm_id = r.id
+                JOIN player_profiles pp ON p.id = pp.player_id
+                LEFT JOIN player_details pd ON p.id = pd.player_id
+                WHERE r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                  AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+            `, region, realmSlug, classKey).Scan(&total); err != nil { return fmt.Errorf("players total (class realm): %w", err) }
+        }
+        pages := (total + pageSize - 1) / pageSize
+
+        for p := 1; p <= pages; p++ {
+            offset := (p-1) * pageSize
+            var rows *sql.Rows
+            var err error
+            if scope == "global" {
+                rows, err = db.Query(`
+                    SELECT p.id, p.name, r.slug, r.name, r.region,
+                           COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+                           pp.combined_best_time, pp.dungeons_completed, pp.total_runs
+                    FROM players p
+                    JOIN realms r ON p.realm_id = r.id
+                    JOIN player_profiles pp ON p.id = pp.player_id
+                    LEFT JOIN player_details pd ON p.id = pd.player_id
+                    WHERE pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                      AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+                    ORDER BY pp.combined_best_time ASC, p.name ASC
+                    LIMIT ? OFFSET ?
+                `, classKey, pageSize, offset)
+            } else if scope == "regional" {
+                rows, err = db.Query(`
+                    SELECT p.id, p.name, r.slug, r.name, r.region,
+                           COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+                           pp.combined_best_time, pp.dungeons_completed, pp.total_runs
+                    FROM players p
+                    JOIN realms r ON p.realm_id = r.id
+                    JOIN player_profiles pp ON p.id = pp.player_id
+                    LEFT JOIN player_details pd ON p.id = pd.player_id
+                    WHERE r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                      AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+                    ORDER BY pp.combined_best_time ASC, p.name ASC
+                    LIMIT ? OFFSET ?
+                `, region, classKey, pageSize, offset)
+            } else {
+                rows, err = db.Query(`
+                    SELECT p.id, p.name, r.slug, r.name, r.region,
+                           COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+                           pp.combined_best_time, pp.dungeons_completed, pp.total_runs
+                    FROM players p
+                    JOIN realms r ON p.realm_id = r.id
+                    JOIN player_profiles pp ON p.id = pp.player_id
+                    LEFT JOIN player_details pd ON p.id = pd.player_id
+                    WHERE r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+                      AND REPLACE(LOWER(pd.class_name),' ', '_') = ?
+                    ORDER BY pp.combined_best_time ASC, p.name ASC
+                    LIMIT ? OFFSET ?
+                `, region, realmSlug, classKey, pageSize, offset)
+            }
+            if err != nil { return err }
+            type PlayerRow struct { ID int64; Name, RealmSlug, RealmName, Region, ClassName, ActiveSpecName string; MainSpecID sql.NullInt64; CombinedBestTime sql.NullInt64; DungeonsCompleted, TotalRuns int }
+            list := []map[string]any{}
+            for rows.Next() {
+                var r PlayerRow
+                if err := rows.Scan(&r.ID, &r.Name, &r.RealmSlug, &r.RealmName, &r.Region, &r.ClassName, &r.ActiveSpecName, &r.MainSpecID, &r.CombinedBestTime, &r.DungeonsCompleted, &r.TotalRuns); err != nil { rows.Close(); return err }
+                obj := map[string]any{
+                    "player_id": r.ID,
+                    "name": r.Name,
+                    "realm_slug": r.RealmSlug,
+                    "realm_name": r.RealmName,
+                    "region": r.Region,
+                    "class_name": r.ClassName,
+                    "active_spec_name": r.ActiveSpecName,
+                    "dungeons_completed": r.DungeonsCompleted,
+                    "total_runs": r.TotalRuns,
+                }
+                if r.MainSpecID.Valid { obj["main_spec_id"] = int(r.MainSpecID.Int64) }
+                if r.CombinedBestTime.Valid { obj["combined_best_time"] = r.CombinedBestTime.Int64 }
+                list = append(list, obj)
+            }
+            rows.Close()
+            pageObj := map[string]any{
+                "leaderboard": list,
+                "title": func() string {
+                    if scope == "global" { return "Global Player Rankings" }
+                    if scope == "regional" { return strings.ToUpper(region) + " Player Rankings" }
+                    return strings.ToUpper(region) + "/" + realmSlug + " Player Rankings"
+                }(),
+                "generated_timestamp": time.Now().UnixMilli(),
+                "pagination": map[string]any{
+                    "currentPage": p,
+                    "pageSize": pageSize,
+                    "totalPlayers": total,
+                    "totalPages": pages,
+                    "hasNextPage": p < pages,
+                    "hasPrevPage": p > 1,
+                    "totalRuns": total,
+                },
+            }
+            if err := writeJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), pageObj); err != nil { return err }
+        }
+        return nil
+    }
+
+    // Generate class pages
+    for _, cls := range classKeys {
+        // global
+        if err := writeClassScope("global", "", "", cls); err != nil { return err }
+        // regional
+        for _, reg := range regions {
+            if err := writeClassScope("regional", reg, "", cls); err != nil { return err }
+            // realm
+            rrows, err := db.Query(`SELECT slug FROM realms WHERE region = ? ORDER BY slug`, reg)
+            if err != nil { return fmt.Errorf("players class realms list: %w", err) }
+            slugs := []string{}
+            for rrows.Next() { var s string; if err := rrows.Scan(&s); err != nil { rrows.Close(); return err }; slugs = append(slugs, s) }
+            rrows.Close()
+            for _, rslug := range slugs {
+                if err := writeClassScope("realm", reg, rslug, cls); err != nil { return err }
+            }
+        }
     }
     fmt.Println("[OK] Player leaderboards generated")
     return nil
