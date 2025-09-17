@@ -3,7 +3,7 @@ package blizzard
 // GetHardcodedPeriodAndDungeons returns the primary period ID and dungeon list
 // hardcoded values since the index endpoint is broken - most records are in period 1026
 func GetHardcodedPeriodAndDungeons() (string, []DungeonInfo) {
-	periodID := "1028"
+	periodID := "1029"
 
 	dungeons := []DungeonInfo{
 		{ID: 2, Name: "Temple of the Jade Serpent", Slug: "temple-of-the-jade-serpent"},
@@ -23,12 +23,12 @@ func GetHardcodedPeriodAndDungeons() (string, []DungeonInfo) {
 // GetFallbackPeriods returns periods to try in order for multi-period fallback
 // based on period analysis results showing sparse data distribution
 func GetFallbackPeriods() []string {
-	return []string{"1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+	return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
 }
 
 // GetGlobalPeriods returns a global sweep order newest -> oldest
 func GetGlobalPeriods() []string {
-	return []string{"1028", "1027", "1026", "1025", "1024", "1023"}
+	return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023"}
 }
 
 // GetRegionFallbackPeriods prioritizes the period order per region based on observed data
@@ -37,13 +37,13 @@ func GetRegionFallbackPeriods(region string) []string {
 	switch region {
 	case "eu":
 		// EU often has most data in 1025, then 1026
-		return []string{"1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
 	case "us":
 		// US commonly 1026 first
-		return []string{"1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
 	case "kr":
 		// KR follows US pattern in our observations
-		return []string{"1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
 	default:
 		return GetFallbackPeriods()
 	}
