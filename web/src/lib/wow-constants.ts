@@ -80,6 +80,15 @@ export function getClassColorClass(className: string): string {
   return `class-${normalizedClass}`;
 }
 
+export function getClassTextClass(
+  className: string | undefined | null,
+): string {
+  const key = String(className || "common")
+    .toLowerCase()
+    .replace(/[\s_]+/g, "-");
+  return `text-${key}`;
+}
+
 export function getSpecInfo(specId: number) {
   return SPEC_MAP[specId as SpecId] || null;
 }
