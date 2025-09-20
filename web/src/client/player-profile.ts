@@ -3,6 +3,7 @@ import {
   buildStaticPlayerProfilePath,
   formatDurationMMSS,
 } from "../lib/utils";
+import { getClassTextClass } from "../lib/wow-constants";
 import { formatRankingWithBracket as formatRank } from "../lib/client-utils.ts";
 import { renderBestRunsWithWrapper } from "../lib/bestRunsRenderer";
 import {
@@ -148,13 +149,14 @@ class PlayerProfileManager {
     const regBracket = player.regional_ranking_bracket || "";
     const realmBracket = player.realm_ranking_bracket || "";
 
+    const classText = getClassTextClass(player.class_name || "common");
     const headerHTML = `
       <div class="player-header-horizontal">
         <div class="player-avatar">
           ${avatar ? `<img src="${avatar}" alt="${player.name} avatar" class="avatar-image" />` : ""}
         </div>
         <div class="player-info-column">
-          <h1 class="player-name text-${(player.class_name || "common").toLowerCase()}">${player.name}</h1>
+          <h1 class="player-name ${classText}">${player.name}</h1>
           ${guild ? `<div class="guild-name">${guild}</div>` : ""}
           <div class="character-details">${player.race_name || ""} ${player.active_spec_name || player.spec_name || ""} ${player.class_name || ""}</div>
           <div class="item-level">Item Level: ${player.equipped_item_level ?? "-"} equipped / ${player.average_item_level ?? "-"} average</div>

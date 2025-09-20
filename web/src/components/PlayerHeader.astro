@@ -1,6 +1,7 @@
 ---
 import { formatDurationMMSS } from "../lib/utils.ts";
 import { formatRankingWithBracket } from "../lib/ranking-utils.ts";
+import { getClassTextClass } from "../lib/wow-constants.ts";
 
 export interface Props {
   player: any;
@@ -47,7 +48,7 @@ const avatarUrl = player.avatar_url
 
   <div class="player-info-column">
     <h1
-      class={`player-name text-${player.class_name?.toLowerCase() || "common"}`}
+      class={`player-name ${getClassTextClass(player.class_name)}`}
     >
       {player.name}
     </h1>
