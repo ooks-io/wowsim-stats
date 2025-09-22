@@ -54,7 +54,7 @@ jobs:
           nix run . build -- \
             --out web/public \
             --from-scratch \
-            --regions us,eu,kr \
+            --regions us,eu,kr,tw \
             --page-size 25 \
             --shard-size 5000 \
             --concurrency 20
