@@ -130,7 +130,8 @@ func (ds *DatabaseService) UpdateFetchMetadata(fetchType string, runsFetched, pl
 
 // GetRealmID retrieves realm ID by slug, returns 0 if not found
 func (ds *DatabaseService) GetRealmID(slug string) (int, error) {
-	query := `SELECT id FROM realms WHERE slug = ?`
+    // Deprecated: prefer GetRealmIDByRegionAndSlug
+    query := `SELECT id FROM realms WHERE slug = ?`
 
 	var realmID int
 	err := ds.db.QueryRow(query, slug).Scan(&realmID)
@@ -142,6 +143,21 @@ func (ds *DatabaseService) GetRealmID(slug string) (int, error) {
 	}
 
 	return realmID, nil
+}
+
+// GetRealmIDByRegionAndSlug retrieves realm ID by composite (region, slug), returns 0 if not found
+func (ds *DatabaseService) GetRealmIDByRegionAndSlug(region, slug string) (int, error) {
+    query := `SELECT id FROM realms WHERE region = ? AND slug = ?`
+
+    var realmID int
+    err := ds.db.QueryRow(query, region, slug).Scan(&realmID)
+    if err == sql.ErrNoRows {
+        return 0, nil
+    }
+    if err != nil {
+        return 0, err
+    }
+    return realmID, nil
 }
 
 // GetDungeonID retrieves dungeon ID by slug, returns 0 if not found

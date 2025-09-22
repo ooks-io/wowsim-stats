@@ -124,17 +124,20 @@ var fetchCMCmd = &cobra.Command{
 				}
 			}
 		}
-		if strings.TrimSpace(realmsCSV) != "" {
-			allowed := map[string]bool{}
-			for _, s := range strings.Split(realmsCSV, ",") {
-				allowed[strings.TrimSpace(s)] = true
-			}
-			for slug := range allRealms {
-				if !allowed[slug] {
-					delete(allRealms, slug)
-				}
-			}
-		}
+        if strings.TrimSpace(realmsCSV) != "" {
+            allowed := map[string]bool{}
+            for _, s := range strings.Split(realmsCSV, ",") {
+                s = strings.TrimSpace(s)
+                if s != "" { allowed[s] = true }
+            }
+            filtered := make(map[string]blizzard.RealmInfo)
+            for key, info := range allRealms {
+                if allowed[key] || allowed[info.Slug] {
+                    filtered[key] = info
+                }
+            }
+            allRealms = filtered
+        }
 		if strings.TrimSpace(dungeonsCSV) != "" {
 			// parse list of ids or slugs
 			allowed := map[string]bool{}
@@ -153,14 +156,9 @@ var fetchCMCmd = &cobra.Command{
 			}
 		}
 
-		// pre-populate reference data (optimized): insert all dungeons once, then batch insert realms
-		fmt.Printf("Pre-populating reference data...\n")
-		fmt.Printf("  - Ensuring dungeons (%d)\n", len(dungeons))
-		// ensure slugs are set on realmInfo entries
-		for realmSlug, realmInfo := range allRealms {
-			realmInfo.Slug = realmSlug
-			allRealms[realmSlug] = realmInfo
-		}
+        // pre-populate reference data (optimized): insert all dungeons once, then batch insert realms
+        fmt.Printf("Pre-populating reference data...\n")
+        fmt.Printf("  - Ensuring dungeons (%d)\n", len(dungeons))
 		if err := dbService.EnsureDungeonsOnce(dungeons); err != nil {
 			return fmt.Errorf("failed to ensure dungeons: %w", err)
 		}
@@ -403,7 +401,7 @@ func init() {
 	fetchCMCmd.Flags().Int("fallback-depth", 0, "Limit number of fallback periods to try per dungeon (0 = default)")
 	fetchCMCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 	fetchCMCmd.Flags().Int("api-timeout-seconds", 15, "HTTP client timeout in seconds")
-	fetchCMCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr)")
+    fetchCMCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
 	fetchCMCmd.Flags().String("realms", "", "Comma-separated realm slugs to include")
 	fetchCMCmd.Flags().String("dungeons", "", "Comma-separated dungeon IDs or slugs to include")
 	// period strategy

@@ -232,13 +232,13 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			map_challenge_mode_id INTEGER UNIQUE
 		)`,
 		
-		`CREATE TABLE IF NOT EXISTS realms (
-			id INTEGER PRIMARY KEY,
-			slug TEXT UNIQUE,
-			name TEXT,
-			region TEXT,
-			connected_realm_id INTEGER UNIQUE
-		)`,
+        `CREATE TABLE IF NOT EXISTS realms (
+            id INTEGER PRIMARY KEY,
+            slug TEXT,
+            name TEXT,
+            region TEXT,
+            connected_realm_id INTEGER UNIQUE
+        )`,
 		
 		// Core leaderboard data
 		`CREATE TABLE IF NOT EXISTS challenge_runs (
@@ -405,13 +405,20 @@ func EnsureCompleteSchema(db *sql.DB) error {
 	
 fmt.Printf("[OK] All tables created\n")
 	
-	// Create indexes
-	return ensureRecommendedIndexes(db)
+    // Migrate realms schema if needed (ensure (region, slug) composite uniqueness)
+    if err := migrateRealmsCompositeSlug(db); err != nil {
+        return err
+    }
+
+    // Create indexes
+    return ensureRecommendedIndexes(db)
 }
 
 // ensureRecommendedIndexes creates indexes used by hot paths if missing
 func ensureRecommendedIndexes(db *sql.DB) error {
     stmts := []string{
+        // Ensure composite uniqueness for realms
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_realms_region_slug ON realms(region, slug)",
         // Fast path for high-water checks
         "CREATE INDEX IF NOT EXISTS idx_runs_realm_dungeon_ct ON challenge_runs(realm_id, dungeon_id, completed_timestamp)",
         // Uniqueness key to avoid duplicates
@@ -433,5 +440,54 @@ func ensureRecommendedIndexes(db *sql.DB) error {
     }
     
     fmt.Printf("[OK] All indexes ensured\n")
+    return nil
+}
+
+// migrateRealmsCompositeSlug upgrades the realms table from slug-unique to (region,slug)-unique if necessary.
+func migrateRealmsCompositeSlug(db *sql.DB) error {
+    // Inspect table SQL
+    var createSQL string
+    _ = db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='realms'`).Scan(&createSQL)
+    // If table already created without UNIQUE on slug, nothing to do
+    if !strings.Contains(strings.ToLower(createSQL), "slug text unique") {
+        return nil
+    }
+
+    fmt.Printf("[MIGRATE] Upgrading realms table to composite (region,slug) uniqueness...\n")
+    tx, err := db.Begin()
+    if err != nil { return err }
+    defer tx.Rollback()
+
+    // Create new table without UNIQUE on slug
+    if _, err := tx.Exec(`
+        CREATE TABLE IF NOT EXISTS realms_new (
+            id INTEGER PRIMARY KEY,
+            slug TEXT,
+            name TEXT,
+            region TEXT,
+            connected_realm_id INTEGER UNIQUE
+        )
+    `); err != nil { return fmt.Errorf("create realms_new: %w", err) }
+
+    // Copy data
+    if _, err := tx.Exec(`INSERT INTO realms_new (id, slug, name, region, connected_realm_id)
+                          SELECT id, slug, name, region, connected_realm_id FROM realms`); err != nil {
+        return fmt.Errorf("copy realms: %w", err)
+    }
+
+    // Rename old and new
+    if _, err := tx.Exec(`ALTER TABLE realms RENAME TO realms_old`); err != nil { return fmt.Errorf("rename old: %w", err) }
+    if _, err := tx.Exec(`ALTER TABLE realms_new RENAME TO realms`); err != nil { return fmt.Errorf("rename new: %w", err) }
+
+    // Drop old
+    if _, err := tx.Exec(`DROP TABLE realms_old`); err != nil { return fmt.Errorf("drop old: %w", err) }
+
+    // Ensure composite unique index
+    if _, err := tx.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_realms_region_slug ON realms(region, slug)`); err != nil {
+        return fmt.Errorf("create composite unique index: %w", err)
+    }
+
+    if err := tx.Commit(); err != nil { return err }
+    fmt.Printf("[OK] Realms table migrated\n")
     return nil
 }

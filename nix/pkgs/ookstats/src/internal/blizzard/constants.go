@@ -34,25 +34,28 @@ func GetGlobalPeriods() []string {
 // GetRegionFallbackPeriods prioritizes the period order per region based on observed data
 // This reduces 404 churn before finding data.
 func GetRegionFallbackPeriods(region string) []string {
-	switch region {
-	case "eu":
-		// EU often has most data in 1025, then 1026
-		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	case "us":
-		// US commonly 1026 first
-		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	case "kr":
-		// KR follows US pattern in our observations
-		return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	default:
-		return GetFallbackPeriods()
-	}
+    switch region {
+    case "eu":
+        // EU often has most data in 1025, then 1026
+        return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+    case "us":
+        // US commonly 1026 first
+        return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+    case "kr":
+        // KR follows US pattern in our observations
+        return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+    case "tw":
+        // TW expected to mirror US/KR period availability
+        return []string{"1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
+    default:
+        return GetFallbackPeriods()
+    }
 }
 
 // GetAllRealms returns the complete realm configuration
 // this data comes from nix/api/realm.nix
 func GetAllRealms() map[string]RealmInfo {
-	return map[string]RealmInfo{
+    return map[string]RealmInfo{
 		// us realms
 		"atiesh":               {ID: 4372, Region: "us", Name: "Atiesh", Slug: "atiesh"},
 		"myzrael":              {ID: 4373, Region: "us", Name: "Myzrael", Slug: "myzrael"},
@@ -105,11 +108,22 @@ func GetAllRealms() map[string]RealmInfo {
 		"thekal":               {ID: 4815, Region: "eu", Name: "Thekal", Slug: "thekal"},
 		"jindo":                {ID: 4816, Region: "eu", Name: "Jin'do", Slug: "jindo"},
 
-		// kr realms
-		"shimmering-flats": {ID: 4417, Region: "kr", Name: "Shimmering Flats", Slug: "shimmering-flats"},
-		"lokholar":         {ID: 4419, Region: "kr", Name: "Lokholar", Slug: "lokholar"},
-		"iceblood":         {ID: 4420, Region: "kr", Name: "Iceblood", Slug: "iceblood"},
-		"ragnaros":         {ID: 4421, Region: "kr", Name: "Ragnaros", Slug: "ragnaros"},
-		"frostmourne":      {ID: 4840, Region: "kr", Name: "Frostmourne", Slug: "frostmourne"},
-	}
+        // kr realms
+        "shimmering-flats": {ID: 4417, Region: "kr", Name: "Shimmering Flats", Slug: "shimmering-flats"},
+        "lokholar":         {ID: 4419, Region: "kr", Name: "Lokholar", Slug: "lokholar"},
+        "iceblood":         {ID: 4420, Region: "kr", Name: "Iceblood", Slug: "iceblood"},
+        "ragnaros":         {ID: 4421, Region: "kr", Name: "Ragnaros", Slug: "ragnaros"},
+        "frostmourne":      {ID: 4840, Region: "kr", Name: "Frostmourne", Slug: "frostmourne"},
+
+        // tw realms (exclude PTR realms TW4 CWOW GMSS 1/2)
+        "maraudon":     {ID: 4485, Region: "tw", Name: "Maraudon", Slug: "maraudon"},
+        "ivus":         {ID: 4487, Region: "tw", Name: "Ivus", Slug: "ivus"},
+        "wushoolay":    {ID: 4488, Region: "tw", Name: "Wushoolay", Slug: "wushoolay"},
+        "zeliek":       {ID: 4489, Region: "tw", Name: "Zeliek", Slug: "zeliek"},
+        "arathi-basin": {ID: 5740, Region: "tw", Name: "Arathi Basin", Slug: "arathi-basin"},
+        "murloc":       {ID: 5741, Region: "tw", Name: "Murloc", Slug: "murloc"},
+        // Use disambiguated map keys for slugs colliding across regions; Slug field remains the Blizzard slug.
+        "golemagg-tw":   {ID: 5742, Region: "tw", Name: "Golemagg", Slug: "golemagg"},
+        "windseeker-tw": {ID: 5743, Region: "tw", Name: "Windseeker", Slug: "windseeker"},
+    }
 }

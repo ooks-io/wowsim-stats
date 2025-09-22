@@ -118,8 +118,8 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 		return 0, 0, nil
 	}
 
-	// Get realm and dungeon IDs
-	realmID, err := ds.GetRealmID(realmInfo.Slug)
+    // Get realm and dungeon IDs
+    realmID, err := ds.GetRealmIDByRegionAndSlug(realmInfo.Region, realmInfo.Slug)
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to get realm ID: %w", err)
 	}
@@ -213,7 +213,7 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 			// get or create player realm
 			var playerRealmID int
 			if hasRealmSlug {
-				playerRealmID, err = ds.getOrCreateRealm(tx, playerRealmSlug, allRealms)
+				playerRealmID, err = ds.getOrCreateRealmByRegion(tx, playerRealmSlug, realmInfo.Region, allRealms)
 				if err != nil {
 					return 0, 0, fmt.Errorf("failed to get/create player realm: %w", err)
 				}
@@ -462,7 +462,7 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
             continue
         }
         // resolve IDs (read-only)
-        realmID, err := ds.GetRealmID(res.RealmInfo.Slug)
+        realmID, err := ds.GetRealmIDByRegionAndSlug(res.RealmInfo.Region, res.RealmInfo.Slug)
         if err != nil {
             return 0, 0, fmt.Errorf("failed to resolve realm id: %w", err)
         }
@@ -573,7 +573,7 @@ func (ds *DatabaseService) ensureReferenceDataTx(tx *sql.Tx, realmInfo blizzard.
 // insertLeaderboardDataTx inserts leaderboard data within a transaction
 func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *blizzard.LeaderboardResponse, realmInfo blizzard.RealmInfo, dungeon blizzard.DungeonInfo) (int, int, error) {
     // Resolve realm and dungeon IDs (read-only; realms/dungeons are pre-populated)
-    realmID, err := ds.getRealmIDTx(tx, realmInfo.Slug)
+    realmID, err := ds.getRealmIDTx(tx, realmInfo.Slug, realmInfo.Region)
     if err != nil {
         return 0, 0, fmt.Errorf("failed to get realm ID: %w", err)
     }
@@ -681,7 +681,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 			var playerRealmID int
             if hasRealmSlug {
                 // resolve player realm id (realms are pre-populated; create only if truly unknown)
-                playerRealmID, err = ds.getRealmIDTx(tx, playerRealmSlug)
+                playerRealmID, err = ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
                 if err != nil {
                     return 0, 0, fmt.Errorf("failed to resolve player realm: %w", err)
                 }
@@ -690,7 +690,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
                         playerRealmSlug, playerRealmSlug, realmInfo.Region, 0); err != nil {
                         return 0, 0, fmt.Errorf("failed to create placeholder realm: %w", err)
                     }
-                    id2, err := ds.getRealmIDTx(tx, playerRealmSlug)
+                    id2, err := ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
                     if err != nil || id2 == 0 {
                         return 0, 0, fmt.Errorf("failed to resolve placeholder realm id: %w", err)
                     }
@@ -761,13 +761,13 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 }
 
 // helper functions for transaction-based operations
-func (ds *DatabaseService) getRealmIDTx(tx *sql.Tx, slug string) (int, error) {
-	var realmID int
-	err := tx.QueryRow("SELECT id FROM realms WHERE slug = ?", slug).Scan(&realmID)
-	if err == sql.ErrNoRows {
-		return 0, fmt.Errorf("realm not found: %s", slug)
-	}
-	return realmID, err
+func (ds *DatabaseService) getRealmIDTx(tx *sql.Tx, slug string, region string) (int, error) {
+    var realmID int
+    err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", slug, region).Scan(&realmID)
+    if err == sql.ErrNoRows {
+        return 0, fmt.Errorf("realm not found: %s/%s", region, slug)
+    }
+    return realmID, err
 }
 
 func (ds *DatabaseService) getDungeonIDTx(tx *sql.Tx, slug string) (int, error) {
@@ -814,6 +814,43 @@ func (ds *DatabaseService) getOrCreateRealmTx(tx *sql.Tx, realmSlug string, allR
 		id, err := result.LastInsertId()
 		return int(id), err
 	}
+}
+
+// getOrCreateRealmByRegion resolves a realm by region+slug or creates a placeholder/known realm
+func (ds *DatabaseService) getOrCreateRealmByRegion(tx *sql.Tx, realmSlug string, region string, allRealms map[string]blizzard.RealmInfo) (int, error) {
+    // try to get existing realm by composite key
+    var realmID int
+    err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", realmSlug, region).Scan(&realmID)
+    if err == nil {
+        return realmID, nil
+    }
+    if err != sql.ErrNoRows {
+        return 0, err
+    }
+
+    // If we know this realm (by slug) from constants, use its canonical region/name/id
+    if realmInfo, ok := allRealms[realmSlug]; ok {
+        result, err := tx.Exec(`
+            INSERT INTO realms (slug, name, region, connected_realm_id)
+            VALUES (?, ?, ?, ?)
+        `, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+        if err != nil {
+            return 0, err
+        }
+        newID, err := result.LastInsertId()
+        return int(newID), err
+    }
+
+    // otherwise create a placeholder scoped to the provided region
+    result, err := tx.Exec(`
+        INSERT INTO realms (slug, name, region, connected_realm_id)
+        VALUES (?, ?, ?, ?)
+    `, realmSlug, utils.Slugify(realmSlug), region, 0)
+    if err != nil {
+        return 0, err
+    }
+    newID, err := result.LastInsertId()
+    return int(newID), err
 }
 
 // player profile database operations
