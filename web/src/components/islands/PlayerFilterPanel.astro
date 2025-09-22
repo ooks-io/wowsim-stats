@@ -31,6 +31,7 @@ const {
         <option value="us" selected={initialRegion === "us"}>US</option>
         <option value="eu" selected={initialRegion === "eu"}>EU</option>
         <option value="kr" selected={initialRegion === "kr"}>KR</option>
+        <option value="tw" selected={initialRegion === "tw"}>TW</option>
       </select>
     </div>
 
@@ -57,6 +58,13 @@ const {
             .sort((a, b) => a[1].localeCompare(b[1]))
             .map(([slug, name]) => (
               <option value={slug} data-region="kr" style="display: none;">{name}</option>
+            ))
+        }
+        {
+          Object.entries(REALM_DATA.tw)
+            .sort((a, b) => a[1].localeCompare(b[1]))
+            .map(([slug, name]) => (
+              <option value={slug} data-region="tw" style="display: none;">{name}</option>
             ))
         }
       </select>
@@ -95,4 +103,3 @@ const {
   .filter-select { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px 10px; }
   @media (max-width: 768px) { .filter-row { grid-template-columns: 1fr; } }
 </style>
-

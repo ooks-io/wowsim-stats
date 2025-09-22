@@ -955,7 +955,7 @@ func generateLeaderboards(db *sql.DB, out string, pageSize int, regions []string
     for _, d := range dungeons { if err := writeGlobal(d); err != nil { return err } }
 
     // Regions
-    if len(regions) == 0 { regions = []string{"us","eu","kr"} }
+    if len(regions) == 0 { regions = []string{"us","eu","kr","tw"} }
     for _, reg := range regions {
         fmt.Printf("Generating %s leaderboards...\n", strings.ToUpper(reg))
         for _, d := range dungeons { if err := writeRegional(reg, d); err != nil { return err } }
@@ -1215,7 +1215,7 @@ func generatePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
     // global
     if err := writeScope("global", ""); err != nil { return err }
     // regional
-    if len(regions) == 0 { regions = []string{"us","eu","kr"} }
+    if len(regions) == 0 { regions = []string{"us","eu","kr","tw"} }
     for _, reg := range regions {
         if err := writeScope("regional", reg); err != nil { return err }
     }
@@ -1541,5 +1541,5 @@ func init() {
     generateAPICmd.Flags().Bool("search", true, "Generate search index JSON shards")
     generateAPICmd.Flags().Int("page-size", 25, "Leaderboard page size")
     generateAPICmd.Flags().Int("shard-size", 5000, "Search index shard size")
-    generateAPICmd.Flags().String("regions", "us,eu,kr", "Regions to include for regional leaderboards")
+    generateAPICmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional leaderboards")
 }

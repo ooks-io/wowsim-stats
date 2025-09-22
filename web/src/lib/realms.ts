@@ -60,6 +60,16 @@ export const REALM_DATA = {
     ragnaros: "Ragnaros",
     frostmourne: "Frostmourne",
   },
+  tw: {
+    maraudon: "Maraudon",
+    ivus: "Ivus",
+    wushoolay: "Wushoolay",
+    zeliek: "Zeliek",
+    "arathi-basin": "Arathi Basin",
+    murloc: "Murloc",
+    golemagg: "Golemagg",
+    windseeker: "Windseeker",
+  },
 } as const;
 
 export type Region = keyof typeof REALM_DATA;

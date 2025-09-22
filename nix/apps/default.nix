@@ -39,6 +39,7 @@
     rankingProcessor = import ./challenge-mode/ranking-processor.nix {inherit writers python3Packages;};
     # analyze periods across all dungeons to find optimal API strategy
     periodAnalyzer = import ./utils/period-analyzer.nix {inherit writers python3Packages;};
+    multiPeriodAnalyzer = import ./utils/multi-period-analyzer.nix {inherit api writers python3Packages;};
     # convert simulation data to apps
 
     # DEPRECATED SCRIPTS
@@ -112,6 +113,10 @@
         periodAnalyzer = {
           type = "app";
           program = "${periodAnalyzer}/bin/period-analyzer";
+        };
+        multiPeriodAnalyzer = {
+          type = "app";
+          program = "${multiPeriodAnalyzer}/bin/multi-period-analyzer";
         };
         wowstats-db = {
           type = "app";
