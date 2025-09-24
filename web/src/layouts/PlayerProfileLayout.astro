@@ -1,5 +1,6 @@
 ---
 import Navigation from "../components/Navigation.astro";
+import Callout from "../components/Callout.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
 import PlayerProfile from "../components/islands/PlayerProfile.astro";
 import PlayerSearch from "../components/islands/PlayerSearch.astro";
@@ -29,8 +30,16 @@ const pageTitle = `${playerName} - ${realmSlug} | Player Profile`;
   <body>
     <WoWClassColors />
     <Navigation />
-
     <div class="player-profile-layout">
+      <!-- Temporary callout -->
+      <div style="margin-bottom: 12px;">
+        <Callout type="warning" title="Warning">
+          <p>
+            We’re currently experiencing issues fetching player profile data
+            from the Blizzard API.
+          </p>
+        </Callout>
+      </div>
       <div class="profile-search-section">
         <div class="search-container">
           <PlayerSearch />
