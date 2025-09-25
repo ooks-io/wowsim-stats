@@ -69,9 +69,10 @@ func GetAllRealms() map[string]RealmInfo {
 		"faerlina":             {ID: 4408, Region: "us", Name: "Faerlina", Slug: "faerlina"},
 		"grobbulus":            {ID: 4647, Region: "us", Name: "Grobbulus", Slug: "grobbulus"},
 		"bloodsail-buccaneers": {ID: 4648, Region: "us", Name: "Bloodsail Buccaneers", Slug: "bloodsail-buccaneers"},
-		"remulos":              {ID: 4667, Region: "us", Name: "Remulos", Slug: "remulos"},
-		"arugal":               {ID: 4669, Region: "us", Name: "Arugal", Slug: "arugal"},
-		"yojamba":              {ID: 4670, Region: "us", Name: "Yojamba", Slug: "yojamba"},
+        // OCE realms are served under US region with -au slug suffix
+        "remulos-au":           {ID: 4667, Region: "us", Name: "Remulos (AU)", Slug: "remulos-au"},
+        "arugal-au":            {ID: 4669, Region: "us", Name: "Arugal (AU)", Slug: "arugal-au"},
+        "yojamba-au":           {ID: 4670, Region: "us", Name: "Yojamba (AU)", Slug: "yojamba-au"},
 		"skyfury":              {ID: 4725, Region: "us", Name: "Skyfury", Slug: "skyfury"},
 		"sulfuras":             {ID: 4726, Region: "us", Name: "Sulfuras", Slug: "sulfuras"},
 		"windseeker":           {ID: 4727, Region: "us", Name: "Windseeker", Slug: "windseeker"},
@@ -80,6 +81,12 @@ func GetAllRealms() map[string]RealmInfo {
 		"maladath":             {ID: 4738, Region: "us", Name: "Maladath", Slug: "maladath"},
 		"angerforge":           {ID: 4795, Region: "us", Name: "Angerforge", Slug: "angerforge"},
 		"eranikus":             {ID: 4800, Region: "us", Name: "Eranikus", Slug: "eranikus"},
+        // New US realms (MoP Classic launch wave)
+        "nazgrim":             {ID: 6359, Region: "us", Name: "Nazgrim", Slug: "nazgrim"},
+        "galakras":            {ID: 6360, Region: "us", Name: "Galakras", Slug: "galakras"},
+        "raden":               {ID: 6361, Region: "us", Name: "Ra-den", Slug: "raden"},
+        "lei-shen":            {ID: 6362, Region: "us", Name: "Lei Shen", Slug: "lei-shen"},
+        "immerseus":           {ID: 6363, Region: "us", Name: "Immerseus", Slug: "immerseus"},
 
 		// eu realms
 		"everlook":             {ID: 4440, Region: "eu", Name: "Everlook", Slug: "everlook"},
@@ -107,6 +114,12 @@ func GetAllRealms() map[string]RealmInfo {
 		"mandokir":             {ID: 4813, Region: "eu", Name: "Mandokir", Slug: "mandokir"},
 		"thekal":               {ID: 4815, Region: "eu", Name: "Thekal", Slug: "thekal"},
 		"jindo":                {ID: 4816, Region: "eu", Name: "Jin'do", Slug: "jindo"},
+        // New EU realms (MoP Classic launch wave)
+        "shekzeer":            {ID: 6364, Region: "eu", Name: "Shek'zeer", Slug: "shekzeer"},
+        "garalon":             {ID: 6365, Region: "eu", Name: "Garalon", Slug: "garalon"},
+        "norushen":            {ID: 6366, Region: "eu", Name: "Norushen", Slug: "norushen"},
+        "hoptallus":           {ID: 6367, Region: "eu", Name: "Hoptallus", Slug: "hoptallus"},
+        "ook-ook":             {ID: 6368, Region: "eu", Name: "Ook Ook", Slug: "ook-ook"},
 
         // kr realms
         "shimmering-flats": {ID: 4417, Region: "kr", Name: "Shimmering Flats", Slug: "shimmering-flats"},

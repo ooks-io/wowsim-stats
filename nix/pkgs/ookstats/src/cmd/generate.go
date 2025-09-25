@@ -75,6 +75,85 @@ type PlayerPageJSON struct {
     Version     string               `json:"version"`
 }
 
+// --- Fallback helpers for class/spec resolution when Profile API is unavailable ---
+func specIdToClassSpec(id int) (className string, specName string, ok bool) {
+    switch id {
+    // Tanks
+    case 73:
+        return "Warrior", "Protection", true
+    case 104:
+        return "Druid", "Guardian", true
+    case 250:
+        return "Death Knight", "Blood", true
+    case 268:
+        return "Monk", "Brewmaster", true
+    case 66:
+        return "Paladin", "Protection", true
+    // Healers
+    case 105:
+        return "Druid", "Restoration", true
+    case 270:
+        return "Monk", "Mistweaver", true
+    case 65:
+        return "Paladin", "Holy", true
+    case 256:
+        return "Priest", "Discipline", true
+    case 257:
+        return "Priest", "Holy", true
+    case 264:
+        return "Shaman", "Restoration", true
+    // DPS
+    case 71:
+        return "Warrior", "Arms", true
+    case 72:
+        return "Warrior", "Fury", true
+    case 70:
+        return "Paladin", "Retribution", true
+    case 253:
+        return "Hunter", "Beast Mastery", true
+    case 254:
+        return "Hunter", "Marksmanship", true
+    case 255:
+        return "Hunter", "Survival", true
+    case 259:
+        return "Rogue", "Assassination", true
+    case 260:
+        return "Rogue", "Outlaw", true
+    case 261:
+        return "Rogue", "Subtlety", true
+    case 258:
+        return "Priest", "Shadow", true
+    case 251:
+        return "Death Knight", "Frost", true
+    case 252:
+        return "Death Knight", "Unholy", true
+    case 262:
+        return "Shaman", "Elemental", true
+    case 263:
+        return "Shaman", "Enhancement", true
+    case 62:
+        return "Mage", "Arcane", true
+    case 63:
+        return "Mage", "Fire", true
+    case 64:
+        return "Mage", "Frost", true
+    case 265:
+        return "Warlock", "Affliction", true
+    case 266:
+        return "Warlock", "Demonology", true
+    case 267:
+        return "Warlock", "Destruction", true
+    case 269:
+        return "Monk", "Windwalker", true
+    case 102:
+        return "Druid", "Balance", true
+    case 103:
+        return "Druid", "Feral", true
+    default:
+        return "", "", false
+    }
+}
+
 // Optimized data structures for batch loading
 type PlayerData struct {
     ID                   int64
@@ -686,6 +765,14 @@ func generateSinglePlayerJSON(player PlayerData, bestRunsMap map[int64][]BestRun
     if player.RealmRanking.Valid { v := int(player.RealmRanking.Int64); pj.RealmRanking = &v }
     if player.AverageItemLevel.Valid { v := int(player.AverageItemLevel.Int64); pj.AverageItemLevel = &v }
     if player.EquippedItemLevel.Valid { v := int(player.EquippedItemLevel.Int64); pj.EquippedItemLevel = &v }
+
+    // Fallback: if class/spec missing (Profile API issues), derive from main_spec_id
+    if (pj.ClassName == "" || pj.ActiveSpecName == "") && pj.MainSpecID != nil {
+        if cls, spec, ok := specIdToClassSpec(*pj.MainSpecID); ok {
+            if pj.ClassName == "" { pj.ClassName = cls }
+            if pj.ActiveSpecName == "" { pj.ActiveSpecName = spec }
+        }
+    }
     if player.LastUpdated.Valid { v := player.LastUpdated.Int64; pj.LastUpdated = &v }
     
     // Build best runs
@@ -1186,6 +1273,27 @@ func generatePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
                     "active_spec_name": r.ActiveSpecName,
                     "dungeons_completed": r.DungeonsCompleted,
                     "total_runs": r.TotalRuns,
+                }
+                // Fallback class/spec if missing
+                if (r.ClassName == "" || r.ActiveSpecName == "") && r.MainSpecID.Valid {
+                    if cls, spec, ok := specIdToClassSpec(int(r.MainSpecID.Int64)); ok {
+                        if r.ClassName == "" { obj["class_name"] = cls }
+                        if r.ActiveSpecName == "" { obj["active_spec_name"] = spec }
+                    }
+                }
+                // Fallback class/spec if missing
+                if (r.ClassName == "" || r.ActiveSpecName == "") && r.MainSpecID.Valid {
+                    if cls, spec, ok := specIdToClassSpec(int(r.MainSpecID.Int64)); ok {
+                        if r.ClassName == "" { obj["class_name"] = cls }
+                        if r.ActiveSpecName == "" { obj["active_spec_name"] = spec }
+                    }
+                }
+                // Fallback class/spec if missing
+                if (r.ClassName == "" || r.ActiveSpecName == "") && r.MainSpecID.Valid {
+                    if cls, spec, ok := specIdToClassSpec(int(r.MainSpecID.Int64)); ok {
+                        if r.ClassName == "" { obj["class_name"] = cls }
+                        if r.ActiveSpecName == "" { obj["active_spec_name"] = spec }
+                    }
                 }
                 if r.MainSpecID.Valid { obj["main_spec_id"] = int(r.MainSpecID.Int64) }
                 if r.CombinedBestTime.Valid { obj["combined_best_time"] = r.CombinedBestTime.Int64 }

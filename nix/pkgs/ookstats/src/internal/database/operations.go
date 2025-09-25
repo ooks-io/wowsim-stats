@@ -765,7 +765,8 @@ func (ds *DatabaseService) getRealmIDTx(tx *sql.Tx, slug string, region string) 
     var realmID int
     err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", slug, region).Scan(&realmID)
     if err == sql.ErrNoRows {
-        return 0, fmt.Errorf("realm not found: %s/%s", region, slug)
+        // Not found is not an error for callers that may insert placeholders/aliases
+        return 0, nil
     }
     return realmID, err
 }
