@@ -97,7 +97,7 @@
       ]
 
       API_TOKEN = os.getenv("BLIZZARD_API_TOKEN")
-      PERIOD_RANGE = range(1026, 1030)  # Test periods 1026-1028
+      PERIOD_RANGE = range(1026, 1031)  # Test periods 1026-1028
       MAX_CONCURRENT = 50  # Reduced concurrency for comprehensive testing
       BATCH_SIZE = 50
 
@@ -362,4 +362,3 @@
     '';
 in
   multiPeriodAnalyzerScript
-

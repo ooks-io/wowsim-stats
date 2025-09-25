@@ -4,6 +4,7 @@ import {
   formatDurationMMSS,
 } from "../lib/utils";
 import { getClassTextClass } from "../lib/wow-constants";
+import { getSpecInfo } from "../lib/client-utils.ts";
 import { formatRankingWithBracket as formatRank } from "../lib/client-utils.ts";
 import { renderBestRunsWithWrapper } from "../lib/bestRunsRenderer";
 import {
@@ -149,7 +150,13 @@ class PlayerProfileManager {
     const regBracket = player.regional_ranking_bracket || "";
     const realmBracket = player.realm_ranking_bracket || "";
 
-    const classText = getClassTextClass(player.class_name || "common");
+    // Fallback class color when class_name missing: derive from main_spec_id if available
+    let classNameForColor = player.class_name || "";
+    if (!classNameForColor && (player.main_spec_id || player.main_spec_id === 0)) {
+      const si = getSpecInfo(Number(player.main_spec_id));
+      if (si && si.class) classNameForColor = si.class;
+    }
+    const classText = getClassTextClass(classNameForColor || "common");
     const headerHTML = `
       <div class="player-header-horizontal">
         <div class="player-avatar">

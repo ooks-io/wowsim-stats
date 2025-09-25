@@ -226,9 +226,15 @@ class PlayerLeaderboardClient {
         ? this.formatDuration(player.combined_best_time)
         : "-";
       const row = document.createElement("div");
-      const classColor = player.class_name
-        ? getClassColor(player.class_name)
-        : "#FFFFFF";
+      let classColor = "#FFFFFF";
+      if (player.class_name) {
+        classColor = getClassColor(player.class_name);
+      } else if (player.main_spec_id) {
+        const si = getSpecInfo(Number(player.main_spec_id));
+        if (si && si.class) {
+          classColor = getClassColor(si.class);
+        }
+      }
       const profileUrl = buildPlayerProfileURL(
         player.region || "us",
         player.realm_slug,
