@@ -1,0 +1,105 @@
+---
+import Navigation from "../components/Navigation.astro";
+import Callout from "../components/Callout.astro";
+import LoadingState from "../components/LoadingState.astro";
+import "../styles/global.css";
+import "../styles/best-runs.scss";
+
+const pageTitle = "Challenge Mode Status";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <Navigation />
+
+    <main class="status-page">
+      <h1 class="page-title">Challenge Mode Status</h1>
+      <Callout type="note" title="About">
+        <p>
+          This page summarizes the latest recorded Challenge Mode run per realm using
+          a quick multi-period sweep. Data updates when we run the analyzer during builds.
+        </p>
+      </Callout>
+
+      <div class="controls">
+        <label for="region-filter">Region</label>
+        <select id="region-filter">
+          <option value="">All</option>
+          <option value="us">US</option>
+          <option value="eu">EU</option>
+          <option value="kr">KR</option>
+          <option value="tw">TW</option>
+        </select>
+        <label for="realm-filter">Realm</label>
+        <select id="realm-filter">
+          <option value="">(Select realm)</option>
+        </select>
+      </div>
+
+      <div id="status-loading">
+        <LoadingState message="Loading latest realm activity..." />
+      </div>
+
+      <div id="status-error" style="display:none;">
+        <LoadingState type="error" message="Failed to load status data." />
+      </div>
+
+      <div id="status-content" style="display:none;"></div>
+
+      <h2 class="section-title">Realm Coverage</h2>
+      <div id="realm-coverage" style="display:none;"></div>
+    </main>
+
+    <script src="../client/status-page.ts"></script>
+    <script src="../client/best-runs-decorate.ts"></script>
+  </body>
+</html>
+
+<style>
+  .status-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  .page-title {
+    margin: 8px 0 16px 0;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 16px 0;
+  }
+  .controls label { color: var(--text-secondary); font-size: 0.9em; }
+  .controls select { background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px 10px; }
+  .latest-table { width: 100%; }
+  .latest-header, .latest-row { display: grid; grid-template-columns: 1.2fr 0.5fr 1.4fr 1fr 0.6fr 2fr; gap: 8px; align-items: center; }
+  .latest-header { font-weight: 600; color: var(--text-secondary); text-transform: uppercase; font-size: 0.85em; padding: 8px 0; }
+  .latest-row { padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+  .member-list { display: flex; gap: 10px; flex-wrap: wrap; }
+  .member { display: inline-flex; align-items: center; gap: 6px; }
+  .spec-icon { width: 18px; height: 18px; border-radius: 3px; }
+  .realm-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dungeon-cell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @media (max-width: 920px) {
+    .latest-header, .latest-row { grid-template-columns: 1fr 0.6fr 1.2fr 0.8fr 0.6fr 1fr; }
+  }
+  @media (max-width: 720px) {
+    .latest-header { display: none; }
+    .latest-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+  .section-title { margin: 24px 0 8px 0; }
+  .coverage-grid { width: 100%; }
+  .coverage-row, .coverage-header { display: grid; grid-template-columns: 1.4fr 1.6fr; gap: 8px; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--border-color); }
+  .coverage-header { font-weight: 600; color: var(--text-secondary); text-transform: uppercase; font-size: 0.85em; }
+  .period-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+  .badge { padding: 2px 6px; border-radius: 4px; font-size: 0.8em; border: 1px solid var(--border-color); }
+  .badge-ok { background: rgba(0, 128, 0, 0.15); border-color: #2d8f2d; }
+  .badge-miss { background: rgba(128, 0, 0, 0.15); border-color: #8f2d2d; }
+</style>

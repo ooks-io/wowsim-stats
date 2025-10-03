@@ -175,6 +175,14 @@
   }
 }
 
+.best-runs-table[data-mode="status"] {
+
+  .best-runs-header,
+  .best-runs-row {
+    grid-template-columns: 200px 120px 2fr 200px 220px 90px;
+  }
+}
+
 // hide mobile card elements on desktop
 .mobile-card-header,
 .mobile-card-body {
@@ -185,7 +193,8 @@
 @media (max-width: 1024px) {
 
   .best-runs-table[data-mode="full"],
-  .best-runs-table[data-mode="compact"] {
+  .best-runs-table[data-mode="compact"],
+  .best-runs-table[data-mode="status"] {
     .best-runs-header {
       display: none;
     }
@@ -311,8 +320,31 @@
     .runs-cell--dungeon,
     .runs-cell--time,
     .runs-cell--team,
-    .runs-cell--rank {
+    .runs-cell--rank,
+    .runs-cell--realm,
+    .runs-cell--last,
+    .runs-cell--period {
       display: none;
     }
   }
+}
+
+// Generic subtle text class
+.text-subtle { color: var(--text-secondary); }
+
+// Mobile metadata block for status mode
+@media (max-width: 1024px) {
+  .mobile-meta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .mobile-meta-item { display: flex; justify-content: space-between; gap: 8px; }
+  .mobile-meta-label {
+    font-size: 0.75em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .mobile-meta-value { font-weight: 600; }
 }
