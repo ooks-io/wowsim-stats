@@ -289,9 +289,7 @@ var fetchProfilesCmd = &cobra.Command{
 
 		fmt.Printf("Processing %d players in batches of %d with 20 concurrent requests\n", len(players), batchSize)
 
-		// start concurrent fetching with batch processing
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
-		defer cancel()
+			// start concurrent fetching with batch processing
 
 		fmt.Printf("\nStarting player profile fetching...\n")
 		startTime := time.Now()
@@ -300,64 +298,102 @@ var fetchProfilesCmd = &cobra.Command{
 		totalEquipment := 0
 		processedCount := 0
 
-		// process in batches to avoid overwhelming the API
-		for i := 0; i < len(players); i += batchSize {
-			end := i + batchSize
-			if end > len(players) {
-				end = len(players)
-			}
-			batch := players[i:end]
+        // process in batches to avoid overwhelming the API
+        for i := 0; i < len(players); i += batchSize {
+            end := i + batchSize
+            if end > len(players) {
+                end = len(players)
+            }
+            batch := players[i:end]
 
 			batchNumber := (i / batchSize) + 1
 			totalBatches := (len(players) + batchSize - 1) / batchSize
 
 			fmt.Printf("\n--- Batch %d/%d (%d players) ---\n", batchNumber, totalBatches, len(batch))
 
-			// fetch profiles concurrently for this batch
-			results := client.FetchPlayerProfilesConcurrent(ctx, batch)
+            // fetch profiles concurrently for this batch with fallback attempts
+            sem := make(chan struct{}, 20)
+            type out struct{ profiles, equipment int; err error }
+            outCh := make(chan out, len(batch))
+            timestamp := time.Now().UnixMilli()
+            for _, p := range batch {
+                sem <- struct{}{}
+                go func(p blizzard.PlayerInfo) {
+                    defer func(){ <-sem }()
+                    // Build candidate list
+                    region := p.Region
+                    realm := blizzard.NormalizeRealmSlug(region, p.RealmSlug)
+                    name := p.Name
+                    tried := map[string]bool{}
+                    candidates := [][2]string{{realm, name}}
+                    // connected-realm sweep
+                    if slugs, err := dbService.GetConnectedRealmSlugs(region, realm); err == nil {
+                        for _, s := range slugs {
+                            s = blizzard.NormalizeRealmSlug(region, s)
+                            if s != realm { candidates = append(candidates, [2]string{s, name}) }
+                        }
+                    }
+                    // last-run realm heuristic
+                    if lrRegion, lrSlug, _, err := dbService.GetLastRunRealmForPlayer(p.ID); err == nil && lrRegion != "" && lrSlug != "" {
+                        if lrRegion == region {
+                            lrSlug = blizzard.NormalizeRealmSlug(region, lrSlug)
+                            candidates = append(candidates, [2]string{lrSlug, name})
+                        }
+                    }
 
-			// process results
-			batchProfiles := 0
-			batchEquipment := 0
-			timestamp := time.Now().UnixMilli()
+                    // Attempt candidates
+                    var profs, items int
+                    var finalErr error
+                    for _, c := range candidates {
+                        key := c[0] + "|" + c[1]
+                        if tried[key] { continue }
+                        tried[key] = true
 
-			for result := range results {
-				processedCount++
+                        // Fetch summary first; if it 404s, skip to next candidate
+                        sum, err := client.FetchCharacterSummary(c[1], c[0], region)
+                        if err != nil {
+                            // try next candidate
+                            finalErr = err
+                            continue
+                        }
+                        eq, err2 := client.FetchCharacterEquipment(c[1], c[0], region)
+                        if err2 != nil { finalErr = err2 }
+                        med, err3 := client.FetchCharacterMedia(c[1], c[0], region)
+                        if err3 != nil { finalErr = err3 }
 
-				if result.Error != nil {
-					fmt.Printf("  [ERROR] %s (%s): %v\n", result.PlayerName, result.Region, result.Error)
-					continue
-				}
+                        // Insert profile data
+                        res := blizzard.PlayerProfileResult{ PlayerID: p.ID, PlayerName: c[1], RealmSlug: c[0], Region: region, Summary: sum, Equipment: eq, Media: med }
+                        pr, eqc, derr := dbService.InsertPlayerProfileData(res, timestamp)
+                        if derr != nil {
+                            finalErr = derr
+                            continue
+                        }
+                        profs += pr
+                        items += eqc
+                        // Update players table to resolved identity for this build
+                        _ = dbService.UpdatePlayerIdentity(p.ID, c[1], region, c[0])
+                        break
+                    }
+                    outCh <- out{profiles: profs, equipment: items, err: finalErr}
+                }(p)
+            }
+            // wait for batch: collect exactly len(batch) results
+            batchProfiles := 0
+            batchEquipment := 0
+            for k := 0; k < len(batch); k++ {
+                r := <-outCh
+                processedCount++
+                if r.err != nil && r.profiles == 0 && r.equipment == 0 {
+                    // only log errors if nothing was inserted
+                    fmt.Printf("  [ERROR] profile fetch failed: %v\n", r.err)
+                }
+                batchProfiles += r.profiles
+                batchEquipment += r.equipment
+            }
+            close(outCh)
 
-				// insert profile data
-				profiles, equipment, err := dbService.InsertPlayerProfileData(result, timestamp)
-				if err != nil {
-					fmt.Printf("  [ERROR] %s (%s): DB error - %v\n", result.PlayerName, result.Region, err)
-					continue
-				}
-
-				batchProfiles += profiles
-				batchEquipment += equipment
-
-				// show success status
-				statusParts := []string{}
-				if result.Summary != nil {
-					statusParts = append(statusParts, "profile")
-				}
-				if result.Equipment != nil {
-					statusParts = append(statusParts, fmt.Sprintf("%d items", equipment))
-				}
-				if result.Media != nil {
-					statusParts = append(statusParts, "avatar")
-				}
-
-				if len(statusParts) > 0 {
-					fmt.Printf("  [OK] %s (%s): %s\n", result.PlayerName, result.Region, strings.Join(statusParts, ", "))
-				}
-			}
-
-			totalProfiles += batchProfiles
-			totalEquipment += batchEquipment
+            totalProfiles += batchProfiles
+            totalEquipment += batchEquipment
 
 			elapsed := time.Since(startTime)
 			fmt.Printf("  -> Batch %d complete: %d profiles, %d items (Total: %d/%d players, %.1f players/min)\n",

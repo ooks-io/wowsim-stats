@@ -49,9 +49,10 @@
           {"id": 4408, "region": "us", "name": "Faerlina", "slug": "faerlina"},
           {"id": 4647, "region": "us", "name": "Grobbulus", "slug": "grobbulus"},
           {"id": 4648, "region": "us", "name": "Bloodsail Buccaneers", "slug": "bloodsail-buccaneers"},
-          {"id": 4667, "region": "us", "name": "Remulos", "slug": "remulos"},
-          {"id": 4669, "region": "us", "name": "Arugal", "slug": "arugal"},
-          {"id": 4670, "region": "us", "name": "Yojamba", "slug": "yojamba"},
+          # OCE realms now have -au slugs under the US region
+          {"id": 4667, "region": "us", "name": "Remulos (AU)", "slug": "remulos-au"},
+          {"id": 4669, "region": "us", "name": "Arugal (AU)", "slug": "arugal-au"},
+          {"id": 4670, "region": "us", "name": "Yojamba (AU)", "slug": "yojamba-au"},
           {"id": 4725, "region": "us", "name": "Skyfury", "slug": "skyfury"},
           {"id": 4726, "region": "us", "name": "Sulfuras", "slug": "sulfuras"},
           {"id": 4727, "region": "us", "name": "Windseeker", "slug": "windseeker"},
@@ -60,6 +61,12 @@
           {"id": 4738, "region": "us", "name": "Maladath", "slug": "maladath"},
           {"id": 4795, "region": "us", "name": "Angerforge", "slug": "angerforge"},
           {"id": 4800, "region": "us", "name": "Eranikus", "slug": "eranikus"},
+          # New US destination realms (pre-connected)
+          {"id": 6359, "region": "us", "name": "Nazgrim", "slug": "nazgrim"},
+          {"id": 6360, "region": "us", "name": "Galakras", "slug": "galakras"},
+          {"id": 6361, "region": "us", "name": "Ra-den", "slug": "raden"},
+          {"id": 6362, "region": "us", "name": "Lei Shen", "slug": "lei-shen"},
+          {"id": 6363, "region": "us", "name": "Immerseus", "slug": "immerseus"},
 
           # EU Realms
           {"id": 4440, "region": "eu", "name": "Everlook", "slug": "everlook"},
@@ -87,6 +94,12 @@
           {"id": 4813, "region": "eu", "name": "Mandokir", "slug": "mandokir"},
           {"id": 4815, "region": "eu", "name": "Thekal", "slug": "thekal"},
           {"id": 4816, "region": "eu", "name": "Jin'do", "slug": "jindo"},
+          # New EU destination realms (pre-connected)
+          {"id": 6364, "region": "eu", "name": "Shek'zeer", "slug": "shekzeer"},
+          {"id": 6365, "region": "eu", "name": "Garalon", "slug": "garalon"},
+          {"id": 6366, "region": "eu", "name": "Norushen", "slug": "norushen"},
+          {"id": 6367, "region": "eu", "name": "Hoptallus", "slug": "hoptallus"},
+          {"id": 6368, "region": "eu", "name": "Ook Ook", "slug": "ook-ook"},
 
           # KR Realms
           {"id": 4417, "region": "kr", "name": "Shimmering Flats", "slug": "shimmering-flats"},
@@ -94,6 +107,16 @@
           {"id": 4420, "region": "kr", "name": "Iceblood", "slug": "iceblood"},
           {"id": 4421, "region": "kr", "name": "Ragnaros", "slug": "ragnaros"},
           {"id": 4840, "region": "kr", "name": "Frostmourne", "slug": "frostmourne"},
+          
+          # TW Realms
+          {"id": 4485, "region": "tw", "name": "Maraudon", "slug": "maraudon"},
+          {"id": 4487, "region": "tw", "name": "Ivus", "slug": "ivus"},
+          {"id": 4488, "region": "tw", "name": "Wushoolay", "slug": "wushoolay"},
+          {"id": 4489, "region": "tw", "name": "Zeliek", "slug": "zeliek"},
+          {"id": 5740, "region": "tw", "name": "Arathi Basin", "slug": "arathi-basin"},
+          {"id": 5741, "region": "tw", "name": "Murloc", "slug": "murloc"},
+          {"id": 5742, "region": "tw", "name": "Golemagg", "slug": "golemagg"},
+          {"id": 5743, "region": "tw", "name": "Windseeker", "slug": "windseeker"},
       ]
 
       API_TOKEN = os.getenv("BLIZZARD_API_TOKEN")
@@ -170,6 +193,12 @@
                   }
 
       async def main():
+          # Optional output path for JSON
+          OUT_PATH = None
+          if len(sys.argv) > 1 and sys.argv[1].strip():
+              OUT_PATH = sys.argv[1].strip()
+          if not OUT_PATH:
+              OUT_PATH = os.getenv('OUTPUT_LATEST_JSON', '').strip() or None
           if not API_TOKEN:
               print("FATAL: BLIZZARD_API_TOKEN environment variable not set.")
               sys.exit(1)
@@ -257,6 +286,59 @@
           print(f"Total endpoints tested: {len(all_results)}")
           print(f"Successful endpoints: {len(successful_results)} ({len(successful_results)/len(all_results)*100:.1f}%)")
           print(f"Failed endpoints: {len(failed_results)} ({len(failed_results)/len(all_results)*100:.1f}%)")
+
+          # Latest runs per realm (across all dungeons/periods) with details
+          latest_details = {}
+          for r in successful_results:
+              mr = r.get("most_recent")
+              if not mr:
+                  continue
+              key = (r["region"], r["realm_slug"]) 
+              cur = latest_details.get(key)
+              if (not cur) or (mr > cur["most_recent"]):
+                  latest_details[key] = {
+                      "region": r["region"],
+                      "realm_slug": r["realm_slug"],
+                      "realm_name": r["realm_name"],
+                      "realm_id": r["realm_id"],
+                      "most_recent": mr,
+                      "most_recent_iso": time.strftime('%Y-%m-%d %H:%M:%S UTC', time.gmtime(mr/1000)),
+                      "period_id": r["period_id"],
+                      "dungeon_slug": r["dungeon_slug"],
+                      "dungeon_name": r["dungeon_name"],
+                      "run_count": r.get("run_count", 0),
+                      "has_runs": r.get("has_runs", False),
+                  }
+
+          latest_sorted = sorted(latest_details.values(), key=lambda x: x["most_recent"], reverse=True)
+          if latest_sorted:
+              print("\n=== LATEST RECORDED RUN PER REALM ===")
+              for entry in latest_sorted:
+                  print(f"  {entry['realm_name']} [{entry['region'].upper()}] ({entry['realm_slug']})"
+                        f" -> {entry['most_recent_iso']}  | {entry['dungeon_name']} ({entry['dungeon_slug']})"
+                        f"  period={entry['period_id']}  runs_in_payload={entry['run_count']}")
+
+          # Emit JSON for website consumption if requested
+          if OUT_PATH:
+              payload = {
+                  "generated_at": int(time.time()*1000),
+                  "period_range": [PERIOD_RANGE.start, PERIOD_RANGE.stop - 1],
+                  "summary": {
+                      "realms_tested": len(REALMS),
+                      "dungeons_tested": len(DUNGEONS),
+                      "periods_tested": len(range(PERIOD_RANGE.start, PERIOD_RANGE.stop)),
+                      "endpoints_tested": len(all_results),
+                      "success": len(successful_results),
+                      "failed": len(failed_results),
+                  },
+                  "latest_runs": latest_sorted,
+              }
+              try:
+                  with open(OUT_PATH, 'w', encoding='utf-8') as f:
+                      json.dump(payload, f, ensure_ascii=False, indent=2)
+                  print(f"\nWrote latest runs JSON to: {OUT_PATH}")
+              except Exception as e:
+                  print(f"\n[WARN] Failed to write JSON file {OUT_PATH}: {e}")
 
           # Analyze failure patterns
           if failed_results:

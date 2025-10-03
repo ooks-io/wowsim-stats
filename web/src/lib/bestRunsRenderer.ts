@@ -6,20 +6,29 @@ import { buildPlayerProfileURL } from "./utils";
 import { getSpecInfo } from "./wow-constants";
 
 export interface BestRunsOptions {
-  mode?: "full" | "compact";
+  mode?: "full" | "compact" | "status";
   showSectionWrapper?: boolean;
   className?: string;
 }
 
 export function renderBestRunsHeader(
-  mode: "full" | "compact" = "full",
+  mode: "full" | "compact" | "status" = "full",
 ): string {
   const cells = [
     '<div class="header-cell header-cell--dungeon">Dungeon</div>',
     '<div class="header-cell header-cell--time">Time</div>',
     '<div class="header-cell header-cell--team">Team</div>',
-    '<div class="header-cell header-cell--rank">Global</div>',
   ];
+
+  if (mode === "status") {
+    cells.push(
+      '<div class="header-cell header-cell--realm">Realm</div>',
+      '<div class="header-cell header-cell--last">Last Run</div>',
+      '<div class="header-cell header-cell--period">Period</div>',
+    );
+  } else {
+    cells.push('<div class="header-cell header-cell--rank">Global</div>');
+  }
 
   if (mode === "full") {
     cells.push(
@@ -33,7 +42,7 @@ export function renderBestRunsHeader(
 
 export function renderBestRunsRow(
   run: BestRun,
-  mode: "full" | "compact" = "full",
+  mode: "full" | "compact" | "status" = "full",
   playerRegion?: string,
   playerRealmSlug?: string,
 ): string {
@@ -100,22 +109,36 @@ export function renderBestRunsRow(
     </div>
   `);
 
-  const globalRankingValue =
-    typeof (run as any).global_ranking_filtered === "number" &&
-    (run as any).global_ranking_filtered > 0
-      ? (run as any).global_ranking_filtered
-      : run.global_ranking;
-  const globalBracket =
-    (run as any).global_percentile_bracket || run.percentile_bracket || "";
-  const globalRankHTML = formatRankingWithBracket(
-    globalRankingValue,
-    globalBracket,
-  );
   const dungeonSlug = (run as any).dungeon_slug || "";
-  const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
-  cells.push(
-    `<div class="runs-cell runs-cell--rank"><a class="rank-link" href="${globalURL}">${globalRankHTML}</a></div>`,
-  );
+  if (mode !== "status") {
+    const globalRankingValue =
+      typeof (run as any).global_ranking_filtered === "number" &&
+      (run as any).global_ranking_filtered > 0
+        ? (run as any).global_ranking_filtered
+        : (run as any).global_ranking;
+    const globalBracket =
+      (run as any).global_percentile_bracket || (run as any).percentile_bracket || "";
+    const globalRankHTML = formatRankingWithBracket(
+      globalRankingValue,
+      globalBracket,
+    );
+    const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+    cells.push(
+      `<div class="runs-cell runs-cell--rank"><a class="rank-link" href="${globalURL}">${globalRankHTML}</a></div>`,
+    );
+  } else {
+    const meta = (run as any).__status || {};
+    const realmText = meta.realm_name || meta.realm_slug || "-";
+    const lastIso = meta.most_recent_iso || "";
+    const lastTs = Number(meta.most_recent_ts || 0);
+    const rel = lastTs ? timeAgo(lastTs) : "";
+    const period = meta.period_id ? String(meta.period_id) : "";
+    cells.push(
+      `<div class="runs-cell runs-cell--realm">${realmText}</div>`,
+      `<div class="runs-cell runs-cell--last">${lastIso}${rel ? ` <span class=\"text-subtle\">(${rel})</span>` : ""}</div>`,
+      `<div class="runs-cell runs-cell--period">${period}</div>`,
+    );
+  }
 
   if (mode === "full") {
     const regionalBracket =
@@ -167,16 +190,32 @@ export function renderBestRunsRow(
     </div>
   `;
 
-  let mobileRankingsContent = `
-    <div class="mobile-rank-item">
-      <span class="mobile-rank-label">Global</span>
-      <div class="mobile-rank-value">
-        <a class="rank-link" href="${globalURL}">${globalRankHTML}</a>
-      </div>
-    </div>
-  `;
+  let mobileBodyContent = "";
 
-  if (mode === "full") {
+  if (mode === "full" || mode === "compact") {
+    const globalRankingValue =
+      typeof (run as any).global_ranking_filtered === "number" &&
+      (run as any).global_ranking_filtered > 0
+        ? (run as any).global_ranking_filtered
+        : (run as any).global_ranking;
+    const globalBracket =
+      (run as any).global_percentile_bracket || (run as any).percentile_bracket || "";
+    const globalRankHTML = formatRankingWithBracket(
+      globalRankingValue,
+      globalBracket,
+    );
+    const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+
+    let mobileRankingsContent = `
+      <div class="mobile-rank-item">
+        <span class="mobile-rank-label">Global</span>
+        <div class="mobile-rank-value">
+          <a class="rank-link" href="${globalURL}">${globalRankHTML}</a>
+        </div>
+      </div>
+    `;
+
+    if (mode === "full") {
     // recalculate rankings for mobile (since they're scoped to the full mode block)
     const regionalBracket =
       (run as any).regional_percentile_bracket || run.percentile_bracket || "";
@@ -210,7 +249,7 @@ export function renderBestRunsRow(
         ? buildLeaderboardURL(region, realmSlug, dungeonSlug)
         : "#";
 
-    mobileRankingsContent += `
+      mobileRankingsContent += `
       <div class="mobile-rank-item">
         <span class="mobile-rank-label">Region</span>
         <div class="mobile-rank-value">
@@ -224,13 +263,37 @@ export function renderBestRunsRow(
         </div>
       </div>
     `;
-  }
+    }
 
-  const mobileRankings = `
-    <div class="mobile-rankings">
-      ${mobileRankingsContent}
-    </div>
-  `;
+    mobileBodyContent += `
+      <div class="mobile-rankings">
+        ${mobileRankingsContent}
+      </div>
+    `;
+  } else if (mode === "status") {
+    const meta = (run as any).__status || {};
+    const realmText = meta.realm_name || meta.realm_slug || "-";
+    const lastIso = meta.most_recent_iso || "";
+    const lastTs = Number(meta.most_recent_ts || 0);
+    const rel = lastTs ? timeAgo(lastTs) : "";
+    const period = meta.period_id ? String(meta.period_id) : "";
+    mobileBodyContent += `
+      <div class="mobile-meta">
+        <div class="mobile-meta-item">
+          <span class="mobile-meta-label">Realm</span>
+          <div class="mobile-meta-value">${realmText}</div>
+        </div>
+        <div class="mobile-meta-item">
+          <span class="mobile-meta-label">Last Run</span>
+          <div class="mobile-meta-value">${lastIso}${rel ? ` <span class=\"text-subtle\">(${rel})</span>` : ""}</div>
+        </div>
+        <div class="mobile-meta-item">
+          <span class="mobile-meta-label">Period</span>
+          <div class="mobile-meta-value">${period}</div>
+        </div>
+      </div>
+    `;
+  }
 
   const mobileTeam = `
     <div class="mobile-team">
@@ -263,7 +326,7 @@ export function renderBestRunsRow(
 
   const mobileCardBody = `
     <div class="mobile-card-body">
-      ${mobileRankings}
+      ${mobileBodyContent}
       ${mobileTeam}
     </div>
   `;
@@ -355,6 +418,19 @@ export const BEST_RUNS_CSS_CLASSES = {
 
 export const GRID_TEMPLATES = {
   full: "200px 120px 2fr 100px 100px 100px",
-  compact: "150px 100px 80px",
+  compact: "150px 100px 2fr 80px",
+  status: "200px 120px 2fr 200px 220px 90px",
   mobile: "1fr 100px 80px",
 } as const;
+
+function timeAgo(tsMs: number): string {
+  if (!tsMs) return "";
+  const sec = Math.max(0, Math.floor((Date.now() - tsMs) / 1000));
+  const mins = Math.floor(sec / 60);
+  const hours = Math.floor(mins / 60);
+  const days = Math.floor(hours / 24);
+  if (days > 0) return `${days} day${days === 1 ? "" : "s"} ago`;
+  if (hours > 0) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  if (mins > 0) return `${mins} minute${mins === 1 ? "" : "s"} ago`;
+  return `${sec} seconds ago`;
+}
