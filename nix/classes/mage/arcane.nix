@@ -55,6 +55,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = arcane.talents.livingBomb;
         glyphs = arcane.glyphs.default;
@@ -63,6 +64,7 @@
       multiTarget = {
         apl = "arcane_cleave";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = arcane.talents.netherTempest;
         glyphs = arcane.glyphs.default;
@@ -71,6 +73,7 @@
       cleave = {
         apl = "arcane_cleave";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = arcane.talents.netherTempest;
         glyphs = arcane.glyphs.default;

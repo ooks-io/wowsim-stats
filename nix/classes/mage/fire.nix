@@ -53,6 +53,7 @@
       singleTarget = {
         apl = "fire";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = fire.talents.livingBomb;
         glyphs = fire.glyphs.default;
@@ -61,6 +62,7 @@
       multiTarget = {
         apl = "fire_cleave";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = fire.talents.netherTempest;
         glyphs = fire.glyphs.default;
@@ -69,6 +71,7 @@
       cleave = {
         apl = "fire_cleave";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = fire.talents.netherTempest;
         glyphs = fire.glyphs.default;

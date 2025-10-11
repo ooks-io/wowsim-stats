@@ -50,6 +50,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = enhancement.talents.elementalBlast;
         glyphs = enhancement.glyphs.default;
@@ -58,6 +59,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = enhancement.talents.elementalBlast;
         glyphs = enhancement.glyphs.default;
@@ -66,6 +68,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = enhancement.talents.elementalBlast;
         glyphs = enhancement.glyphs.default;

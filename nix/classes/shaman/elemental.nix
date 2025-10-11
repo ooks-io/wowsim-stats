@@ -46,6 +46,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = elemental.talents.unleashedFury;
         glyphs = elemental.glyphs.default;
@@ -54,6 +55,7 @@
       multiTarget = {
         apl = "aoe";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = elemental.talents.primalElementalist;
         glyphs = elemental.glyphs.default;
@@ -62,6 +64,7 @@
       cleave = {
         apl = "cleave";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = elemental.talents.primalElementalist;
         glyphs = elemental.glyphs.default;

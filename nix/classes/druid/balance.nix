@@ -44,6 +44,7 @@
       singleTarget = {
         apl = "standard";
         p1.gearset = "t14";
+        p2.gearset = "t15";
         preRaid.gearset = "preraid";
         talents = balance.talents.dreamOfCenarius;
         glyphs = balance.glyphs.default;
@@ -52,6 +53,7 @@
       multiTarget = {
         apl = "standard";
         p1.gearset = "t14";
+        p2.gearset = "t15";
         preRaid.gearset = "preraid";
         talents = balance.talents.dreamOfCenarius;
         glyphs = balance.glyphs.default;
@@ -60,6 +62,7 @@
       cleave = {
         apl = "standard";
         p1.gearset = "t14";
+        p2.gearset = "t15";
         preRaid.gearset = "preraid";
         talents = balance.talents.dreamOfCenarius;
         glyphs = balance.glyphs.default;

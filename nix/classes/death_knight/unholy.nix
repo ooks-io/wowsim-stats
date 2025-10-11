@@ -51,6 +51,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "prebis";
         talents = unholy.talents.gorfiendsGrasp;
         glyphs = unholy.glyphs.default;
@@ -59,6 +60,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "prebis";
         talents = unholy.talents.gorfiendsGrasp;
         glyphs = unholy.glyphs.default;
@@ -67,6 +69,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "prebis";
         talents = unholy.talents.gorfiendsGrasp;
         glyphs = unholy.glyphs.default;
