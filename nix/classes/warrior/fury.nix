@@ -49,6 +49,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1_fury_tg";
+        p2.gearset = "p2_fury_tg";
         preRaid.gearset = "preraid_fury_tg";
         talents = fury.talents.stormBolt;
         glyphs = fury.glyphs.default;
@@ -57,6 +58,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1_fury_tg";
+        p2.gearset = "p2_fury_tg";
         preRaid.gearset = "preraid_fury_tg";
         talents = fury.talents.stormBolt;
         glyphs = fury.glyphs.default;
@@ -65,6 +67,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1_fury_tg";
+        p2.gearset = "p2_fury_tg";
         preRaid.gearset = "preraid_fury_tg";
         talents = fury.talents.stormBolt;
         glyphs = fury.glyphs.default;

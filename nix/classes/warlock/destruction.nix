@@ -44,6 +44,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "p1-prebis";
         talents = destruction.talents.archimondesDarkness;
         glyphs = destruction.glyphs.default;
@@ -52,6 +53,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "p1-prebis";
         talents = destruction.talents.archimondesDarkness;
         glyphs = destruction.glyphs.default;
@@ -60,6 +62,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "p1-prebis";
         talents = destruction.talents.archimondesDarkness;
         glyphs = destruction.glyphs.default;

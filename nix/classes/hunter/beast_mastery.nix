@@ -52,30 +52,33 @@
 
       singleTarget = {
         apl = "bm";
-        p1.gearset = "p1";
-        preRaid.gearset = "preraid";
+        p1.gearset = "p1_bm";
+        p2.gearset = "p2_bm";
+        preRaid.gearset = "preraid_bm";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
 
       multiTarget = {
         apl = "bm";
-        p1.gearset = "p1";
-        preRaid.gearset = "preraid";
+        p1.gearset = "p1_bm";
+        p2.gearset = "p2_bm";
+        preRaid.gearset = "preraid_bm";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
 
       cleave = {
         apl = "bm";
-        p1.gearset = "p1";
-        preRaid.gearset = "preraid";
+        p1.gearset = "p1_bm";
+        p2.gearset = "p2_bm";
+        preRaid.gearset = "preraid_bm";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
 
       challengeMode = {
-        gearset = "p1";
+        gearset = "p1_bm";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };

@@ -48,7 +48,8 @@
       singleTarget = {
         apl = "arms";
         p1.gearset = "p1_arms_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        p2.gearset = "p2_arms_bis";
+        preRaid.gearset = "p1_prebis";
         talents = arms.talents.bloodbath;
         glyphs = arms.glyphs.default;
       };
@@ -56,7 +57,8 @@
       multiTarget = {
         apl = "arms";
         p1.gearset = "p1_arms_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        p2.gearset = "p2_arms_bis";
+        preRaid.gearset = "p1_prebis";
         talents = arms.talents.bloodbath;
         glyphs = arms.glyphs.default;
       };
@@ -64,7 +66,8 @@
       cleave = {
         apl = "arms";
         p1.gearset = "p1_arms_bis";
-        preRaid.gearset = "p1_prebis_rich";
+        p2.gearset = "p2_arms_bis";
+        preRaid.gearset = "p1_prebis";
         talents = arms.talents.bloodbath;
         glyphs = arms.glyphs.default;
       };

@@ -49,6 +49,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = demonology.talents.archimondesDarkness;
         glyphs = demonology.glyphs.default;
@@ -57,6 +58,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = demonology.talents.archimondesDarkness;
         glyphs = demonology.glyphs.default;
@@ -65,6 +67,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "preraid";
         talents = demonology.talents.archimondesDarkness;
         glyphs = demonology.glyphs.default;

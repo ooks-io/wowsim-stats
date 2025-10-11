@@ -45,6 +45,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "pre_raid";
         talents = shadow.talents.halo;
         glyphs = shadow.glyphs.default;
@@ -53,6 +54,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "pre_raid";
         talents = shadow.talents.halo;
         glyphs = shadow.glyphs.default;
@@ -61,6 +63,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1";
+        p2.gearset = "p2";
         preRaid.gearset = "pre_raid";
         talents = shadow.talents.halo;
         glyphs = shadow.glyphs.default;

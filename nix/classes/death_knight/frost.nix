@@ -57,6 +57,7 @@
       singleTarget = {
         apl = "obliterate";
         p1.gearset = "p1.2h-obliterate";
+        p2.gearset = "p2.2h-obliterate";
         preRaid.gearset = "prebis";
         talents = frost.talents.obliterate;
         glyphs = frost.glyphs.obliterate;
@@ -65,6 +66,7 @@
       multiTarget = {
         apl = "obliterate";
         p1.gearset = "p1.2h-obliterate";
+        p2.gearset = "p2.2h-obliterate";
         preRaid.gearset = "prebis";
         talents = frost.talents.obliterate;
         glyphs = frost.glyphs.obliterate;
@@ -73,6 +75,7 @@
       cleave = {
         apl = "obliterate";
         p1.gearset = "p1.2h-obliterate";
+        p2.gearset = "p2.2h-obliterate";
         preRaid.gearset = "prebis";
         talents = frost.talents.obliterate;
         glyphs = frost.glyphs.obliterate;

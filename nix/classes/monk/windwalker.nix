@@ -47,6 +47,7 @@
       singleTarget = {
         apl = "default";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.xuen;
         glyphs = windwalker.glyphs.default;
@@ -55,6 +56,7 @@
       multiTarget = {
         apl = "default";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.rjw;
         glyphs = windwalker.glyphs.default;
@@ -63,6 +65,7 @@
       cleave = {
         apl = "default";
         p1.gearset = "p1_bis";
+        p2.gearset = "p2_bis";
         preRaid.gearset = "p1_prebis";
         talents = windwalker.talents.rjw;
         glyphs = windwalker.glyphs.default;
