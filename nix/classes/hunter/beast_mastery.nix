@@ -46,33 +46,31 @@
         classOptions = {
           petType = "Wolf";
           petUptime = 1;
-          useHunterMark = true;
+          useHuntersMark = true;
+          glaiveTossSuccess = 0.8;
         };
       };
 
       singleTarget = {
         apl = "bm";
-        p1.gearset = "p1_bm";
-        p2.gearset = "p2_bm";
-        preRaid.gearset = "preraid_bm";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
 
       multiTarget = {
-        apl = "bm";
-        p1.gearset = "p1_bm";
-        p2.gearset = "p2_bm";
-        preRaid.gearset = "preraid_bm";
+        apl = "aoe";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
 
       cleave = {
         apl = "bm";
-        p1.gearset = "p1_bm";
-        p2.gearset = "p2_bm";
-        preRaid.gearset = "preraid_bm";
+        p1.gearset = "p1";
+        preRaid.gearset = "preraid";
         talents = beast_mastery.talents.glaiveToss;
         glyphs = beast_mastery.glyphs.default;
       };
