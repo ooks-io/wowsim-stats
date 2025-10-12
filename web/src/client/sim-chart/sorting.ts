@@ -1,18 +1,9 @@
 export type SortBy = "dps" | "max" | "min" | "stdev" | "percent" | string;
 
-export function calculateBarWidth(value: number, max: number, min: number) {
-  if (max <= 0) return 0;
-  // Hybrid scaling with minimum visibility
-  const valueRange = Math.max(max - min, 0);
-  const average = (max + min) / 2 || max;
-  const cov = average ? valueRange / average : 0;
-  const rangeWeight = Math.min(cov * 1.5, 0.8);
-  const zeroWeight = 1 - rangeWeight;
-  const zeroPct = max ? value / max : 0;
-  const rangePct = valueRange > 0 ? (value - min) / valueRange : 1;
-  const pct = zeroPct * zeroWeight + rangePct * rangeWeight;
-  const minPct = 0.15;
-  return Math.max(pct, minPct) * 100;
+export function calculateBarWidth(value: number, max: number, min: number, sortBy?: SortBy) {
+  const valueRange = max - min;
+  if (valueRange <= 0) return 100;
+  return ((value - min) / valueRange) * 100;
 }
 
 export type ItemForSort = {
