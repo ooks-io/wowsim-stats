@@ -53,12 +53,12 @@ export function renderRankingsChartHTML(
           ? it.stdev
           : it.value;
   const max = Math.max(...items.map(metric), 0);
-  const min = Math.min(...items.map(metric), max);
+  const min = String(sortBy) === "dps" || String(sortBy) === "max" || String(sortBy) === "min" ? 0 : Math.min(...items.map(metric), max);
 
   const bars = items
     .map((it, idx) => {
       const mval = metric(it);
-      const width = calculateBarWidth(mval, max, min).toFixed(1);
+      const width = calculateBarWidth(mval, max, min, sortBy).toFixed(1);
       const displayRaw = String(sortBy) === "stdev" ? it.stdev : mval;
       const display = Math.round(displayRaw).toLocaleString();
       const tooltip = `${it.label}: ${display}`;
@@ -127,21 +127,27 @@ export function renderComparisonChartHTML(
   barColor: string = "#666",
 ): string {
   const baseline = data?.results?.baseline?.dps || 0;
+  const baselineMax = data?.results?.baseline?.max || 0;
+  const baselineMin = data?.results?.baseline?.min || 0;
   const items: Item[] = [];
   for (const [key, v] of Object.entries<any>(data.results || {})) {
     if (key === "baseline") continue;
+
     let label = key.replace(/_/g, " ");
+    let iconData: any = null;
+    let percent: number | undefined;
+    let dpsIncrease: number | undefined;
+
     if (comparisonType === "race") {
       label = utilFormatRace(key);
     }
-    let iconData: any = null;
     if (comparisonType === "trinket") {
       iconData = trinketIconDataFromLoadout(v.loadout);
       if (iconData) label = iconData.ilvl ? `${iconData.ilvl}` : iconData.name;
     }
-    const percent =
-      baseline > 0 ? ((v.dps - baseline) / baseline) * 100 : undefined;
-    const dpsIncrease = baseline > 0 ? v.dps - baseline : undefined;
+    percent = baseline > 0 ? ((v.dps - baseline) / baseline) * 100 : undefined;
+    dpsIncrease = baseline > 0 ? v.dps - baseline : undefined;
+
     (items as any).push({
       label,
       value: v.dps,
@@ -150,6 +156,8 @@ export function renderComparisonChartHTML(
       stdev: v.stdev,
       percent,
       dpsIncrease,
+      maxIncrease: baselineMax > 0 ? v.max - baselineMax : undefined,
+      minIncrease: baselineMin > 0 ? v.min - baselineMin : undefined,
       loadout: v.loadout,
       iconData,
     });
@@ -162,19 +170,19 @@ export function renderComparisonChartHTML(
     String(effectiveSort) === "percent"
       ? (it.percent ?? 0)
       : String(effectiveSort) === "max"
-        ? it.max
+        ? (it as any).maxIncrease ?? 0
         : String(effectiveSort) === "min"
-          ? it.min
+          ? (it as any).minIncrease ?? 0
           : String(effectiveSort) === "stdev"
             ? it.stdev
-            : it.value;
+            : (it as any).dpsIncrease ?? 0;
   const max = Math.max(...items.map(metric), 0);
-  const min = Math.min(...items.map(metric), max);
+  const min = String(effectiveSort) === "percent" || String(effectiveSort) === "dps" || String(effectiveSort) === "max" || String(effectiveSort) === "min" ? 0 : Math.min(...items.map(metric), max);
 
   const bars = items
     .map((it, idx) => {
       const mval = metric(it);
-      const width = calculateBarWidth(mval, max, min).toFixed(1);
+      const width = calculateBarWidth(mval, max, min, effectiveSort).toFixed(1);
       const display = Math.round(mval).toLocaleString();
       const percentStr =
         it.percent != null ? ` (+${it.percent.toFixed(1)}%)` : "";
@@ -187,12 +195,8 @@ export function renderComparisonChartHTML(
       let chartDisplay = display;
       let tooltip = display;
       if (comparisonType === "trinket" && it.percent != null) {
-        const percentDisplay =
-          it.percent === 0 ? "Baseline" : `+${it.percent.toFixed(1)}%`;
-        const dpsIncreaseDisplay =
-          (it as any).dpsIncrease === 0
-            ? "Baseline"
-            : `+${Math.round((it as any).dpsIncrease || 0).toLocaleString()}`;
+        const percentDisplay = `+${it.percent.toFixed(1)}%`;
+        const dpsIncreaseDisplay = `+${Math.round((it as any).dpsIncrease || 0).toLocaleString()}`;
         if (String(effectiveSort) === "percent") {
           chartDisplay = percentDisplay;
           tooltip = `${percentDisplay} (${display} DPS)`;
