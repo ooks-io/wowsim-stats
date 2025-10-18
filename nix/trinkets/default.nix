@@ -61,7 +61,7 @@ let
     honor = 84489;
   };
 
-  mithrilWristwatch = 87572;
+  mithrilWristwatch = 257884;
   visionOfThePredator = 81192;
   flashfrozenResinGlobule = 81263;
 
@@ -122,7 +122,7 @@ let
 
   scrollOfReveredAncestors = 89080;
 
-  thousandYearPickledEgg = 87573;
+  thousandYearPickledEgg = 257881;
 
   jadeCourtesanFigurine = {
     celestial = 86774;
@@ -138,7 +138,7 @@ let
   laoChinsLiquidCourage = 89079;
   quilenStatuette = 89611;
   # agility and strength
-  corensColdChromiumCoaster = 87574;
+  corensColdChromiumCoaster = 257880;
 
   relicOfXuen = {
     agility = 79328;
