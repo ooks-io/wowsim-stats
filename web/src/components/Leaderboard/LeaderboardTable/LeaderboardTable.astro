@@ -1,0 +1,169 @@
+---
+import type { ChallengeRun, Player } from "../../../lib/types";
+import Table from "../../Table/Table.astro";
+import TableRow from "../../Table/TableRow.astro";
+import TableCell from "../../Table/TableCell.astro";
+import TeamComposition from "../TeamComposition/TeamComposition.astro";
+import PlayerLink from "../PlayerLink/PlayerLink.astro";
+import { formatDurationMMSS } from "../../../lib/utils";
+import "./LeaderboardTable.scss";
+
+type LeaderboardType = "dungeon" | "player";
+
+interface Props {
+  type: LeaderboardType;
+  runs?: ChallengeRun[];
+  players?: Player[];
+  currentPage?: number;
+  pageSize?: number;
+  // Data attributes for client-side hydration
+  region?: string;
+  realm?: string;
+  dungeon?: string;
+}
+
+const {
+  type,
+  runs = [],
+  players = [],
+  currentPage = 1,
+  pageSize = 25,
+  region = "",
+  realm = "",
+  dungeon = "",
+} = Astro.props;
+
+const formatDate = (timestamp: number) => {
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+const formatTime = (ms: number) => {
+  return formatDurationMMSS(ms);
+};
+---
+
+<div
+  class="leaderboard-table-container"
+  data-type={type}
+  data-region={region}
+  data-realm={realm}
+  data-dungeon={dungeon}
+>
+  <!-- Loading state -->
+  <div class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+    <p>Loading leaderboard...</p>
+  </div>
+
+  <!-- Error state -->
+  <div class="error-message" style="display: none;">
+    <p></p>
+  </div>
+
+  <!-- Leaderboard content -->
+  <div class="leaderboard-content">
+    {
+      type === "dungeon" ? (
+        <Table mode="leaderboard">
+          <div slot="header" class="table-header-cell">
+            Rank
+          </div>
+          <div slot="header" class="table-header-cell">
+            Time
+          </div>
+          <div slot="header" class="table-header-cell">
+            Team
+          </div>
+          <div slot="header" class="table-header-cell">
+            Date
+          </div>
+
+          {runs.length > 0 ? (
+            runs.map((run, index) => {
+              const rank = (currentPage - 1) * pageSize + index + 1;
+              const duration = formatTime(run.duration);
+              const date = formatDate(run.completed_timestamp);
+              const bracketClass = run.ranking_percentile
+                ? `quality-${run.ranking_percentile}`
+                : "";
+
+              return (
+                <TableRow>
+                  <TableCell label="Rank">
+                    <span class:list={["rank", bracketClass]}>{rank}</span>
+                  </TableCell>
+                  <TableCell label="Time">{duration}</TableCell>
+                  <TableCell label="Team">
+                    <TeamComposition
+                      members={run.members}
+                      currentRegion={region}
+                      currentRealm={realm}
+                    />
+                  </TableCell>
+                  <TableCell label="Date">{date}</TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <div class="table-empty">
+              <p>No runs found for this leaderboard.</p>
+            </div>
+          )}
+        </Table>
+      ) : (
+        <Table mode="players">
+          <div slot="header" class="table-header-cell">
+            Rank
+          </div>
+          <div slot="header" class="table-header-cell">
+            Player
+          </div>
+          <div slot="header" class="table-header-cell">
+            Realm
+          </div>
+          <div slot="header" class="table-header-cell">
+            Combined Time
+          </div>
+
+          {players.length > 0 ? (
+            players.map((player, index) => {
+              const rank = (currentPage - 1) * pageSize + index + 1;
+              const time = player.combined_best_time
+                ? formatTime(player.combined_best_time)
+                : "N/A";
+              const bracketClass = player.ranking_percentile
+                ? `quality-${player.ranking_percentile}`
+                : "";
+
+              return (
+                <TableRow>
+                  <TableCell label="Rank">
+                    <span class:list={["rank", bracketClass]}>{rank}</span>
+                  </TableCell>
+                  <TableCell label="Player">
+                    <PlayerLink
+                      name={player.name}
+                      specId={player.main_spec_id || 0}
+                      region={player.region}
+                      realmSlug={player.realm_slug}
+                    />
+                  </TableCell>
+                  <TableCell label="Realm">{player.realm_name}</TableCell>
+                  <TableCell label="Combined Time">{time}</TableCell>
+                </TableRow>
+              );
+            })
+          ) : (
+            <div class="table-empty">
+              <p>No players found for this leaderboard.</p>
+            </div>
+          )}
+        </Table>
+      )
+    }
+  </div>
+</div>

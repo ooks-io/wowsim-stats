@@ -1,0 +1,36 @@
+@use "../../../styles/core/tokens" as *;
+
+.status-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  .page-title {
+    margin: $spacing-sm 0 $spacing-lg 0;
+  }
+}
+
+.dungeon-cell {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.dungeon-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.timestamp-cell {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+.time-ago {
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+}

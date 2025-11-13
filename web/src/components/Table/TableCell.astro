@@ -1,0 +1,12 @@
+---
+interface Props {
+  label?: string; // For mobile responsive data-label
+  class?: string;
+}
+
+const { label = "", class: className = "" } = Astro.props;
+---
+
+<div class={`table-cell ${className}`.trim()} data-label={label}>
+  <slot />
+</div>

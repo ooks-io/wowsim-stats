@@ -1,0 +1,59 @@
+import "./LeaderboardTypeNav.scss";
+
+interface Props {
+  currentType: "dungeon" | "player";
+  currentRegion?: string;
+  currentRealm?: string;
+  currentSeason?: number;
+  currentDungeon?: string;
+  currentClass?: string;
+}
+
+const {
+  currentType,
+  currentRegion = "global",
+  currentRealm = "",
+  currentSeason = 1,
+  currentDungeon = "temple-of-the-jade-serpent",
+  currentClass = "all",
+} = Astro.props;
+
+// build urls
+const seasonSlug = `season${currentSeason}`;
+const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
+  ? "test-challenge-mode"
+  : "challenge-mode";
+
+let dungeonUrl: string;
+if (currentRegion === "global") {
+  dungeonUrl = `/${basePath}/${seasonSlug}/global/${currentDungeon}`;
+} else if (currentRealm && currentRealm !== "all") {
+  dungeonUrl = `/${basePath}/${seasonSlug}/${currentRegion}/${currentRealm}/${currentDungeon}`;
+} else {
+  dungeonUrl = `/${basePath}/${seasonSlug}/${currentRegion}/all/${currentDungeon}`;
+}
+
+let playerUrl: string;
+if (currentRegion === "global") {
+  playerUrl = `/${basePath}/${seasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+} else if (currentRealm && currentRealm !== "all") {
+  playerUrl = `/${basePath}/${seasonSlug}/players/${currentRegion}/${currentRealm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+} else {
+  playerUrl = `/${basePath}/${seasonSlug}/players/${currentRegion}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+}
+---
+
+<nav class="leaderboard-type-nav">
+  <a
+    href={dungeonUrl}
+    class:list={["nav-tab", { active: currentType === "dungeon" }]}
+  >
+    Dungeons
+  </a>
+  <a
+    href={playerUrl}
+    class:list={["nav-tab", { active: currentType === "player" }]}
+  >
+    Players
+  </a>
+</nav>

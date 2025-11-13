@@ -1,0 +1,43 @@
+@use "./tokens" as *;
+
+// Shared structural helpers used across multiple components.
+
+@mixin card($padding: $spacing-xl, $radius: $radius-lg) {
+  background-color: var(--bg-secondary);
+  border-radius: $radius;
+  border: 1px solid var(--border-color);
+  padding: $padding;
+  margin-bottom: $spacing-3xl;
+}
+
+@mixin form-control {
+  padding: $spacing-sm $spacing-md;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-sm;
+  color: var(--text-primary);
+  font-size: $font-size-base;
+
+  &:focus {
+    outline: none;
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin responsive-grid($min-width: 200px, $gap: $spacing-lg) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $gap;
+}
+
+@mixin flex-column($gap: 5px) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}

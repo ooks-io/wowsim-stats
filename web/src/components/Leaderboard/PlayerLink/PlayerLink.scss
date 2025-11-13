@@ -1,0 +1,28 @@
+// PlayerLink Component Styles
+// Note: Class colors are defined globally in styles/global.scss
+// This file contains only component-specific layout and behavior
+
+.player-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  font-size: 1rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.spec-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.player-link-name {
+  font-weight: bold;
+  white-space: nowrap;
+}

@@ -22,6 +22,7 @@ export interface Player {
   global_ranking_bracket?: string;
   regional_ranking_bracket?: string;
   realm_ranking_bracket?: string;
+  ranking_percentile?: string; // contextual bracket based on leaderboard scope
   combined_best_time?: number;
   dungeons_completed?: number;
   total_runs?: number;
@@ -46,6 +47,7 @@ export interface ChallengeRun {
   region: string;
   ranking?: number;
   percentile_bracket?: string;
+  ranking_percentile?: string; // contextual bracket based on leaderboard scope
   members: TeamMember[];
 }
 
@@ -95,8 +97,9 @@ export interface Enchantment {
 
 export interface LeaderboardData {
   leading_groups: ChallengeRun[];
-  pagination?: {
+  pagination: {
     currentPage: number;
+    pageSize: number;
     totalPages: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
@@ -106,19 +109,53 @@ export interface LeaderboardData {
 
 export interface PlayerLeaderboardData {
   leaderboard: Player[];
-  pagination?: {
+  pagination: {
     currentPage: number;
+    pageSize: number;
     totalPages: number;
     hasNextPage: boolean;
     hasPrevPage: boolean;
     totalPlayers: number;
+    totalRuns: number;
   };
 }
 
+export interface PlayerSeasonData {
+  main_spec_id?: number;
+  dungeons_completed: number;
+  total_runs: number;
+  combined_best_time?: number;
+  global_ranking?: number;
+  regional_ranking?: number;
+  realm_ranking?: number;
+  global_ranking_bracket?: string;
+  regional_ranking_bracket?: string;
+  realm_ranking_bracket?: string;
+  last_updated?: number;
+  best_runs: Record<string, BestRun>;
+}
+
+export interface PlayerWithSeasons {
+  id: number;
+  name: string;
+  realm_slug: string;
+  realm_name: string;
+  region: string;
+  class_name?: string;
+  active_spec_name?: string;
+  race_name?: string;
+  avatar_url?: string;
+  guild_name?: string;
+  average_item_level?: number;
+  equipped_item_level?: number;
+  seasons: Record<string, PlayerSeasonData>;
+}
+
 export interface PlayerProfileData {
-  player: Player | null;
+  player: PlayerWithSeasons | null;
   equipment: Equipment;
-  bestRuns: Record<string, BestRun>;
+  generated_at: number;
+  version: string;
 }
 
 // API Response types
@@ -185,4 +222,83 @@ export interface FuseSearchResult<T> {
   item: T;
   refIndex: number;
   score?: number;
+}
+
+// Status page types
+export interface LatestRunMember {
+  name: string;
+  spec_id: number;
+  realm_slug: string;
+  region: string;
+}
+
+export interface LatestRunDetails {
+  completed_timestamp: number;
+  duration_ms: number;
+  keystone_level: number;
+  members: LatestRunMember[];
+}
+
+export interface LatestRunEntry {
+  region: string;
+  realm_slug: string;
+  realm_name: string;
+  realm_id: number;
+  most_recent: number;
+  most_recent_iso: string;
+  period_id: string;
+  dungeon_slug: string;
+  dungeon_name: string;
+  run_count: number;
+  has_runs: boolean;
+  latest_run: LatestRunDetails;
+}
+
+export interface PeriodCoverage {
+  period_id: string;
+  has_runs: boolean;
+  latest_ts: number;
+  latest_iso: string;
+  run_count: number;
+}
+
+export interface DungeonStatus {
+  dungeon_slug: string;
+  dungeon_name: string;
+  latest_ts: number;
+  latest_iso: string;
+  latest_period: string;
+  periods: PeriodCoverage[];
+  missing_periods: string[];
+  latest_run?: LatestRunDetails;
+}
+
+export interface RealmStatus {
+  region: string;
+  realm_slug: string;
+  realm_name: string;
+  realm_id: number;
+  dungeons: DungeonStatus[];
+}
+
+export interface StatusApiResponse {
+  generated_at: number;
+  periods: string[];
+  summary: {
+    endpoints_tested: number;
+    success: number;
+    failed: number;
+  };
+  latest_runs: LatestRunEntry[];
+  realm_status: RealmStatus[];
+}
+
+export interface RealmStatusApiResponse {
+  generated_at: number;
+  region: string;
+  realm_slug: string;
+  realm_name: string;
+  realm_id: number;
+  periods: string[];
+  dungeons: DungeonStatus[];
 }

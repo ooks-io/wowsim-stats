@@ -1,8 +1,6 @@
 ---
-import ModernChallengeModeLayout from "../../layouts/ModernChallengeModeLayout.astro";
-
-// Prerender this static page
-export const prerender = true;
+// redirect to default dungeon leaderboard
+return Astro.redirect(
+  "/challenge-mode/season1/global/temple-of-the-jade-serpent",
+);
 ---
-
-<ModernChallengeModeLayout />

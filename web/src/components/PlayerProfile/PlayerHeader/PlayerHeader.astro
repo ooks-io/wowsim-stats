@@ -1,0 +1,145 @@
+---
+import { formatDurationMMSS } from "../../../lib/utils";
+import { formatRankingWithBracket } from "../../../lib/ranking-utils";
+import { getClassTextClass } from "../../../lib/wow-constants";
+import "./PlayerHeader.scss";
+
+interface SeasonData {
+  main_spec_id?: number;
+  dungeons_completed: number;
+  total_runs: number;
+  combined_best_time?: number;
+  global_ranking?: number;
+  regional_ranking?: number;
+  realm_ranking?: number;
+  global_ranking_bracket?: string;
+  regional_ranking_bracket?: string;
+  realm_ranking_bracket?: string;
+  last_updated?: number;
+}
+
+interface Player {
+  id: number;
+  name: string;
+  region: string;
+  realm_name: string;
+  realm_slug: string;
+  class_name?: string;
+  active_spec_name?: string;
+  race_name?: string;
+  avatar_url?: string;
+  guild_name?: string;
+  average_item_level?: number;
+  equipped_item_level?: number;
+}
+
+interface Props {
+  player: Player;
+  seasonData: SeasonData;
+}
+
+const { player, seasonData } = Astro.props;
+
+function getRaceId(raceName: string): number {
+  const raceIds: Record<string, number> = {
+    Human: 1,
+    Orc: 2,
+    Dwarf: 3,
+    "Night Elf": 4,
+    Undead: 5,
+    Tauren: 6,
+    Gnome: 7,
+    Troll: 8,
+    Goblin: 9,
+    "Blood Elf": 10,
+    Draenei: 11,
+    Worgen: 22,
+  };
+  return raceIds[raceName] || 1;
+}
+
+const raceId = getRaceId(player.race_name || "Human");
+const genderId = 0;
+const fallbackUrl = `/wow/static/images/2d/avatar/${raceId}-${genderId}.jpg`;
+const avatarUrl = player.avatar_url
+  ? `${player.avatar_url}?alt=${fallbackUrl}`
+  : fallbackUrl;
+---
+
+<div class="player-header-horizontal">
+  <div class="player-avatar">
+    <img src={avatarUrl} alt={`${player.name} avatar`} class="avatar-image" />
+  </div>
+
+  <div class="player-info-column">
+    <h1 class={`player-name ${getClassTextClass(player.class_name || "common")}`}>
+      {player.name}
+    </h1>
+    {
+      player.guild_name && (
+        <div class="guild-name">&lt;{player.guild_name}&gt;</div>
+      )
+    }
+    <div class="character-details">
+      {player.race_name}
+      {player.active_spec_name}
+      {player.class_name}
+    </div>
+    <div class="item-level">
+      Item Level: {player.equipped_item_level || "-"} equipped / {
+        player.average_item_level || "-"
+      } average
+    </div>
+  </div>
+
+  <div class="combined-time-column">
+    <div class="stat-label">Combined Time</div>
+    <div
+      class={`stat-value combined-time-value ${seasonData.global_ranking_bracket ? `bracket-${seasonData.global_ranking_bracket}` : ""}`}
+    >
+      {
+        seasonData.combined_best_time
+          ? formatDurationMMSS(seasonData.combined_best_time)
+          : "-"
+      }
+    </div>
+  </div>
+
+  <div class="ranking-column">
+    <div class="stat-label">Global Rank</div>
+    <div
+      class="stat-value"
+      set:html={formatRankingWithBracket(
+        seasonData.global_ranking,
+        seasonData.global_ranking_bracket,
+      )}
+    />
+  </div>
+
+  <div class="ranking-column">
+    <div class="stat-label">{player.region?.toUpperCase()} Rank</div>
+    <div
+      class="stat-value"
+      set:html={formatRankingWithBracket(
+        seasonData.regional_ranking,
+        seasonData.regional_ranking_bracket,
+      )}
+    />
+  </div>
+
+  <div class="ranking-column">
+    <div class="stat-label">{player.realm_name || player.realm_slug} Rank</div>
+    <div
+      class="stat-value"
+      set:html={formatRankingWithBracket(
+        seasonData.realm_ranking,
+        seasonData.realm_ranking_bracket,
+      )}
+    />
+  </div>
+
+  <div class="ranking-column">
+    <div class="stat-label">Total Runs</div>
+    <div class="stat-value">{seasonData.total_runs || 0}</div>
+  </div>
+</div>

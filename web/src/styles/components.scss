@@ -1,78 +1,17 @@
+@use "./core/tokens" as *;
+@use "./core/mixins" as mixins;
+
 /*
  * Shared component styles for WoW Sim Stats
  * Better organized SCSS with variables and mixins
  */
 
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 12px;
-$spacing-lg: 16px;
-$spacing-xl: 20px;
-$spacing-3xl: 30px;
-
-$radius-sm: 4px;
-$radius-md: 6px;
-$radius-lg: 8px;
-
-$font-size-sm: 0.85em;
-$font-size-base: 0.9em;
-$font-size-md: 1em;
-$font-size-lg: 1.1em;
-$font-size-xl: 1.2em;
-$font-size-2xl: 1.4em;
-$font-size-3xl: 2.5em;
-
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
-$font-weight-bold: 700;
-
-
-@mixin card($padding: $spacing-xl, $radius: $radius-lg) {
-  background-color: var(--bg-secondary);
-  border-radius: $radius;
-  border: 1px solid var(--border-color);
-  padding: $padding;
-  margin-bottom: $spacing-3xl;
-}
-
-@mixin form-control {
-  padding: $spacing-sm $spacing-md;
-  background-color: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: $radius-sm;
-  color: var(--text-primary);
-  font-size: $font-size-base;
-
-  &:focus {
-    outline: none;
-    border-color: var(--highlight-color);
-    box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.2);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-@mixin responsive-grid($min-width: 200px, $gap: $spacing-lg) {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
-  gap: $gap;
-}
-
-@mixin flex-column($gap: 5px) {
-  display: flex;
-  flex-direction: column;
-  gap: $gap;
-}
-
 .card-container {
-  @include card();
+  @include mixins.card();
 }
 
 .card-compact {
-  @include card($spacing-lg, $radius-md);
+  @include mixins.card($spacing-lg, $radius-md);
 }
 
 .chart-bars {
@@ -240,11 +179,11 @@ $font-weight-bold: 700;
 }
 
 .loadout-grid {
-  @include responsive-grid(200px, $spacing-lg);
+  @include mixins.responsive-grid(200px, $spacing-lg);
 }
 
 .loadout-item {
-  @include flex-column(6px);
+  @include mixins.flex-column(6px);
   padding: 10px;
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -266,7 +205,7 @@ $font-weight-bold: 700;
 }
 
 .equipment-grid {
-  @include responsive-grid(220px, $spacing-lg);
+  @include mixins.responsive-grid(220px, $spacing-lg);
 }
 
 .equipment-item-header,
@@ -307,7 +246,7 @@ $font-weight-bold: 700;
 
 .talents-list,
 .glyphs-list {
-  @include flex-column(4px);
+  @include mixins.flex-column(4px);
 }
 
 .loadout-item .talents-list,
@@ -392,7 +331,7 @@ $font-weight-bold: 700;
 }
 
 .form-group {
-  @include flex-column();
+  @include mixins.flex-column();
 }
 
 .form-label {
@@ -404,20 +343,20 @@ $font-weight-bold: 700;
 }
 
 .form-select {
-  @include form-control();
+  @include mixins.form-control();
   min-width: 120px;
 }
 
 .info-grid {
-  @include responsive-grid();
+  @include mixins.responsive-grid();
 
   &-compact {
-    @include responsive-grid(150px, 10px);
+    @include mixins.responsive-grid(150px, 10px);
   }
 }
 
 .info-item {
-  @include flex-column(4px);
+  @include mixins.flex-column(4px);
 
   &-wide {
     grid-column: 1 / -1;

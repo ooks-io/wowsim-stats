@@ -1,0 +1,100 @@
+---
+import { DUNGEON_MAP, dungeonNameToSlug } from "../../../lib/wow-constants";
+import "./DungeonFilterSelect.scss";
+
+interface Props {
+  currentDungeon?: string; // slug
+  currentRegion?: string;
+  currentRealm?: string;
+}
+
+const {
+  currentDungeon = "",
+  currentRegion = "global",
+  currentRealm = "",
+} = Astro.props;
+
+// convert DUNGEON_MAP to options array with slugs
+const dungeonOptions = Object.entries(DUNGEON_MAP).map(([id, name]) => ({
+  id: id,
+  label: name,
+  slug: dungeonNameToSlug(name),
+}));
+
+// helper to build url for a dungeon selection
+// function buildDungeonURL(dungeonSlug: string): string {
+//   if (currentRegion === "global") {
+//     return `/challenge-mode/global/${dungeonSlug}`;
+//   } else if (currentRealm === "all" || !currentRealm) {
+//     return `/challenge-mode/${currentRegion}/all/${dungeonSlug}`;
+//   } else {
+//     return `/challenge-mode/${currentRegion}/${currentRealm}/${dungeonSlug}`;
+//   }
+// }
+---
+
+<div class="dungeon-filter-select">
+  <label for="dungeon-filter">Dungeon</label>
+  <select id="dungeon-filter">
+    {
+      dungeonOptions.map((option) => (
+        <option value={option.slug} selected={option.slug === currentDungeon}>
+          {option.label}
+        </option>
+      ))
+    }
+  </select>
+</div>
+
+<script>
+  document.getElementById("dungeon-filter")?.addEventListener("change", (e) => {
+    const select = e.target as HTMLSelectElement;
+    const selectedSlug = select.value;
+
+    // TODO: do we need this? we dont use query params anymore
+    // check if we're using query params
+    const searchParams = new URLSearchParams(window.location.search);
+    const usesQueryParams = searchParams.toString().length > 0;
+
+    if (usesQueryParams) {
+      // Query param mode - update dungeon param
+      searchParams.set("dungeon", selectedSlug);
+      searchParams.delete("page"); // reset to page 1
+      window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
+    } else {
+      // Path-based mode - build new path with season
+      const pathParts = window.location.pathname.split("/").filter((p) => p);
+      let newPath: string;
+
+      // Detect if we're in test-challenge-mode or challenge-mode
+      const basePath =
+        pathParts[0] === "test-challenge-mode"
+          ? "test-challenge-mode"
+          : "challenge-mode";
+
+      // Extract season from path
+      let seasonSlug = "season1"; // default
+      if (pathParts.length >= 2 && pathParts[1].startsWith("season")) {
+        seasonSlug = pathParts[1];
+      }
+
+      if (
+        pathParts.length >= 4 &&
+        (pathParts[0] === "challenge-mode" ||
+          pathParts[0] === "test-challenge-mode")
+      ) {
+        if (pathParts[2] === "global") {
+          newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
+        } else if (pathParts.length === 5) {
+          newPath = `/${basePath}/${seasonSlug}/${pathParts[2]}/${pathParts[3]}/${selectedSlug}`;
+        } else {
+          newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
+        }
+      } else {
+        newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
+      }
+
+      window.location.href = newPath;
+    }
+  });
+</script>

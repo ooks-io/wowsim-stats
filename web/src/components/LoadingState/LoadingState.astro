@@ -1,0 +1,26 @@
+---
+import "./LoadingState.scss";
+
+export interface Props {
+  message?: string;
+  type?: "loading" | "error";
+  mode?: "overlay" | "inline";
+  size?: "small" | "normal" | "large";
+  class?: string;
+}
+
+const {
+  message,
+  type = "loading",
+  mode = "inline",
+  size = "normal",
+  class: className,
+} = Astro.props;
+---
+
+<div class={`loading-state ${type} ${mode} ${size} ${className || ""}`.trim()}>
+  {type === "loading" && <div class="loading-spinner" />}
+  <p class="loading-message">
+    {message || (type === "error" ? "An error occurred" : "Loading...")}
+  </p>
+</div>

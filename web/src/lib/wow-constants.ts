@@ -12,6 +12,20 @@ export const CLASS_COLORS = {
   warrior: "#C69B6D",
 } as const;
 
+export const CLASSES = [
+  "death_knight",
+  "druid",
+  "hunter",
+  "mage",
+  "monk",
+  "paladin",
+  "priest",
+  "rogue",
+  "shaman",
+  "warlock",
+  "warrior",
+] as const;
+
 export const SPEC_MAP = {
   73: { role: "tank", class: "Warrior", spec: "Protection" },
   104: { role: "tank", class: "Druid", spec: "Guardian" },
@@ -33,7 +47,7 @@ export const SPEC_MAP = {
   254: { role: "dps", class: "Hunter", spec: "Marksmanship" },
   255: { role: "dps", class: "Hunter", spec: "Survival" },
   259: { role: "dps", class: "Rogue", spec: "Assassination" },
-  260: { role: "dps", class: "Rogue", spec: "Outlaw" },
+  260: { role: "dps", class: "Rogue", spec: "Combat" },
   261: { role: "dps", class: "Rogue", spec: "Subtlety" },
   258: { role: "dps", class: "Priest", spec: "Shadow" },
   251: { role: "dps", class: "Death Knight", spec: "Frost" },
@@ -119,6 +133,15 @@ export function getSpecIcon(
 }
 
 // SPEC_OPTIONS for class/spec selection dropdowns
+// REGION_OPTIONS for region selection dropdowns
+export const REGION_OPTIONS = [
+  { value: "", label: "All" },
+  { value: "us", label: "US" },
+  { value: "eu", label: "EU" },
+  { value: "kr", label: "KR" },
+  { value: "tw", label: "TW" },
+] as const;
+
 export const SPEC_OPTIONS = {
   death_knight: [
     { value: "250", label: "Blood" },

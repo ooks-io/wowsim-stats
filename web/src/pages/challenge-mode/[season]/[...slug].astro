@@ -1,0 +1,181 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import LeaderboardHeader from "../../../components/Leaderboard/LeaderboardHeader/LeaderboardHeader.astro";
+import LeaderboardTable from "../../../components/Leaderboard/LeaderboardTable/LeaderboardTable.astro";
+import Pagination from "../../../components/Leaderboard/Pagination/Pagination.astro";
+import DungeonFilterSelect from "../../../components/Leaderboard/DungeonFilterSelect/DungeonFilterSelect.astro";
+import LeaderboardScopeFilter from "../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
+import LeaderboardTypeNav from "../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import PlayerSearch from "../../../components/PlayerSearch/PlayerSearch.astro";
+import {
+  DUNGEON_MAP,
+  dungeonNameToSlug,
+  dungeonSlugToId,
+} from "../../../lib/wow-constants";
+import { fetchLeaderboard } from "../../../lib/api";
+
+export const prerender = false;
+
+// parse season from path parameter
+const seasonParam = Astro.params.season || "season1";
+const seasonMatch = seasonParam.match(/^season(\d+)$/);
+const currentSeason = seasonMatch ? parseInt(seasonMatch[1], 10) : 1;
+
+// parse the slug for region/realm/dungeon
+const slug = Astro.params.slug || "";
+const slugParts = slug.split("/");
+
+// defaults
+let regionParam = "global";
+let realmParam = "";
+let dungeonParam = "temple-of-the-jade-serpent";
+
+// Parse URL patterns:
+// /test-challenge-mode/season1/global/dungeon-slug
+// /test-challenge-mode/season1/region/all/dungeon-slug
+// /test-challenge-mode/season1/region/realm/dungeon-slug
+if (slugParts.length >= 2) {
+  if (slugParts[0] === "global") {
+    regionParam = "global";
+    realmParam = "";
+    dungeonParam = slugParts[1];
+  } else if (slugParts.length === 3) {
+    regionParam = slugParts[0];
+    realmParam = slugParts[1];
+    dungeonParam = slugParts[2];
+  }
+}
+
+// Check for page query param
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+// Get dungeon name and ID from slug
+let dungeonName = "Temple of the Jade Serpent";
+const dungeonIdStr = dungeonSlugToId(dungeonParam);
+const dungeonId = dungeonIdStr ? parseInt(dungeonIdStr, 10) : 2;
+
+for (const [id, name] of Object.entries(DUNGEON_MAP)) {
+  if (dungeonNameToSlug(name) === dungeonParam) {
+    dungeonName = name;
+    break;
+  }
+}
+
+// Build scope label
+let scopeLabel: string;
+if (regionParam === "global") {
+  scopeLabel = "Global";
+} else if (realmParam && realmParam !== "all") {
+  scopeLabel = `${regionParam.toUpperCase()} - ${realmParam}`;
+} else {
+  scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
+}
+
+// Fetch leaderboard data
+let data;
+try {
+  data = await fetchLeaderboard(
+    regionParam,
+    realmParam || "all",
+    dungeonId,
+    currentPage,
+    true,
+    Astro.url.origin,
+    currentSeason,
+  );
+} catch (error) {
+  console.error("[Test Leaderboard] Error:", error);
+  throw error;
+}
+---
+
+<PageLayout
+  title="Challenge Mode Dungeon Leaderboards"
+  description="View the top Mist of Pandaria challenge mode records"
+>
+  <main class="leaderboard-page">
+    <LeaderboardHeader
+      season={currentSeason}
+      dungeonName={dungeonName}
+      dungeonSlug={dungeonParam}
+      scopeLabel={scopeLabel}
+    />
+
+    <PlayerSearch />
+    <LeaderboardTypeNav
+      currentType="dungeon"
+      currentRegion={regionParam}
+      currentRealm={realmParam}
+      currentSeason={currentSeason}
+      currentDungeon={dungeonParam}
+    />
+
+    <div class="filters">
+      <LeaderboardScopeFilter
+        currentRegion={regionParam}
+        currentRealm={realmParam}
+        currentSeason={currentSeason}
+        leaderboardType="dungeon"
+        currentDungeon={dungeonParam}
+      />
+      <DungeonFilterSelect
+        currentDungeon={dungeonParam}
+        currentRegion={regionParam}
+        currentRealm={realmParam}
+      />
+    </div>
+
+    <div id="leaderboard-content">
+      <LeaderboardTable
+        type="dungeon"
+        runs={data.leading_groups}
+        currentPage={data.pagination.currentPage}
+        pageSize={data.pagination.pageSize}
+        region={regionParam}
+        realm={realmParam}
+        dungeon={dungeonId.toString()}
+      />
+    </div>
+
+    <Pagination
+      currentPage={data.pagination.currentPage}
+      totalPages={data.pagination.totalPages}
+      hasNextPage={data.pagination.hasNextPage}
+      hasPrevPage={data.pagination.hasPrevPage}
+      totalRuns={data.pagination.totalRuns}
+      baseUrl={Astro.url.pathname}
+    />
+  </main>
+</PageLayout>
+
+<style>
+  .leaderboard-page {
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-page {
+      padding: 15px;
+    }
+
+    .filters {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+  }
+</style>

@@ -11,14 +11,26 @@ import {
 const API_BASE = "";
 
 // generic api request handler with error handling
-async function apiRequest<T>(url: string): Promise<T> {
-  const fullUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+async function apiRequest<T>(url: string, origin?: string): Promise<T> {
+  let fullUrl: string;
+  if (url.startsWith("http")) {
+    fullUrl = url;
+  } else if (origin) {
+    // SSR context - need full URL
+    fullUrl = `${origin}${url}`;
+  } else {
+    // Client-side context - relative URL works
+    fullUrl = `${API_BASE}${url}`;
+  }
   const response = await fetch(fullUrl);
 
   if (!response.ok) {
-    const errorText = await response.text();
+    if (response.status === 404) {
+      throw new Error("Player not found");
+    }
+
     throw new Error(
-      `API request failed: ${response.status} ${response.statusText} - ${errorText}`,
+      `Failed to load data: ${response.status} ${response.statusText}`,
     );
   }
 
@@ -30,10 +42,12 @@ export async function fetchGlobalLeaderboard(
   dungeonId: number,
   page: number = 1,
   teamFilter: boolean = true,
+  origin?: string,
+  seasonId: number = 1,
 ): Promise<LeaderboardData> {
-  const url = `${API_BASE}${buildStaticLeaderboardPath("global", "", dungeonId, page)}`;
+  const url = `${API_BASE}${buildStaticLeaderboardPath("global", "", dungeonId, page, seasonId)}`;
   console.log("Fetching global leaderboard:", url);
-  return apiRequest<LeaderboardData>(url);
+  return apiRequest<LeaderboardData>(url, origin);
 }
 
 export async function fetchRegionalLeaderboard(
@@ -41,10 +55,12 @@ export async function fetchRegionalLeaderboard(
   dungeonId: number,
   page: number = 1,
   teamFilter: boolean = true,
+  origin?: string,
+  seasonId: number = 1,
 ): Promise<LeaderboardData> {
-  const url = `${API_BASE}${buildStaticLeaderboardPath(region, "all", dungeonId, page)}`;
+  const url = `${API_BASE}${buildStaticLeaderboardPath(region, "all", dungeonId, page, seasonId)}`;
   console.log("Fetching regional leaderboard:", url);
-  return apiRequest<LeaderboardData>(url);
+  return apiRequest<LeaderboardData>(url, origin);
 }
 
 export async function fetchRealmLeaderboard(
@@ -53,10 +69,12 @@ export async function fetchRealmLeaderboard(
   dungeonId: number,
   page: number = 1,
   teamFilter: boolean = true,
+  origin?: string,
+  seasonId: number = 1,
 ): Promise<LeaderboardData> {
-  const url = `${API_BASE}${buildStaticLeaderboardPath(region, realmSlug, dungeonId, page)}`;
+  const url = `${API_BASE}${buildStaticLeaderboardPath(region, realmSlug, dungeonId, page, seasonId)}`;
   console.log("Fetching realm leaderboard:", url);
-  return apiRequest<LeaderboardData>(url);
+  return apiRequest<LeaderboardData>(url, origin);
 }
 
 export async function fetchPlayerLeaderboard(
@@ -64,11 +82,12 @@ export async function fetchPlayerLeaderboard(
   region?: string,
   page: number = 1,
   pageSize: number = 25,
-  opts?: { realmSlug?: string; classKey?: string },
+  opts?: { realmSlug?: string; classKey?: string; seasonId?: number },
+  origin?: string,
 ): Promise<any> {
   const url = `${API_BASE}${buildStaticPlayerLeaderboardPath(scope, region, page, opts)}`;
   console.log("Fetching player leaderboard:", url);
-  return apiRequest(url);
+  return apiRequest(url, origin);
 }
 
 // player profile API functions
@@ -76,10 +95,11 @@ export async function fetchPlayerProfile(
   region: string,
   realmSlug: string,
   playerName: string,
+  origin?: string,
 ): Promise<PlayerProfileData> {
   const url = `${API_BASE}${buildStaticPlayerProfilePath(region, realmSlug, playerName)}`;
   console.log("Fetching player profile:", url);
-  return apiRequest<PlayerProfileData>(url);
+  return apiRequest<PlayerProfileData>(url, origin);
 }
 
 // fetchPlayerBestRuns removed - best runs are now included in fetchPlayerProfile response
@@ -91,13 +111,15 @@ export async function fetchLeaderboard(
   dungeonId: number,
   page: number = 1,
   teamFilter: boolean = true,
+  origin?: string,
+  seasonId: number = 1,
 ): Promise<LeaderboardData> {
   if (region === "global") {
-    return fetchGlobalLeaderboard(dungeonId, page, teamFilter);
+    return fetchGlobalLeaderboard(dungeonId, page, teamFilter, origin, seasonId);
   } else if (realm === "all") {
-    return fetchRegionalLeaderboard(region, dungeonId, page, teamFilter);
+    return fetchRegionalLeaderboard(region, dungeonId, page, teamFilter, origin, seasonId);
   } else {
-    return fetchRealmLeaderboard(region, realm, dungeonId, page, teamFilter);
+    return fetchRealmLeaderboard(region, realm, dungeonId, page, teamFilter, origin, seasonId);
   }
 }
 

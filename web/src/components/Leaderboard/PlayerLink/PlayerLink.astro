@@ -1,0 +1,42 @@
+---
+import {
+  getSpecInfo,
+  getSpecIcon,
+  getClassTextClass,
+} from "../../../lib/wow-constants";
+import "./PlayerLink.scss";
+
+import { buildPlayerProfileURL } from "./PlayerLink.ts";
+
+interface Props {
+  name: string;
+  specId: number;
+  region: string;
+  realmSlug: string;
+}
+
+const { name, specId, region, realmSlug } = Astro.props;
+
+const profileUrl = buildPlayerProfileURL(region, realmSlug, name);
+const specInfo = getSpecInfo(specId);
+const specIconUrl = specInfo
+  ? getSpecIcon(specInfo.class, specInfo.spec)
+  : null;
+const classColorClass = specInfo ? getClassTextClass(specInfo.class) : "";
+---
+
+<a href={profileUrl} class="player-link">
+  {
+    specIconUrl && (
+      <img
+        src={specIconUrl}
+        alt={specInfo?.spec || ""}
+        class="spec-icon"
+        loading="lazy"
+      />
+    )
+  }
+  <span class={`player-link-name ${classColorClass}`.trim()}>
+    {name}
+  </span>
+</a>

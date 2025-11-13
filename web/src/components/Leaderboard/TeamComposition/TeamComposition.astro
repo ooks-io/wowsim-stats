@@ -1,0 +1,61 @@
+---
+import type { LatestRunMember, TeamMember } from "../../../lib/types";
+import PlayerLink from "../PlayerLink/PlayerLink.astro";
+import { getSpecInfo } from "../../../lib/wow-constants";
+import "./TeamComposition.scss";
+
+interface Props {
+  members: LatestRunMember[] | TeamMember[];
+  currentRegion?: string;
+  currentRealm?: string;
+}
+
+const { members = [], currentRegion, currentRealm } = Astro.props;
+
+// Only show cross-realm indicators when viewing a specific realm (not "all" or "global")
+const showCrossRealmIndicators =
+  currentRegion &&
+  currentRealm &&
+  currentRealm !== "all" &&
+  currentRegion !== "global";
+
+// sort members by role: tank -> healer -> dps, then alphabetically by name
+const roleOrder: Record<string, number> = { tank: 0, healer: 1, dps: 2 };
+const sortedMembers = [...members].sort((a, b) => {
+  const aSpec = getSpecInfo(a.spec_id);
+  const bSpec = getSpecInfo(b.spec_id);
+  const aRole = aSpec?.role || "dps";
+  const bRole = bSpec?.role || "dps";
+  const aWeight = roleOrder[aRole] ?? 99;
+  const bWeight = roleOrder[bRole] ?? 99;
+
+  // sort by role first
+  if (aWeight !== bWeight) return aWeight - bWeight;
+
+  // then by name
+  return a.name.localeCompare(b.name);
+});
+---
+
+<div class="team-composition">
+  {
+    sortedMembers.map((member) => {
+      const isCrossRealm =
+        showCrossRealmIndicators &&
+        member.realm_slug &&
+        member.realm_slug !== currentRealm;
+
+      return (
+        <span class="team-member">
+          <PlayerLink
+            name={member.name}
+            specId={member.spec_id}
+            region={member.region || "us"}
+            realmSlug={member.realm_slug}
+          />
+          {isCrossRealm && <span class="cross-realm-indicator">*</span>}
+        </span>
+      );
+    })
+  }
+</div>

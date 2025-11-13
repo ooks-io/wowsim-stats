@@ -1,0 +1,601 @@
+@use "./tokens" as *;
+
+// Shared utility classes that should be globally available.
+
+.card {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-color);
+}
+
+.card-title {
+  color: var(--highlight-color);
+  margin: 0 0 15px;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.card-title-large {
+  color: var(--highlight-color);
+  margin: 0 0 20px;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.text-accent {
+  color: var(--highlight-color);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.nav-link {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.nav-link:hover {
+  background-color: var(--border-color);
+  text-decoration: none;
+}
+
+.nav-active {
+  background-color: var(--highlight-color) !important;
+  border-color: var(--highlight-color) !important;
+  color: var(--text-primary) !important;
+}
+
+.callout-note {
+  background-color: rgba(125, 174, 163, 0.1);
+  border: 1px solid var(--note-color);
+  border-left: 3px solid var(--note-color);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.callout-note-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--note-color);
+  flex-shrink: 0;
+}
+
+.callout-note-content {
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0;
+  font-size: 0.9em;
+  flex: 1;
+}
+
+// WoW class utility helpers
+.text-death-knight {
+  color: var(--class-death-knight);
+}
+.text-druid {
+  color: var(--class-druid);
+}
+.text-hunter {
+  color: var(--class-hunter);
+}
+.text-mage {
+  color: var(--class-mage);
+}
+.text-monk {
+  color: var(--class-monk);
+}
+.text-paladin {
+  color: var(--class-paladin);
+}
+.text-priest {
+  color: var(--class-priest);
+}
+.text-rogue {
+  color: var(--class-rogue);
+}
+.text-shaman {
+  color: var(--class-shaman);
+}
+.text-warlock {
+  color: var(--class-warlock);
+}
+.text-warrior {
+  color: var(--class-warrior);
+}
+
+.class-death-knight {
+  color: var(--class-death-knight) !important;
+}
+.class-druid {
+  color: var(--class-druid) !important;
+}
+.class-hunter {
+  color: var(--class-hunter) !important;
+}
+.class-mage {
+  color: var(--class-mage) !important;
+}
+.class-monk {
+  color: var(--class-monk) !important;
+}
+.class-paladin {
+  color: var(--class-paladin) !important;
+}
+.class-priest {
+  color: var(--class-priest) !important;
+}
+.class-rogue {
+  color: var(--class-rogue) !important;
+}
+.class-shaman {
+  color: var(--class-shaman) !important;
+}
+.class-warlock {
+  color: var(--class-warlock) !important;
+}
+.class-warrior {
+  color: var(--class-warrior) !important;
+}
+
+// Item quality helpers
+.quality-0,
+.quality-poor {
+  color: var(--quality-poor);
+}
+.quality-1,
+.quality-common {
+  color: var(--quality-common);
+}
+.quality-2,
+.quality-uncommon {
+  color: var(--quality-uncommon);
+}
+.quality-3,
+.quality-rare {
+  color: var(--quality-rare);
+}
+.quality-4,
+.quality-epic {
+  color: var(--quality-epic);
+}
+.quality-5,
+.quality-legendary {
+  color: var(--quality-legendary);
+}
+.quality-6,
+.quality-artifact {
+  color: var(--quality-artifact);
+}
+.quality-7,
+.quality-heirloom {
+  color: var(--quality-heirloom);
+}
+
+.equipment-item-link.quality-0,
+.equipment-item-link.quality-1,
+.equipment-item-link.quality-2,
+.equipment-item-link.quality-3,
+.equipment-item-link.quality-4,
+.equipment-item-link.quality-5,
+.equipment-item-link.quality-6,
+.equipment-item-link.quality-7 {
+  text-decoration: none;
+}
+
+// Bracket helpers
+.bracket-artifact {
+  color: var(--bracket-artifact);
+}
+.bracket-excellent {
+  color: var(--bracket-excellent);
+}
+.bracket-legendary {
+  color: var(--bracket-legendary);
+}
+.bracket-epic {
+  color: var(--bracket-epic);
+}
+.bracket-rare {
+  color: var(--bracket-rare);
+}
+.bracket-uncommon {
+  color: var(--bracket-uncommon);
+}
+.bracket-common {
+  color: var(--bracket-common);
+}
+
+.bracket-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bracket-badge.bracket-artifact {
+  background-color: rgba(230, 204, 128, 0.15);
+  border: 1px solid var(--bracket-artifact);
+}
+.bracket-badge.bracket-excellent {
+  background-color: rgba(226, 104, 168, 0.15);
+  border: 1px solid var(--bracket-excellent);
+}
+.bracket-badge.bracket-legendary {
+  background-color: rgba(255, 128, 0, 0.15);
+  border: 1px solid var(--bracket-legendary);
+}
+.bracket-badge.bracket-epic {
+  background-color: rgba(163, 53, 238, 0.15);
+  border: 1px solid var(--bracket-epic);
+}
+.bracket-badge.bracket-rare {
+  background-color: rgba(0, 112, 221, 0.15);
+  border: 1px solid var(--bracket-rare);
+}
+.bracket-badge.bracket-uncommon {
+  background-color: rgba(30, 255, 0, 0.15);
+  border: 1px solid var(--bracket-uncommon);
+}
+.bracket-badge.bracket-common {
+  background-color: rgba(157, 157, 157, 0.15);
+  border: 1px solid var(--bracket-common);
+}
+
+.ranking-with-bracket {
+  font-weight: 700;
+}
+
+.ranking-number.bracket-artifact {
+  color: var(--bracket-artifact);
+}
+.ranking-number.bracket-excellent {
+  color: var(--bracket-excellent);
+}
+.ranking-number.bracket-legendary {
+  color: var(--bracket-legendary);
+}
+.ranking-number.bracket-epic {
+  color: var(--bracket-epic);
+}
+.ranking-number.bracket-rare {
+  color: var(--bracket-rare);
+}
+.ranking-number.bracket-uncommon {
+  color: var(--bracket-uncommon);
+}
+.ranking-number.bracket-common {
+  color: var(--bracket-common);
+}
+
+/* Layout helpers */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-xs {
+  gap: $spacing-xs;
+}
+
+.gap-sm {
+  gap: $spacing-sm;
+}
+
+.gap-md {
+  gap: $spacing-md;
+}
+
+.gap-lg {
+  gap: $spacing-lg;
+}
+
+.stack-xs {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.hide-mobile {
+  @media (max-width: 768px) {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  display: none !important;
+
+  @media (max-width: 768px) {
+    display: initial !important;
+  }
+}
+
+/* Spacing helpers */
+.mt-xs {
+  margin-top: $spacing-xs;
+}
+
+.mt-sm {
+  margin-top: $spacing-sm;
+}
+
+.mt-md {
+  margin-top: $spacing-md;
+}
+
+.mt-lg {
+  margin-top: $spacing-lg;
+}
+
+.mb-xs {
+  margin-bottom: $spacing-xs;
+}
+
+.mb-sm {
+  margin-bottom: $spacing-sm;
+}
+
+.mb-md {
+  margin-bottom: $spacing-md;
+}
+
+.mb-lg {
+  margin-bottom: $spacing-lg;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.px-sm {
+  padding-left: $spacing-sm;
+  padding-right: $spacing-sm;
+}
+
+.py-sm {
+  padding-top: $spacing-sm;
+  padding-bottom: $spacing-sm;
+}
+
+.px-md {
+  padding-left: $spacing-md;
+  padding-right: $spacing-md;
+}
+
+.py-md {
+  padding-top: $spacing-md;
+  padding-bottom: $spacing-md;
+}
+
+/* Typography helpers */
+.heading-xl {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+}
+
+.heading-lg {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+}
+
+.heading-md {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+}
+
+.text-label {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Form helpers */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  min-width: 120px;
+}
+
+.form-label {
+  @extend .text-label;
+}
+
+.form-control {
+  padding: $spacing-xs $spacing-sm;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-sm;
+  font-size: $font-size-md;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 2px rgba(216, 166, 87, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* Button helpers */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-sm;
+  border: 1px solid transparent;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--highlight-color);
+  color: #000;
+  border-color: transparent;
+}
+
+.btn-primary:disabled {
+  background-color: #5f5f5f;
+  color: #b5b5b5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  border-color: var(--highlight-color);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: $spacing-sm;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.tab {
+  padding: $spacing-sm $spacing-lg;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+  border-bottom-color: var(--border-color);
+}
+
+.tab.is-active {
+  color: var(--highlight-color);
+  border-bottom-color: var(--highlight-color);
+}
+
+/* Feedback helpers */
+.alert {
+  padding: $spacing-md;
+  border-radius: $radius-sm;
+  border: 1px solid var(--border-color);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.alert-error {
+  background-color: rgba(255, 107, 107, 0.1);
+  border-color: #ff6b6b;
+  color: var(--text-primary);
+}
+
+.table-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  border-radius: $radius-md;
+  border: 1px solid var(--border-color);
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  border-radius: $radius-md;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--highlight-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,44 @@
+---
+import "./Navigation.scss";
+---
+
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <a href="/" class="brand-link">
+        <span class="brand-text">wowsimstats</span>
+      </a>
+    </div>
+
+    <button
+      id="navbarToggler"
+      class="navbar-toggler"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div id="navbarMenu" class="navbar-menu">
+      <div class="navbar-search">
+        <!-- Search moved below nav -->
+      </div>
+      <a href="/simulation/benchmark" class="navbar-link">Simulations</a>
+      <a href="/challenge-mode" class="navbar-link">Challenge Mode</a>
+    </div>
+  </div>
+</nav>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    const toggler = document.getElementById("navbarToggler");
+    const menu = document.getElementById("navbarMenu");
+
+    if (toggler && menu) {
+      toggler.addEventListener("click", () => {
+        menu.classList.toggle("is-active");
+      });
+    }
+  });
+</script>

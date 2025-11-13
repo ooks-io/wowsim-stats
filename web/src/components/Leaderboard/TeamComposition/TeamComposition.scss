@@ -1,0 +1,36 @@
+// TeamComposition Component Styles
+
+.team-composition {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.team-member {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.cross-realm-indicator {
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+// Mobile optimizations
+@media (max-width: 720px) {
+  .team-composition {
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .team-member {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 10px;
+    border-radius: 4px;
+    width: 100%;
+  }
+}

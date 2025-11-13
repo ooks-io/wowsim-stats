@@ -1,0 +1,90 @@
+@use "../../styles/core/tokens" as *;
+
+.loading-state {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-lg;
+
+  &.inline {
+    padding: 40px 20px;
+    margin: 20px 0;
+    background-color: var(--bg-secondary);
+    border-radius: $radius-lg;
+    border: 1px solid var(--border-color);
+  }
+
+  &.overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--bg-secondary);
+    border-radius: $radius-lg;
+    z-index: 1000;
+    min-width: 200px;
+    padding: $spacing-lg;
+    border: 1px solid var(--border-color);
+  }
+
+  &.small {
+    padding: $spacing-md;
+    gap: $spacing-sm;
+  }
+
+  &.large {
+    padding: 60px 40px;
+    gap: $spacing-lg;
+  }
+
+  &.loading {
+    color: var(--text-muted);
+  }
+
+  &.error {
+    color: #ff6666;
+    border-color: #ff4444;
+    background-color: rgba(255, 0, 0, 0.1);
+
+    &.overlay {
+      background-color: #3a2a2a;
+      border-color: var(--highlight-color);
+      color: var(--highlight-color);
+    }
+  }
+}
+
+.loading-spinner {
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-state.small .loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--highlight-color);
+}
+
+.loading-state.normal .loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-top: 2px solid var(--highlight-color);
+}
+
+.loading-state.large .loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--highlight-color);
+}
+
+.loading-message {
+  margin: 0;
+}
+
+.loading-state.small .loading-message {
+  font-size: 0.85em;
+}

@@ -1,0 +1,82 @@
+---
+import "./Pagination.scss";
+
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  baseUrl?: string;
+  totalRuns?: number;
+  totalPlayers?: number;
+}
+
+const {
+  currentPage,
+  totalPages,
+  hasNextPage,
+  hasPrevPage,
+  baseUrl = "",
+  totalRuns,
+  totalPlayers,
+} = Astro.props;
+
+const totalCount = totalRuns || totalPlayers;
+const totalLabel = totalRuns ? "Total Runs" : "Total Players";
+
+// preserve existing query params except page
+const url = Astro.url;
+const params = new URLSearchParams(url.search);
+params.delete("page");
+const existingParams = params.toString();
+
+const buildUrl = (page: number) => {
+  const separator = existingParams ? "&" : "?";
+  return `${baseUrl}${existingParams ? "?" + existingParams : ""}${separator}page=${page}`;
+};
+
+const prevUrl = hasPrevPage ? buildUrl(currentPage - 1) : null;
+const nextUrl = hasNextPage ? buildUrl(currentPage + 1) : null;
+---
+
+<div class="pagination-container">
+  {
+    totalCount && (
+      <div class="pagination-info">
+        <span>
+          {totalLabel}: {totalCount.toLocaleString()}
+        </span>
+      </div>
+    )
+  }
+
+  <div class="pagination-buttons">
+    {
+      prevUrl ? (
+        <a href={prevUrl} class="pagination-btn">
+          Previous
+        </a>
+      ) : (
+        <button class="pagination-btn" disabled>
+          Previous
+        </button>
+      )
+    }
+
+    <span class="page-info">
+      {currentPage} / {totalPages}
+    </span>
+
+    {
+      nextUrl ? (
+        <a href={nextUrl} class="pagination-btn">
+          Next
+        </a>
+      ) : (
+        <button class="pagination-btn" disabled>
+          Next
+        </button>
+      )
+    }
+  </div>
+</div>

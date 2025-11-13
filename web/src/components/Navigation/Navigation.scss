@@ -1,0 +1,130 @@
+@use "../../styles/core/tokens" as *;
+
+.navbar {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $spacing-xl;
+  height: 60px;
+}
+
+.navbar-brand {
+  flex-shrink: 0;
+}
+
+.brand-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-text {
+  color: var(--highlight-color);
+  font-size: 1.4em;
+  font-weight: $font-weight-bold;
+  letter-spacing: -0.5px;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: $spacing-lg;
+  align-items: center;
+}
+
+.navbar-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-sm;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+  font-weight: $font-weight-bold;
+
+  &:hover {
+    background-color: var(--border-color);
+    color: var(--highlight-color);
+    text-decoration: none;
+  }
+}
+
+.navbar-link-github {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.navbar-toggler {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--text-primary);
+    margin: 5px 0;
+    transition: transform 0.3s ease;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 $spacing-md;
+  }
+
+  .brand-text {
+    font-size: 1.2em;
+  }
+
+  .navbar-toggler {
+    display: block;
+    z-index: 101;
+  }
+
+  .navbar-menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    padding: $spacing-sm 0;
+
+    &.is-active {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .navbar-link {
+    padding: $spacing-sm $spacing-xl;
+    width: 100%;
+    text-align: center;
+    border-radius: 0;
+  }
+
+  .github-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .navbar-link-github {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,63 @@
+// Pagination Component Styles
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 15px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.pagination-info {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  background-color: var(--highlight-color);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+
+  &:hover:not(:disabled) {
+    background-color: #e6d55a;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background-color: #666;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.page-info {
+  color: var(--text-primary);
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .pagination-container {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+}

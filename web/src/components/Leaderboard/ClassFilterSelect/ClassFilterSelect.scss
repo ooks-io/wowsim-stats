@@ -1,0 +1,47 @@
+@use "../../../styles/core/tokens" as *;
+
+.class-filter {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  label {
+    font-weight: $font-weight-semibold;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  select {
+    padding: $spacing-sm $spacing-md;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-sm;
+    font-size: $font-size-md;
+    cursor: pointer;
+    min-width: 180px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: var(--highlight-color);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--highlight-color);
+      box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .class-filter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-xs;
+
+    select {
+      width: 100%;
+    }
+  }
+}

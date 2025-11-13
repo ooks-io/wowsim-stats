@@ -1,0 +1,12 @@
+---
+interface Props {
+  class?: string;
+  [key: string]: any; // Allow data-* attributes
+}
+
+const { class: className = "", ...attrs } = Astro.props;
+---
+
+<div class={`table-row ${className}`.trim()} {...attrs}>
+  <slot />
+</div>

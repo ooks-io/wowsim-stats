@@ -1,0 +1,188 @@
+---
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import LeaderboardTable from "../../../../components/Leaderboard/LeaderboardTable/LeaderboardTable.astro";
+import Pagination from "../../../../components/Leaderboard/Pagination/Pagination.astro";
+import LeaderboardScopeFilter from "../../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
+import ClassFilterSelect from "../../../../components/Leaderboard/ClassFilterSelect/ClassFilterSelect.astro";
+import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import LeaderboardHeader from "../../../../components/Leaderboard/LeaderboardHeader/LeaderboardHeader.astro";
+import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
+import { fetchPlayerLeaderboard } from "../../../../lib/api";
+import { CLASSES } from "../../../../lib/wow-constants";
+
+export const prerender = false;
+
+// Parse season from path
+const seasonParam = Astro.params.season || "season1";
+const seasonMatch = seasonParam.match(/^season(\d+)$/);
+const currentSeason = seasonMatch ? parseInt(seasonMatch[1], 10) : 1;
+
+// Parse scope from path
+const scope = Astro.params.scope || "";
+const scopeParts = scope.split("/");
+
+// Defaults
+let regionParam = "global";
+let realmParam = "";
+let classParam = "all";
+let apiScope: "global" | "regional" | "realm" = "global";
+
+if (scopeParts.length >= 1) {
+  regionParam = scopeParts[0];
+
+  if (regionParam === "global") {
+    apiScope = "global";
+    if (scopeParts.length >= 2) {
+      classParam = scopeParts[1];
+    }
+  } else {
+    // region specified
+    if (scopeParts.length === 1) {
+      // just region - regional scope
+      apiScope = "regional";
+    } else if (scopeParts.length === 2) {
+      // could be region/class or region/realm
+      const secondPart = scopeParts[1];
+      if (CLASSES.includes(secondPart as any)) {
+        // It's a class filter
+        apiScope = "regional";
+        classParam = secondPart;
+      } else {
+        // It's a realm
+        apiScope = "realm";
+        realmParam = secondPart;
+      }
+    } else if (scopeParts.length >= 3) {
+      // region/realm/class
+      apiScope = "realm";
+      realmParam = scopeParts[1];
+      classParam = scopeParts[2];
+    }
+  }
+}
+
+// check for page query param
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+// build scope label
+let scopeLabel: string;
+if (regionParam === "global") {
+  scopeLabel = "Global";
+} else if (realmParam && realmParam !== "all") {
+  scopeLabel = `${regionParam.toUpperCase()} - ${realmParam}`;
+} else {
+  scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
+}
+
+// fetch player leaderboard data
+let data;
+try {
+  data = await fetchPlayerLeaderboard(
+    apiScope,
+    regionParam,
+    currentPage,
+    25,
+    {
+      realmSlug: realmParam || undefined,
+      classKey: classParam !== "all" ? classParam : undefined,
+      seasonId: currentSeason,
+    },
+    Astro.url.origin,
+  );
+} catch (error) {
+  console.error("[Test Player Leaderboard] Error:", error);
+  throw error;
+}
+
+const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
+---
+
+<PageLayout title={pageTitle}>
+  <main class="leaderboard-page">
+    <LeaderboardHeader
+      season={currentSeason}
+      dungeonName="Player Rankings"
+      scopeLabel={scopeLabel}
+    />
+    <PlayerSearch />
+    <LeaderboardTypeNav
+      currentType="player"
+      currentRegion={regionParam}
+      currentRealm={realmParam}
+      currentSeason={currentSeason}
+      currentClass={classParam}
+    />
+
+    <div class="filters">
+      <LeaderboardScopeFilter
+        currentRegion={regionParam}
+        currentRealm={realmParam}
+        currentSeason={currentSeason}
+        leaderboardType="player"
+        currentClass={classParam}
+      />
+      <ClassFilterSelect currentClass={classParam} />
+    </div>
+
+    <div id="leaderboard-content">
+      <LeaderboardTable
+        type="player"
+        players={data.leaderboard}
+        currentPage={data.pagination.currentPage}
+        pageSize={data.pagination.pageSize}
+        region={regionParam}
+        realm={realmParam}
+      />
+    </div>
+
+    <Pagination
+      currentPage={data.pagination.currentPage}
+      totalPages={data.pagination.totalPages}
+      hasNextPage={data.pagination.hasNextPage}
+      hasPrevPage={data.pagination.hasPrevPage}
+      totalPlayers={data.pagination.totalPlayers}
+      baseUrl={Astro.url.pathname}
+    />
+  </main>
+</PageLayout>
+
+<style>
+  .leaderboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .page-title {
+    margin: 8px 0 16px 0;
+  }
+
+  .filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-page {
+      padding: 15px;
+    }
+
+    .filters {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 1.5em;
+    }
+  }
+</style>
