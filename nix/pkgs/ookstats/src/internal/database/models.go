@@ -176,6 +176,17 @@ func (ds *DatabaseService) GetDungeonID(slug string) (int, error) {
 	return dungeonID, nil
 }
 
+// Season represents a database season record
+type Season struct {
+	ID             int
+	SeasonNumber   int
+	StartTimestamp int64
+	EndTimestamp   *int64
+	SeasonName     string
+	FirstPeriodID  *int
+	LastPeriodID   *int
+}
+
 // GetPlayerCurrentIdentity returns region, realm_slug, and name for a player from players/realms tables
 func (ds *DatabaseService) GetPlayerCurrentIdentity(playerID int) (string, string, string, error) {
     const q = `

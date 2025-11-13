@@ -17,8 +17,6 @@ type Client struct {
     HTTPClient  *http.Client
     Token       string
     rateLimiter chan struct{} // semaphore for rate limiting
-    // FallbackLimit limits how many periods to try per dungeon (0 = no limit)
-    FallbackLimit int
     // Verbose controls extra per-request logging
     Verbose bool
     // metrics
@@ -56,7 +54,6 @@ func NewClient() (*Client, error) {
         },
         Token:       token,
         rateLimiter: rateLimiter,
-        FallbackLimit: 0, // default: no explicit limit (use full list)
     }
 
     return client, nil
@@ -111,44 +108,6 @@ func (c *Client) FetchLeaderboardData(realmInfo RealmInfo, dungeon DungeonInfo, 
 	}
 
 	return nil, fmt.Errorf("failed after %d attempts: %w", maxRetries, lastErr)
-}
-
-// FetchLeaderboardDataWithFallback tries multiple periods in order until data is found
-func (c *Client) FetchLeaderboardDataWithFallback(realmInfo RealmInfo, dungeon DungeonInfo) (*LeaderboardResponse, error) {
-    periods := GetRegionFallbackPeriods(realmInfo.Region)
-    if c.FallbackLimit > 0 && c.FallbackLimit < len(periods) {
-        periods = periods[:c.FallbackLimit]
-    }
-
-	for i, periodID := range periods {
-		result, err := c.FetchLeaderboardData(realmInfo, dungeon, periodID)
-		if err != nil {
-			// check if it's a 404 (no data for this period)
-			if strings.Contains(err.Error(), "status 404") {
-				if i == len(periods)-1 {
-					// last period, log the final failure with full context
-					fmt.Printf("    [NO DATA] %s (%s) / %s - exhausted all %d periods\n",
-						realmInfo.Name, realmInfo.Region, dungeon.Name, len(periods))
-					return nil, fmt.Errorf("no data found in any period for %s/%s", realmInfo.Name, dungeon.Name)
-				}
-				// try next period silently
-				continue
-			}
-			// non-404 error, return immediately with context
-			fmt.Printf("    [API ERROR] %s (%s) / %s - %v\n",
-				realmInfo.Name, realmInfo.Region, dungeon.Name, err)
-			return nil, err
-		}
-
-		// success! return the data
-		if i > 0 {
-			fmt.Printf("    [FALLBACK] %s (%s) / %s - found data in period %s (tried %d periods)\n",
-				realmInfo.Name, realmInfo.Region, dungeon.Name, periodID, i+1)
-		}
-		return result, nil
-	}
-
-	return nil, fmt.Errorf("no data found in any period for %s/%s", realmInfo.Name, dungeon.Name)
 }
 
 // fetchLeaderboardDataOnce performs a single fetch attempt
@@ -281,86 +240,6 @@ func (c *Client) FetchAllRealmsConcurrent(ctx context.Context, realms map[string
 
 			// fetch all dungeons for this realm concurrently
 			realmResults := c.FetchLeaderboardsConcurrent(ctx, info, dungeons, periodID)
-
-			// forward results from this realm
-			for result := range realmResults {
-				select {
-				case results <- result:
-				case <-ctx.Done():
-					return
-				}
-			}
-		}(realmSlug, realmInfo)
-	}
-
-	// close channel when all realms complete
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
-	return results
-}
-
-// FetchLeaderboardsConcurrentWithFallback fetches multiple leaderboards concurrently with multi-period fallback
-func (c *Client) FetchLeaderboardsConcurrentWithFallback(ctx context.Context, realmInfo RealmInfo, dungeons []DungeonInfo) <-chan FetchResult {
-	results := make(chan FetchResult, len(dungeons))
-	var wg sync.WaitGroup
-
-	for _, dungeon := range dungeons {
-		wg.Add(1)
-		go func(d DungeonInfo) {
-			defer wg.Done()
-
-			// acquire rate limiter token
-			select {
-			case c.rateLimiter <- struct{}{}:
-				defer func() { <-c.rateLimiter }() // Release token
-			case <-ctx.Done():
-				results <- FetchResult{
-					RealmInfo: realmInfo,
-					Dungeon:   d,
-					Error:     ctx.Err(),
-				}
-				return
-			}
-
-			// minimal delay to respect API rate limits
-			time.Sleep(20 * time.Millisecond)
-
-			leaderboard, err := c.FetchLeaderboardDataWithFallback(realmInfo, d)
-			results <- FetchResult{
-				RealmInfo:   realmInfo,
-				Dungeon:     d,
-				Leaderboard: leaderboard,
-				Error:       err,
-			}
-		}(dungeon)
-	}
-
-	// close channel when all goroutines complete
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
-	return results
-}
-
-// FetchAllRealmsConcurrentWithFallback fetches leaderboards for multiple realms concurrently with multi-period fallback
-func (c *Client) FetchAllRealmsConcurrentWithFallback(ctx context.Context, realms map[string]RealmInfo, dungeons []DungeonInfo) <-chan FetchResult {
-	results := make(chan FetchResult, len(realms)*len(dungeons))
-	var wg sync.WaitGroup
-
-	for realmSlug, realmInfo := range realms {
-		wg.Add(1)
-		go func(slug string, info RealmInfo) {
-			defer wg.Done()
-
-			fmt.Printf("Processing Realm: %s (%s)\n", info.Name, info.Region)
-
-			// fetch all dungeons for this realm concurrently with fallback
-			realmResults := c.FetchLeaderboardsConcurrentWithFallback(ctx, info, dungeons)
 
 			// forward results from this realm
 			for result := range realmResults {
@@ -608,6 +487,220 @@ type PlayerInfo struct {
 	Name      string
 	RealmSlug string
 	Region    string
+}
+
+// FetchPeriodIndex fetches the list of available periods for a region
+func (c *Client) FetchPeriodIndex(region string) (*PeriodIndexResponse, error) {
+	namespace := fmt.Sprintf("dynamic-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/data/wow/mythic-keystone/period/index?namespace=%s&locale=en_US",
+		region, namespace,
+	)
+
+	const maxRetries = 3
+	const baseDelay = 1 * time.Second
+
+	var lastErr error
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		if attempt > 0 {
+			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
+			time.Sleep(delay)
+		}
+
+		result, err := c.fetchPeriodIndexOnce(url)
+		if err == nil {
+			return result, nil
+		}
+
+		lastErr = err
+
+		// don't retry on 4xx errors
+		if strings.Contains(err.Error(), "status 4") {
+			break
+		}
+	}
+
+	return nil, fmt.Errorf("failed to fetch period index after %d attempts: %w", maxRetries, lastErr)
+}
+
+// fetchPeriodIndexOnce performs a single period index fetch attempt
+func (c *Client) fetchPeriodIndexOnce(url string) (*PeriodIndexResponse, error) {
+	time.Sleep(50 * time.Millisecond)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	req.Header.Set("User-Agent", "WoWStatsDB/1.0")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var result PeriodIndexResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// GetDynamicPeriodList fetches the period list from the API and returns it in reverse order (newest first)
+func (c *Client) GetDynamicPeriodList(region string) ([]string, error) {
+	index, err := c.FetchPeriodIndex(region)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch period list for %s: %w", region, err)
+	}
+
+	if len(index.Periods) == 0 {
+		return nil, fmt.Errorf("period index returned empty list for %s", region)
+	}
+
+	// Extract period IDs and reverse the list (newest first)
+	periods := make([]string, len(index.Periods))
+	for i, p := range index.Periods {
+		periods[len(index.Periods)-1-i] = fmt.Sprintf("%d", p.ID)
+	}
+
+	fmt.Printf("[OK] Fetched %d periods dynamically for %s (newest: %s, oldest: %s)\n",
+		len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
+
+	return periods, nil
+}
+
+// FetchSeasonIndex fetches the list of available seasons for a region
+func (c *Client) FetchSeasonIndex(region string) (*SeasonIndexResponse, error) {
+	namespace := fmt.Sprintf("dynamic-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/data/wow/mythic-keystone/season/index?namespace=%s&locale=en_US",
+		region, namespace,
+	)
+
+	const maxRetries = 3
+	const baseDelay = 1 * time.Second
+
+	var lastErr error
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		if attempt > 0 {
+			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
+			time.Sleep(delay)
+		}
+
+		result, err := c.fetchSeasonIndexOnce(url)
+		if err == nil {
+			return result, nil
+		}
+
+		lastErr = err
+
+		if strings.Contains(err.Error(), "status 4") {
+			break
+		}
+	}
+
+	return nil, fmt.Errorf("failed to fetch season index after %d attempts: %w", maxRetries, lastErr)
+}
+
+func (c *Client) fetchSeasonIndexOnce(url string) (*SeasonIndexResponse, error) {
+	time.Sleep(50 * time.Millisecond)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	req.Header.Set("User-Agent", "WoWStatsDB/1.0")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var result SeasonIndexResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return &result, nil
+}
+
+// FetchSeasonDetail fetches details for a specific season
+func (c *Client) FetchSeasonDetail(region string, seasonID int) (*SeasonDetailResponse, error) {
+	namespace := fmt.Sprintf("dynamic-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/data/wow/mythic-keystone/season/%d?namespace=%s&locale=en_US",
+		region, seasonID, namespace,
+	)
+
+	const maxRetries = 3
+	const baseDelay = 1 * time.Second
+
+	var lastErr error
+	for attempt := 0; attempt < maxRetries; attempt++ {
+		if attempt > 0 {
+			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
+			time.Sleep(delay)
+		}
+
+		result, err := c.fetchSeasonDetailOnce(url)
+		if err == nil {
+			return result, nil
+		}
+
+		lastErr = err
+
+		if strings.Contains(err.Error(), "status 4") {
+			break
+		}
+	}
+
+	return nil, fmt.Errorf("failed to fetch season %d after %d attempts: %w", seasonID, maxRetries, lastErr)
+}
+
+func (c *Client) fetchSeasonDetailOnce(url string) (*SeasonDetailResponse, error) {
+	time.Sleep(50 * time.Millisecond)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
+	req.Header.Set("User-Agent", "WoWStatsDB/1.0")
+
+	resp, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var result SeasonDetailResponse
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("failed to decode response: %w", err)
+	}
+
+	return &result, nil
 }
 
 func getEnvOrFail(key string) string {

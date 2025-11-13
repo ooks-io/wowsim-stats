@@ -13,8 +13,8 @@ var rootCmd = &cobra.Command{
 	Short: "WoW Stats Database Management Tool",
 	Long: `A comprehensive tool for managing WoW Challenge Mode statistics database.
 
-Supports fetching data from Blizzard API, processing player rankings, 
-and managing data in Turso/libSQL database.`,
+Supports fetching data from Blizzard API, processing player rankings,
+and managing data in local SQLite database.`,
 }
 
 // execute adds all child commands to the root command and sets flags appropriately.

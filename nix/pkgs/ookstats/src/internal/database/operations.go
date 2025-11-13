@@ -1178,3 +1178,200 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 
 	return equipmentCount, nil
 }
+
+// Season management operations
+
+// UpsertSeason inserts or updates a season record
+func (ds *DatabaseService) UpsertSeason(seasonID int, seasonName string, startTimestamp int64) error {
+	query := `
+		INSERT INTO seasons (id, season_number, season_name, start_timestamp)
+		VALUES (?, ?, ?, ?)
+		ON CONFLICT(id) DO UPDATE SET
+			season_name = excluded.season_name,
+			start_timestamp = excluded.start_timestamp
+	`
+	_, err := ds.db.Exec(query, seasonID, seasonID, seasonName, startTimestamp)
+	return err
+}
+
+// UpdateSeasonPeriodRange updates the first_period_id and last_period_id for a season
+func (ds *DatabaseService) UpdateSeasonPeriodRange(seasonID, firstPeriodID, lastPeriodID int) error {
+	query := `
+		UPDATE seasons
+		SET first_period_id = ?, last_period_id = ?
+		WHERE id = ?
+	`
+	_, err := ds.db.Exec(query, firstPeriodID, lastPeriodID, seasonID)
+	return err
+}
+
+// UpdateSeasonEndTimestamp updates the end_timestamp for a season
+func (ds *DatabaseService) UpdateSeasonEndTimestamp(seasonID int, endTimestamp int64) error {
+	query := `UPDATE seasons SET end_timestamp = ? WHERE id = ?`
+	_, err := ds.db.Exec(query, endTimestamp, seasonID)
+	return err
+}
+
+// LinkPeriodToSeason creates a mapping between a period and season
+func (ds *DatabaseService) LinkPeriodToSeason(periodID, seasonID int) error {
+	query := `INSERT OR IGNORE INTO period_seasons (period_id, season_id) VALUES (?, ?)`
+	_, err := ds.db.Exec(query, periodID, seasonID)
+	return err
+}
+
+// GetSeasonByID retrieves a season by its ID
+func (ds *DatabaseService) GetSeasonByID(seasonID int) (*Season, error) {
+	query := `
+		SELECT id, season_number, start_timestamp, end_timestamp, season_name, first_period_id, last_period_id
+		FROM seasons
+		WHERE id = ?
+	`
+	var season Season
+	var endTimestamp sql.NullInt64
+	var firstPeriod, lastPeriod sql.NullInt64
+	err := ds.db.QueryRow(query, seasonID).Scan(
+		&season.ID,
+		&season.SeasonNumber,
+		&season.StartTimestamp,
+		&endTimestamp,
+		&season.SeasonName,
+		&firstPeriod,
+		&lastPeriod,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if endTimestamp.Valid {
+		season.EndTimestamp = &endTimestamp.Int64
+	}
+	if firstPeriod.Valid {
+		fp := int(firstPeriod.Int64)
+		season.FirstPeriodID = &fp
+	}
+	if lastPeriod.Valid {
+		lp := int(lastPeriod.Int64)
+		season.LastPeriodID = &lp
+	}
+	return &season, nil
+}
+
+// GetAllSeasons retrieves all seasons ordered by start timestamp
+func (ds *DatabaseService) GetAllSeasons() ([]Season, error) {
+	query := `
+		SELECT id, season_number, start_timestamp, end_timestamp, season_name, first_period_id, last_period_id
+		FROM seasons
+		ORDER BY start_timestamp DESC
+	`
+	rows, err := ds.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var seasons []Season
+	for rows.Next() {
+		var season Season
+		var endTimestamp sql.NullInt64
+		var firstPeriod, lastPeriod sql.NullInt64
+		err := rows.Scan(
+			&season.ID,
+			&season.SeasonNumber,
+			&season.StartTimestamp,
+			&endTimestamp,
+			&season.SeasonName,
+			&firstPeriod,
+			&lastPeriod,
+		)
+		if err != nil {
+			return nil, err
+		}
+		if endTimestamp.Valid {
+			season.EndTimestamp = &endTimestamp.Int64
+		}
+		if firstPeriod.Valid {
+			fp := int(firstPeriod.Int64)
+			season.FirstPeriodID = &fp
+		}
+		if lastPeriod.Valid {
+			lp := int(lastPeriod.Int64)
+			season.LastPeriodID = &lp
+		}
+		seasons = append(seasons, season)
+	}
+	return seasons, rows.Err()
+}
+
+// GetCurrentSeason retrieves the current active season (most recent without end timestamp)
+func (ds *DatabaseService) GetCurrentSeason() (*Season, error) {
+	query := `
+		SELECT id, season_number, start_timestamp, end_timestamp, season_name, first_period_id, last_period_id
+		FROM seasons
+		WHERE end_timestamp IS NULL
+		ORDER BY start_timestamp DESC
+		LIMIT 1
+	`
+	var season Season
+	var endTimestamp sql.NullInt64
+	var firstPeriod, lastPeriod sql.NullInt64
+	err := ds.db.QueryRow(query).Scan(
+		&season.ID,
+		&season.SeasonNumber,
+		&season.StartTimestamp,
+		&endTimestamp,
+		&season.SeasonName,
+		&firstPeriod,
+		&lastPeriod,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	if endTimestamp.Valid {
+		season.EndTimestamp = &endTimestamp.Int64
+	}
+	if firstPeriod.Valid {
+		fp := int(firstPeriod.Int64)
+		season.FirstPeriodID = &fp
+	}
+	if lastPeriod.Valid {
+		lp := int(lastPeriod.Int64)
+		season.LastPeriodID = &lp
+	}
+	return &season, nil
+}
+
+// GetSeasonForPeriod retrieves the season ID for a given period
+func (ds *DatabaseService) GetSeasonForPeriod(periodID int) (int, error) {
+	query := `SELECT season_id FROM period_seasons WHERE period_id = ? LIMIT 1`
+	var seasonID int
+	err := ds.db.QueryRow(query, periodID).Scan(&seasonID)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	return seasonID, err
+}
+
+// GetPeriodsForSeason retrieves all period IDs for a given season
+func (ds *DatabaseService) GetPeriodsForSeason(seasonID int) ([]int, error) {
+	query := `SELECT period_id FROM period_seasons WHERE season_id = ? ORDER BY period_id`
+	rows, err := ds.db.Query(query, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var periods []int
+	for rows.Next() {
+		var periodID int
+		if err := rows.Scan(&periodID); err != nil {
+			return nil, err
+		}
+		periods = append(periods, periodID)
+	}
+	return periods, rows.Err()
+}
