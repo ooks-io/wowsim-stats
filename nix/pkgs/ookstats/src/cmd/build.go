@@ -13,6 +13,8 @@ import (
     "github.com/spf13/cobra"
     "ookstats/internal/blizzard"
     "ookstats/internal/database"
+    "ookstats/internal/generator"
+    "ookstats/internal/pipeline"
 )
 
 // buildCmd orchestrates a full from-scratch rebuild + static API generation
@@ -77,8 +79,7 @@ var buildCmd = &cobra.Command{
             return fmt.Errorf("populate items: %w", err)
         }
 
-        // 3) Fetch CM runs using global period sweep
-        fmt.Println("\n=== Fetching Challenge Mode leaderboards (global period sweep) ===")
+        // 3) Initialize Blizzard API client
         client, err := blizzard.NewClient()
         if err != nil {
             return fmt.Errorf("blizzard client: %w", err)
@@ -87,6 +88,15 @@ var buildCmd = &cobra.Command{
         if concurrency > 0 {
             client.SetConcurrency(concurrency)
         }
+
+        // 4) Sync season metadata from API
+        fmt.Println("\n=== Syncing season metadata ===")
+        if err := syncSeasons(db, client, regionsCSV); err != nil {
+            return fmt.Errorf("sync seasons: %w", err)
+        }
+
+        // 5) Fetch CM runs using global period sweep
+        fmt.Println("\n=== Fetching Challenge Mode leaderboards (global period sweep) ===")
 
         // Realms and dungeons
         _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
@@ -114,37 +124,67 @@ var buildCmd = &cobra.Command{
         // control database-internal verbosity (hide 404 noise unless verbose)
         database.SetVerbose(verbose)
 
-        // Determine periods to sweep
-        periods := []string{}
-        if strings.TrimSpace(periodsCSV) != "" {
-            for _, p := range strings.Split(periodsCSV, ",") {
-                v := strings.TrimSpace(p)
-                if v != "" { periods = append(periods, v) }
+        // Group realms by region
+        realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
+        for slug, info := range allRealms {
+            if realmsByRegion[info.Region] == nil {
+                realmsByRegion[info.Region] = make(map[string]blizzard.RealmInfo)
             }
-        } else {
-            periods = blizzard.GetGlobalPeriods()
+            realmsByRegion[info.Region][slug] = info
         }
-        fmt.Printf("Sweeping periods (newest -> oldest): %v\n", periods)
-
-        totalRuns := 0
-        totalPlayers := 0
 
         ctx, cancel := context.WithTimeout(context.Background(), 45*time.Minute)
         defer cancel()
 
+        totalRuns := 0
+        totalPlayers := 0
         sweepStart := time.Now()
-        for _, period := range periods {
-            fmt.Printf("\n--- Period %s ---\n", period)
-            realmResults := client.FetchAllRealmsConcurrent(ctx, allRealms, dungeons, period)
-            runs, players, err := dbService.BatchProcessFetchResults(ctx, realmResults)
-            if err != nil {
-                fmt.Printf("Batch processing errors in period %s: %v\n", period, err)
+
+        // Process each region independently
+        for region, regionRealms := range realmsByRegion {
+            fmt.Printf("\n========== Region: %s (%d realms) ==========\n", strings.ToUpper(region), len(regionRealms))
+
+            // Determine periods for this region
+            var periods []string
+            var err error
+
+            if strings.TrimSpace(periodsCSV) != "" {
+                // User-specified periods (support ranges like "1020-1036")
+                periods, err = blizzard.ParsePeriods(periodsCSV)
+                if err != nil {
+                    return fmt.Errorf("failed to parse periods: %w", err)
+                }
+                fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
+            } else {
+                // Fetch periods dynamically from Blizzard API for this region
+                fmt.Printf("Fetching period list dynamically from Blizzard API for %s...\n", strings.ToUpper(region))
+                periods, err = client.GetDynamicPeriodList(region)
+                if err != nil {
+                    fmt.Printf("Failed to fetch period list for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    continue
+                }
             }
-            fmt.Printf("Period %s -> inserted runs: %d, new players: %d\n", period, runs, players)
-            totalRuns += runs
-            totalPlayers += players
+
+            if len(periods) == 0 {
+                fmt.Printf("No periods to process for %s - skipping region\n", strings.ToUpper(region))
+                continue
+            }
+
+            // Period sweep for this region
+            fmt.Printf("Starting period sweep for %s: %d periods\n", strings.ToUpper(region), len(periods))
+            for _, period := range periods {
+                fmt.Printf("\n--- %s Period %s ---\n", strings.ToUpper(region), period)
+                realmResults := client.FetchAllRealmsConcurrent(ctx, regionRealms, dungeons, period)
+                runs, players, err := dbService.BatchProcessFetchResults(ctx, realmResults)
+                if err != nil {
+                    fmt.Printf("Batch processing errors in %s period %s: %v\n", strings.ToUpper(region), period, err)
+                }
+                fmt.Printf("%s Period %s -> inserted runs: %d, new players: %d\n", strings.ToUpper(region), period, runs, players)
+                totalRuns += runs
+                totalPlayers += players
+            }
         }
-        fmt.Printf("\nSweep complete in %v\n", time.Since(sweepStart))
+        fmt.Printf("\n========== Sweep complete in %v ==========\n", time.Since(sweepStart))
 
         if err := dbService.UpdateFetchMetadata("challenge_mode_leaderboard", totalRuns, totalPlayers); err != nil {
             return fmt.Errorf("update fetch metadata: %w", err)
@@ -179,6 +219,14 @@ var buildCmd = &cobra.Command{
             return err
         }
 
+        // 8) Generate status API via analyze
+        fmt.Println("\n=== Generating status API (analyze) ===")
+        statusDir := filepath.Join(normalizedOut, "api", "status")
+        outPath := filepath.Join(statusDir, "latest-runs.json")
+        if err := runAnalyze(client, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
+            return fmt.Errorf("analyze status: %w", err)
+        }
+
         // Print summary
         summarizeBuild(db, normalizedOut)
 
@@ -189,32 +237,19 @@ var buildCmd = &cobra.Command{
 
 // processPlayersOnce runs the same steps as `process players`
 func processPlayersOnce(db *sql.DB) error {
-    tx, err := db.Begin()
-    if err != nil { return fmt.Errorf("begin tx: %w", err) }
-    defer tx.Rollback()
-
-    if _, err := createPlayerAggregations(tx); err != nil {
-        return fmt.Errorf("create player aggregations: %w", err)
+    opts := pipeline.ProcessPlayersOptions{
+        Verbose: false,
     }
-    if _, err := computePlayerRankings(tx); err != nil {
-        return fmt.Errorf("compute player rankings: %w", err)
-    }
-    if err := tx.Commit(); err != nil { return fmt.Errorf("commit players: %w", err) }
-    if _, err := db.Exec("VACUUM"); err != nil { fmt.Printf("VACUUM warning: %v\n", err) }
-    return nil
+    _, _, err := pipeline.ProcessPlayers(db, opts)
+    return err
 }
 
 // processRunRankingsOnce runs the same steps as `process rankings`
 func processRunRankingsOnce(db *sql.DB) error {
-    tx, err := db.Begin()
-    if err != nil { return fmt.Errorf("begin tx: %w", err) }
-    defer tx.Rollback()
-
-    if err := computeGlobalRankings(tx); err != nil { return fmt.Errorf("global rankings: %w", err) }
-    if err := computeRegionalRankings(tx); err != nil { return fmt.Errorf("regional rankings: %w", err) }
-    if err := tx.Commit(); err != nil { return fmt.Errorf("commit run rankings: %w", err) }
-    if _, err := db.Exec("VACUUM"); err != nil { fmt.Printf("VACUUM warning: %v\n", err) }
-    return nil
+    opts := pipeline.ProcessRunRankingsOptions{
+        Verbose: false,
+    }
+    return pipeline.ProcessRunRankings(db, opts)
 }
 
 // fetchProfilesOnce runs the same logic as `fetch profiles`
@@ -266,7 +301,7 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regio
     if err := os.MkdirAll(base, 0o755); err != nil { return fmt.Errorf("mkdir: %w", err) }
 
     // players
-    if err := generatePlayers(db, filepath.Join(base, "player"), ""); err != nil { return err }
+    if err := generator.GeneratePlayers(db, filepath.Join(base, "player"), ""); err != nil { return err }
 
     // leaderboards (+ players rankings)
     regions := []string{}
@@ -276,11 +311,11 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regio
             if rr != "" { regions = append(regions, rr) }
         }
     }
-    if err := generateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil { return err }
-    if err := generatePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil { return err }
+    if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil { return err }
+    if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil { return err }
 
     // search index
-    if err := generateSearchIndex(db, filepath.Join(base, "search"), shardSize); err != nil { return err }
+    if err := generator.GenerateSearchIndex(db, filepath.Join(base, "search"), shardSize); err != nil { return err }
 
     fmt.Println("[OK] Static API generated")
     return nil
@@ -319,6 +354,79 @@ func summarizeBuild(db *sql.DB, outParent string) {
     }
 }
 
+// syncSeasons syncs season metadata from Blizzard API
+func syncSeasons(db *sql.DB, client *blizzard.Client, regionsCSV string) error {
+	dbService := database.NewDatabaseService(db)
+
+	// Only need one region since seasons are global
+	region := "us"
+	if strings.TrimSpace(regionsCSV) != "" {
+		parts := strings.Split(regionsCSV, ",")
+		if len(parts) > 0 {
+			region = strings.TrimSpace(parts[0])
+		}
+	}
+
+	fmt.Printf("Fetching season metadata from %s...\n", strings.ToUpper(region))
+
+	// Fetch season index
+	seasonIndex, err := client.FetchSeasonIndex(region)
+	if err != nil {
+		return fmt.Errorf("failed to fetch season index: %w", err)
+	}
+
+	if len(seasonIndex.Seasons) == 0 {
+		fmt.Println("No seasons found in API")
+		return nil
+	}
+
+	fmt.Printf("Found %d seasons\n", len(seasonIndex.Seasons))
+
+	// Process each season
+	for _, seasonRef := range seasonIndex.Seasons {
+		seasonID := seasonRef.ID
+		fmt.Printf("  Season %d: ", seasonID)
+
+		// Fetch season details
+		seasonDetail, err := client.FetchSeasonDetail(region, seasonID)
+		if err != nil {
+			fmt.Printf("error fetching details - %v\n", err)
+			continue
+		}
+
+		// Upsert season
+		err = dbService.UpsertSeason(seasonDetail.ID, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
+		if err != nil {
+			fmt.Printf("error upserting - %v\n", err)
+			continue
+		}
+
+		// Link periods to season
+		if len(seasonDetail.Periods) > 0 {
+			firstPeriod := seasonDetail.Periods[0].ID
+			lastPeriod := seasonDetail.Periods[len(seasonDetail.Periods)-1].ID
+
+			// Update period range
+			err = dbService.UpdateSeasonPeriodRange(seasonDetail.ID, firstPeriod, lastPeriod)
+			if err != nil {
+				fmt.Printf("error updating period range - %v\n", err)
+			}
+
+			// Link each period
+			for _, periodRef := range seasonDetail.Periods {
+				err = dbService.LinkPeriodToSeason(periodRef.ID, seasonDetail.ID)
+				if err != nil {
+					fmt.Printf("error linking period %d - %v\n", periodRef.ID, err)
+				}
+			}
+		}
+		fmt.Printf("%s (%d periods)\n", seasonDetail.SeasonName, len(seasonDetail.Periods))
+	}
+
+	fmt.Println("[OK] Season metadata synced")
+	return nil
+}
+
 func init() {
     rootCmd.AddCommand(buildCmd)
     buildCmd.Flags().String("out", "", "Parent output directory for static API (e.g. web/public or web/public/api)")
@@ -328,6 +436,6 @@ func init() {
     buildCmd.Flags().Int("shard-size", 5000, "Search index shard size")
     buildCmd.Flags().String("wowsims-db", "", "Optional path to WoWSims items JSON for item enrichment")
     buildCmd.Flags().Bool("skip-profiles", false, "Skip fetching player detailed profiles")
-    buildCmd.Flags().String("periods", "", "Comma-separated period IDs to sweep (default: newest->oldest set)")
+    buildCmd.Flags().String("periods", "", "Period specification: comma-separated list or ranges (e.g., '1020-1036' or '1020,1025,1030-1036'). Default: fetch all periods from API")
     buildCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 }

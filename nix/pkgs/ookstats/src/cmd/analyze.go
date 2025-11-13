@@ -55,24 +55,38 @@ var analyzeCmd = &cobra.Command{
             }
         }
 
-        // Periods
-        var periods []string
+        // Determine period spec (parse once, apply per-region)
+        var periodsSpec string
         if strings.TrimSpace(periodsCSV) != "" {
-            for _, p := range strings.Split(periodsCSV, ",") {
-                if v := strings.TrimSpace(p); v != "" { periods = append(periods, v) }
-            }
+            periodsSpec = periodsCSV
         } else if strings.TrimSpace(rng) != "" {
-            parts := strings.Split(strings.TrimSpace(rng), "-")
-            if len(parts) != 2 { return errors.New("invalid --range format (expected start-end)") }
-            a, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
-            b, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+            rangeParts := strings.Split(strings.TrimSpace(rng), "-")
+            if len(rangeParts) != 2 { return errors.New("invalid --range format (expected start-end)") }
+            a, err1 := strconv.Atoi(strings.TrimSpace(rangeParts[0]))
+            b, err2 := strconv.Atoi(strings.TrimSpace(rangeParts[1]))
             if err1 != nil || err2 != nil || a <= 0 || b <= 0 || b < a { return errors.New("invalid --range values") }
-            for i := a; i <= b; i++ { periods = append(periods, fmt.Sprintf("%d", i)) }
-        } else {
-            periods = blizzard.GetGlobalPeriods()
+            // Convert range to comma-separated list
+            var periodParts []string
+            for i := a; i <= b; i++ { periodParts = append(periodParts, fmt.Sprintf("%d", i)) }
+            periodsSpec = strings.Join(periodParts, ",")
         }
 
-        fmt.Printf("Analyze: %d realms, %d dungeons, periods=%v, concurrency=%d\n", len(realms), len(dungeons), periods, concurrency)
+        return runAnalyze(client, realms, dungeons, periodsSpec, outPath, statusDir)
+    },
+}
+
+func init() {
+    rootCmd.AddCommand(analyzeCmd)
+    analyzeCmd.Flags().String("out", "", "Optional path to write latest-runs JSON (default: {status-dir}/latest-runs.json)")
+    analyzeCmd.Flags().String("status-dir", "web/public/api/status", "Base dir to write status JSON files (latest-runs and per-realm)")
+    analyzeCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
+    analyzeCmd.Flags().String("periods", "", "Comma-separated period IDs to test (default: global periods)")
+    analyzeCmd.Flags().String("range", "", "Period range to test (e.g., 1026-1030)")
+    analyzeCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
+}
+
+func runAnalyze(client *blizzard.Client, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
+        fmt.Printf("Analyze: %d realms, %d dungeons\n", len(realms), len(dungeons))
 
         type latest struct{
             Region        string `json:"region"`
@@ -110,16 +124,61 @@ var analyzeCmd = &cobra.Command{
         failed := 0
         start := time.Now()
 
-        // Iterate periods and fetch concurrently using the client helper
-        for _, period := range periods {
-            fmt.Printf("\n--- Period %s ---\n", period)
-            expected := len(realms) * len(dungeons)
-            fmt.Printf("Expecting %d requests (%d realms × %d dungeons)\n", expected, len(realms), len(dungeons))
-            processed := 0
+        // Group realms by region
+        realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
+        for slug, info := range realms {
+            if realmsByRegion[info.Region] == nil {
+                realmsByRegion[info.Region] = make(map[string]blizzard.RealmInfo)
+            }
+            realmsByRegion[info.Region][slug] = info
+        }
 
-            ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
-            results := client.FetchAllRealmsConcurrent(ctx, realms, dungeons, period)
-            for res := range results {
+        // Track periods per region for JSON output
+        allPeriodsByRegion := make(map[string][]string)
+
+        // Process each region independently
+        for region, regionRealms := range realmsByRegion {
+            fmt.Printf("\n========== Region: %s (%d realms) ==========\n", strings.ToUpper(region), len(regionRealms))
+
+            // Determine periods for this region
+            var periods []string
+            var err error
+
+            if strings.TrimSpace(periodsSpec) != "" {
+                // User specified periods (support ranges like "1020-1036")
+                periods, err = blizzard.ParsePeriods(periodsSpec)
+                if err != nil {
+                    fmt.Printf("Failed to parse periods for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    continue
+                }
+                fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
+            } else {
+                // Fetch periods dynamically from Blizzard API for this region
+                fmt.Printf("Fetching period list dynamically from Blizzard API for %s...\n", strings.ToUpper(region))
+                periods, err = client.GetDynamicPeriodList(region)
+                if err != nil {
+                    fmt.Printf("Failed to fetch period list for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    continue
+                }
+            }
+
+            if len(periods) == 0 {
+                fmt.Printf("No periods to process for %s - skipping region\n", strings.ToUpper(region))
+                continue
+            }
+
+            allPeriodsByRegion[region] = periods
+
+            // Iterate periods for this region
+            for _, period := range periods {
+                fmt.Printf("\n--- %s Period %s ---\n", strings.ToUpper(region), period)
+                expected := len(regionRealms) * len(dungeons)
+                fmt.Printf("Expecting %d requests (%d realms × %d dungeons)\n", expected, len(regionRealms), len(dungeons))
+                processed := 0
+
+                ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+                results := client.FetchAllRealmsConcurrent(ctx, regionRealms, dungeons, period)
+                for res := range results {
                 processed++
                 total++
                 if res.Error != nil {
@@ -240,6 +299,7 @@ var analyzeCmd = &cobra.Command{
                 }
             }
             cancel()
+            }
         }
 
         // Prepare sorted slice
@@ -304,7 +364,8 @@ var analyzeCmd = &cobra.Command{
             for _, d := range dns {
                 perMap := byDungeon[d.slug]
                 ds := dungeonStatus{ DungeonSlug: d.slug, DungeonName: d.name }
-                // collect coverages per tested period order
+                // collect coverages per tested period order for this realm's region
+                periods := allPeriodsByRegion[ri.Region]
                 latestTs := int64(0)
                 latestPer := ""
                 periodsCover := make([]periodCoverage, 0, len(periods))
@@ -338,7 +399,7 @@ var analyzeCmd = &cobra.Command{
         if strings.TrimSpace(outPath) != "" {
             payload := map[string]any{
                 "generated_at": time.Now().UnixMilli(),
-                "periods": periods,
+                "periods_by_region": allPeriodsByRegion,
                 "summary": map[string]any{
                     "endpoints_tested": total,
                     "success": success,
@@ -422,7 +483,7 @@ var analyzeCmd = &cobra.Command{
                     RealmSlug: rs.RealmSlug,
                     RealmName: rs.RealmName,
                     RealmID: rs.RealmID,
-                    Periods: periods,
+                    Periods: allPeriodsByRegion[rs.Region],
                     Dungeons: dout,
                 }
                 // path: statusDir/{region}/{realmSlug}.json
@@ -442,15 +503,4 @@ var analyzeCmd = &cobra.Command{
         }
 
         return nil
-    },
-}
-
-func init() {
-    rootCmd.AddCommand(analyzeCmd)
-    analyzeCmd.Flags().String("out", "", "Optional path to write latest-runs JSON (default: {status-dir}/latest-runs.json)")
-    analyzeCmd.Flags().String("status-dir", "web/public/api/status", "Base dir to write status JSON files (latest-runs and per-realm)")
-    analyzeCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
-    analyzeCmd.Flags().String("periods", "", "Comma-separated period IDs to test (default: global periods)")
-    analyzeCmd.Flags().String("range", "", "Period range to test (e.g., 1026-1030)")
-    analyzeCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 }

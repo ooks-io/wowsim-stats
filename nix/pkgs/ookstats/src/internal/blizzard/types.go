@@ -241,3 +241,55 @@ type MediaAsset struct {
 	Value string `json:"value"`
 }
 
+// PeriodIndexResponse represents the response from the mythic keystone period index API
+type PeriodIndexResponse struct {
+	Periods []struct {
+		Key struct {
+			Href string `json:"href"`
+		} `json:"key"`
+		ID int `json:"id"`
+	} `json:"periods"`
+	CurrentPeriod struct {
+		Key struct {
+			Href string `json:"href"`
+		} `json:"key"`
+		ID int `json:"id"`
+	} `json:"current_period"`
+}
+
+// PeriodDetailResponse represents the response from a specific period detail API
+type PeriodDetailResponse struct {
+	ID             int   `json:"id"`
+	StartTimestamp int64 `json:"start_timestamp"`
+	EndTimestamp   int64 `json:"end_timestamp"`
+}
+
+// SeasonIndexResponse represents the response from the mythic keystone season index API
+type SeasonIndexResponse struct {
+	Seasons []struct {
+		Key struct {
+			Href string `json:"href"`
+		} `json:"key"`
+		ID int `json:"id"`
+	} `json:"seasons"`
+	CurrentSeason struct {
+		Key struct {
+			Href string `json:"href"`
+		} `json:"key"`
+		ID int `json:"id"`
+	} `json:"current_season"`
+}
+
+// SeasonDetailResponse represents the response from a specific season detail API
+type SeasonDetailResponse struct {
+	ID             int    `json:"id"`
+	StartTimestamp int64  `json:"start_timestamp"`
+	SeasonName     string `json:"season_name"`
+	Periods        []struct {
+		Key struct {
+			Href string `json:"href"`
+		} `json:"key"`
+		ID int `json:"id"`
+	} `json:"periods"`
+}
+

@@ -1,5 +1,11 @@
 package blizzard
 
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
 // GetHardcodedPeriodAndDungeons returns the primary period ID and dungeon list
 // hardcoded values since the index endpoint is broken - most records are in period 1026
 func GetHardcodedPeriodAndDungeons() (string, []DungeonInfo) {
@@ -18,34 +24,6 @@ func GetHardcodedPeriodAndDungeons() (string, []DungeonInfo) {
 	}
 
 	return periodID, dungeons
-}
-
-// GetFallbackPeriods returns periods to try in order for multi-period fallback
-// based on period analysis results showing sparse data distribution
-func GetFallbackPeriods() []string {
-	return []string{"1036", "1035", "1034", "1033", "1032", "1031", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-}
-
-// GetGlobalPeriods returns a global sweep order newest -> oldest
-func GetGlobalPeriods() []string {
-	return []string{"1036", "1035", "1034", "1033", "1032", "1031", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023"}
-}
-
-// GetRegionFallbackPeriods prioritizes the period order per region based on observed data
-// This reduces 404 churn before finding data.
-func GetRegionFallbackPeriods(region string) []string {
-	switch region {
-	case "eu":
-		return []string{"1036", "1035", "1034", "1033", "1032", "1030", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	case "us":
-		return []string{"1036", "1035", "1034", "1033", "1032", "1031", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	case "kr":
-		return []string{"1036", "1035", "1034", "1033", "1032", "1031", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	case "tw":
-		return []string{"1036", "1035", "1034", "1033", "1032", "1031", "1030", "1029", "1028", "1027", "1026", "1025", "1024", "1023", "1022", "1021", "1020"}
-	default:
-		return GetFallbackPeriods()
-	}
 }
 
 // GetAllRealms returns the complete realm configuration
@@ -151,4 +129,52 @@ func NormalizeRealmSlug(region, slug string) string {
 		}
 	}
 	return slug
+}
+
+// ParsePeriods parses a period specification string that can contain:
+// - comma-separated list: "1020,1021,1025"
+// - ranges: "1020-1036"
+// - mixed: "1020,1025-1030,1036"
+func ParsePeriods(periodsSpec string) ([]string, error) {
+	if strings.TrimSpace(periodsSpec) == "" {
+		return nil, nil
+	}
+
+	var periods []string
+	parts := strings.Split(periodsSpec, ",")
+
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		if part == "" {
+			continue
+		}
+
+		// check if it's a range
+		if strings.Contains(part, "-") {
+			rangeParts := strings.Split(part, "-")
+			if len(rangeParts) != 2 {
+				return nil, fmt.Errorf("invalid range format: %s (expected START-END)", part)
+			}
+			start, err := strconv.Atoi(strings.TrimSpace(rangeParts[0]))
+			if err != nil {
+				return nil, fmt.Errorf("invalid start period in range %s: %w", part, err)
+			}
+			end, err := strconv.Atoi(strings.TrimSpace(rangeParts[1]))
+			if err != nil {
+				return nil, fmt.Errorf("invalid end period in range %s: %w", part, err)
+			}
+			if start > end {
+				return nil, fmt.Errorf("invalid range %s: start > end", part)
+			}
+			// add all periods in range
+			for i := start; i <= end; i++ {
+				periods = append(periods, fmt.Sprintf("%d", i))
+			}
+		} else {
+			// single period
+			periods = append(periods, part)
+		}
+	}
+
+	return periods, nil
 }

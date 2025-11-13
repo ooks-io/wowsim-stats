@@ -3,20 +3,16 @@ package database
 import (
     "database/sql"
     "fmt"
-    "net/url"
     "os"
-    "path/filepath"
     "strings"
-    "time"
 
-    libsql "github.com/tursodatabase/go-libsql"
     _ "github.com/tursodatabase/go-libsql"
 )
 
-// connect creates a local libSQL database connection (no Turso syncing)
+// connect creates a local libSQL database connection
 var dbPathOverride string
 
-// SetDBPath allows callers (CLI) to override the local SQLite filename (or libsql conn string)
+// SetDBPath allows callers (CLI) to override the local SQLite filename
 func SetDBPath(path string) {
     dbPathOverride = path
 }
@@ -25,39 +21,19 @@ func SetDBPath(path string) {
 func DBConnString() string {
     // Priority: explicit override -> env vars -> default
     if dbPathOverride != "" {
-        if strings.HasPrefix(dbPathOverride, "file:") || strings.Contains(dbPathOverride, "://") {
+        if strings.HasPrefix(dbPathOverride, "file:") {
             return dbPathOverride
         }
         return "file:" + dbPathOverride
     }
     if v := os.Getenv("OOKSTATS_DB"); v != "" {
-        if strings.HasPrefix(v, "file:") || strings.Contains(v, "://") {
+        if strings.HasPrefix(v, "file:") {
             return v
         }
         return "file:" + v
     }
-    // Support common Turso/Astro envs for remote connections without requiring OOKSTATS_DB
-    if url := strings.TrimSpace(os.Getenv("TURSO_DATABASE_URL")); url != "" {
-        tok := strings.TrimSpace(os.Getenv("TURSO_AUTH_TOKEN"))
-        if tok != "" && !strings.Contains(url, "authToken=") {
-            sep := "?"
-            if strings.Contains(url, "?") { sep = "&" }
-            return url + sep + "authToken=" + tok
-        }
-        return url
-    }
-    if url := strings.TrimSpace(os.Getenv("ASTRO_DB_REMOTE_URL")); url != "" {
-        tok := strings.TrimSpace(os.Getenv("ASTRO_DB_APP_TOKEN"))
-        if tok != "" && !strings.Contains(url, "authToken=") {
-            sep := "?"
-            if strings.Contains(url, "?") { sep = "&" }
-            return url + sep + "authToken=" + tok
-        }
-        return url
-    }
     if v := os.Getenv("ASTRO_DATABASE_FILE"); v != "" {
-        // Astro uses file: URIs typically
-        if strings.HasPrefix(v, "file:") || strings.Contains(v, "://") {
+        if strings.HasPrefix(v, "file:") {
             return v
         }
         return "file:" + v
@@ -76,84 +52,18 @@ func DBFilePath() string {
 
 func Connect() (*sql.DB, error) {
     dsn := DBConnString()
-    fmt.Printf("Using local libSQL database: %s\n", dsn)
-
+    fmt.Printf("Using local SQLite database: %s\n", dsn)
     fmt.Printf("Opening database connection...\n")
 
-    // Detect embedded replica mode: file: DSN with either vfs=libsql or sync_url param
-    if strings.HasPrefix(dsn, "file:") && (strings.Contains(dsn, "vfs=libsql") || strings.Contains(dsn, "sync_url=")) {
-        // Parse local path and query params
-        raw := strings.TrimPrefix(dsn, "file:")
-        var dbFile string
-        var q string
-        if i := strings.Index(raw, "?"); i >= 0 {
-            dbFile = raw[:i]
-            q = raw[i+1:]
-        } else {
-            dbFile = raw
-        }
-        // Resolve to absolute path for reliability
-        if abs, err := filepath.Abs(dbFile); err == nil {
-            dbFile = abs
-        }
-        vals, _ := url.ParseQuery(q)
-        primaryURL := vals.Get("sync_url")
-        if primaryURL == "" {
-            // fallback to env vars
-            primaryURL = strings.TrimSpace(os.Getenv("TURSO_DATABASE_URL"))
-            if primaryURL == "" {
-                primaryURL = strings.TrimSpace(os.Getenv("ASTRO_DB_REMOTE_URL"))
-            }
-        }
-        authToken := vals.Get("authToken")
-        if authToken == "" {
-            // fallback to env
-            authToken = strings.TrimSpace(os.Getenv("TURSO_AUTH_TOKEN"))
-            if authToken == "" {
-                authToken = strings.TrimSpace(os.Getenv("ASTRO_DB_APP_TOKEN"))
-            }
-        }
-        if primaryURL == "" || authToken == "" {
-            return nil, fmt.Errorf("embedded replica requires sync_url and authToken (or TURSO_DATABASE_URL/TURSO_AUTH_TOKEN)")
-        }
-
-        // Build embedded replica connector
-        connector, err := libsql.NewEmbeddedReplicaConnector(dbFile, primaryURL, libsql.WithAuthToken(authToken))
-        if err != nil {
-            return nil, fmt.Errorf("failed to create embedded replica connector: %w", err)
-        }
-        // Open DB through connector
-        db := sql.OpenDB(connector)
-
-        fmt.Printf("Testing database connection...\n")
-        if err := db.Ping(); err != nil {
-            db.Close()
-            return nil, fmt.Errorf("failed to ping embedded replica: %w", err)
-        }
-
-        // Warm schema once
-        for i := 0; i < 5; i++ {
-            var cnt int
-            if err := db.QueryRow("SELECT COUNT(*) FROM sqlite_master").Scan(&cnt); err == nil {
-                break
-            }
-            time.Sleep(200 * time.Millisecond)
-        }
-
-        fmt.Printf("[OK] Embedded replica connected (file: %s)\n", dbFile)
-        return db, nil
-    }
-
-    // Default: remote url or local file via registered driver
     db, err := sql.Open("libsql", dsn)
     if err != nil {
-        return nil, fmt.Errorf("failed to open libsql database: %w", err)
+        return nil, fmt.Errorf("failed to open database: %w", err)
     }
 
     fmt.Printf("Testing database connection...\n")
     if err := db.Ping(); err != nil {
         db.Close()
-        return nil, fmt.Errorf("failed to ping local database: %w", err)
+        return nil, fmt.Errorf("failed to ping database: %w", err)
     }
 
     // configure database for optimal performance
@@ -162,7 +72,7 @@ func Connect() (*sql.DB, error) {
         return nil, fmt.Errorf("failed to configure database: %w", err)
     }
 
-    fmt.Printf("[OK] Local libSQL database connected\n")
+    fmt.Printf("[OK] Local SQLite database connected\n")
     return db, nil
 }
 
@@ -193,20 +103,14 @@ func QuerySQL(db *sql.DB, query string, args ...any) (*sql.Rows, error) {
 	return rows, nil
 }
 
-// configureDatabaseSettings optimizes database for performance and reliability
+// configureDatabaseSettings optimizes database for performance
 func configureDatabaseSettings(db *sql.DB, dsn string) error {
-    // for libSQL embedded replica, we should be more conservative with PRAGMA settings
-    // many settings are already optimized by libSQL itself
-
-    // Skip unsupported PRAGMAs for remote libsql/turso URLs (non-file DSN)
-    if strings.HasPrefix(dsn, "file:") || (!strings.Contains(dsn, "://")) {
-        // local SQLite file: apply a modest cache size
-        if _, err := db.Exec("PRAGMA cache_size = -64000"); err != nil {
-            // ignore if not supported
-        }
+    // apply modest cache size for local SQLite file
+    if _, err := db.Exec("PRAGMA cache_size = -64000"); err != nil {
+        // ignore if not supported
     }
 
-	// check if we're in WAL mode (embedded replica should already be in WAL mode)
+	// check journal mode
 	var journalMode string
 	err := db.QueryRow("PRAGMA journal_mode").Scan(&journalMode)
 	if err == nil {
@@ -268,9 +172,10 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			faction TEXT
 		)`,
 		
-		// Player aggregation and rankings
+		// Player aggregation and rankings (season-scoped)
 		`CREATE TABLE IF NOT EXISTS player_profiles (
-			player_id INTEGER PRIMARY KEY,
+			player_id INTEGER,
+			season_id INTEGER NOT NULL,
 			name TEXT,
 			realm_id INTEGER,
 			main_spec_id INTEGER,
@@ -285,7 +190,8 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			regional_ranking_bracket TEXT,
 			realm_ranking_bracket TEXT,
 			has_complete_coverage INTEGER DEFAULT 0,
-			last_updated INTEGER
+			last_updated INTEGER,
+			PRIMARY KEY (player_id, season_id)
 		)`,
 		
 		`CREATE TABLE IF NOT EXISTS player_best_runs (
@@ -293,6 +199,7 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			dungeon_id INTEGER,
 			run_id INTEGER,
 			duration INTEGER,
+			season_id INTEGER NOT NULL,
 			global_ranking INTEGER,
 			global_ranking_filtered INTEGER,
 			regional_ranking INTEGER,
@@ -303,7 +210,8 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			global_percentile_bracket TEXT,
 			regional_percentile_bracket TEXT,
 			realm_percentile_bracket TEXT,
-			completed_timestamp INTEGER
+			completed_timestamp INTEGER,
+			PRIMARY KEY (player_id, dungeon_id, season_id)
 		)`,
 		
 		`CREATE TABLE IF NOT EXISTS player_rankings (
@@ -313,6 +221,21 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			ranking INTEGER,
 			combined_best_time INTEGER,
 			last_updated INTEGER
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS player_seasonal_rankings (
+			player_id INTEGER,
+			season_id INTEGER NOT NULL,
+			dungeons_completed INTEGER DEFAULT 0,
+			combined_best_time INTEGER,
+			global_ranking INTEGER,
+			regional_ranking INTEGER,
+			realm_ranking INTEGER,
+			global_ranking_bracket TEXT,
+			regional_ranking_bracket TEXT,
+			realm_ranking_bracket TEXT,
+			last_updated INTEGER,
+			PRIMARY KEY (player_id, season_id)
 		)`,
 		
 		// Extended player information
@@ -366,7 +289,9 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			ranking_scope TEXT,
 			ranking INTEGER,
 			percentile_bracket TEXT,
-			computed_at INTEGER
+			season_id INTEGER NOT NULL,
+			computed_at INTEGER,
+			PRIMARY KEY (run_id, ranking_type, ranking_scope, season_id)
 		)`,
 		
 		// Metadata and items
@@ -394,6 +319,23 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			quality INTEGER,
 			type INTEGER,
 			stats TEXT
+		)`,
+
+		// Season tables
+		`CREATE TABLE IF NOT EXISTS seasons (
+			id INTEGER PRIMARY KEY,
+			season_number INTEGER UNIQUE,
+			start_timestamp INTEGER,
+			end_timestamp INTEGER,
+			season_name TEXT,
+			first_period_id INTEGER,
+			last_period_id INTEGER
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS period_seasons (
+			period_id INTEGER,
+			season_id INTEGER,
+			PRIMARY KEY (period_id, season_id)
 		)`,
 	}
 	
@@ -431,6 +373,11 @@ func ensureRecommendedIndexes(db *sql.DB) error {
         // Additional indexes for performance
         "CREATE INDEX IF NOT EXISTS idx_run_members_player_id ON run_members(player_id)",
         "CREATE INDEX IF NOT EXISTS idx_challenge_runs_dungeon_duration ON challenge_runs(dungeon_id, duration)",
+        // Season-related indexes
+        "CREATE INDEX IF NOT EXISTS idx_run_rankings_season ON run_rankings(season_id, ranking_type, ranking_scope, dungeon_id)",
+        "CREATE INDEX IF NOT EXISTS idx_player_best_runs_season ON player_best_runs(season_id, player_id)",
+        "CREATE INDEX IF NOT EXISTS idx_player_profiles_season ON player_profiles(season_id, global_ranking)",
+        "CREATE INDEX IF NOT EXISTS idx_player_profiles_season_coverage ON player_profiles(season_id, has_complete_coverage, combined_best_time)",
     }
     for _, s := range stmts {
         if _, err := db.Exec(s); err != nil {

@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
-	"ookstats/internal/blizzard"
-	"ookstats/internal/database"
 	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
+	"ookstats/internal/blizzard"
+	"ookstats/internal/database"
+	"ookstats/internal/pipeline"
 )
 
 var fetchCmd = &cobra.Command{
@@ -35,202 +35,91 @@ var fetchCMCmd = &cobra.Command{
 			return fmt.Errorf("failed to create Blizzard API client: %w", err)
 		}
 
-		// enable verbose logging if requested
+		// Enable verbose logging if requested
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
 		client.Verbose = verbose
-
-		// optional: reduce fallback depth for incremental runs to speed up
-		fallbackDepth, _ := cmd.Flags().GetInt("fallback-depth")
-		if fallbackDepth > 0 {
-			client.FallbackLimit = fallbackDepth
-		}
+		database.SetVerbose(verbose)
 
 		fmt.Println("Connected to local database")
 		fmt.Println("Blizzard API client initialized")
 
-		// initialize database service
+		// Initialize database service
 		dbService := database.NewDatabaseService(db)
 
-		// set database verbose based on flag
-		database.SetVerbose(verbose)
-
-		// ensure auxiliary tables for incremental markers exist
-		if _, err := db.Exec(`
-			CREATE TABLE IF NOT EXISTS api_fetch_markers (
-				realm_slug TEXT NOT NULL,
-				dungeon_id INTEGER NOT NULL,
-				period_id INTEGER NOT NULL,
-				last_completed_ts INTEGER NOT NULL DEFAULT 0,
-				PRIMARY KEY (realm_slug, dungeon_id, period_id)
-			)`); err != nil {
-			return fmt.Errorf("failed to ensure api_fetch_markers table: %w", err)
-		}
-
-		// check for incremental mode and force flags
-		incremental, _ := cmd.Flags().GetBool("incremental")
-		force, _ := cmd.Flags().GetBool("force")
-
-		// check last fetch info
-		lastFetch, prevRuns, prevPlayers, err := dbService.GetLastFetchInfo("challenge_mode_leaderboard")
-		if err != nil {
-			return fmt.Errorf("failed to get last fetch info: %w", err)
-		}
-
-		if lastFetch != nil {
-			lastFetchTime := time.UnixMilli(*lastFetch)
-			fmt.Printf("Last fetch: %s\n", lastFetchTime.UTC().Format("2006-01-02 15:04:05 UTC"))
-			fmt.Printf("Previous fetch: %d runs, %d players\n", prevRuns, prevPlayers)
-
-			if incremental && !force {
-				timeSinceLastFetch := time.Since(lastFetchTime)
-				if timeSinceLastFetch < 1*time.Hour {
-					fmt.Printf("Incremental mode: Last fetch was %.1f minutes ago\n", timeSinceLastFetch.Minutes())
-					fmt.Printf("Skipping fetch - use --force to override\n")
-					return nil
-				}
-				fmt.Printf("Incremental mode: Last fetch was %.1f hours ago - proceeding\n", timeSinceLastFetch.Hours())
-				// If user didn't explicitly set fallback-depth, prefer a shallow fallback for incremental runs
-				if fallbackDepth == 0 {
-					client.FallbackLimit = 2
-				}
-			} else if force {
-				fmt.Printf("Force mode: Proceeding despite recent fetch\n")
-			}
-		} else {
-			if incremental {
-				fmt.Println("Incremental mode: First time running - full database population")
-			} else {
-				fmt.Println("First time running - full database population")
-			}
-		}
-
-		_, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
-		allRealms := blizzard.GetAllRealms()
-		fmt.Printf("Dungeons: %d, Realms: %d\n", len(dungeons), len(allRealms))
-
-		// Optional filtering: regions/realms/dungeons
+		// Parse filters from flags
 		regionsCSV, _ := cmd.Flags().GetString("regions")
 		realmsCSV, _ := cmd.Flags().GetString("realms")
 		dungeonsCSV, _ := cmd.Flags().GetString("dungeons")
+		periodsSpec, _ := cmd.Flags().GetString("periods")
+		concurrency, _ := cmd.Flags().GetInt("concurrency")
+		timeoutSecs, _ := cmd.Flags().GetInt("api-timeout-seconds")
 
+		// Convert CSV strings to slices
+		var regions []string
 		if strings.TrimSpace(regionsCSV) != "" {
-			allowed := map[string]bool{}
 			for _, r := range strings.Split(regionsCSV, ",") {
-				allowed[strings.TrimSpace(r)] = true
-			}
-			for slug, info := range allRealms {
-				if !allowed[info.Region] {
-					delete(allRealms, slug)
+				r = strings.TrimSpace(r)
+				if r != "" {
+					regions = append(regions, r)
 				}
 			}
 		}
-        if strings.TrimSpace(realmsCSV) != "" {
-            allowed := map[string]bool{}
-            for _, s := range strings.Split(realmsCSV, ",") {
-                s = strings.TrimSpace(s)
-                if s != "" { allowed[s] = true }
-            }
-            filtered := make(map[string]blizzard.RealmInfo)
-            for key, info := range allRealms {
-                if allowed[key] || allowed[info.Slug] {
-                    filtered[key] = info
-                }
-            }
-            allRealms = filtered
-        }
+
+		var realms []string
+		if strings.TrimSpace(realmsCSV) != "" {
+			for _, r := range strings.Split(realmsCSV, ",") {
+				r = strings.TrimSpace(r)
+				if r != "" {
+					realms = append(realms, r)
+				}
+			}
+		}
+
+		var dungeons []string
 		if strings.TrimSpace(dungeonsCSV) != "" {
-			// parse list of ids or slugs
-			allowed := map[string]bool{}
-			for _, s := range strings.Split(dungeonsCSV, ",") {
-				allowed[strings.TrimSpace(s)] = true
-			}
-			filtered := make([]blizzard.DungeonInfo, 0, len(dungeons))
-			for _, d := range dungeons {
-				idStr := fmt.Sprintf("%d", d.ID)
-				if allowed[idStr] || allowed[d.Slug] {
-					filtered = append(filtered, d)
+			for _, d := range strings.Split(dungeonsCSV, ",") {
+				d = strings.TrimSpace(d)
+				if d != "" {
+					dungeons = append(dungeons, d)
 				}
 			}
-			if len(filtered) > 0 {
-				dungeons = filtered
+		}
+
+		// Parse periods
+		var periods []string
+		if strings.TrimSpace(periodsSpec) != "" {
+			periods, err = blizzard.ParsePeriods(periodsSpec)
+			if err != nil {
+				return fmt.Errorf("failed to parse periods: %w", err)
 			}
 		}
 
-        // pre-populate reference data (optimized): insert all dungeons once, then batch insert realms
-        fmt.Printf("Pre-populating reference data...\n")
-        fmt.Printf("  - Ensuring dungeons (%d)\n", len(dungeons))
-		if err := dbService.EnsureDungeonsOnce(dungeons); err != nil {
-			return fmt.Errorf("failed to ensure dungeons: %w", err)
-		}
-		fmt.Printf("  [OK] Dungeons ensured\n")
-		fmt.Printf("  - Ensuring realms (%d)\n", len(allRealms))
-		if err := dbService.EnsureRealmsBatch(allRealms); err != nil {
-			return fmt.Errorf("failed to ensure realms: %w", err)
-		}
-		fmt.Printf("  [OK] Realms ensured\n")
-		fmt.Printf("Reference data populated for %d realms and %d dungeons\n", len(allRealms), len(dungeons))
-
-		// Determine mode and periods
-		sweep, _ := cmd.Flags().GetBool("sweep-periods")
-		fallbackMode, _ := cmd.Flags().GetBool("fallback-mode")
-		periodsCSV, _ := cmd.Flags().GetString("periods")
-		ctx, cancel := context.WithTimeout(context.Background(), 45*time.Minute)
-		defer cancel()
-
-		totalRuns := 0
-		totalPlayers := 0
-
-		if sweep && !fallbackMode {
-			// Global sweep: iterate periods newest->oldest, fetch all realms x dungeons per period
-			var periods []string
-			if strings.TrimSpace(periodsCSV) != "" {
-				for _, p := range strings.Split(periodsCSV, ",") {
-					if v := strings.TrimSpace(p); v != "" {
-						periods = append(periods, v)
-					}
-				}
-			} else {
-				periods = blizzard.GetGlobalPeriods()
-			}
-			fmt.Printf("\nStarting global period sweep: %v\n", periods)
-			for _, period := range periods {
-				fmt.Printf("\n--- Period %s ---\n", period)
-				res := client.FetchAllRealmsConcurrent(ctx, allRealms, dungeons, period)
-				runs, players, berr := dbService.BatchProcessFetchResults(ctx, res)
-				if berr != nil {
-					fmt.Printf("Batch errors in period %s: %v\n", period, berr)
-				}
-				fmt.Printf("Period %s -> inserted runs: %d, new players: %d\n", period, runs, players)
-				totalRuns += runs
-				totalPlayers += players
-			}
-		} else {
-			// Legacy per-dungeon fallback mode
-			fallbackPeriods := blizzard.GetFallbackPeriods()
-			fmt.Printf("Using multi-period fallback strategy: %v\n", fallbackPeriods)
-			fmt.Printf("\nStarting concurrent API fetching (fallback mode)...\n")
-			startTime := time.Now()
-			results := client.FetchAllRealmsConcurrentWithFallback(ctx, allRealms, dungeons)
-			runs, players, batchErr := dbService.BatchProcessFetchResults(ctx, results)
-			if batchErr != nil {
-				fmt.Printf("Batch processing encountered errors: %v\n", batchErr)
-			}
-			elapsed := time.Since(startTime)
-			if verbose {
-				req, nf, avg := client.Stats()
-				fmt.Printf("HTTP metrics: requests=%d, 404s=%d, avg=%.1fms\n", req, nf, avg)
-			}
-			fmt.Printf("Completed fallback run in %v\n", elapsed)
-			totalRuns += runs
-			totalPlayers += players
+		// Set client concurrency
+		if concurrency > 0 {
+			client.SetConcurrency(concurrency)
 		}
 
-		// update fetch metadata
-		if err := dbService.UpdateFetchMetadata("challenge_mode_leaderboard", totalRuns, totalPlayers); err != nil {
-			return fmt.Errorf("failed to update fetch metadata: %w", err)
+		// Build options
+		opts := pipeline.FetchCMOptions{
+			Verbose:     verbose,
+			Regions:     regions,
+			Realms:      realms,
+			Dungeons:    dungeons,
+			Periods:     periods,
+			Concurrency: concurrency,
+			Timeout:     time.Duration(timeoutSecs) * time.Second,
+		}
+		if opts.Timeout == 0 {
+			opts.Timeout = 45 * time.Minute
 		}
 
-		fmt.Printf("\nSuccessfully inserted %d runs and %d new players into local database\n", totalRuns, totalPlayers)
+		// Fetch challenge mode data
+		result, err := pipeline.FetchChallengeMode(dbService, client, opts)
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("\nSuccessfully inserted %d runs and %d new players into local database\n", result.TotalRuns, result.TotalPlayers)
 		fmt.Printf("Database saved to: %s\n", database.DBFilePath())
 
 		return nil
@@ -242,7 +131,7 @@ var fetchProfilesCmd = &cobra.Command{
 	Short: "Fetch detailed player profiles",
 	Long:  `Fetch detailed player profile data including equipment and character information.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("=== Player Profile Fetcher (Go Implementation) ===")
+		fmt.Println("=== Player Profile Fetcher ===")
 
 		db, err := database.Connect()
 		if err != nil {
@@ -255,172 +144,165 @@ var fetchProfilesCmd = &cobra.Command{
 			return fmt.Errorf("failed to create Blizzard API client: %w", err)
 		}
 
+		// Enable verbose logging if requested
+		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
+		client.Verbose = verbose
+
 		fmt.Println("Connected to local database")
 		fmt.Println("Blizzard API client initialized")
 
-		// initialize database service
+		// Initialize database service
 		dbService := database.NewDatabaseService(db)
 
-		// get eligible players (9/9 completion)
-		fmt.Println("\nFinding eligible players with complete coverage (9/9 dungeons)...")
-		players, err := dbService.GetEligiblePlayersForProfileFetch()
-		if err != nil {
-			return fmt.Errorf("failed to get eligible players: %w", err)
-		}
-
-		if len(players) == 0 {
-			fmt.Println("No eligible players found. Run 'ookstats process players' first to generate player profiles.")
-			return nil
-		}
-
-		fmt.Printf("Found %d eligible players with 9/9 completion\n", len(players))
-
-		// check batch size flag
+		// Parse flags
 		batchSize, _ := cmd.Flags().GetInt("batch-size")
-		if batchSize <= 0 {
-			batchSize = 20 // default batch size
-		}
-
 		maxPlayers, _ := cmd.Flags().GetInt("max-players")
-		if maxPlayers > 0 && len(players) > maxPlayers {
-			players = players[:maxPlayers]
-			fmt.Printf("Limited to first %d players due to --max-players flag\n", maxPlayers)
+
+		// Build options
+		opts := pipeline.FetchProfilesOptions{
+			Verbose:    verbose,
+			BatchSize:  batchSize,
+			MaxPlayers: maxPlayers,
 		}
 
-		fmt.Printf("Processing %d players in batches of %d with 20 concurrent requests\n", len(players), batchSize)
-
-			// start concurrent fetching with batch processing
-
-		fmt.Printf("\nStarting player profile fetching...\n")
-		startTime := time.Now()
-
-		totalProfiles := 0
-		totalEquipment := 0
-		processedCount := 0
-
-        // process in batches to avoid overwhelming the API
-        for i := 0; i < len(players); i += batchSize {
-            end := i + batchSize
-            if end > len(players) {
-                end = len(players)
-            }
-            batch := players[i:end]
-
-			batchNumber := (i / batchSize) + 1
-			totalBatches := (len(players) + batchSize - 1) / batchSize
-
-			fmt.Printf("\n--- Batch %d/%d (%d players) ---\n", batchNumber, totalBatches, len(batch))
-
-            // fetch profiles concurrently for this batch with fallback attempts
-            sem := make(chan struct{}, 20)
-            type out struct{ profiles, equipment int; err error }
-            outCh := make(chan out, len(batch))
-            timestamp := time.Now().UnixMilli()
-            for _, p := range batch {
-                sem <- struct{}{}
-                go func(p blizzard.PlayerInfo) {
-                    defer func(){ <-sem }()
-                    // Build candidate list
-                    region := p.Region
-                    realm := blizzard.NormalizeRealmSlug(region, p.RealmSlug)
-                    name := p.Name
-                    tried := map[string]bool{}
-                    candidates := [][2]string{{realm, name}}
-                    // connected-realm sweep
-                    if slugs, err := dbService.GetConnectedRealmSlugs(region, realm); err == nil {
-                        for _, s := range slugs {
-                            s = blizzard.NormalizeRealmSlug(region, s)
-                            if s != realm { candidates = append(candidates, [2]string{s, name}) }
-                        }
-                    }
-                    // last-run realm heuristic
-                    if lrRegion, lrSlug, _, err := dbService.GetLastRunRealmForPlayer(p.ID); err == nil && lrRegion != "" && lrSlug != "" {
-                        if lrRegion == region {
-                            lrSlug = blizzard.NormalizeRealmSlug(region, lrSlug)
-                            candidates = append(candidates, [2]string{lrSlug, name})
-                        }
-                    }
-
-                    // Attempt candidates
-                    var profs, items int
-                    var finalErr error
-                    for _, c := range candidates {
-                        key := c[0] + "|" + c[1]
-                        if tried[key] { continue }
-                        tried[key] = true
-
-                        // Fetch summary first; if it 404s, skip to next candidate
-                        sum, err := client.FetchCharacterSummary(c[1], c[0], region)
-                        if err != nil {
-                            // try next candidate
-                            finalErr = err
-                            continue
-                        }
-                        eq, err2 := client.FetchCharacterEquipment(c[1], c[0], region)
-                        if err2 != nil { finalErr = err2 }
-                        med, err3 := client.FetchCharacterMedia(c[1], c[0], region)
-                        if err3 != nil { finalErr = err3 }
-
-                        // Insert profile data
-                        res := blizzard.PlayerProfileResult{ PlayerID: p.ID, PlayerName: c[1], RealmSlug: c[0], Region: region, Summary: sum, Equipment: eq, Media: med }
-                        pr, eqc, derr := dbService.InsertPlayerProfileData(res, timestamp)
-                        if derr != nil {
-                            finalErr = derr
-                            continue
-                        }
-                        profs += pr
-                        items += eqc
-                        // Update players table to resolved identity for this build
-                        _ = dbService.UpdatePlayerIdentity(p.ID, c[1], region, c[0])
-                        break
-                    }
-                    outCh <- out{profiles: profs, equipment: items, err: finalErr}
-                }(p)
-            }
-            // wait for batch: collect exactly len(batch) results
-            batchProfiles := 0
-            batchEquipment := 0
-            for k := 0; k < len(batch); k++ {
-                r := <-outCh
-                processedCount++
-                if r.err != nil && r.profiles == 0 && r.equipment == 0 {
-                    // only log errors if nothing was inserted
-                    fmt.Printf("  [ERROR] profile fetch failed: %v\n", r.err)
-                }
-                batchProfiles += r.profiles
-                batchEquipment += r.equipment
-            }
-            close(outCh)
-
-            totalProfiles += batchProfiles
-            totalEquipment += batchEquipment
-
-			elapsed := time.Since(startTime)
-			fmt.Printf("  -> Batch %d complete: %d profiles, %d items (Total: %d/%d players, %.1f players/min)\n",
-				batchNumber, batchProfiles, batchEquipment, processedCount, len(players),
-				float64(processedCount)/elapsed.Minutes())
-
-			// small delay between batches to be respectful to the API
-			if i+batchSize < len(players) {
-				fmt.Printf("  [INFO] Waiting 1 second before next batch...\n")
-				time.Sleep(1 * time.Second)
-			}
+		// Fetch player profiles
+		result, err := pipeline.FetchPlayerProfiles(dbService, client, opts)
+		if err != nil {
+			return err
 		}
 
-		elapsed := time.Since(startTime)
 		fmt.Printf("\n[OK] Player profile fetching complete!\n")
-		fmt.Printf("   Processed: %d/%d players in %v\n", processedCount, len(players), elapsed)
-		fmt.Printf("   Updated: %d player profiles\n", totalProfiles)
-		fmt.Printf("   Updated: %d equipment items\n", totalEquipment)
+		fmt.Printf("   Processed: %d players in %v\n", result.ProcessedCount, result.Duration)
+		fmt.Printf("   Updated: %d player profiles\n", result.TotalProfiles)
+		fmt.Printf("   Updated: %d equipment items\n", result.TotalEquipment)
 
-		if processedCount > 0 {
-			rate := float64(processedCount) / elapsed.Minutes()
+		if result.ProcessedCount > 0 {
+			rate := float64(result.ProcessedCount) / result.Duration.Minutes()
 			fmt.Printf("   Rate: %.1f players/minute\n", rate)
 		}
 
 		fmt.Println("\nNext steps:")
-		fmt.Println("  1. Run 'ookstats sync' to push profile data to Turso")
-		fmt.Println("  2. Rebuild the website to include new player profile data")
+		fmt.Println("  Run 'ookstats generate api' to rebuild the website with new player profile data")
+
+		return nil
+	},
+}
+
+var fetchSeasonsCmd = &cobra.Command{
+	Use:   "seasons",
+	Short: "Fetch and sync season metadata",
+	Long:  `Fetch season metadata from Blizzard API and populate the seasons and period_seasons tables.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("=== Season Metadata Sync ===")
+
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer db.Close()
+
+		client, err := blizzard.NewClient()
+		if err != nil {
+			return fmt.Errorf("failed to create Blizzard API client: %w", err)
+		}
+
+		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
+		client.Verbose = verbose
+
+		fmt.Println("Connected to local database")
+		fmt.Println("Blizzard API client initialized")
+
+		dbService := database.NewDatabaseService(db)
+
+		// Get regions to sync
+		regionsCSV, _ := cmd.Flags().GetString("regions")
+		var regions []string
+		if strings.TrimSpace(regionsCSV) != "" {
+			for _, r := range strings.Split(regionsCSV, ",") {
+				r = strings.TrimSpace(r)
+				if r != "" {
+					regions = append(regions, r)
+				}
+			}
+		} else {
+			// Default to all regions
+			regions = []string{"us", "eu", "kr", "tw"}
+		}
+
+		fmt.Printf("Syncing seasons for regions: %v\n\n", regions)
+
+		totalSeasons := 0
+		totalPeriods := 0
+
+		for _, region := range regions {
+			fmt.Printf("=== Region: %s ===\n", strings.ToUpper(region))
+
+			// Fetch season index
+			seasonIndex, err := client.FetchSeasonIndex(region)
+			if err != nil {
+				fmt.Printf("Error fetching season index for %s: %v\n", region, err)
+				continue
+			}
+
+			fmt.Printf("Found %d seasons in %s\n", len(seasonIndex.Seasons), strings.ToUpper(region))
+
+			// Process each season
+			for _, seasonRef := range seasonIndex.Seasons {
+				seasonID := seasonRef.ID
+				fmt.Printf("\n--- Season %d ---\n", seasonID)
+
+				// Fetch season details
+				seasonDetail, err := client.FetchSeasonDetail(region, seasonID)
+				if err != nil {
+					fmt.Printf("Error fetching season %d details: %v\n", seasonID, err)
+					continue
+				}
+
+				// Upsert season
+				err = dbService.UpsertSeason(seasonDetail.ID, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
+				if err != nil {
+					fmt.Printf("Error upserting season %d: %v\n", seasonID, err)
+					continue
+				}
+				totalSeasons++
+
+				fmt.Printf("Season: %s (ID: %d)\n", seasonDetail.SeasonName, seasonDetail.ID)
+				fmt.Printf("Start: %d\n", seasonDetail.StartTimestamp)
+				fmt.Printf("Periods: %d\n", len(seasonDetail.Periods))
+
+				// Link periods to season
+				if len(seasonDetail.Periods) > 0 {
+					firstPeriod := seasonDetail.Periods[0].ID
+					lastPeriod := seasonDetail.Periods[len(seasonDetail.Periods)-1].ID
+
+					// Update period range
+					err = dbService.UpdateSeasonPeriodRange(seasonDetail.ID, firstPeriod, lastPeriod)
+					if err != nil {
+						fmt.Printf("Error updating season period range: %v\n", err)
+					}
+
+					// Link each period
+					for _, periodRef := range seasonDetail.Periods {
+						err = dbService.LinkPeriodToSeason(periodRef.ID, seasonDetail.ID)
+						if err != nil {
+							fmt.Printf("Error linking period %d to season %d: %v\n", periodRef.ID, seasonDetail.ID, err)
+						} else {
+							totalPeriods++
+						}
+					}
+					fmt.Printf("Linked %d periods to season %d\n", len(seasonDetail.Periods), seasonDetail.ID)
+				}
+			}
+
+			// Note: We only need to sync from one region since season IDs and periods are global
+			// Breaking after first successful region to avoid redundant work
+			fmt.Printf("\n[OK] Synced seasons from %s (seasons are global across regions)\n", strings.ToUpper(region))
+			break
+		}
+
+		fmt.Printf("\n=== Sync Complete ===\n")
+		fmt.Printf("Total seasons synced: %d\n", totalSeasons)
+		fmt.Printf("Total period mappings created: %d\n", totalPeriods)
 
 		return nil
 	},
@@ -430,22 +312,20 @@ func init() {
 	rootCmd.AddCommand(fetchCmd)
 	fetchCmd.AddCommand(fetchCMCmd)
 	fetchCmd.AddCommand(fetchProfilesCmd)
+	fetchCmd.AddCommand(fetchSeasonsCmd)
 
-	// add incremental processing flags for CM fetching
-	fetchCMCmd.Flags().Bool("incremental", false, "Skip fetching if last fetch was recent")
-	fetchCMCmd.Flags().Bool("force", false, "Force fetch even in incremental mode")
-	fetchCMCmd.Flags().Int("fallback-depth", 0, "Limit number of fallback periods to try per dungeon (0 = default)")
+	// CM fetching flags
 	fetchCMCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 	fetchCMCmd.Flags().Int("api-timeout-seconds", 15, "HTTP client timeout in seconds")
-    fetchCMCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
+	fetchCMCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
 	fetchCMCmd.Flags().String("realms", "", "Comma-separated realm slugs to include")
 	fetchCMCmd.Flags().String("dungeons", "", "Comma-separated dungeon IDs or slugs to include")
-	// period strategy
-	fetchCMCmd.Flags().Bool("sweep-periods", true, "Sweep periods globally (newest->oldest) and insert any new runs")
-	fetchCMCmd.Flags().String("periods", "", "Comma-separated period IDs to sweep (overrides default)")
-	fetchCMCmd.Flags().Bool("fallback-mode", false, "Use per-dungeon fallback mode instead of global sweep")
+	fetchCMCmd.Flags().String("periods", "", "Period specification: comma-separated list or ranges (e.g., '1020-1036' or '1020,1025,1030-1036'). Default: fetch all periods from API")
 
 	// add player profile fetching flags
 	fetchProfilesCmd.Flags().Int("batch-size", 20, "Number of players to process per batch")
 	fetchProfilesCmd.Flags().Int("max-players", 0, "Maximum number of players to process (0 = no limit)")
+
+	// season syncing flags
+	fetchSeasonsCmd.Flags().String("regions", "us", "Comma-separated regions to query (only one needed since seasons are global)")
 }
