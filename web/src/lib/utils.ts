@@ -302,15 +302,16 @@ export function buildStaticLeaderboardPath(
   realm: string,
   dungeonId: number,
   page: number = 1,
+  seasonId: number = 1,
 ): string {
   const dungeonSlug = dungeonIdToSlug(dungeonId);
 
   if (region === "global") {
-    return `/api/leaderboard/global/${dungeonSlug}/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/global/${dungeonSlug}/${page}.json`;
   } else if (realm === "all") {
-    return `/api/leaderboard/${region}/all/${dungeonSlug}/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/${region}/all/${dungeonSlug}/${page}.json`;
   } else {
-    return `/api/leaderboard/${region}/${realm}/${dungeonSlug}/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/${region}/${realm}/${dungeonSlug}/${page}.json`;
   }
 }
 
@@ -318,36 +319,37 @@ export function buildStaticPlayerLeaderboardPath(
   scope: "global" | "regional" | "realm",
   region?: string,
   page: number = 1,
-  opts?: { realmSlug?: string; classKey?: string },
+  opts?: { realmSlug?: string; classKey?: string; seasonId?: number },
 ): string {
   const cls = (opts?.classKey || "").toLowerCase();
   const realm = (opts?.realmSlug || "").toLowerCase();
+  const seasonId = opts?.seasonId ?? 1;
 
   // Class-filtered variants
   if (cls) {
     if (scope === "global") {
-      return `/api/leaderboard/players/class/${cls}/global/${page}.json`;
+      return `/api/leaderboard/season/${seasonId}/players/class/${cls}/global/${page}.json`;
     }
     if (scope === "regional" && region) {
-      return `/api/leaderboard/players/class/${cls}/regional/${region}/${page}.json`;
+      return `/api/leaderboard/season/${seasonId}/players/class/${cls}/regional/${region}/${page}.json`;
     }
     if (scope === "realm" && region && realm) {
-      return `/api/leaderboard/players/class/${cls}/realm/${region}/${realm}/${page}.json`;
+      return `/api/leaderboard/season/${seasonId}/players/class/${cls}/realm/${region}/${realm}/${page}.json`;
     }
   }
 
   // Unfiltered
   if (scope === "global") {
-    return `/api/leaderboard/players/global/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/players/global/${page}.json`;
   }
   if (scope === "regional" && region) {
-    return `/api/leaderboard/players/regional/${region}/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/players/regional/${region}/${page}.json`;
   }
   if (scope === "realm" && region && realm) {
-    return `/api/leaderboard/players/realm/${region}/${realm}/${page}.json`;
+    return `/api/leaderboard/season/${seasonId}/players/realm/${region}/${realm}/${page}.json`;
   }
   // Fallback to global
-  return `/api/leaderboard/players/global/${page}.json`;
+  return `/api/leaderboard/season/${seasonId}/players/global/${page}.json`;
 }
 
 export function buildStaticPlayerProfilePath(
@@ -366,3 +368,23 @@ export function buildStaticSearchIndexPath(shardNumber: number): string {
   const paddedNumber = shardNumber.toString().padStart(3, "0");
   return `/api/search/players-${paddedNumber}.json`;
 }
+
+// Status page utilities
+export function filterByRegion<T extends { region?: string }>(
+  items: T[],
+  region: string,
+): T[] {
+  if (!region) return items;
+  const normalized = region.toLowerCase();
+  return items.filter((item) => (item.region || "").toLowerCase() === normalized);
+}
+
+export function safeArray<T>(value: any): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
+export const STATUS_CONSTANTS = {
+  MODE: "status" as const,
+  DELIMITER: "|" as const,
+  REGION_REALM_SEPARATOR: "|" as const,
+} as const;

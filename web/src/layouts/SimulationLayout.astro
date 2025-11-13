@@ -1,8 +1,7 @@
 ---
-import Navigation from "../components/Navigation.astro";
+import Navigation from "../components/Navigation/Navigation.astro";
 import "../styles/components.scss";
-import "../styles/global.css";
-import "../components/PlayerEquipment.scss";
+import "../styles/global.scss";
 import { CLASS_COLORS, SPEC_OPTIONS } from "../lib/wow-constants.ts";
 import { buildSimSpecOptions } from "../lib/sim-specs.ts";
 import {
@@ -69,19 +68,5 @@ const SPEC_OPTIONS_SIM = buildSimSpecOptions(SPEC_OPTIONS);
     <div class="page-container rankings-container">
       <slot />
     </div>
-    <style>
-      .page-header {
-        text-align: center;
-        padding: 30px 20px;
-      }
-      .page-title {
-        margin: 0 0 10px 0;
-        font-size: 2.2em;
-        font-weight: 700;
-      }
-      .page-description {
-        color: var(--text-secondary);
-      }
-    </style>
   </body>
 </html>

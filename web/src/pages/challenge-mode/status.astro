@@ -1,0 +1,39 @@
+---
+import Callout from "../../components/Callout/Callout.astro";
+import StatusRunsTable from "../../components/Status/StatusRunsTable/StatusRunsTable.astro";
+import PageLayout from "../../layouts/PageLayout.astro";
+import "../../styles/global.scss";
+import "../../components/Status/StatusRunsTable/StatusRunsTable.scss";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+// Load global status data server-side
+const filePath = join(
+  process.cwd(),
+  "public",
+  "api",
+  "status",
+  "latest-runs.json",
+);
+const fileContent = await readFile(filePath, "utf-8");
+const data = JSON.parse(fileContent);
+---
+
+<PageLayout title="Challenge Mode Status">
+  <main class="status-page">
+    <h1 class="page-title">Challenge Mode Global Status</h1>
+
+    <Callout type="note" title="About">
+      <p>
+        Showing the latest run for each realm across all dungeons. Data
+        generated at {new Date(data.generated_at).toLocaleString()}.
+      </p>
+    </Callout>
+
+    <div id="status-content">
+      <StatusRunsTable runs={data.latest_runs} />
+    </div>
+  </main>
+
+  <script src="../../client/best-runs-decorate.ts"></script>
+</PageLayout>

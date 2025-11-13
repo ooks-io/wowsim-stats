@@ -1,4 +1,3 @@
----
 export interface Props {
   mode: 'benchmarks' | 'comparison';
   comparisonType?: 'trinket' | 'race';
@@ -9,19 +8,19 @@ export interface Props {
 const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' } = Astro.props;
 ---
 
-<div class="controls-row">
+<div class="flex flex-wrap gap-md mt-md mb-md">
   {mode === 'comparison' && (
     <>
-      <div class="control-group">
-        <label for="class">Class</label>
+      <div class="form-group">
+        <label class="form-label" for="class">Class</label>
         <select id="class"></select>
       </div>
-      <div class="control-group">
-        <label for="spec">Spec</label>
+      <div class="form-group">
+        <label class="form-label" for="spec">Spec</label>
         <select id="spec" disabled></select>
       </div>
-      <div class="control-group">
-        <label for="cmpType">Comparison</label>
+      <div class="form-group">
+        <label class="form-label" for="cmpType">Comparison</label>
         <select id="cmpType">
           <option value="">Select Comparison</option>
           <option value="trinket">Trinkets</option>
@@ -30,20 +29,20 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       </div>
     </>
   )}
-  <div class="control-group">
+  <div class="form-group">
     <label for="phase">Phase</label>
     <select id="phase">
       <option value="preRaid">Pre-Raid</option>
       <option value="p1">Phase 1</option>
     </select>
   </div>
-  <div class="control-group">
+  <div class="form-group">
     <label for="encounter">Encounter</label>
     <select id="encounter">
       <option value="raid">Raid</option>
     </select>
   </div>
-  <div class="control-group">
+  <div class="form-group">
     <label for="targets">Targets</label>
     <select id="targets">
       <option value="single">1</option>
@@ -52,7 +51,7 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       <option value="ten">10</option>
     </select>
   </div>
-  <div class="control-group">
+  <div class="form-group">
     <label for="duration">Duration</label>
     <select id="duration">
       <option value="short">Short (2m)</option>
@@ -60,7 +59,7 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       <option value="long" selected>Long (5m)</option>
     </select>
   </div>
-  <div class="control-group">
+  <div class="form-group">
     <label for="sort">Sort</label>
     <select id="sort">
       <option value="dps">Avg DPS</option>
@@ -228,10 +227,3 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
     initControls();
   }
 </script>
-
-<style>
-  .controls-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
-  .control-group { display: flex; flex-direction: column; gap: 4px; }
-  .control-group label { font-size: 0.85em; color: var(--text-muted); }
-  .control-group select { padding: 6px 10px; min-width: 140px; background: #2a2a2a; color: var(--text-primary); border: 1px solid #555; border-radius: 4px; }
-</style>

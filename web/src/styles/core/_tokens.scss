@@ -1,0 +1,87 @@
+// Core design tokens and CSS custom properties shared across the app.
+//
+// SCSS variables are used by component styles and mixins at build time,
+// while the CSS custom properties under :root power runtime theming.
+
+// Spacing scale
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 20px;
+$spacing-2xl: 24px;
+$spacing-3xl: 30px;
+
+// Border radii
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+
+// Typography scale
+$font-size-xs: 0.75em;
+$font-size-sm: 0.85em;
+$font-size-base: 0.9em;
+$font-size-md: 1em;
+$font-size-lg: 1.1em;
+$font-size-xl: 1.2em;
+$font-size-2xl: 1.4em;
+$font-size-3xl: 2.5em;
+
+// Font weights
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+:root {
+  --highlight-color: #d8a657;
+  --bg-primary: #282828;
+  --bg-secondary: #32302f;
+  --bg-selection: #32302f;
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --accent-color: #3b82f6;
+  --border-color: #4a4a4a;
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+  --text-tertiary: #7f7f7f;
+  --text-muted: #a9a9a9;
+  --blue-color: #7daea3;
+  --note-color: #7daea3;
+
+  /* WoW Class Colors */
+  --class-death-knight: #c41e3a;
+  --class-druid: #ff7c0a;
+  --class-hunter: #aad372;
+  --class-mage: #3fc7eb;
+  --class-monk: #00ff98;
+  --class-paladin: #f48cba;
+  --class-priest: #ffffff;
+  --class-rogue: #fff468;
+  --class-shaman: #0070dd;
+  --class-warlock: #8788ee;
+  --class-warrior: #c69b6d;
+
+  /* WoW Item Quality Colors */
+  --quality-poor: #9d9d9d;
+  --quality-common: #ffffff;
+  --quality-uncommon: #1eff00;
+  --quality-rare: #0070dd;
+  --quality-epic: #a335ee;
+  --quality-legendary: #ff8000;
+  --quality-artifact: #e6cc80;
+  --quality-heirloom: #00ccff;
+
+  /* Player Search Variables */
+  --search-bg: #32302f;
+  --search-border: #4a4a4a;
+  --search-hover: rgba(255, 215, 0, 0.08);
+  --search-selected: rgba(255, 215, 0, 0.12);
+
+  /* Bracket Colors (using item quality colors) */
+  --bracket-artifact: var(--quality-artifact);
+  --bracket-excellent: #e268a8;
+  --bracket-legendary: var(--quality-legendary);
+  --bracket-epic: var(--quality-epic);
+  --bracket-rare: var(--quality-rare);
+  --bracket-uncommon: var(--quality-uncommon);
+  --bracket-common: var(--quality-poor);
+}

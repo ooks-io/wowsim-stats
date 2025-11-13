@@ -1,0 +1,138 @@
+---
+import type { LatestRunEntry } from "../../../lib/types";
+import { REGION_OPTIONS } from "../../../lib/wow-constants";
+import "./RegionRealmFilterSelect.scss";
+
+interface Props {
+  runs: LatestRunEntry[];
+  currentRegion?: string;
+  currentRealm?: string;
+}
+
+const { runs, currentRegion = "", currentRealm = "" } = Astro.props;
+
+// extract unique realms grouped by region
+const realmsByRegion: Record<string, { value: string; label: string }[]> = {};
+
+runs.forEach((run) => {
+  const region = run.region.toLowerCase();
+  if (!realmsByRegion[region]) {
+    realmsByRegion[region] = [];
+  }
+
+  const exists = realmsByRegion[region].some((r) => r.value === run.realm_slug);
+  if (!exists) {
+    realmsByRegion[region].push({
+      value: run.realm_slug,
+      label: run.realm_name,
+    });
+  }
+});
+
+// sort realms alphabetically within each region
+Object.keys(realmsByRegion).forEach((region) => {
+  realmsByRegion[region].sort((a, b) => a.label.localeCompare(b.label));
+});
+
+// get all unique realms for "All regions" option
+const allRealms: { value: string; label: string }[] = [];
+runs.forEach((run) => {
+  const exists = allRealms.some((r) => r.value === run.realm_slug);
+  if (!exists) {
+    allRealms.push({
+      value: run.realm_slug,
+      label: run.realm_name,
+    });
+  }
+});
+allRealms.sort((a, b) => a.label.localeCompare(b.label));
+---
+
+<div class="region-realm-filter">
+  <div class="filter-group">
+    <label for="region-filter">Region</label>
+    <select id="region-filter" data-param="region">
+      {
+        REGION_OPTIONS.map((option) => (
+          <option
+            value={option.value}
+            selected={option.value === currentRegion}
+          >
+            {option.label}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="realm-filter">Realm</label>
+    <select id="realm-filter" data-param="realm">
+      <option value="">All</option>
+    </select>
+  </div>
+</div>
+
+<script define:vars={{ realmsByRegion, allRealms, currentRegion, currentRealm }}
+>
+  const regionSelect = document.getElementById("region-filter");
+  const realmSelect = document.getElementById("realm-filter");
+
+  // function to update realm options based on selected region
+  function updateRealmOptions(region) {
+    const realms = region ? realmsByRegion[region] || [] : allRealms;
+
+    // clear existing options
+    realmSelect.innerHTML = '<option value="">All</option>';
+
+    // add realm options
+    realms.forEach((realm) => {
+      const option = document.createElement("option");
+      option.value = realm.value;
+      option.textContent = realm.label;
+      option.selected = realm.value === currentRealm;
+      realmSelect.appendChild(option);
+    });
+  }
+
+  // initialize realm options on page load
+  updateRealmOptions(currentRegion);
+
+  // handle region change
+  if (regionSelect) {
+    regionSelect.addEventListener("change", (e) => {
+      const selectedRegion = e.target.value;
+
+      // update realm dropdown
+      updateRealmOptions(selectedRegion);
+
+      // update URL
+      const url = new URL(window.location.href);
+      if (selectedRegion) {
+        url.searchParams.set("region", selectedRegion);
+      } else {
+        url.searchParams.delete("region");
+      }
+      // clear realm when region changes
+      url.searchParams.delete("realm");
+
+      window.location.href = url.toString();
+    });
+  }
+
+  // handle realm change
+  if (realmSelect) {
+    realmSelect.addEventListener("change", (e) => {
+      const selectedRealm = e.target.value;
+
+      const url = new URL(window.location.href);
+      if (selectedRealm) {
+        url.searchParams.set("realm", selectedRealm);
+      } else {
+        url.searchParams.delete("realm");
+      }
+
+      window.location.href = url.toString();
+    });
+  }
+</script>

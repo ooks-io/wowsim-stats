@@ -1,0 +1,30 @@
+@use "../styles/core/tokens" as *;
+
+.faq-item {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #4a4a4a;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.faq-question {
+  color: var(--highlight-color);
+  margin: 0 0 $spacing-sm 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+}
+
+.faq-answer {
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+
+  strong {
+    color: var(--highlight-color);
+  }
+}

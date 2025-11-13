@@ -1,0 +1,21 @@
+.leaderboard-header {
+  margin: 8px 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .dungeon-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .header-text {
+    display: inline-block;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1.5em;
+  }
+}

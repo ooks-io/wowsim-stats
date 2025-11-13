@@ -1,80 +1,106 @@
 ---
-import Navigation from "../components/Navigation.astro";
-import Callout from "../components/Callout.astro";
+import Callout from "../components/Callout/Callout.astro";
 import WoWClassColors from "../components/WoWClassColors.astro";
-import PlayerProfile from "../components/islands/PlayerProfile.astro";
-import PlayerSearch from "../components/islands/PlayerSearch.astro";
-import "../styles/global.css";
-import "../styles/best-runs.scss";
-import "../components/PlayerEquipment.scss";
-import "../styles/player-profile-header.css";
+import PlayerSearch from "../components/PlayerSearch/PlayerSearch.astro";
+import PlayerHeader from "../components/PlayerProfile/PlayerHeader/PlayerHeader.astro";
+import PlayerEquipment from "../components/PlayerProfile/PlayerEquipment/PlayerEquipment.astro";
+import PlayerBestRuns from "../components/PlayerProfile/PlayerBestRuns/PlayerBestRuns.astro";
+import PageLayout from "./PageLayout.astro";
+import type { PlayerProfileData } from "../lib/types";
+import "../styles/global.scss";
+import "./PlayerProfileLayout.scss";
 
 export interface Props {
   region?: string;
   realmSlug?: string;
   playerName?: string;
+  playerData?: PlayerProfileData | null;
+  error?: string | null;
 }
 
-const { region = "", realmSlug = "", playerName = "" } = Astro.props;
+const {
+  region = "",
+  realmSlug = "",
+  playerName = "",
+  playerData = null,
+  error = null,
+} = Astro.props;
 
 const pageTitle = `${playerName} - ${realmSlug} | Player Profile`;
+
+const player = playerData?.player;
+const equipment = playerData?.equipment || {};
+
+let currentSeasonId: string | null = null;
+let currentSeasonData = null;
+
+if (player && player.seasons) {
+  const seasonIds = Object.keys(player.seasons).sort(
+    (a, b) => Number(b) - Number(a),
+  );
+  if (seasonIds.length > 0) {
+    currentSeasonId = seasonIds[0];
+    currentSeasonData = player.seasons[currentSeasonId];
+  }
+}
+
+const bestRuns = currentSeasonData?.best_runs || {};
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{pageTitle}</title>
-  </head>
+<PageLayout title={pageTitle} description="Player profile page">
   <body>
     <WoWClassColors />
-    <Navigation />
     <div class="player-profile-layout">
-      <!-- Temporary callout -->
-      <div style="margin-bottom: 12px;">
-        <Callout type="warning" title="Warning">
-          <p>
-            We’re currently experiencing issues fetching player profile data
-            from the Blizzard API.
-          </p>
-        </Callout>
-      </div>
-      <div class="profile-search-section">
-        <div class="search-container">
-          <PlayerSearch />
-        </div>
-      </div>
+      <Callout type="warning" title="Warning">
+        <p>
+          We're currently experiencing issues fetching player profile data from
+          the Blizzard API.
+        </p>
+      </Callout>
+      <PlayerSearch />
 
       <div class="player-profile-page">
-        <PlayerProfile
-          region={region}
-          realmSlug={realmSlug}
-          playerName={playerName}
-        />
+        {
+          error && (
+            <div class="error-state">
+              <div class="error-message">
+                <h2>Error</h2>
+                <p>{error}</p>
+              </div>
+            </div>
+          )
+        }
+
+        {
+          !player && !error && (
+            <div class="error-state">
+              <div class="error-message">
+                <h2>Player Not Found</h2>
+                <p>
+                  Player "{playerName}" not found. Only players with complete
+                  coverage (9/9 recorded dungeons) are included.
+                </p>
+              </div>
+            </div>
+          )
+        }
+
+        {
+          player && currentSeasonData && (
+            <>
+              <PlayerHeader player={player} seasonData={currentSeasonData} />
+              <PlayerEquipment equipment={equipment} />
+              <PlayerBestRuns
+                bestRuns={bestRuns}
+                showSectionWrapper={true}
+                playerRegion={player.region}
+                playerRealmSlug={player.realm_slug}
+                mode="full"
+              />
+            </>
+          )
+        }
       </div>
     </div>
   </body>
-</html>
-
-<style>
-  .player-profile-layout {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  .profile-search-section {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 24px;
-  }
-
-  @media (max-width: 768px) {
-    .player-profile-layout {
-      padding: 15px;
-    }
-  }
-</style>
+</PageLayout>

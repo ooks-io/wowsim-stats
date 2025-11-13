@@ -1,0 +1,314 @@
+---
+import type { BestRun } from "../../../lib/types";
+import Table from "../../Table/Table.astro";
+import TableRow from "../../Table/TableRow.astro";
+import TableCell from "../../Table/TableCell.astro";
+import TeamComposition from "../../Leaderboard/TeamComposition/TeamComposition.astro";
+import { formatDurationMMSS, buildLeaderboardURL } from "../../../lib/utils";
+import { formatRankingWithBracket } from "../../../lib/ranking-utils";
+import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+import "./PlayerBestRuns.scss";
+
+interface Props {
+  bestRuns?: Record<string, BestRun>;
+  mode?: "full" | "compact";
+  showSectionWrapper?: boolean;
+  class?: string;
+  playerRegion?: string;
+  playerRealmSlug?: string;
+}
+
+const {
+  bestRuns,
+  mode = "full",
+  showSectionWrapper = true,
+  class: className,
+  playerRegion,
+  playerRealmSlug,
+} = Astro.props;
+
+const runsArray = bestRuns ? Object.values(bestRuns) : [];
+
+const formatTime = (ms: number) => formatDurationMMSS(ms);
+
+const formatDate = (timestamp: number) => {
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+---
+
+{
+  showSectionWrapper && (
+    <div class="profile-section">
+      <h3 class="section-title">Best Times Per Dungeon</h3>
+      <div class={`player-best-runs ${className || ""}`.trim()}>
+        {runsArray.length > 0 ? (
+          <Table mode="best-runs">
+            <div slot="header" class="table-header-cell">
+              Dungeon
+            </div>
+            <div slot="header" class="table-header-cell">
+              Time
+            </div>
+            <div slot="header" class="table-header-cell">
+              Team
+            </div>
+            <div slot="header" class="table-header-cell">
+              Global
+            </div>
+            <div slot="header" class="table-header-cell">
+              Region
+            </div>
+            <div slot="header" class="table-header-cell">
+              Realm
+            </div>
+
+            {runsArray.map((run) => {
+              const duration = formatTime(run.duration);
+              const dungeonSlug = (run as any).dungeon_slug || "";
+              const iconUrl = getDungeonIconUrl(dungeonSlug, run.dungeon_name);
+
+              const globalRankingValue =
+                typeof (run as any).global_ranking_filtered === "number" &&
+                (run as any).global_ranking_filtered > 0
+                  ? (run as any).global_ranking_filtered
+                  : (run as any).global_ranking;
+              const globalBracket =
+                (run as any).global_percentile_bracket ||
+                (run as any).percentile_bracket ||
+                "";
+
+              const regionalRankingValue =
+                typeof (run as any).regional_ranking_filtered === "number" &&
+                (run as any).regional_ranking_filtered > 0
+                  ? (run as any).regional_ranking_filtered
+                  : run.regional_ranking;
+              const realmRankingValue =
+                typeof (run as any).realm_ranking_filtered === "number" &&
+                (run as any).realm_ranking_filtered > 0
+                  ? (run as any).realm_ranking_filtered
+                  : run.realm_ranking;
+
+              const regionalBracket =
+                (run as any).regional_percentile_bracket ||
+                run.percentile_bracket ||
+                "";
+              const realmBracket =
+                (run as any).realm_percentile_bracket ||
+                run.percentile_bracket ||
+                "";
+
+              const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+              const regionalURL = playerRegion
+                ? buildLeaderboardURL(playerRegion, "all", dungeonSlug)
+                : "#";
+              const realmURL =
+                playerRegion && playerRealmSlug
+                  ? buildLeaderboardURL(playerRegion, playerRealmSlug, dungeonSlug)
+                  : "#";
+
+              const members = (run as any).all_members || (run as any).team_members || [];
+
+              return (
+                <TableRow>
+                  <TableCell label="Dungeon">
+                    <div class="dungeon-cell">
+                      {iconUrl && (
+                        <img
+                          src={iconUrl}
+                          alt={run.dungeon_name}
+                          class="dungeon-icon"
+                        />
+                      )}
+                      <span class="dungeon-name">{run.dungeon_name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell label="Time">{duration}</TableCell>
+                  <TableCell label="Team">
+                    <TeamComposition
+                      members={members}
+                      currentRegion={playerRegion || ""}
+                      currentRealm={playerRealmSlug || ""}
+                    />
+                  </TableCell>
+                  <TableCell label="Global" class="ranking-cell ranking-global">
+                    <a
+                      href={globalURL}
+                      class="rank-link"
+                      set:html={formatRankingWithBracket(
+                        globalRankingValue,
+                        globalBracket,
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell label="Region" class="ranking-cell ranking-region">
+                    <a
+                      href={regionalURL}
+                      class="rank-link"
+                      set:html={formatRankingWithBracket(
+                        regionalRankingValue,
+                        regionalBracket,
+                      )}
+                    />
+                  </TableCell>
+                  <TableCell label="Realm" class="ranking-cell ranking-realm">
+                    <a
+                      href={realmURL}
+                      class="rank-link"
+                      set:html={formatRankingWithBracket(
+                        realmRankingValue,
+                        realmBracket,
+                      )}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </Table>
+        ) : (
+          <div class="no-runs-message">
+            <p>No best runs found for this player.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+{
+  !showSectionWrapper && (
+    <div class={`player-best-runs ${className || ""}`.trim()}>
+      {runsArray.length > 0 ? (
+        <Table mode="best-runs">
+          <div slot="header" class="table-header-cell">
+            Dungeon
+          </div>
+          <div slot="header" class="table-header-cell">
+            Time
+          </div>
+          <div slot="header" class="table-header-cell">
+            Team
+          </div>
+          <div slot="header" class="table-header-cell">
+            Global
+          </div>
+          <div slot="header" class="table-header-cell">
+            Region
+          </div>
+          <div slot="header" class="table-header-cell">
+            Realm
+          </div>
+
+          {runsArray.map((run) => {
+            const duration = formatTime(run.duration);
+            const dungeonSlug = (run as any).dungeon_slug || "";
+            const iconUrl = getDungeonIconUrl(dungeonSlug, run.dungeon_name);
+
+            const globalRankingValue =
+              typeof (run as any).global_ranking_filtered === "number" &&
+              (run as any).global_ranking_filtered > 0
+                ? (run as any).global_ranking_filtered
+                : (run as any).global_ranking;
+            const globalBracket =
+              (run as any).global_percentile_bracket ||
+              (run as any).percentile_bracket ||
+              "";
+
+            const regionalRankingValue =
+              typeof (run as any).regional_ranking_filtered === "number" &&
+              (run as any).regional_ranking_filtered > 0
+                ? (run as any).regional_ranking_filtered
+                : run.regional_ranking;
+            const realmRankingValue =
+              typeof (run as any).realm_ranking_filtered === "number" &&
+              (run as any).realm_ranking_filtered > 0
+                ? (run as any).realm_ranking_filtered
+                : run.realm_ranking;
+
+            const regionalBracket =
+              (run as any).regional_percentile_bracket ||
+              run.percentile_bracket ||
+              "";
+            const realmBracket =
+              (run as any).realm_percentile_bracket ||
+              run.percentile_bracket ||
+              "";
+
+            const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+            const regionalURL = playerRegion
+              ? buildLeaderboardURL(playerRegion, "all", dungeonSlug)
+              : "#";
+            const realmURL =
+              playerRegion && playerRealmSlug
+                ? buildLeaderboardURL(playerRegion, playerRealmSlug, dungeonSlug)
+                : "#";
+
+            const members = (run as any).all_members || (run as any).team_members || [];
+
+            return (
+              <TableRow>
+                <TableCell label="Dungeon">
+                  <div class="dungeon-cell">
+                    {iconUrl && (
+                      <img
+                        src={iconUrl}
+                        alt={run.dungeon_name}
+                        class="dungeon-icon"
+                      />
+                    )}
+                    <span class="dungeon-name">{run.dungeon_name}</span>
+                  </div>
+                </TableCell>
+                <TableCell label="Time">{duration}</TableCell>
+                <TableCell label="Team">
+                  <TeamComposition
+                    members={members}
+                    currentRegion={playerRegion || ""}
+                    currentRealm={playerRealmSlug || ""}
+                  />
+                </TableCell>
+                <TableCell label="Global" class="ranking-cell ranking-global">
+                  <a
+                    href={globalURL}
+                    class="rank-link"
+                    set:html={formatRankingWithBracket(
+                      globalRankingValue,
+                      globalBracket,
+                    )}
+                  />
+                </TableCell>
+                <TableCell label="Region" class="ranking-cell ranking-region">
+                  <a
+                    href={regionalURL}
+                    class="rank-link"
+                    set:html={formatRankingWithBracket(
+                      regionalRankingValue,
+                      regionalBracket,
+                    )}
+                  />
+                </TableCell>
+                <TableCell label="Realm" class="ranking-cell ranking-realm">
+                  <a
+                    href={realmURL}
+                    class="rank-link"
+                    set:html={formatRankingWithBracket(
+                      realmRankingValue,
+                      realmBracket,
+                    )}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </Table>
+      ) : (
+        <div class="no-runs-message">
+          <p>No best runs found for this player.</p>
+        </div>
+      )}
+    </div>
+  )
+}

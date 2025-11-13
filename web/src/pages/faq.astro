@@ -1,5 +1,6 @@
 ---
-import PageLayout from "../components/PageLayout.astro";
+import PageLayout from "../layouts/PageLayout.astro";
+import "../styles/faq.scss";
 ---
 
 <PageLayout
@@ -132,34 +133,3 @@ import PageLayout from "../components/PageLayout.astro";
     </div>
   </div>
 </PageLayout>
-
-<style>
-  .faq-item {
-    margin-bottom: 25px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #4a4a4a;
-  }
-
-  .faq-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .faq-question {
-    color: var(--highlight-color);
-    margin: 0 0 10px 0;
-    font-size: 1.1em;
-    font-weight: 600;
-  }
-
-  .faq-answer {
-    color: var(--text-primary);
-    line-height: 1.6;
-    margin: 0;
-  }
-
-  .faq-answer strong {
-    color: var(--highlight-color);
-  }
-</style>

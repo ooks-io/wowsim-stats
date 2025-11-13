@@ -1,0 +1,76 @@
+@use "../../styles/core/tokens" as *;
+
+.callout {
+  --callout-color: var(--highlight-color);
+  --callout-bg: var(--bg-secondary);
+
+  background-color: var(--callout-bg);
+  border: 1px solid var(--callout-color);
+  border-left: 4px solid var(--callout-color);
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.callout[data-type="warning"] {
+  --callout-color: #ea6962;
+  --callout-bg: #3a2a2a;
+}
+
+.callout[data-type="caution"] {
+  --callout-color: #d79921;
+  --callout-bg: #3a3620;
+}
+
+.callout[data-type="note"] {
+  --callout-color: #458588;
+  --callout-bg: #2a3a3a;
+}
+
+.callout-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
+}
+
+.callout-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--callout-color, var(--highlight-color));
+  flex-shrink: 0;
+}
+
+.callout-title {
+  color: var(--callout-color, var(--highlight-color));
+  margin: 0;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}
+
+.callout-content {
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-left: 30px;
+
+  p {
+    margin: 0 0 $spacing-sm 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  a {
+    color: var(--callout-color, var(--highlight-color));
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  strong {
+    color: var(--callout-color, var(--highlight-color));
+  }
+}

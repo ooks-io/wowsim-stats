@@ -1,0 +1,31 @@
+---
+import "./LeaderboardHeader.scss";
+import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+
+interface Props {
+  season: number;
+  dungeonName: string;
+  dungeonSlug: string;
+  scopeLabel: string;
+}
+
+const { season, dungeonName, dungeonSlug, scopeLabel } = Astro.props;
+
+const dungeonIconUrl = getDungeonIconUrl(dungeonSlug, dungeonName);
+---
+
+<h1 class="leaderboard-header">
+  {
+    dungeonIconUrl && (
+      <img
+        src={dungeonIconUrl}
+        alt={dungeonName}
+        class="dungeon-icon"
+        loading="lazy"
+      />
+    )
+  }
+  <span class="header-text">
+    Season {season} - {dungeonName} - {scopeLabel}
+  </span>
+</h1>

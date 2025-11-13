@@ -1,0 +1,62 @@
+@use "./core/tokens";
+@use "./core/utilities";
+@use "./core/best-runs";
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.page-header {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-title {
+  color: var(--highlight-color);
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+  font-weight: 700;
+}
+
+.page-description {
+  color: var(--text-secondary);
+  font-size: 1.1em;
+  margin: 0;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Links */
+a {
+  color: var(--highlight-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2em;
+  }
+
+  .page-container {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+}

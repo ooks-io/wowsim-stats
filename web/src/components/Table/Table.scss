@@ -1,0 +1,243 @@
+@use "../../styles/core/tokens" as *;
+
+// Base Table Styles
+.table-container {
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.table-header {
+  display: grid;
+  gap: $spacing-sm;
+  padding: $spacing-md 0;
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.table-header-cell {
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 0.85em;
+  padding: 0 $spacing-xs;
+}
+
+.table-body {
+  min-height: 200px;
+}
+
+.table-row {
+  display: grid;
+  gap: $spacing-sm;
+  align-items: center;
+  padding: $spacing-md 0;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.2s ease;
+}
+
+.table-row:hover {
+  background: rgba(255, 215, 0, 0.05);
+}
+
+.table-cell {
+  color: var(--text-primary);
+  padding: 0 $spacing-xs;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Grid Templates for different table modes
+.table-container[data-mode="status"] {
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 200px 120px 2fr 200px 220px 90px;
+  }
+}
+
+.table-container[data-mode="leaderboard"] {
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 120px 2fr 120px;
+  }
+}
+
+.table-container[data-mode="players"] {
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 80px 2fr 1.5fr 140px;
+  }
+}
+
+.table-container[data-mode="best-runs"] {
+
+  .table-header,
+  .table-row {
+    grid-template-columns: 200px 120px 2fr 100px 100px 100px;
+  }
+}
+
+// Empty State
+.table-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.table-empty p {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+// Responsive
+@media (max-width: 920px) {
+  .table-container[data-mode="status"] {
+
+    .table-header,
+    .table-row {
+      grid-template-columns: 1fr 0.6fr 1.2fr 0.8fr 0.6fr 0.5fr;
+    }
+  }
+}
+
+@media (max-width: 720px) {
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
+    gap: $spacing-xs;
+    padding: $spacing-lg $spacing-sm;
+  }
+
+  .table-cell::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 8px;
+    display: inline-block;
+    min-width: 100px;
+  }
+
+  // Leaderboard-specific mobile layout - completely restructured
+  .table-container[data-mode="leaderboard"] {
+    .table-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      grid-template-rows: auto auto;
+      gap: $spacing-sm;
+      padding: $spacing-md;
+      background: var(--bg-secondary);
+      border-radius: $radius-md;
+      margin-bottom: $spacing-sm;
+      align-items: center;
+    }
+
+    .table-cell::before {
+      display: none; // No labels needed in custom layout
+    }
+
+    // First row: Rank | (space) | Time | Date
+    .table-cell:nth-child(1) {
+      // Rank
+      grid-column: 1;
+      grid-row: 1;
+      font-weight: bold;
+      color: var(--highlight-color);
+      padding: 0;
+    }
+
+    .table-cell:nth-child(2) {
+      // Time
+      grid-column: 3;
+      grid-row: 1;
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 0;
+      text-align: right;
+    }
+
+    .table-cell:nth-child(4) {
+      // Date
+      grid-column: 4;
+      grid-row: 1;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      padding: 0;
+      margin-left: 12px;
+    }
+
+    // Second row: Team spans full width
+    .table-cell:nth-child(3) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      width: 100%;
+      padding: 0;
+      margin-top: 4px;
+    }
+  }
+
+  // Players-specific mobile layout
+  .table-container[data-mode="players"] {
+    .table-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      grid-template-rows: auto auto;
+      gap: $spacing-sm;
+      padding: $spacing-md;
+      background: var(--bg-secondary);
+      border-radius: $radius-md;
+      margin-bottom: $spacing-sm;
+      align-items: center;
+    }
+
+    .table-cell::before {
+      display: none; // No labels needed in custom layout
+    }
+
+    // First row: Rank | Player | Combined Time
+    .table-cell:nth-child(1) {
+      // Rank
+      grid-column: 1;
+      grid-row: 1;
+      font-weight: bold;
+      color: var(--highlight-color);
+      padding: 0;
+    }
+
+    .table-cell:nth-child(2) {
+      // Player
+      grid-column: 2;
+      grid-row: 1;
+      padding: 0;
+    }
+
+    .table-cell:nth-child(4) {
+      // Combined Time
+      grid-column: 3;
+      grid-row: 1;
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 0;
+      text-align: right;
+    }
+
+    // Second row: Realm spans full width
+    .table-cell:nth-child(3) {
+      // Realm
+      grid-column: 1 / -1;
+      grid-row: 2;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      padding: 0;
+      margin-top: 4px;
+    }
+  }
+
+}

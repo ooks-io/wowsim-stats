@@ -1,0 +1,33 @@
+@use "../styles/core/tokens" as *;
+
+.player-profile-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+
+  @media (max-width: 768px) {
+    padding: $spacing-lg;
+  }
+}
+
+.error-state {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  padding: 40px;
+  text-align: center;
+}
+
+.error-message {
+  h2 {
+    color: var(--text-primary);
+    margin: 0 0 $spacing-lg 0;
+    font-size: 1.5em;
+  }
+
+  p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 1em;
+  }
+}

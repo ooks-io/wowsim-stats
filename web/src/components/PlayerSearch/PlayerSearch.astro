@@ -1,0 +1,49 @@
+---
+import "./PlayerSearch.scss";
+
+export interface Props {
+  placeholder?: string;
+  class?: string;
+}
+
+const { placeholder = "Press / to search for players...", class: className } =
+  Astro.props;
+---
+
+<div class={`player-search-island ${className || ""}`.trim()}>
+  <div class="search-input-wrapper">
+    <input
+      id="player-search-input"
+      type="text"
+      class="search-input"
+      placeholder={placeholder}
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="search-clear" class="search-clear" style="display: none;">
+      x
+    </button>
+  </div>
+
+  <div id="search-results" class="search-results" style="display: none;">
+    <div class="search-loading" id="search-loading" style="display: none;">
+      <div class="loading-spinner"></div>
+      <span>Searching...</span>
+    </div>
+
+    <div id="search-results-list" class="search-results-list"></div>
+
+    <div
+      id="search-no-results"
+      class="search-no-results"
+      style="display: none;"
+    >
+      <p>No players found matching your search.</p>
+      <p class="search-hint">
+        Try searching by character name, realm, or region.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="./PlayerSearch.ts"></script>

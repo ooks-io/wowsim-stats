@@ -1,0 +1,97 @@
+import "./ClassFilterSelect.scss";
+
+interface Props {
+  currentClass?: string;
+}
+
+const { currentClass = "all" } = Astro.props;
+
+const classes = [
+  { slug: "all", name: "All Classes" },
+  { slug: "death_knight", name: "Death Knight" },
+  { slug: "druid", name: "Druid" },
+  { slug: "hunter", name: "Hunter" },
+  { slug: "mage", name: "Mage" },
+  { slug: "monk", name: "Monk" },
+  { slug: "paladin", name: "Paladin" },
+  { slug: "priest", name: "Priest" },
+  { slug: "rogue", name: "Rogue" },
+  { slug: "shaman", name: "Shaman" },
+  { slug: "warlock", name: "Warlock" },
+  { slug: "warrior", name: "Warrior" },
+];
+---
+
+<div class="class-filter">
+  <label for="class-filter">Class:</label>
+  <select id="class-filter" name="class">
+    {
+      classes.map((cls) => (
+        <option value={cls.slug} selected={currentClass === cls.slug}>
+          {cls.name}
+        </option>
+      ))
+    }
+  </select>
+</div>
+
+<script>
+  document.getElementById('class-filter')?.addEventListener('change', (e) => {
+    const select = e.target as HTMLSelectElement;
+    const selectedClass = select.value;
+
+    // Check if we're using query params
+    const searchParams = new URLSearchParams(window.location.search);
+    const usesQueryParams = searchParams.toString().length > 0 && !window.location.pathname.includes('/players/');
+
+    if (usesQueryParams) {
+      // Query param mode
+      if (selectedClass === 'all') {
+        searchParams.delete('class');
+      } else {
+        searchParams.set('class', selectedClass);
+      }
+      searchParams.delete('page'); // reset to page 1
+      window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
+    } else {
+      // Path-based mode for player leaderboards
+      const pathParts = window.location.pathname.split('/').filter(p => p);
+
+      // Detect base path
+      const basePath = pathParts[0] === 'test-challenge-mode' ? 'test-challenge-mode' : 'challenge-mode';
+
+      // Extract season
+      let seasonSlug = 'season1';
+      if (pathParts.length >= 2 && pathParts[1].startsWith('season')) {
+        seasonSlug = pathParts[1];
+      }
+
+      // Find the 'players' segment
+      const playersIndex = pathParts.indexOf('players');
+      if (playersIndex === -1) return;
+
+      // Parse current scope
+      let newPath: string;
+      const scopeParts = pathParts.slice(playersIndex + 1);
+
+      if (scopeParts.length === 0 || scopeParts[0] === 'global') {
+        // Global scope
+        newPath = `/${basePath}/${seasonSlug}/players/global${selectedClass !== 'all' ? '/' + selectedClass : ''}`;
+      } else {
+        const region = scopeParts[0];
+
+        // Check if second part is a class or realm
+        if (scopeParts.length === 1 || (scopeParts.length >= 2 && scopeParts[1].includes('_'))) {
+          // Regional scope (region or region/class)
+          newPath = `/${basePath}/${seasonSlug}/players/${region}${selectedClass !== 'all' ? '/' + selectedClass : ''}`;
+        } else {
+          // Realm scope (region/realm or region/realm/class)
+          const realm = scopeParts[1];
+          newPath = `/${basePath}/${seasonSlug}/players/${region}/${realm}${selectedClass !== 'all' ? '/' + selectedClass : ''}`;
+        }
+      }
+
+      window.location.href = newPath;
+    }
+  });
+</script>

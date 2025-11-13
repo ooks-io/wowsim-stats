@@ -1,0 +1,19 @@
+---
+import "./Table.scss";
+
+interface Props {
+  mode?: "status" | "leaderboard" | "players" | "best-runs";
+  class?: string;
+}
+
+const { mode = "status", class: className = "" } = Astro.props;
+---
+
+<div class={`table-container ${className}`.trim()} data-mode={mode}>
+  <div class="table-header">
+    <slot name="header" />
+  </div>
+  <div class="table-body">
+    <slot />
+  </div>
+</div>

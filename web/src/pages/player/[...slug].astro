@@ -1,21 +1,35 @@
 ---
 import PlayerProfileLayout from "../../layouts/PlayerProfileLayout.astro";
+import { fetchPlayerProfile } from "../../lib/api";
+import type { PlayerProfileData } from "../../lib/types";
 
-// Enable server-side rendering for this dynamic route (SPA behavior)
 export const prerender = false;
 
-// Parse the slug dynamically for client-side routing (SPA mode)
 const slug = Astro.params.slug || "";
 const slugParts = slug.split("/");
 
-// For URLs like /player/{region}/{realm}/{name}
 const region = slugParts[0] || "";
 const realmSlug = slugParts[1] || "";
 const playerName = slugParts[2] || "";
+
+let playerData: PlayerProfileData | null = null;
+let error: string | null = null;
+
+if (region && realmSlug && playerName) {
+  try {
+    const origin = Astro.url?.origin || Astro.site || "";
+    playerData = await fetchPlayerProfile(region, realmSlug, playerName, origin);
+  } catch (err: any) {
+    console.error("[PlayerPage] Error fetching player data:", err);
+    error = err.message || "Failed to load player data";
+  }
+}
 ---
 
 <PlayerProfileLayout
   region={region}
   realmSlug={realmSlug}
   playerName={playerName}
+  playerData={playerData}
+  error={error}
 />

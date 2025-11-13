@@ -1,0 +1,162 @@
+---
+import { REGION_OPTIONS } from "../../../lib/wow-constants";
+import { REALM_DATA } from "../../../lib/realms";
+import "./LeaderboardScopeFilter.scss";
+
+interface Props {
+  currentRegion?: string;
+  currentRealm?: string;
+  currentSeason?: number;
+  leaderboardType?: "dungeon" | "player";
+  currentDungeon?: string;
+  currentClass?: string;
+}
+
+const {
+  currentRegion = "global",
+  currentRealm = "",
+  currentSeason = 1,
+  leaderboardType = "dungeon",
+  currentDungeon = "temple-of-the-jade-serpent",
+  currentClass = "all",
+} = Astro.props;
+
+// Scope options: Global + individual regions
+const scopeOptions = [
+  { value: "global", label: "Global" },
+  ...REGION_OPTIONS.filter((opt) => opt.value !== "").map((opt) => ({
+    value: opt.value,
+    label: opt.label,
+  })),
+];
+
+// Get available realms for the selected region from REALM_DATA
+let realmOptions: { value: string; label: string }[] = [];
+if (currentRegion && currentRegion !== "global") {
+  const regionRealms = REALM_DATA[currentRegion as keyof typeof REALM_DATA];
+  if (regionRealms) {
+    // Start with "All Realms" option
+    realmOptions = [{ value: "all", label: "All Realms" }];
+
+    // Add all realms from REALM_DATA, sorted alphabetically by name
+    const realms = Object.entries(regionRealms)
+      .sort((a, b) => a[1].localeCompare(b[1]))
+      .map(([slug, name]) => ({
+        value: slug,
+        label: name,
+      }));
+
+    realmOptions.push(...realms);
+  }
+}
+
+// Helper function to build URLs based on leaderboard type
+const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
+  ? "test-challenge-mode"
+  : "challenge-mode";
+const seasonSlug = `season${currentSeason}`;
+
+function buildUrl(region: string, realm: string = ""): string {
+  if (leaderboardType === "player") {
+    // Player leaderboard URL
+    if (region === "global") {
+      return `/${basePath}/${seasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    } else if (realm && realm !== "all") {
+      return `/${basePath}/${seasonSlug}/players/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    } else {
+      return `/${basePath}/${seasonSlug}/players/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    }
+  } else {
+    // Dungeon leaderboard URL
+    if (region === "global") {
+      return `/${basePath}/${seasonSlug}/global/${currentDungeon}`;
+    } else {
+      const realmSlug = realm && realm !== "all" ? realm : "all";
+      return `/${basePath}/${seasonSlug}/${region}/${realmSlug}/${currentDungeon}`;
+    }
+  }
+}
+---
+
+<div class="leaderboard-scope-filter">
+  <div class="filter-group">
+    <label for="season-filter">Season</label>
+    <select id="season-filter" data-param="season">
+      <option value="1" selected={currentSeason === 1}>Season 1</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="scope-filter">Scope</label>
+    <select id="scope-filter" data-param="scope">
+      {
+        scopeOptions.map((option) => (
+          <option
+            value={option.value}
+            selected={option.value === currentRegion}
+            data-url={buildUrl(
+              option.value,
+              option.value === "global" ? "" : "all",
+            )}
+          >
+            {option.label}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+
+  {
+    currentRegion !== "global" && realmOptions.length > 0 && (
+      <div class="filter-group">
+        <label for="realm-filter">Realm</label>
+        <select id="realm-filter" data-param="realm">
+          {realmOptions.map((option) => (
+            <option
+              value={option.value}
+              selected={option.value === currentRealm}
+              data-url={buildUrl(currentRegion, option.value)}
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  const scopeSelect = document.getElementById(
+    "scope-filter",
+  ) as HTMLSelectElement;
+  const realmSelect = document.getElementById(
+    "realm-filter",
+  ) as HTMLSelectElement | null;
+
+  // Handle scope change - just read the URL from the data attribute
+  if (scopeSelect) {
+    scopeSelect.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const selectedOption = target.options[target.selectedIndex];
+      const url = selectedOption.dataset.url;
+      if (url) {
+        window.location.href = url;
+      }
+    });
+  }
+
+  // Handle realm change - just read the URL from the data attribute
+  if (realmSelect) {
+    realmSelect.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const selectedOption = target.options[target.selectedIndex];
+      const url = selectedOption.dataset.url;
+      if (url) {
+        window.location.href = url;
+      }
+    });
+  }
+
+  // TODO: Handle season change (for now, only season 1 exists)
+</script>
