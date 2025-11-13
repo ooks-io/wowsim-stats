@@ -39,6 +39,7 @@
       // {
         inherit ookstats;
         allSimulations = simulation.generateAllSimulationsScript pkgs;
+        simInputs = simulation.generateSimInputs pkgs;
         testRaid = callPackage ./testRaid.nix {
           inherit lib classes encounter buffs debuffs wowsimcli;
         };

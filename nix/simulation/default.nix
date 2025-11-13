@@ -142,9 +142,15 @@
       runtimeInputs = [pkgs.coreutils pkgs.findutils];
     };
 
+  # Function to generate simulation inputs with pkgs
+  generateSimInputs = pkgs: let
+    simInputsModule = import ./inputs.nix {inherit lib pkgs classes encounter buffs debuffs inputs trinket;};
+  in
+    simInputsModule.simInputs;
+
   simulation = {
     # Generation functions that take pkgs as parameter
-    inherit generateMassSimulations generateRaceComparisons generateTrinketComparisons generateAllSimulationsScript generateTestGroupSim;
+    inherit generateMassSimulations generateRaceComparisons generateTrinketComparisons generateAllSimulationsScript generateTestGroupSim generateSimInputs;
 
     # Configuration and utilities
     inherit config generateScenarios scenarios;

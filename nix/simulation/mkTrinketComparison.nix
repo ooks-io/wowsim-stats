@@ -75,10 +75,24 @@
         # Modify profession if trinket requires it
         configWithProfession =
           if requiredProfession != null
-          then
+          then let
+            # Determine which profession is being replaced
+            droppedProfession =
+              if baseConfig.profession2 != requiredProfession
+              then baseConfig.profession2
+              else if baseConfig.profession1 != requiredProfession
+              then baseConfig.profession1
+              else null;
+
+            # Remove enchants from the dropped profession
+            cleanedGearset =
+              if droppedProfession != null
+              then trinketLib.removeProfessionEnchants gearset droppedProfession
+              else gearset;
+          in
             baseConfig
             // {
-              equipment = gearset;
+              equipment = cleanedGearset;
               profession2 = requiredProfession;
             }
           else baseConfig // {equipment = gearset;};
