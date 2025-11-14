@@ -16,6 +16,7 @@ interface Props {
   class?: string;
   playerRegion?: string;
   playerRealmSlug?: string;
+  seasonId?: string | number;
 }
 
 const {
@@ -25,9 +26,12 @@ const {
   class: className,
   playerRegion,
   playerRealmSlug,
+  seasonId,
 } = Astro.props;
 
 const runsArray = bestRuns ? Object.values(bestRuns) : [];
+const seasonNumber = seasonId ? Number(seasonId) : undefined;
+const leaderboardUrlOpts = seasonNumber ? { season: seasonNumber } : undefined;
 
 const formatTime = (ms: number) => formatDurationMMSS(ms);
 
@@ -101,13 +105,31 @@ const formatDate = (timestamp: number) => {
                 run.percentile_bracket ||
                 "";
 
-              const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+              const globalURL = buildLeaderboardURL(
+                "global",
+                "all",
+                dungeonSlug,
+                undefined,
+                leaderboardUrlOpts,
+              );
               const regionalURL = playerRegion
-                ? buildLeaderboardURL(playerRegion, "all", dungeonSlug)
+                ? buildLeaderboardURL(
+                    playerRegion,
+                    "all",
+                    dungeonSlug,
+                    undefined,
+                    leaderboardUrlOpts,
+                  )
                 : "#";
               const realmURL =
                 playerRegion && playerRealmSlug
-                  ? buildLeaderboardURL(playerRegion, playerRealmSlug, dungeonSlug)
+                  ? buildLeaderboardURL(
+                      playerRegion,
+                      playerRealmSlug,
+                      dungeonSlug,
+                      undefined,
+                      leaderboardUrlOpts,
+                    )
                   : "#";
 
               const members = (run as any).all_members || (run as any).team_members || [];
@@ -237,13 +259,31 @@ const formatDate = (timestamp: number) => {
               run.percentile_bracket ||
               "";
 
-            const globalURL = buildLeaderboardURL("global", "all", dungeonSlug);
+            const globalURL = buildLeaderboardURL(
+              "global",
+              "all",
+              dungeonSlug,
+              undefined,
+              leaderboardUrlOpts,
+            );
             const regionalURL = playerRegion
-              ? buildLeaderboardURL(playerRegion, "all", dungeonSlug)
+              ? buildLeaderboardURL(
+                  playerRegion,
+                  "all",
+                  dungeonSlug,
+                  undefined,
+                  leaderboardUrlOpts,
+                )
               : "#";
             const realmURL =
               playerRegion && playerRealmSlug
-                ? buildLeaderboardURL(playerRegion, playerRealmSlug, dungeonSlug)
+                ? buildLeaderboardURL(
+                    playerRegion,
+                    playerRealmSlug,
+                    dungeonSlug,
+                    undefined,
+                    leaderboardUrlOpts,
+                  )
                 : "#";
 
             const members = (run as any).all_members || (run as any).team_members || [];

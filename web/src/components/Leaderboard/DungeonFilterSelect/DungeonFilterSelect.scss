@@ -1,34 +1,7 @@
 // DungeonFilterSelect Component Styles
 
 .dungeon-filter-select {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  label {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-    white-space: nowrap;
-  }
-
   select {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-    font-size: 0.95em;
-    transition: border-color 0.2s ease;
     min-width: 200px;
-
-    &:hover {
-      border-color: var(--text-secondary);
-    }
-
-    &:focus {
-      outline: none;
-      border-color: var(--accent-color, #3b82f6);
-    }
   }
 }

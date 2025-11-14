@@ -1,48 +1,61 @@
+---
 export interface Props {
-  mode: 'benchmarks' | 'comparison';
-  comparisonType?: 'trinket' | 'race';
+  mode: "benchmarks" | "comparison";
+  comparisonType?: "trinket" | "race";
   selectedClass?: string;
   selectedSpec?: string;
 }
 
-const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' } = Astro.props;
+const {
+  mode,
+  comparisonType = "trinket",
+  selectedClass = "",
+  selectedSpec = "",
+} = Astro.props;
 ---
 
-<div class="flex flex-wrap gap-md mt-md mb-md">
-  {mode === 'comparison' && (
-    <>
-      <div class="form-group">
-        <label class="form-label" for="class">Class</label>
-        <select id="class"></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="spec">Spec</label>
-        <select id="spec" disabled></select>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="cmpType">Comparison</label>
-        <select id="cmpType">
-          <option value="">Select Comparison</option>
-          <option value="trinket">Trinkets</option>
-          <option value="race">Race</option>
-        </select>
-      </div>
-    </>
-  )}
-  <div class="form-group">
+<div class="filter-row simulation-controls mt-md mb-md">
+  {
+    mode === "comparison" && (
+      <>
+        <div class="filter-group">
+          <label for="class">Class</label>
+          <select id="class">
+            <option value="">Loading...</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="spec">Spec</label>
+          <select id="spec" disabled>
+            <option value="">Select class first</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="cmpType">Comparison</label>
+          <select id="cmpType">
+            <option value="">Select Comparison</option>
+            <option value="trinket">Trinkets</option>
+            <option value="race">Race</option>
+          </select>
+        </div>
+      </>
+    )
+  }
+  <div class="filter-group">
     <label for="phase">Phase</label>
     <select id="phase">
       <option value="preRaid">Pre-Raid</option>
       <option value="p1">Phase 1</option>
     </select>
   </div>
-  <div class="form-group">
+  <div class="filter-group">
     <label for="encounter">Encounter</label>
     <select id="encounter">
       <option value="raid">Raid</option>
     </select>
   </div>
-  <div class="form-group">
+
+  <div class="filter-group">
     <label for="targets">Targets</label>
     <select id="targets">
       <option value="single">1</option>
@@ -51,7 +64,7 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       <option value="ten">10</option>
     </select>
   </div>
-  <div class="form-group">
+  <div class="filter-group">
     <label for="duration">Duration</label>
     <select id="duration">
       <option value="short">Short (2m)</option>
@@ -59,7 +72,7 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
       <option value="long" selected>Long (5m)</option>
     </select>
   </div>
-  <div class="form-group">
+  <div class="filter-group">
     <label for="sort">Sort</label>
     <select id="sort">
       <option value="dps">Avg DPS</option>
@@ -71,116 +84,195 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
   </div>
 </div>
 
-<script type="module" is:inline define:vars={{ mode, comparisonType, selectedClass, selectedSpec }}>
-  const K = (window.SimURL && window.SimURL.PARAM) || { phase:'phase', encounter:'encounter', targets:'targets', duration:'duration', sort:'sort', type:'type', class:'class', spec:'spec' };
-  const getParam = (name, fallback) => (window.SimURL && typeof window.SimURL.getParam === 'function') ? window.SimURL.getParam(name, fallback) : (fallback || '');
+<script
+  type="module"
+  is:inline
+  define:vars={{ mode, comparisonType, selectedClass, selectedSpec }}
+>
+  const K = (window.SimURL && window.SimURL.PARAM) || {
+    phase: "phase",
+    encounter: "encounter",
+    targets: "targets",
+    duration: "duration",
+    sort: "sort",
+    type: "type",
+    class: "class",
+    spec: "spec",
+  };
+  const getParam = (name, fallback) =>
+    window.SimURL && typeof window.SimURL.getParam === "function"
+      ? window.SimURL.getParam(name, fallback)
+      : fallback || "";
   function pushParams(params, pathOverride) {
-    if (window.SimURL && typeof window.SimURL.pushParams === 'function') {
+    if (window.SimURL && typeof window.SimURL.pushParams === "function") {
       return window.SimURL.pushParams(params, pathOverride);
     }
     const url = new URL(window.location.href);
     if (pathOverride) url.pathname = pathOverride;
     Object.entries(params).forEach(([k, v]) => {
-      if (v == null || v === '') url.searchParams.delete(k);
+      if (v == null || v === "") url.searchParams.delete(k);
       else url.searchParams.set(k, v);
     });
-    window.history.pushState({}, '', url.toString());
-    window.dispatchEvent(new CustomEvent('simulation:statechange'));
+    window.history.pushState({}, "", url.toString());
+    window.dispatchEvent(new CustomEvent("simulation:statechange"));
   }
-  const toTitle = (s) => (window.WoWConstants && window.WoWConstants.toTitleCase)
-    ? window.WoWConstants.toTitleCase(s)
-    : String(s || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const toTitle = (s) =>
+    window.WoWConstants && window.WoWConstants.toTitleCase
+      ? window.WoWConstants.toTitleCase(s)
+      : String(s || "")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
   function initControls() {
-    const phase = document.getElementById('phase');
-    const encounter = document.getElementById('encounter');
-    const targets = document.getElementById('targets');
-    const duration = document.getElementById('duration');
-    const sort = document.getElementById('sort');
-    const classSel = document.getElementById('class');
-    const specSel = document.getElementById('spec');
+    const phase = document.getElementById("phase");
+    const encounter = document.getElementById("encounter");
+    const targets = document.getElementById("targets");
+    const duration = document.getElementById("duration");
+    const sort = document.getElementById("sort");
+    const classSel = document.getElementById("class");
+    const specSel = document.getElementById("spec");
 
     // hydrate from URL
-    phase && (phase.value = getParam(K.phase, 'p1'));
-    encounter && (encounter.value = getParam(K.encounter, 'raid'));
-    targets && (targets.value = getParam(K.targets, 'single'));
-    duration && (duration.value = getParam(K.duration, 'long'));
-    const sortDefault = (mode === 'comparison' && comparisonType === 'trinket') ? 'percent' : 'dps';
+    phase && (phase.value = getParam(K.phase, "p1"));
+    encounter && (encounter.value = getParam(K.encounter, "raid"));
+    targets && (targets.value = getParam(K.targets, "single"));
+    duration && (duration.value = getParam(K.duration, "long"));
+    const sortDefault =
+      mode === "comparison" && comparisonType === "trinket" ? "percent" : "dps";
     sort && (sort.value = getParam(K.sort, sortDefault));
 
-    if (classSel && specSel && mode === 'comparison') {
-      const SPEC_OPTIONS = (window.WoWConstants && window.WoWConstants.SPEC_OPTIONS) || {};
+    if (classSel && specSel && mode === "comparison") {
+      const SPEC_OPTIONS =
+        (window.WoWConstants && window.WoWConstants.SPEC_OPTIONS) || {};
       // Populate classes
-      classSel.innerHTML = '<option value="">Select Class</option>' + Object.keys(SPEC_OPTIONS).map(cls => `<option value="${cls}">${toTitle(cls)}</option>`).join('');
+      classSel.innerHTML =
+        '<option value="">Select Class</option>' +
+        Object.keys(SPEC_OPTIONS)
+          .map((cls) => `<option value="${cls}">${toTitle(cls)}</option>`)
+          .join("");
       if (selectedClass) classSel.value = selectedClass;
 
       const fillSpecs = () => {
         const cls = classSel.value;
         const specs = SPEC_OPTIONS[cls] || [];
-        specSel.innerHTML = '<option value="">Select Spec</option>' + specs.map(s => `<option value="${s.value}">${s.label}</option>`).join('');
+        specSel.innerHTML =
+          '<option value="">Select Spec</option>' +
+          specs
+            .map((s) => `<option value="${s.value}">${s.label}</option>`)
+            .join("");
         specSel.disabled = specs.length === 0;
         if (selectedSpec) specSel.value = selectedSpec;
       };
       fillSpecs();
       // hydrate comparison type select
-      const cmpTypeSel = document.getElementById('cmpType');
-      const currentType = (getParam(K.type, ''));
+      const cmpTypeSel = document.getElementById("cmpType");
+      const currentType = getParam(K.type, "");
       if (cmpTypeSel) cmpTypeSel.value = currentType;
       // show/hide percent option based on type
-      const sortSel0 = document.getElementById('sort');
-      const percentOpt0 = sortSel0 ? sortSel0.querySelector('option[value="percent"]') : null;
+      const sortSel0 = document.getElementById("sort");
+      const percentOpt0 = sortSel0
+        ? sortSel0.querySelector('option[value="percent"]')
+        : null;
       if (percentOpt0) {
-        percentOpt0.style.display = currentType === 'trinket' ? '' : 'none';
-        if (percentOpt0.style.display === 'none' && sortSel0 && sortSel0.value === 'percent') sortSel0.value = 'dps';
+        percentOpt0.style.display = currentType === "trinket" ? "" : "none";
+        if (
+          percentOpt0.style.display === "none" &&
+          sortSel0 &&
+          sortSel0.value === "percent"
+        )
+          sortSel0.value = "dps";
       }
       // update when type changes
-      if (cmpTypeSel) cmpTypeSel.addEventListener('change', () => {
-        const sortSel = document.getElementById('sort');
-        // show/hide percent option dynamically
-        const percentOpt = sortSel ? sortSel.querySelector('option[value="percent"]') : null;
-        if (percentOpt) {
-          percentOpt.style.display = cmpTypeSel.value === 'trinket' ? '' : 'none';
-          if (cmpTypeSel.value !== 'trinket' && sortSel && sortSel.value === 'percent') sortSel.value = 'dps';
-          if (cmpTypeSel.value === 'trinket' && sortSel && (!sortSel.value || sortSel.value === 'dps')) sortSel.value = 'percent';
-        }
-        // reflect in URL via shared helper
-        const base = '/simulation/comparison';
-        pushParams({
-          class: (classSel && classSel.value) || getParam(K.class,''),
-          spec: (specSel && specSel.value) || getParam(K.spec,''),
-          type: cmpTypeSel.value,
-          phase: phase?.value,
-          encounter: encounter?.value,
-          targets: targets?.value,
-          duration: duration?.value,
-          sort: (sortSel && sortSel['value']) || undefined,
-        }, base);
-      });
-      classSel.addEventListener('change', () => {
+      if (cmpTypeSel)
+        cmpTypeSel.addEventListener("change", () => {
+          const sortSel = document.getElementById("sort");
+          // show/hide percent option dynamically
+          const percentOpt = sortSel
+            ? sortSel.querySelector('option[value="percent"]')
+            : null;
+          if (percentOpt) {
+            percentOpt.style.display =
+              cmpTypeSel.value === "trinket" ? "" : "none";
+            if (
+              cmpTypeSel.value !== "trinket" &&
+              sortSel &&
+              sortSel.value === "percent"
+            )
+              sortSel.value = "dps";
+            if (
+              cmpTypeSel.value === "trinket" &&
+              sortSel &&
+              (!sortSel.value || sortSel.value === "dps")
+            )
+              sortSel.value = "percent";
+          }
+          // reflect in URL via shared helper
+          const base = "/simulation/comparison";
+          pushParams(
+            {
+              class: (classSel && classSel.value) || getParam(K.class, ""),
+              spec: (specSel && specSel.value) || getParam(K.spec, ""),
+              type: cmpTypeSel.value,
+              phase: phase?.value,
+              encounter: encounter?.value,
+              targets: targets?.value,
+              duration: duration?.value,
+              sort: (sortSel && sortSel["value"]) || undefined,
+            },
+            base,
+          );
+        });
+      classSel.addEventListener("change", () => {
         fillSpecs();
         if (classSel.value) {
-          const cmpTypeSel = document.getElementById('cmpType');
-          const currentType = (cmpTypeSel && cmpTypeSel.value) || getParam('type', '');
-          pushParams({ class: classSel.value, spec: specSel.value || '', type: currentType, phase: phase?.value, encounter: encounter?.value, targets: targets?.value, duration: duration?.value, sort: sort?.value }, '/simulation/comparison');
+          const cmpTypeSel = document.getElementById("cmpType");
+          const currentType =
+            (cmpTypeSel && cmpTypeSel.value) || getParam("type", "");
+          pushParams(
+            {
+              class: classSel.value,
+              spec: specSel.value || "",
+              type: currentType,
+              phase: phase?.value,
+              encounter: encounter?.value,
+              targets: targets?.value,
+              duration: duration?.value,
+              sort: sort?.value,
+            },
+            "/simulation/comparison",
+          );
         }
       });
-      specSel.addEventListener('change', () => {
+      specSel.addEventListener("change", () => {
         if (classSel.value) {
-          const cmpTypeSel = document.getElementById('cmpType');
-          const currentType = (cmpTypeSel && cmpTypeSel.value) || getParam('type', '');
-          pushParams({ class: classSel.value, spec: specSel.value || '', type: currentType, phase: phase?.value, encounter: encounter?.value, targets: targets?.value, duration: duration?.value, sort: sort?.value }, '/simulation/comparison');
+          const cmpTypeSel = document.getElementById("cmpType");
+          const currentType =
+            (cmpTypeSel && cmpTypeSel.value) || getParam("type", "");
+          pushParams(
+            {
+              class: classSel.value,
+              spec: specSel.value || "",
+              type: currentType,
+              phase: phase?.value,
+              encounter: encounter?.value,
+              targets: targets?.value,
+              duration: duration?.value,
+              sort: sort?.value,
+            },
+            "/simulation/comparison",
+          );
         }
       });
     }
 
     // hide percent when not trinket comparisons (benchmarks mode)
-    if (mode !== 'comparison') {
+    if (mode !== "comparison") {
       const percentOpt = sort?.querySelector('option[value="percent"]');
       if (percentOpt) {
-        percentOpt.style.display = 'none';
+        percentOpt.style.display = "none";
         // If URL had sort=percent from previous page, coerce to dps and sync URL
-        if (sort && sort.value === 'percent') {
-          sort.value = 'dps';
-          const base = '/simulation/benchmark';
+        if (sort && sort.value === "percent") {
+          sort.value = "dps";
+          const base = "/simulation/benchmark";
           const common = {
             phase: phase?.value,
             encounter: encounter?.value,
@@ -196,33 +288,43 @@ const { mode, comparisonType = 'trinket', selectedClass = '', selectedSpec = '' 
     // hide preRaid when not benchmarks
     if (phase) {
       const pre = phase.querySelector('option[value="preRaid"]');
-      if (pre) pre.style.display = (mode === 'benchmarks') ? '' : 'none';
-      if (pre && pre.style.display === 'none' && phase.value === 'preRaid') phase.value = 'p1';
+      if (pre) pre.style.display = mode === "benchmarks" ? "" : "none";
+      if (pre && pre.style.display === "none" && phase.value === "preRaid")
+        phase.value = "p1";
     }
 
     // listeners
     const paramPush = () => {
-      const base = mode === 'comparison' ? '/simulation/comparison' : '/simulation/benchmark';
-      const common = { phase: phase?.value, encounter: encounter?.value, targets: targets?.value, duration: duration?.value, sort: sort?.value };
-      if (mode === 'comparison') {
-        const cls = (classSel && classSel.value) || getParam(K.class, '');
-        const spc = (specSel && specSel.value) || getParam(K.spec, '');
-        const cmpTypeSel = document.getElementById('cmpType');
-        const typ = (cmpTypeSel && cmpTypeSel.value) || getParam(K.type, '');
+      const base =
+        mode === "comparison"
+          ? "/simulation/comparison"
+          : "/simulation/benchmark";
+      const common = {
+        phase: phase?.value,
+        encounter: encounter?.value,
+        targets: targets?.value,
+        duration: duration?.value,
+        sort: sort?.value,
+      };
+      if (mode === "comparison") {
+        const cls = (classSel && classSel.value) || getParam(K.class, "");
+        const spc = (specSel && specSel.value) || getParam(K.spec, "");
+        const cmpTypeSel = document.getElementById("cmpType");
+        const typ = (cmpTypeSel && cmpTypeSel.value) || getParam(K.type, "");
         pushParams({ ...common, class: cls, spec: spc, type: typ }, base);
       } else {
         pushParams(common, base);
       }
     };
-    phase?.addEventListener('change', paramPush);
-    encounter?.addEventListener('change', paramPush);
-    targets?.addEventListener('change', paramPush);
-    duration?.addEventListener('change', paramPush);
-    sort?.addEventListener('change', paramPush);
+    phase?.addEventListener("change", paramPush);
+    encounter?.addEventListener("change", paramPush);
+    targets?.addEventListener("change", paramPush);
+    duration?.addEventListener("change", paramPush);
+    sort?.addEventListener("change", paramPush);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initControls);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initControls);
   } else {
     initControls();
   }
