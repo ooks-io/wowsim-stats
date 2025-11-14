@@ -2,6 +2,7 @@
 import { formatDurationMMSS } from "../../../lib/utils";
 import { formatRankingWithBracket } from "../../../lib/ranking-utils";
 import { getClassTextClass } from "../../../lib/wow-constants";
+import { getEffectiveRealmSlug, getRealmDisplayName } from "../../../lib/realms";
 import "./PlayerHeader.scss";
 
 interface SeasonData {
@@ -39,6 +40,13 @@ interface Props {
 }
 
 const { player, seasonData } = Astro.props;
+
+const leaderboardRealmSlug =
+  getEffectiveRealmSlug(player.region, player.realm_slug) || player.realm_slug;
+const leaderboardRealmLabel = getRealmDisplayName(
+  player.region,
+  leaderboardRealmSlug,
+);
 
 function getRaceId(raceName: string): number {
   const raceIds: Record<string, number> = {
@@ -128,7 +136,7 @@ const avatarUrl = player.avatar_url
   </div>
 
   <div class="ranking-column">
-    <div class="stat-label">{player.realm_name || player.realm_slug} Rank</div>
+    <div class="stat-label">{leaderboardRealmLabel || player.realm_name || player.realm_slug} Rank</div>
     <div
       class="stat-value"
       set:html={formatRankingWithBracket(

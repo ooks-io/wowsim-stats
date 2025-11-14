@@ -7,6 +7,7 @@ import TeamComposition from "../../Leaderboard/TeamComposition/TeamComposition.a
 import { formatDurationMMSS, buildLeaderboardURL } from "../../../lib/utils";
 import { formatRankingWithBracket } from "../../../lib/ranking-utils";
 import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+import { getEffectiveRealmSlug } from "../../../lib/realms";
 import "./PlayerBestRuns.scss";
 
 interface Props {
@@ -32,6 +33,8 @@ const {
 const runsArray = bestRuns ? Object.values(bestRuns) : [];
 const seasonNumber = seasonId ? Number(seasonId) : undefined;
 const leaderboardUrlOpts = seasonNumber ? { season: seasonNumber } : undefined;
+const leaderboardRealmSlug =
+  getEffectiveRealmSlug(playerRegion, playerRealmSlug) || playerRealmSlug || "";
 
 const formatTime = (ms: number) => formatDurationMMSS(ms);
 
@@ -122,15 +125,16 @@ const formatDate = (timestamp: number) => {
                   )
                 : "#";
               const realmURL =
-                playerRegion && playerRealmSlug
+                playerRegion && leaderboardRealmSlug
                   ? buildLeaderboardURL(
                       playerRegion,
-                      playerRealmSlug,
+                      leaderboardRealmSlug,
                       dungeonSlug,
                       undefined,
                       leaderboardUrlOpts,
                     )
                   : "#";
+
 
               const members = (run as any).all_members || (run as any).team_members || [];
 
@@ -276,15 +280,16 @@ const formatDate = (timestamp: number) => {
                 )
               : "#";
             const realmURL =
-              playerRegion && playerRealmSlug
+              playerRegion && leaderboardRealmSlug
                 ? buildLeaderboardURL(
                     playerRegion,
-                    playerRealmSlug,
+                    leaderboardRealmSlug,
                     dungeonSlug,
                     undefined,
                     leaderboardUrlOpts,
                   )
                 : "#";
+
 
             const members = (run as any).all_members || (run as any).team_members || [];
 
