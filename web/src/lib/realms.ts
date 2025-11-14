@@ -146,3 +146,25 @@ export function areRealmsEquivalent(
   }
   return effectiveA === effectiveB;
 }
+
+export function getRealmDisplayName(
+  region?: string | null,
+  realmSlug?: string | null,
+): string {
+  const normalizedRegion = normalizeRegion(region);
+  const normalizedSlug = normalizeSlug(realmSlug);
+  if (!normalizedSlug) {
+    return realmSlug || "";
+  }
+
+  if (normalizedRegion && REALM_DATA[normalizedRegion]) {
+    const regionRealms = REALM_DATA[normalizedRegion];
+    const displayName =
+      regionRealms[normalizedSlug as keyof typeof regionRealms];
+    if (displayName) {
+      return displayName;
+    }
+  }
+
+  return realmSlug || normalizedSlug;
+}

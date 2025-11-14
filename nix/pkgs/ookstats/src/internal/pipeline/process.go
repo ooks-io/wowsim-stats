@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	"ookstats/internal/realms"
 )
 
 // ProcessPlayersOptions contains options for player processing
@@ -41,6 +43,10 @@ func ProcessPlayers(db *sql.DB, opts ProcessPlayersOptions) (profilesCreated int
 		fmt.Printf("Warning: No seasons found in database. Proceeding with legacy all-time processing.\n")
 	} else {
 		fmt.Printf("Found %d seasons configured\n", seasonCount)
+	}
+
+	if err := realms.SyncRealmGroups(tx); err != nil {
+		return 0, 0, fmt.Errorf("failed to sync realm groups: %w", err)
 	}
 
 	// step 1: create player aggregations (season-aware if seasons exist)
@@ -211,7 +217,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			p.id as player_id,
 			pbr.season_id,
 			p.name,
-			p.realm_id,
+			COALESCE(rg.parent_realm_id, p.realm_id) as realm_id,
 			COUNT(pbr.dungeon_id) as dungeons_completed,
 			season_runs.run_count as total_runs,
 			COALESCE(SUM(pbr.duration), 0) as combined_best_time,
@@ -223,6 +229,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			CASE WHEN COUNT(pbr.dungeon_id) = (SELECT COUNT(*) FROM dungeons) THEN 1 ELSE 0 END as has_complete_coverage,
 			? as last_updated
 		FROM players p
+		LEFT JOIN realm_groups rg ON rg.child_realm_id = p.realm_id
 		INNER JOIN player_best_runs pbr ON p.id = pbr.player_id
 		INNER JOIN (
 			SELECT rm.player_id, COALESCE(ps.season_id, 1) as season_id, COUNT(*) as run_count
@@ -231,7 +238,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
 			GROUP BY rm.player_id, COALESCE(ps.season_id, 1)
 		) season_runs ON p.id = season_runs.player_id AND pbr.season_id = season_runs.season_id
-		GROUP BY p.id, pbr.season_id, p.name, p.realm_id, season_runs.run_count
+		GROUP BY p.id, pbr.season_id, p.name, COALESCE(rg.parent_realm_id, p.realm_id), season_runs.run_count
 	`, currentTime)
 	if err != nil {
 		return 0, err
