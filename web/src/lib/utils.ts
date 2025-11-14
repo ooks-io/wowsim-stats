@@ -146,15 +146,22 @@ export function buildLeaderboardURL(
   realm: string,
   dungeonSlug: string,
   page?: number,
+  opts?: { season?: number; basePath?: string },
 ): string {
+  const season = Number(opts?.season ?? 1);
+  const basePath = opts?.basePath ?? "challenge-mode";
+  const seasonSegment = season > 0 ? `season${season}` : "season1";
+
+  const normalizedRegion = region || "global";
+  const normalizedRealm = realm && realm !== "" ? realm : "all";
+
   let baseURL: string;
 
-  if (region === "global") {
-    baseURL = `/challenge-mode/global/${dungeonSlug}`;
-  } else if (realm === "all") {
-    baseURL = `/challenge-mode/${region}/all/${dungeonSlug}`;
+  if (normalizedRegion === "global") {
+    baseURL = `/${basePath}/${seasonSegment}/global/${dungeonSlug}`;
   } else {
-    baseURL = `/challenge-mode/${region}/${realm}/${dungeonSlug}`;
+    const realmSlug = normalizedRealm || "all";
+    baseURL = `/${basePath}/${seasonSegment}/${normalizedRegion}/${realmSlug}/${dungeonSlug}`;
   }
 
   if (page && page > 1) {

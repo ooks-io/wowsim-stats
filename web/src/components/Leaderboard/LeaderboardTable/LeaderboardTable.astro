@@ -16,7 +16,7 @@ interface Props {
   players?: Player[];
   currentPage?: number;
   pageSize?: number;
-  // Data attributes for client-side hydration
+  // data attributes for client-side hydration
   region?: string;
   realm?: string;
   dungeon?: string;
@@ -53,18 +53,6 @@ const formatTime = (ms: number) => {
   data-realm={realm}
   data-dungeon={dungeon}
 >
-  <!-- Loading state -->
-  <div class="loading-overlay" style="display: none;">
-    <div class="loading-spinner"></div>
-    <p>Loading leaderboard...</p>
-  </div>
-
-  <!-- Error state -->
-  <div class="error-message" style="display: none;">
-    <p></p>
-  </div>
-
-  <!-- Leaderboard content -->
   <div class="leaderboard-content">
     {
       type === "dungeon" ? (
@@ -88,13 +76,15 @@ const formatTime = (ms: number) => {
               const duration = formatTime(run.duration);
               const date = formatDate(run.completed_timestamp);
               const bracketClass = run.ranking_percentile
-                ? `quality-${run.ranking_percentile}`
+                ? `bracket-${run.ranking_percentile.toLowerCase()}`
                 : "";
 
               return (
                 <TableRow>
                   <TableCell label="Rank">
-                    <span class:list={["rank", bracketClass]}>{rank}</span>
+                    <span class:list={["rank", "ranking-number", bracketClass]}>
+                      {rank}
+                    </span>
                   </TableCell>
                   <TableCell label="Time">{duration}</TableCell>
                   <TableCell label="Team">
@@ -136,13 +126,15 @@ const formatTime = (ms: number) => {
                 ? formatTime(player.combined_best_time)
                 : "N/A";
               const bracketClass = player.ranking_percentile
-                ? `quality-${player.ranking_percentile}`
+                ? `bracket-${player.ranking_percentile.toLowerCase()}`
                 : "";
 
               return (
                 <TableRow>
                   <TableCell label="Rank">
-                    <span class:list={["rank", bracketClass]}>{rank}</span>
+                    <span class:list={["rank", "ranking-number", bracketClass]}>
+                      {rank}
+                    </span>
                   </TableCell>
                   <TableCell label="Player">
                     <PlayerLink
