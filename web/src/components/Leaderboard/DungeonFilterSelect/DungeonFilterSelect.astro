@@ -51,50 +51,41 @@ const dungeonOptions = Object.entries(DUNGEON_MAP).map(([id, name]) => ({
     const select = e.target as HTMLSelectElement;
     const selectedSlug = select.value;
 
-    // TODO: do we need this? we dont use query params anymore
-    // check if we're using query params
-    const searchParams = new URLSearchParams(window.location.search);
-    const usesQueryParams = searchParams.toString().length > 0;
+    const pathParts = window.location.pathname.split("/").filter((p) => p);
+    const basePath =
+      pathParts[0] === "test-challenge-mode"
+        ? "test-challenge-mode"
+        : "challenge-mode";
 
-    if (usesQueryParams) {
-      // Query param mode - update dungeon param
-      searchParams.set("dungeon", selectedSlug);
-      searchParams.delete("page"); // reset to page 1
-      window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
-    } else {
-      // Path-based mode - build new path with season
-      const pathParts = window.location.pathname.split("/").filter((p) => p);
-      let newPath: string;
-
-      // Detect if we're in test-challenge-mode or challenge-mode
-      const basePath =
-        pathParts[0] === "test-challenge-mode"
-          ? "test-challenge-mode"
-          : "challenge-mode";
-
-      // Extract season from path
-      let seasonSlug = "season1"; // default
-      if (pathParts.length >= 2 && pathParts[1].startsWith("season")) {
-        seasonSlug = pathParts[1];
-      }
-
-      if (
-        pathParts.length >= 4 &&
-        (pathParts[0] === "challenge-mode" ||
-          pathParts[0] === "test-challenge-mode")
-      ) {
-        if (pathParts[2] === "global") {
-          newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
-        } else if (pathParts.length === 5) {
-          newPath = `/${basePath}/${seasonSlug}/${pathParts[2]}/${pathParts[3]}/${selectedSlug}`;
-        } else {
-          newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
-        }
-      } else {
-        newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
-      }
-
-      window.location.href = newPath;
+    // Find the season segment (default to season1)
+    let seasonSlug = "season1";
+    const seasonIndex = pathParts.findIndex((part) =>
+      /^season\d+$/i.test(part),
+    );
+    if (seasonIndex >= 0) {
+      seasonSlug = pathParts[seasonIndex];
     }
+
+    const scopeParts =
+      seasonIndex >= 0 ? pathParts.slice(seasonIndex + 1) : pathParts.slice(1);
+    let region = "global";
+    let realm = "all";
+
+    if (scopeParts.length >= 2 && scopeParts[0] === "global") {
+      region = "global";
+      realm = "all";
+    } else if (scopeParts.length >= 3) {
+      region = scopeParts[0] || "global";
+      realm = scopeParts[1] || "all";
+    }
+
+    let newPath: string;
+    if (region === "global") {
+      newPath = `/${basePath}/${seasonSlug}/global/${selectedSlug}`;
+    } else {
+      newPath = `/${basePath}/${seasonSlug}/${region}/${realm || "all"}/${selectedSlug}`;
+    }
+
+    window.location.href = newPath;
   });
 </script>
