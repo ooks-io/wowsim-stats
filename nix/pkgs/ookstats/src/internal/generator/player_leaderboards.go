@@ -100,7 +100,7 @@ func generateGlobalPlayerLeaderboard(db *sql.DB, out string, pageSize int, seaso
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
+			ORDER BY pp.global_ranking ASC, p.name ASC
 			LIMIT ? OFFSET ?
 		`, seasonID, pageSize, offset)
 		if err != nil {
@@ -151,7 +151,7 @@ func generateRegionalPlayerLeaderboard(db *sql.DB, out, region string, pageSize 
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
+			ORDER BY pp.regional_ranking ASC, p.name ASC
 			LIMIT ? OFFSET ?
 		`, seasonID, region, pageSize, offset)
 		if err != nil {
@@ -236,7 +236,7 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 				LEFT JOIN player_details pd ON p.id = pd.player_id
 				WHERE pp.season_id = ? AND parent.region = ? AND parent.slug = ?
 				  AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-				ORDER BY pp.combined_best_time ASC, p.name ASC
+				ORDER BY pp.realm_ranking ASC, p.name ASC
 				LIMIT ? OFFSET ?
 			`, seasonID, region, parentSlug, pageSize, offset)
 			if err != nil {
@@ -342,7 +342,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			JOIN realms r ON p.realm_id = r.id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
+			ORDER BY pp.global_ranking ASC, p.name ASC
 		`, seasonID)
 	} else if scope == "regional" {
 		rows, err = db.Query(`
@@ -355,7 +355,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			JOIN realms r ON p.realm_id = r.id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
+			ORDER BY pp.regional_ranking ASC, p.name ASC
 		`, seasonID, region)
 	} else {
 		rows, err = db.Query(`
@@ -370,7 +370,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND parent.region = ? AND parent.slug = ?
 			  AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
+			ORDER BY pp.realm_ranking ASC, p.name ASC
 		`, seasonID, region, realmSlug)
 	}
 
