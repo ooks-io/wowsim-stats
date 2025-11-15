@@ -119,6 +119,12 @@ func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
 		return fmt.Errorf("failed to compute regional rankings: %w", err)
 	}
 
+	// step 3: compute realm run rankings
+	fmt.Println("\n3. Computing realm run rankings...")
+	if err := computeRealmRankings(tx); err != nil {
+		return fmt.Errorf("failed to compute realm rankings: %w", err)
+	}
+
 	// commit all changes
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("failed to commit run rankings: %w", err)
@@ -942,5 +948,125 @@ func computeRegionalRankings(tx *sql.Tx) error {
 	}
 
 	fmt.Printf("[OK] Computed regional rankings with percentile brackets for %d regions\n", len(regions))
+	return nil
+}
+
+// computeRealmRankings precomputes realm-scoped (filtered) rankings with percentile buckets
+func computeRealmRankings(tx *sql.Tx) error {
+	fmt.Printf("Computing realm rankings...\n")
+
+	currentTime := time.Now().UnixMilli()
+
+	if _, err := tx.Exec("DELETE FROM run_rankings WHERE ranking_type = 'realm'"); err != nil {
+		return err
+	}
+
+	_, err := tx.Exec(`
+		WITH season_runs AS (
+			SELECT
+				cr.id,
+				cr.dungeon_id,
+				cr.realm_id,
+				cr.team_signature,
+				cr.duration,
+				cr.completed_timestamp,
+				COALESCE(ps.season_id, 1) as season_id
+			FROM challenge_runs cr
+			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+		),
+		best_per_team AS (
+			SELECT
+				id,
+				dungeon_id,
+				realm_id,
+				team_signature,
+				duration,
+				completed_timestamp,
+				season_id,
+				ROW_NUMBER() OVER (
+					PARTITION BY team_signature, realm_id, dungeon_id, season_id
+					ORDER BY duration ASC, completed_timestamp ASC, id ASC
+				) as rn
+			FROM season_runs
+		),
+		canonical_runs AS (
+			SELECT
+				id,
+				dungeon_id,
+				realm_id,
+				season_id,
+				duration,
+				completed_timestamp
+			FROM best_per_team
+			WHERE rn = 1
+		),
+		ranked AS (
+			SELECT
+				id as run_id,
+				dungeon_id,
+				realm_id,
+				season_id,
+				ROW_NUMBER() OVER (
+					PARTITION BY dungeon_id, realm_id, season_id
+					ORDER BY duration ASC, completed_timestamp ASC, id ASC
+				) as ranking
+			FROM canonical_runs
+		)
+		INSERT INTO run_rankings (run_id, dungeon_id, ranking_type, ranking_scope, ranking, season_id, computed_at)
+		SELECT
+			run_id,
+			dungeon_id,
+			'realm' as ranking_type,
+			'filtered' as ranking_scope,
+			ranking,
+			season_id,
+			? as computed_at
+		FROM ranked
+	`, currentTime)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(`
+		UPDATE run_rankings
+		SET percentile_bracket = (
+			CASE
+				WHEN counts.duration = counts.min_duration THEN 'artifact'
+				ELSE
+					CASE
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_partition AS REAL) * 100) <= 1.0 THEN 'excellent'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_partition AS REAL) * 100) <= 5.0 THEN 'legendary'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_partition AS REAL) * 100) <= 20.0 THEN 'epic'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_partition AS REAL) * 100) <= 40.0 THEN 'rare'
+						WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_partition AS REAL) * 100) <= 60.0 THEN 'uncommon'
+						ELSE 'common'
+					END
+			END
+		)
+		FROM (
+			SELECT
+				rr.run_id,
+				rr.dungeon_id,
+				rr.season_id,
+				cr.realm_id,
+				rr.ranking,
+				cr.duration,
+				MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, cr.realm_id, rr.season_id) as min_duration,
+				COUNT(*) OVER (PARTITION BY rr.dungeon_id, cr.realm_id, rr.season_id) as total_in_partition
+			FROM run_rankings rr
+			INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+			WHERE rr.ranking_type = 'realm' AND rr.ranking_scope = 'filtered'
+		) counts
+		WHERE run_rankings.run_id = counts.run_id
+		AND run_rankings.dungeon_id = counts.dungeon_id
+		AND run_rankings.season_id = counts.season_id
+		AND run_rankings.ranking_type = 'realm'
+		AND run_rankings.ranking_scope = 'filtered'
+	`)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("[OK] Computed realm rankings with percentile brackets\n")
 	return nil
 }

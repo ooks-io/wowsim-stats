@@ -1,15 +1,15 @@
 package database
 
 import (
-    "context"
-    "database/sql"
-    "fmt"
-    "sort"
-    "strings"
-    "time"
-    "ookstats/internal/blizzard"
-    "ookstats/internal/utils"
-    "sync"
+	"context"
+	"database/sql"
+	"fmt"
+	"ookstats/internal/blizzard"
+	"ookstats/internal/utils"
+	"sort"
+	"strings"
+	"sync"
+	"time"
 )
 
 // EnsureReferenceData ensures that realm and dungeon reference data exists in the database
@@ -42,74 +42,74 @@ func (ds *DatabaseService) EnsureReferenceData(realmInfo blizzard.RealmInfo, dun
 
 // EnsureDungeonsOnce inserts all known dungeons once (idempotent). Optimized for remote DBs.
 func (ds *DatabaseService) EnsureDungeonsOnce(dungeons []blizzard.DungeonInfo) error {
-    if len(dungeons) == 0 {
-        return nil
-    }
-    // Build a single INSERT OR IGNORE with multi-row VALUES to reduce round trips
-    // INSERT OR IGNORE INTO dungeons (id, slug, name, map_challenge_mode_id) VALUES (..),(..)...
-    var b strings.Builder
-    args := make([]any, 0, len(dungeons)*4)
-    b.WriteString("INSERT OR IGNORE INTO dungeons (id, slug, name, map_challenge_mode_id) VALUES ")
-    for i, d := range dungeons {
-        if i > 0 {
-            b.WriteString(",")
-        }
-        b.WriteString("(?, ?, ?, ?)")
-        args = append(args, d.ID, d.Slug, d.Name, d.ID)
-    }
-    _, err := ds.db.Exec(b.String(), args...)
-    if err != nil {
-        return fmt.Errorf("failed to ensure dungeons: %w", err)
-    }
-    return nil
+	if len(dungeons) == 0 {
+		return nil
+	}
+	// Build a single INSERT OR IGNORE with multi-row VALUES to reduce round trips
+	// INSERT OR IGNORE INTO dungeons (id, slug, name, map_challenge_mode_id) VALUES (..),(..)...
+	var b strings.Builder
+	args := make([]any, 0, len(dungeons)*4)
+	b.WriteString("INSERT OR IGNORE INTO dungeons (id, slug, name, map_challenge_mode_id) VALUES ")
+	for i, d := range dungeons {
+		if i > 0 {
+			b.WriteString(",")
+		}
+		b.WriteString("(?, ?, ?, ?)")
+		args = append(args, d.ID, d.Slug, d.Name, d.ID)
+	}
+	_, err := ds.db.Exec(b.String(), args...)
+	if err != nil {
+		return fmt.Errorf("failed to ensure dungeons: %w", err)
+	}
+	return nil
 }
 
 // EnsureRealmsBatch inserts/updates all known realms in a single transaction with a prepared statement
 func (ds *DatabaseService) EnsureRealmsBatch(realms map[string]blizzard.RealmInfo) error {
-    if len(realms) == 0 {
-        return nil
-    }
-    tx, err := ds.db.Begin()
-    if err != nil {
-        return err
-    }
-    defer tx.Rollback()
+	if len(realms) == 0 {
+		return nil
+	}
+	tx, err := ds.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-    stmt, err := tx.Prepare(`
+	stmt, err := tx.Prepare(`
         INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id)
         VALUES (?, ?, ?, ?)
     `)
-    if err != nil {
-        return err
-    }
-    defer stmt.Close()
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
 
-    // Insert each known realm once
-    // Note: caller should have set realmInfo.Slug
-    // This minimizes network round trips for remote DBs
-    // and is idempotent thanks to OR IGNORE
-    // Also allows partial success without failing entire batch
-    keys := make([]string, 0, len(realms))
-    for k := range realms {
-        keys = append(keys, k)
-    }
-    sort.Strings(keys)
-    total := len(keys)
-    for i, slug := range keys {
-        ri := realms[slug]
-        if _, err := stmt.Exec(ri.Slug, ri.Name, ri.Region, ri.ID); err != nil {
-            return fmt.Errorf("failed to insert realm %s: %w", ri.Slug, err)
-        }
-        // light progress every 10 items
-        if (i+1)%10 == 0 || i+1 == total {
-            fmt.Printf("    - Ensured %d/%d realms\n", i+1, total)
-        }
-    }
+	// Insert each known realm once
+	// Note: caller should have set realmInfo.Slug
+	// This minimizes network round trips for remote DBs
+	// and is idempotent thanks to OR IGNORE
+	// Also allows partial success without failing entire batch
+	keys := make([]string, 0, len(realms))
+	for k := range realms {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	total := len(keys)
+	for i, slug := range keys {
+		ri := realms[slug]
+		if _, err := stmt.Exec(ri.Slug, ri.Name, ri.Region, ri.ID); err != nil {
+			return fmt.Errorf("failed to insert realm %s: %w", ri.Slug, err)
+		}
+		// light progress every 10 items
+		if (i+1)%10 == 0 || i+1 == total {
+			fmt.Printf("    - Ensured %d/%d realms\n", i+1, total)
+		}
+	}
 
-    if err := tx.Commit(); err != nil {
-        return err
-    }
-    return nil
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // InsertLeaderboardData inserts leaderboard data and returns the number of runs and players inserted
@@ -118,8 +118,8 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 		return 0, 0, nil
 	}
 
-    // Get realm and dungeon IDs
-    realmID, err := ds.GetRealmIDByRegionAndSlug(realmInfo.Region, realmInfo.Slug)
+	// Get realm and dungeon IDs
+	realmID, err := ds.GetRealmIDByRegionAndSlug(realmInfo.Region, realmInfo.Slug)
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to get realm ID: %w", err)
 	}
@@ -397,16 +397,16 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 	for result := range results {
 		processedCount++
 
-        if result.Error != nil {
-            errorCount++
-            // Suppress noisy 404s unless verbose is enabled
-            if verbose {
-                fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
-            } else if !strings.Contains(strings.ToLower(result.Error.Error()), "404") {
-                fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
-            }
-            continue
-        }
+		if result.Error != nil {
+			errorCount++
+			// Suppress noisy 404s unless verbose is enabled
+			if verbose {
+				fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
+			} else if !strings.Contains(strings.ToLower(result.Error.Error()), "404") {
+				fmt.Printf("[ERROR] API error [%d] %s/%s: %v\n", processedCount, result.RealmInfo.Name, result.Dungeon.Name, result.Error)
+			}
+			continue
+		}
 
 		// show periodic progress
 		if processedCount%10 == 0 {
@@ -438,115 +438,115 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 
 // processBatch processes a batch of fetch results in a single transaction
 func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int, error) {
-    if len(batch) == 0 {
-        return 0, 0, nil
-    }
+	if len(batch) == 0 {
+		return 0, 0, nil
+	}
 
-    // Pre-scan batch to decide which items actually need writes (local diff -> insert-new)
-    type batchItem struct {
-        idx         int
-        r           blizzard.RealmInfo
-        d           blizzard.DungeonInfo
-        board       *blizzard.LeaderboardResponse
-        realmID     int
-        dungeonID   int
-        existingMax int64
-        marker      int64
-        maxCT       int64
-        needsWrite  bool
-    }
+	// Pre-scan batch to decide which items actually need writes (local diff -> insert-new)
+	type batchItem struct {
+		idx         int
+		r           blizzard.RealmInfo
+		d           blizzard.DungeonInfo
+		board       *blizzard.LeaderboardResponse
+		realmID     int
+		dungeonID   int
+		existingMax int64
+		marker      int64
+		maxCT       int64
+		needsWrite  bool
+	}
 
-    items := make([]batchItem, 0, len(batch))
-    for i, res := range batch {
-        if res.Leaderboard == nil || len(res.Leaderboard.LeadingGroups) == 0 {
-            continue
-        }
-        // resolve IDs (read-only)
-        realmID, err := ds.GetRealmIDByRegionAndSlug(res.RealmInfo.Region, res.RealmInfo.Slug)
-        if err != nil {
-            return 0, 0, fmt.Errorf("failed to resolve realm id: %w", err)
-        }
-        dungeonID, err := ds.GetDungeonID(res.Dungeon.Slug)
-        if err != nil {
-            return 0, 0, fmt.Errorf("failed to resolve dungeon id: %w", err)
-        }
-        // compute payload maxCT
-        maxCT := int64(0)
-        for _, run := range res.Leaderboard.LeadingGroups {
-            if run.CompletedTimestamp > maxCT {
-                maxCT = run.CompletedTimestamp
-            }
-        }
-        // read DB high-water and marker (read-only; outside TX)
-        var existingMax sql.NullInt64
-        _ = ds.db.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax)
-        var marker int64
-        _ = ds.db.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, res.RealmInfo.Slug, dungeonID, res.Leaderboard.Period).Scan(&marker)
-        minCT := marker
-        if existingMax.Valid && existingMax.Int64 > minCT {
-            minCT = existingMax.Int64
-        }
-        needsWrite := maxCT > 0 && maxCT > minCT
+	items := make([]batchItem, 0, len(batch))
+	for i, res := range batch {
+		if res.Leaderboard == nil || len(res.Leaderboard.LeadingGroups) == 0 {
+			continue
+		}
+		// resolve IDs (read-only)
+		realmID, err := ds.GetRealmIDByRegionAndSlug(res.RealmInfo.Region, res.RealmInfo.Slug)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to resolve realm id: %w", err)
+		}
+		dungeonID, err := ds.GetDungeonID(res.Dungeon.Slug)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to resolve dungeon id: %w", err)
+		}
+		// compute payload maxCT
+		maxCT := int64(0)
+		for _, run := range res.Leaderboard.LeadingGroups {
+			if run.CompletedTimestamp > maxCT {
+				maxCT = run.CompletedTimestamp
+			}
+		}
+		// read DB high-water and marker (read-only; outside TX)
+		var existingMax sql.NullInt64
+		_ = ds.db.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax)
+		var marker int64
+		_ = ds.db.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, res.RealmInfo.Slug, dungeonID, res.Leaderboard.Period).Scan(&marker)
+		minCT := marker
+		if existingMax.Valid && existingMax.Int64 > minCT {
+			minCT = existingMax.Int64
+		}
+		needsWrite := maxCT > 0 && maxCT > minCT
 
-        if !needsWrite {
-            fmt.Printf("    [SKIP] %s/%s: up-to-date (minCT=%d, maxCT=%d)\n", res.RealmInfo.Name, res.Dungeon.Name, minCT, maxCT)
-        }
-        items = append(items, batchItem{
-            idx:         i + 1,
-            r:           res.RealmInfo,
-            d:           res.Dungeon,
-            board:       res.Leaderboard,
-            realmID:     realmID,
-            dungeonID:   dungeonID,
-            existingMax: existingMax.Int64,
-            marker:      marker,
-            maxCT:       maxCT,
-            needsWrite:  needsWrite,
-        })
-    }
+		if !needsWrite {
+			fmt.Printf("    [SKIP] %s/%s: up-to-date (minCT=%d, maxCT=%d)\n", res.RealmInfo.Name, res.Dungeon.Name, minCT, maxCT)
+		}
+		items = append(items, batchItem{
+			idx:         i + 1,
+			r:           res.RealmInfo,
+			d:           res.Dungeon,
+			board:       res.Leaderboard,
+			realmID:     realmID,
+			dungeonID:   dungeonID,
+			existingMax: existingMax.Int64,
+			marker:      marker,
+			maxCT:       maxCT,
+			needsWrite:  needsWrite,
+		})
+	}
 
-    // filter to items needing writes
-    toWrite := make([]batchItem, 0, len(items))
-    for _, it := range items {
-        if it.needsWrite {
-            toWrite = append(toWrite, it)
-        }
-    }
+	// filter to items needing writes
+	toWrite := make([]batchItem, 0, len(items))
+	for _, it := range items {
+		if it.needsWrite {
+			toWrite = append(toWrite, it)
+		}
+	}
 
-    if len(toWrite) == 0 {
-        // nothing to write; avoid starting a transaction
-        return 0, 0, nil
-    }
+	if len(toWrite) == 0 {
+		// nothing to write; avoid starting a transaction
+		return 0, 0, nil
+	}
 
-    // begin transaction for write set only
-    startBatch := time.Now()
-    tx, err := ds.db.Begin()
-    if err != nil {
-        return 0, 0, fmt.Errorf("failed to begin batch transaction: %w", err)
-    }
-    defer tx.Rollback()
+	// begin transaction for write set only
+	startBatch := time.Now()
+	tx, err := ds.db.Begin()
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to begin batch transaction: %w", err)
+	}
+	defer tx.Rollback()
 
-    totalRuns := 0
-    totalPlayers := 0
+	totalRuns := 0
+	totalPlayers := 0
 
-    for _, it := range toWrite {
-        itemStart := time.Now()
-        runs, players, err := ds.insertLeaderboardDataTx(tx, it.board, it.r, it.d)
-        if err != nil {
-            return 0, 0, fmt.Errorf("failed to insert leaderboard data: %w", err)
-        }
-        totalRuns += runs
-        totalPlayers += players
-        fmt.Printf("    - Batch item %d: %s/%s -> +%d runs, +%d players in %dms\n",
-            it.idx, it.r.Name, it.d.Name, runs, players, time.Since(itemStart).Milliseconds())
-    }
+	for _, it := range toWrite {
+		itemStart := time.Now()
+		runs, players, err := ds.insertLeaderboardDataTx(tx, it.board, it.r, it.d)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to insert leaderboard data: %w", err)
+		}
+		totalRuns += runs
+		totalPlayers += players
+		fmt.Printf("    - Batch item %d: %s/%s -> +%d runs, +%d players in %dms\n",
+			it.idx, it.r.Name, it.d.Name, runs, players, time.Since(itemStart).Milliseconds())
+	}
 
-    if err := tx.Commit(); err != nil {
-        return 0, 0, fmt.Errorf("failed to commit batch transaction: %w", err)
-    }
-    fmt.Printf("    [OK] Batch committed in %dms (total +%d runs, +%d players)\n",
-        time.Since(startBatch).Milliseconds(), totalRuns, totalPlayers)
-    return totalRuns, totalPlayers, nil
+	if err := tx.Commit(); err != nil {
+		return 0, 0, fmt.Errorf("failed to commit batch transaction: %w", err)
+	}
+	fmt.Printf("    [OK] Batch committed in %dms (total +%d runs, +%d players)\n",
+		time.Since(startBatch).Milliseconds(), totalRuns, totalPlayers)
+	return totalRuns, totalPlayers, nil
 }
 
 // ensureReferenceDataTx ensures reference data within a transaction
@@ -572,55 +572,55 @@ func (ds *DatabaseService) ensureReferenceDataTx(tx *sql.Tx, realmInfo blizzard.
 
 // insertLeaderboardDataTx inserts leaderboard data within a transaction
 func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *blizzard.LeaderboardResponse, realmInfo blizzard.RealmInfo, dungeon blizzard.DungeonInfo) (int, int, error) {
-    // Resolve realm and dungeon IDs (read-only; realms/dungeons are pre-populated)
-    realmID, err := ds.getRealmIDTx(tx, realmInfo.Slug, realmInfo.Region)
-    if err != nil {
-        return 0, 0, fmt.Errorf("failed to get realm ID: %w", err)
-    }
-    dungeonID, err := ds.getDungeonIDTx(tx, dungeon.Slug)
-    if err != nil {
-        return 0, 0, fmt.Errorf("failed to get dungeon ID: %w", err)
-    }
+	// Resolve realm and dungeon IDs (read-only; realms/dungeons are pre-populated)
+	realmID, err := ds.getRealmIDTx(tx, realmInfo.Slug, realmInfo.Region)
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to get realm ID: %w", err)
+	}
+	dungeonID, err := ds.getDungeonIDTx(tx, dungeon.Slug)
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to get dungeon ID: %w", err)
+	}
 
-    // Compute newest completed_timestamp in this leaderboard
-    maxCT := int64(0)
-    for _, run := range leaderboard.LeadingGroups {
-        if run.CompletedTimestamp > maxCT {
-            maxCT = run.CompletedTimestamp
-        }
-    }
-    // Quick skip using existing DB max completed_timestamp for this realm+dungeon
-    var existingMax sql.NullInt64
-    if err := tx.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax); err == nil {
-        if existingMax.Valid && maxCT > 0 && existingMax.Int64 >= maxCT {
-            fmt.Printf("    [SKIP] %s/%s: existingMax=%d >= maxCT=%d (DB)\n", realmInfo.Name, dungeon.Name, existingMax.Int64, maxCT)
-            return 0, 0, nil
-        }
-    }
-    var marker int64
-    if err := tx.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, realmInfo.Slug, dungeonID, leaderboard.Period).Scan(&marker); err != nil && err != sql.ErrNoRows {
-        return 0, 0, fmt.Errorf("failed to read fetch marker: %w", err)
-    }
-    if marker >= maxCT && maxCT > 0 {
-        fmt.Printf("    [SKIP] %s/%s: up-to-date (marker=%d, maxCT=%d)\n", realmInfo.Name, dungeon.Name, marker, maxCT)
-        return 0, 0, nil
-    }
+	// Compute newest completed_timestamp in this leaderboard
+	maxCT := int64(0)
+	for _, run := range leaderboard.LeadingGroups {
+		if run.CompletedTimestamp > maxCT {
+			maxCT = run.CompletedTimestamp
+		}
+	}
+	// Quick skip using existing DB max completed_timestamp for this realm+dungeon
+	var existingMax sql.NullInt64
+	if err := tx.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax); err == nil {
+		if existingMax.Valid && maxCT > 0 && existingMax.Int64 >= maxCT {
+			fmt.Printf("    [SKIP] %s/%s: existingMax=%d >= maxCT=%d (DB)\n", realmInfo.Name, dungeon.Name, existingMax.Int64, maxCT)
+			return 0, 0, nil
+		}
+	}
+	var marker int64
+	if err := tx.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, realmInfo.Slug, dungeonID, leaderboard.Period).Scan(&marker); err != nil && err != sql.ErrNoRows {
+		return 0, 0, fmt.Errorf("failed to read fetch marker: %w", err)
+	}
+	if marker >= maxCT && maxCT > 0 {
+		fmt.Printf("    [SKIP] %s/%s: up-to-date (marker=%d, maxCT=%d)\n", realmInfo.Name, dungeon.Name, marker, maxCT)
+		return 0, 0, nil
+	}
 
-    runsInserted := 0
-    playersInserted := 0
+	runsInserted := 0
+	playersInserted := 0
 
-    for _, run := range leaderboard.LeadingGroups {
-        // fast-skip duplicates using DB max and marker
-        if (existingMax.Valid && run.CompletedTimestamp <= existingMax.Int64) || (marker > 0 && run.CompletedTimestamp <= marker) {
-            continue
-        }
-        // extract player IDs for team signature
-        var playerIDs []int
-        for _, member := range run.Members {
-            if id, ok := member.GetPlayerID(); ok {
-                playerIDs = append(playerIDs, id)
-            }
-        }
+	for _, run := range leaderboard.LeadingGroups {
+		// fast-skip duplicates using DB max and marker
+		if (existingMax.Valid && run.CompletedTimestamp <= existingMax.Int64) || (marker > 0 && run.CompletedTimestamp <= marker) {
+			continue
+		}
+		// extract player IDs for team signature
+		var playerIDs []int
+		for _, member := range run.Members {
+			if id, ok := member.GetPlayerID(); ok {
+				playerIDs = append(playerIDs, id)
+			}
+		}
 
 		if len(playerIDs) == 0 {
 			continue
@@ -679,26 +679,26 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 
 			// get or create player realm
 			var playerRealmID int
-            if hasRealmSlug {
-                // resolve player realm id (realms are pre-populated; create only if truly unknown)
-                playerRealmID, err = ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
-                if err != nil {
-                    return 0, 0, fmt.Errorf("failed to resolve player realm: %w", err)
-                }
-                if playerRealmID == 0 {
-                    if _, err := tx.Exec(`INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id) VALUES (?, ?, ?, ?)`,
-                        playerRealmSlug, playerRealmSlug, realmInfo.Region, 0); err != nil {
-                        return 0, 0, fmt.Errorf("failed to create placeholder realm: %w", err)
-                    }
-                    id2, err := ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
-                    if err != nil || id2 == 0 {
-                        return 0, 0, fmt.Errorf("failed to resolve placeholder realm id: %w", err)
-                    }
-                    playerRealmID = id2
-                }
-            } else {
-                playerRealmID = realmID
-            }
+			if hasRealmSlug {
+				// resolve player realm id (realms are pre-populated; create only if truly unknown)
+				playerRealmID, err = ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
+				if err != nil {
+					return 0, 0, fmt.Errorf("failed to resolve player realm: %w", err)
+				}
+				if playerRealmID == 0 {
+					if _, err := tx.Exec(`INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id) VALUES (?, ?, ?, ?)`,
+						playerRealmSlug, playerRealmSlug, realmInfo.Region, 0); err != nil {
+						return 0, 0, fmt.Errorf("failed to create placeholder realm: %w", err)
+					}
+					id2, err := ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
+					if err != nil || id2 == 0 {
+						return 0, 0, fmt.Errorf("failed to resolve placeholder realm id: %w", err)
+					}
+					playerRealmID = id2
+				}
+			} else {
+				playerRealmID = realmID
+			}
 
 			// insert player
 			playerQuery := `
@@ -746,29 +746,29 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 		}
 	}
 
-    // update marker inside the transaction if we progressed
-    if maxCT > marker && maxCT > 0 {
-        if _, err := tx.Exec(`INSERT INTO api_fetch_markers (realm_slug, dungeon_id, period_id, last_completed_ts)
+	// update marker inside the transaction if we progressed
+	if maxCT > marker && maxCT > 0 {
+		if _, err := tx.Exec(`INSERT INTO api_fetch_markers (realm_slug, dungeon_id, period_id, last_completed_ts)
                                VALUES (?, ?, ?, ?)
                                ON CONFLICT(realm_slug, dungeon_id, period_id)
                                DO UPDATE SET last_completed_ts = MAX(last_completed_ts, excluded.last_completed_ts)`,
-            realmInfo.Slug, dungeonID, leaderboard.Period, maxCT); err != nil {
-            return 0, 0, fmt.Errorf("failed to update fetch marker: %w", err)
-        }
-    }
+			realmInfo.Slug, dungeonID, leaderboard.Period, maxCT); err != nil {
+			return 0, 0, fmt.Errorf("failed to update fetch marker: %w", err)
+		}
+	}
 
-    return runsInserted, playersInserted, nil
+	return runsInserted, playersInserted, nil
 }
 
 // helper functions for transaction-based operations
 func (ds *DatabaseService) getRealmIDTx(tx *sql.Tx, slug string, region string) (int, error) {
-    var realmID int
-    err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", slug, region).Scan(&realmID)
-    if err == sql.ErrNoRows {
-        // Not found is not an error for callers that may insert placeholders/aliases
-        return 0, nil
-    }
-    return realmID, err
+	var realmID int
+	err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", slug, region).Scan(&realmID)
+	if err == sql.ErrNoRows {
+		// Not found is not an error for callers that may insert placeholders/aliases
+		return 0, nil
+	}
+	return realmID, err
 }
 
 func (ds *DatabaseService) getDungeonIDTx(tx *sql.Tx, slug string) (int, error) {
@@ -819,39 +819,39 @@ func (ds *DatabaseService) getOrCreateRealmTx(tx *sql.Tx, realmSlug string, allR
 
 // getOrCreateRealmByRegion resolves a realm by region+slug or creates a placeholder/known realm
 func (ds *DatabaseService) getOrCreateRealmByRegion(tx *sql.Tx, realmSlug string, region string, allRealms map[string]blizzard.RealmInfo) (int, error) {
-    // try to get existing realm by composite key
-    var realmID int
-    err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", realmSlug, region).Scan(&realmID)
-    if err == nil {
-        return realmID, nil
-    }
-    if err != sql.ErrNoRows {
-        return 0, err
-    }
+	// try to get existing realm by composite key
+	var realmID int
+	err := tx.QueryRow("SELECT id FROM realms WHERE slug = ? AND region = ?", realmSlug, region).Scan(&realmID)
+	if err == nil {
+		return realmID, nil
+	}
+	if err != sql.ErrNoRows {
+		return 0, err
+	}
 
-    // If we know this realm (by slug) from constants, use its canonical region/name/id
-    if realmInfo, ok := allRealms[realmSlug]; ok {
-        result, err := tx.Exec(`
+	// If we know this realm (by slug) from constants, use its canonical region/name/id
+	if realmInfo, ok := allRealms[realmSlug]; ok {
+		result, err := tx.Exec(`
             INSERT INTO realms (slug, name, region, connected_realm_id)
             VALUES (?, ?, ?, ?)
         `, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
-        if err != nil {
-            return 0, err
-        }
-        newID, err := result.LastInsertId()
-        return int(newID), err
-    }
+		if err != nil {
+			return 0, err
+		}
+		newID, err := result.LastInsertId()
+		return int(newID), err
+	}
 
-    // otherwise create a placeholder scoped to the provided region
-    result, err := tx.Exec(`
+	// otherwise create a placeholder scoped to the provided region
+	result, err := tx.Exec(`
         INSERT INTO realms (slug, name, region, connected_realm_id)
         VALUES (?, ?, ?, ?)
     `, realmSlug, utils.Slugify(realmSlug), region, 0)
-    if err != nil {
-        return 0, err
-    }
-    newID, err := result.LastInsertId()
-    return int(newID), err
+	if err != nil {
+		return 0, err
+	}
+	newID, err := result.LastInsertId()
+	return int(newID), err
 }
 
 // player profile database operations
@@ -951,9 +951,9 @@ func (ds *DatabaseService) insertPlayerDetailsTx(tx *sql.Tx, playerID int, summa
 		guildName = &summary.Guild.Name
 	}
 
-    // Upsert without touching last_login_timestamp to avoid noisy writes.
-    // Only update when a value actually changes (WHERE guard).
-    _, err := tx.Exec(`
+	// Upsert without touching last_login_timestamp to avoid noisy writes.
+	// Only update when a value actually changes (WHERE guard).
+	_, err := tx.Exec(`
         INSERT INTO player_details (
             player_id, race_id, race_name, gender, class_id, class_name,
             active_spec_id, active_spec_name, guild_name, level,
@@ -987,23 +987,23 @@ func (ds *DatabaseService) insertPlayerDetailsTx(tx *sql.Tx, playerID int, summa
             player_details.equipped_item_level  IS NOT excluded.equipped_item_level OR
             player_details.avatar_url           IS NOT excluded.avatar_url
     `,
-        playerID,
-        summary.Race.ID,
-        summary.Race.Name,
-        summary.Gender.Type,
-        summary.CharacterClass.ID,
-        summary.CharacterClass.Name,
-        summary.ActiveSpec.ID,
-        summary.ActiveSpec.Name,
-        guildName,
-        summary.Level,
-        summary.AverageItemLevel,
-        summary.EquippedItemLevel,
-        avatarURL,
-        timestamp,
-    )
+		playerID,
+		summary.Race.ID,
+		summary.Race.Name,
+		summary.Gender.Type,
+		summary.CharacterClass.ID,
+		summary.CharacterClass.Name,
+		summary.ActiveSpec.ID,
+		summary.ActiveSpec.Name,
+		guildName,
+		summary.Level,
+		summary.AverageItemLevel,
+		summary.EquippedItemLevel,
+		avatarURL,
+		timestamp,
+	)
 
-    return err
+	return err
 }
 
 // insertPlayerEquipmentTx inserts player equipment data within a transaction
@@ -1014,40 +1014,40 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 
 	equipmentCount := 0
 
-    for _, item := range equipment.EquippedItems {
-        // Check latest snapshot for this slot; skip writing if unchanged
-        var prevID sql.NullInt64
-        var prevItemID sql.NullInt64
-        var prevUpgradeID sql.NullInt64
-        var prevQuality, prevName sql.NullString
-        if err := tx.QueryRow(
-            `SELECT id, item_id, upgrade_id, quality, item_name
+	for _, item := range equipment.EquippedItems {
+		// Check latest snapshot for this slot; skip writing if unchanged
+		var prevID sql.NullInt64
+		var prevItemID sql.NullInt64
+		var prevUpgradeID sql.NullInt64
+		var prevQuality, prevName sql.NullString
+		if err := tx.QueryRow(
+			`SELECT id, item_id, upgrade_id, quality, item_name
              FROM player_equipment
              WHERE player_id = ? AND slot_type = ?
              ORDER BY snapshot_timestamp DESC
              LIMIT 1`,
-            playerID, item.Slot.Type,
-        ).Scan(&prevID, &prevItemID, &prevUpgradeID, &prevQuality, &prevName); err != nil && err != sql.ErrNoRows {
-            return 0, fmt.Errorf("failed to query latest equipment: %w", err)
-        }
+			playerID, item.Slot.Type,
+		).Scan(&prevID, &prevItemID, &prevUpgradeID, &prevQuality, &prevName); err != nil && err != sql.ErrNoRows {
+			return 0, fmt.Errorf("failed to query latest equipment: %w", err)
+		}
 
-        unchanged := false
-        if prevID.Valid {
-            // Basics comparison
-            prevUpg := 0
-            if prevUpgradeID.Valid {
-                prevUpg = int(prevUpgradeID.Int64)
-            }
-            curUpg := 0
-            if item.UpgradeID != nil {
-                curUpg = *item.UpgradeID
-            }
-            sameBasics := prevItemID.Valid && int(prevItemID.Int64) == item.Item.ID && prevQuality.Valid && prevQuality.String == item.Quality.Type && prevName.Valid && prevName.String == item.Name && prevUpg == curUpg
+		unchanged := false
+		if prevID.Valid {
+			// Basics comparison
+			prevUpg := 0
+			if prevUpgradeID.Valid {
+				prevUpg = int(prevUpgradeID.Int64)
+			}
+			curUpg := 0
+			if item.UpgradeID != nil {
+				curUpg = *item.UpgradeID
+			}
+			sameBasics := prevItemID.Valid && int(prevItemID.Int64) == item.Item.ID && prevQuality.Valid && prevQuality.String == item.Quality.Type && prevName.Valid && prevName.String == item.Name && prevUpg == curUpg
 
-            if sameBasics {
-                // Compare enchantments as a canonical sorted signature
-                dbRows, qerr := tx.Query(
-                    `SELECT
+			if sameBasics {
+				// Compare enchantments as a canonical sorted signature
+				dbRows, qerr := tx.Query(
+					`SELECT
                         COALESCE(enchantment_id, -1) as eid,
                         COALESCE(source_item_id, -1) as sid,
                         COALESCE(slot_id, -1) as slotId,
@@ -1056,71 +1056,71 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
                         COALESCE(display_string, '') as disp
                      FROM player_equipment_enchantments
                      WHERE equipment_id = ?`, prevID.Int64)
-                if qerr != nil {
-                    return 0, fmt.Errorf("failed to load existing enchantments: %w", qerr)
-                }
-                var dbSigs []string
-                for dbRows.Next() {
-                    var eid, sid, slotId, spellId int
-                    var slotType, disp string
-                    if err := dbRows.Scan(&eid, &sid, &slotId, &slotType, &spellId, &disp); err != nil {
-                        dbRows.Close()
-                        return 0, fmt.Errorf("failed to scan enchantment: %w", err)
-                    }
-                    dbSigs = append(dbSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
-                }
-                dbRows.Close()
-                sort.Strings(dbSigs)
+				if qerr != nil {
+					return 0, fmt.Errorf("failed to load existing enchantments: %w", qerr)
+				}
+				var dbSigs []string
+				for dbRows.Next() {
+					var eid, sid, slotId, spellId int
+					var slotType, disp string
+					if err := dbRows.Scan(&eid, &sid, &slotId, &slotType, &spellId, &disp); err != nil {
+						dbRows.Close()
+						return 0, fmt.Errorf("failed to scan enchantment: %w", err)
+					}
+					dbSigs = append(dbSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
+				}
+				dbRows.Close()
+				sort.Strings(dbSigs)
 
-                var curSigs []string
-                for _, ench := range item.Enchantments {
-                    eid := -1
-                    if ench.EnchantmentID != nil {
-                        eid = *ench.EnchantmentID
-                    }
-                    sid := -1
-                    if ench.SourceItem != nil {
-                        sid = ench.SourceItem.ID
-                    }
-                    slotId := -1
-                    var slotType string
-                    if ench.EnchantmentSlot != nil {
-                        slotId = ench.EnchantmentSlot.ID
-                        slotType = ench.EnchantmentSlot.Type
-                    }
-                    spellId := -1
-                    if ench.Spell != nil {
-                        spellId = ench.Spell.Spell.ID
-                    }
-                    disp := ench.DisplayString
-                    curSigs = append(curSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
-                }
-                sort.Strings(curSigs)
+				var curSigs []string
+				for _, ench := range item.Enchantments {
+					eid := -1
+					if ench.EnchantmentID != nil {
+						eid = *ench.EnchantmentID
+					}
+					sid := -1
+					if ench.SourceItem != nil {
+						sid = ench.SourceItem.ID
+					}
+					slotId := -1
+					var slotType string
+					if ench.EnchantmentSlot != nil {
+						slotId = ench.EnchantmentSlot.ID
+						slotType = ench.EnchantmentSlot.Type
+					}
+					spellId := -1
+					if ench.Spell != nil {
+						spellId = ench.Spell.Spell.ID
+					}
+					disp := ench.DisplayString
+					curSigs = append(curSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
+				}
+				sort.Strings(curSigs)
 
-                if strings.Join(dbSigs, ";") == strings.Join(curSigs, ";") {
-                    unchanged = true
-                }
-            }
-        }
+				if strings.Join(dbSigs, ";") == strings.Join(curSigs, ";") {
+					unchanged = true
+				}
+			}
+		}
 
-        if unchanged {
-            continue // skip inserting a new snapshot for this slot
-        }
+		if unchanged {
+			continue // skip inserting a new snapshot for this slot
+		}
 
-        // insert equipment item
-        result, err := tx.Exec(`
+		// insert equipment item
+		result, err := tx.Exec(`
             INSERT INTO player_equipment (
                 player_id, slot_type, item_id, upgrade_id, quality, item_name, snapshot_timestamp
             ) VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
-            playerID,
-            item.Slot.Type,
-            item.Item.ID,
-            item.UpgradeID,
-            item.Quality.Type,
-            item.Name,
-            timestamp,
-        )
+			playerID,
+			item.Slot.Type,
+			item.Item.ID,
+			item.UpgradeID,
+			item.Quality.Type,
+			item.Name,
+			timestamp,
+		)
 
 		if err != nil {
 			return 0, fmt.Errorf("failed to insert equipment item: %w", err)
