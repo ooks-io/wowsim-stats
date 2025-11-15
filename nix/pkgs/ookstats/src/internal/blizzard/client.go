@@ -14,15 +14,15 @@ import (
 )
 
 type Client struct {
-    HTTPClient  *http.Client
-    Token       string
-    rateLimiter chan struct{} // semaphore for rate limiting
-    // Verbose controls extra per-request logging
-    Verbose bool
-    // metrics
-    reqCount       int64
-    notFoundCount  int64
-    totalLatencyMs int64
+	HTTPClient  *http.Client
+	Token       string
+	rateLimiter chan struct{} // semaphore for rate limiting
+	// Verbose controls extra per-request logging
+	Verbose bool
+	// metrics
+	reqCount       int64
+	notFoundCount  int64
+	totalLatencyMs int64
 }
 
 // FetchResult represents the result of a fetch operation
@@ -47,34 +47,34 @@ func NewClient() (*Client, error) {
 	// create rate limiter with 20 concurrent requests max
 	rateLimiter := make(chan struct{}, 20)
 
-    client := &Client{
-        HTTPClient: &http.Client{
-            Timeout:   15 * time.Second,
-            Transport: transport,
-        },
-        Token:       token,
-        rateLimiter: rateLimiter,
-    }
+	client := &Client{
+		HTTPClient: &http.Client{
+			Timeout:   15 * time.Second,
+			Transport: transport,
+		},
+		Token:       token,
+		rateLimiter: rateLimiter,
+	}
 
-    return client, nil
+	return client, nil
 }
 
 // SetConcurrency adjusts the maximum concurrent API requests.
 func (c *Client) SetConcurrency(n int) {
-    if n <= 0 {
-        n = 1
-    }
-    c.rateLimiter = make(chan struct{}, n)
+	if n <= 0 {
+		n = 1
+	}
+	c.rateLimiter = make(chan struct{}, n)
 }
 
 // SetTimeout updates the HTTP client timeout.
 func (c *Client) SetTimeout(d time.Duration) {
-    if d <= 0 {
-        return
-    }
-    if c.HTTPClient != nil {
-        c.HTTPClient.Timeout = d
-    }
+	if d <= 0 {
+		return
+	}
+	if c.HTTPClient != nil {
+		c.HTTPClient.Timeout = d
+	}
 }
 
 // FetchLeaderboardData fetches leaderboard data for a specific realm and dungeon with retries
@@ -91,20 +91,20 @@ func (c *Client) FetchLeaderboardData(realmInfo RealmInfo, dungeon DungeonInfo, 
 			fmt.Printf("    [RETRY %d/%d] Retrying after %v delay...\n", attempt+1, maxRetries, delay)
 		}
 
-        result, err := c.fetchLeaderboardDataOnce(realmInfo, dungeon, periodID)
-        if err == nil {
-            return result, nil
-        }
+		result, err := c.fetchLeaderboardDataOnce(realmInfo, dungeon, periodID)
+		if err == nil {
+			return result, nil
+		}
 
 		lastErr = err
 
-        // dont retry on certain errors (4xx client errors)
-        if strings.Contains(err.Error(), "status 4") {
-            if c.Verbose {
-                fmt.Printf("    [ERROR] Client error, not retrying: %v\n", err)
-            }
-            break
-        }
+		// dont retry on certain errors (4xx client errors)
+		if strings.Contains(err.Error(), "status 4") {
+			if c.Verbose {
+				fmt.Printf("    [ERROR] Client error, not retrying: %v\n", err)
+			}
+			break
+		}
 	}
 
 	return nil, fmt.Errorf("failed after %d attempts: %w", maxRetries, lastErr)
@@ -112,10 +112,10 @@ func (c *Client) FetchLeaderboardData(realmInfo RealmInfo, dungeon DungeonInfo, 
 
 // fetchLeaderboardDataOnce performs a single fetch attempt
 func (c *Client) fetchLeaderboardDataOnce(realmInfo RealmInfo, dungeon DungeonInfo, periodID string) (*LeaderboardResponse, error) {
-    // rate limiting - 50ms delay between requests
-    time.Sleep(50 * time.Millisecond)
+	// rate limiting - 50ms delay between requests
+	time.Sleep(50 * time.Millisecond)
 
-    start := time.Now()
+	start := time.Now()
 
 	region := realmInfo.Region
 	realmID := realmInfo.ID
@@ -141,44 +141,44 @@ func (c *Client) fetchLeaderboardDataOnce(realmInfo RealmInfo, dungeon DungeonIn
 	}
 	defer resp.Body.Close()
 
-    if resp.StatusCode != http.StatusOK {
-        bodyBytes, _ := io.ReadAll(resp.Body)
-        // metrics
-        atomic.AddInt64(&c.reqCount, 1)
-        if resp.StatusCode == http.StatusNotFound {
-            atomic.AddInt64(&c.notFoundCount, 1)
-        }
-        atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
-        if c.Verbose {
-            fmt.Printf("HTTP %d %-3s %-20s %-26s in %dms\n", resp.StatusCode, realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
-        }
-        return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
-    }
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		// metrics
+		atomic.AddInt64(&c.reqCount, 1)
+		if resp.StatusCode == http.StatusNotFound {
+			atomic.AddInt64(&c.notFoundCount, 1)
+		}
+		atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
+		if c.Verbose {
+			fmt.Printf("HTTP %d %-3s %-20s %-26s in %dms\n", resp.StatusCode, realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
+		}
+		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+	}
 
 	var leaderboard LeaderboardResponse
 	if err := json.NewDecoder(resp.Body).Decode(&leaderboard); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-    // successfully decoded
-    atomic.AddInt64(&c.reqCount, 1)
-    atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
-    if c.Verbose {
-        fmt.Printf("HTTP 200 %-3s %-20s %-26s in %dms\n", realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
-    }
-    return &leaderboard, nil
+	// successfully decoded
+	atomic.AddInt64(&c.reqCount, 1)
+	atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
+	if c.Verbose {
+		fmt.Printf("HTTP 200 %-3s %-20s %-26s in %dms\n", realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
+	}
+	return &leaderboard, nil
 }
 
 // Stats returns simple client-side metrics for diagnostics
 func (c *Client) Stats() (requests int64, notFound int64, avgLatencyMs float64) {
-    req := atomic.LoadInt64(&c.reqCount)
-    nf := atomic.LoadInt64(&c.notFoundCount)
-    tot := atomic.LoadInt64(&c.totalLatencyMs)
-    var avg float64
-    if req > 0 {
-        avg = float64(tot) / float64(req)
-    }
-    return req, nf, avg
+	req := atomic.LoadInt64(&c.reqCount)
+	nf := atomic.LoadInt64(&c.notFoundCount)
+	tot := atomic.LoadInt64(&c.totalLatencyMs)
+	var avg float64
+	if req > 0 {
+		avg = float64(tot) / float64(req)
+	}
+	return req, nf, avg
 }
 
 // FetchLeaderboardsConcurrent fetches multiple leaderboards concurrently

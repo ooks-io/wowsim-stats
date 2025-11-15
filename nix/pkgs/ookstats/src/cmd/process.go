@@ -27,7 +27,7 @@ var processAllCmd = &cobra.Command{
 			return fmt.Errorf("player processing failed: %w", err)
 		}
 
-		// step 2: process run rankings  
+		// step 2: process run rankings
 		fmt.Println("\n=== Step 2: Processing Run Rankings ===")
 		if err := processRankingsCmd.RunE(cmd, args); err != nil {
 			return fmt.Errorf("run ranking processing failed: %w", err)
@@ -46,30 +46,30 @@ var processRankingsCmd = &cobra.Command{
 	Use:   "rankings",
 	Short: "Compute run rankings",
 	Long:  `Compute global, regional, and realm rankings for all challenge mode runs.`,
-    RunE: func(cmd *cobra.Command, args []string) error {
-        db, err := database.Connect()
-        if err != nil {
-            return fmt.Errorf("failed to connect to database: %w", err)
-        }
-        defer db.Close()
+	RunE: func(cmd *cobra.Command, args []string) error {
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer db.Close()
 
-        fmt.Printf("Connected to database: %s\n", database.DBFilePath())
+		fmt.Printf("Connected to database: %s\n", database.DBFilePath())
 
-        verbose, _ := cmd.InheritedFlags().GetBool("verbose")
-        opts := pipeline.ProcessRunRankingsOptions{
-            Verbose: verbose,
-        }
+		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
+		opts := pipeline.ProcessRunRankingsOptions{
+			Verbose: verbose,
+		}
 
-        if err := pipeline.ProcessRunRankings(db, opts); err != nil {
-            return err
-        }
+		if err := pipeline.ProcessRunRankings(db, opts); err != nil {
+			return err
+		}
 
-        fmt.Printf("\nNext steps:\n")
-        fmt.Printf("  1. Run 'ookstats generate api --out web/public' to update JSON files\n")
-        fmt.Printf("  2. Build and deploy the website\n")
+		fmt.Printf("\nNext steps:\n")
+		fmt.Printf("  1. Run 'ookstats generate api --out web/public' to update JSON files\n")
+		fmt.Printf("  2. Build and deploy the website\n")
 
-        return nil
-    },
+		return nil
+	},
 }
 
 var processPlayersCmd = &cobra.Command{
@@ -83,7 +83,7 @@ var processPlayersCmd = &cobra.Command{
 		}
 		defer db.Close()
 
-        fmt.Printf("Connected to database: %s\n", database.DBFilePath())
+		fmt.Printf("Connected to database: %s\n", database.DBFilePath())
 
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
 		opts := pipeline.ProcessPlayersOptions{
@@ -120,7 +120,7 @@ var processProfilesCmd = &cobra.Command{
 		}
 		defer db.Close()
 
-        fmt.Printf("Connected to database: %s\n", database.DBFilePath())
+		fmt.Printf("Connected to database: %s\n", database.DBFilePath())
 
 		// check if we have eligible players
 		var eligibleCount int
