@@ -6,7 +6,7 @@ import PlayerHeader from "../components/PlayerProfile/PlayerHeader/PlayerHeader.
 import PlayerEquipment from "../components/PlayerProfile/PlayerEquipment/PlayerEquipment.astro";
 import PlayerBestRuns from "../components/PlayerProfile/PlayerBestRuns/PlayerBestRuns.astro";
 import PageLayout from "./PageLayout.astro";
-import type { PlayerProfileData } from "../lib/types";
+import type { PlayerProfileData, BestRun } from "../lib/types";
 import "../styles/global.scss";
 import "./PlayerProfileLayout.scss";
 
@@ -31,16 +31,39 @@ const pageTitle = `${playerName} - ${realmSlug} | Player Profile`;
 const player = playerData?.player;
 const equipment = playerData?.equipment || {};
 
+const requestedSeason =
+  typeof Astro.url?.searchParams?.get === "function"
+    ? Astro.url.searchParams.get("season")
+    : null;
+
 let currentSeasonId: string | null = null;
 let currentSeasonData = null;
+let seasonOptions: { id: string; label: string }[] = [];
+const seasonRunsMap: Record<string, Record<string, BestRun>> = {};
 
 if (player && player.seasons) {
   const seasonIds = Object.keys(player.seasons).sort(
     (a, b) => Number(b) - Number(a),
   );
+  seasonOptions = seasonIds.map((id) => ({
+    id,
+    label: `Season ${id}`,
+  }));
+
   if (seasonIds.length > 0) {
-    currentSeasonId = seasonIds[0];
-    currentSeasonData = player.seasons[currentSeasonId];
+    if (requestedSeason && seasonIds.includes(requestedSeason)) {
+      currentSeasonId = requestedSeason;
+    } else {
+      currentSeasonId = seasonIds[0];
+    }
+    currentSeasonData = currentSeasonId
+      ? player.seasons[currentSeasonId]
+      : null;
+  }
+
+  for (const seasonId of seasonIds) {
+    const data = player.seasons[seasonId];
+    seasonRunsMap[seasonId] = data?.best_runs || {};
   }
 }
 
@@ -96,6 +119,8 @@ const bestRuns = currentSeasonData?.best_runs || {};
                 playerRegion={player.region}
                 playerRealmSlug={player.realm_slug}
                 seasonId={currentSeasonId}
+                seasonOptions={seasonOptions}
+                seasonRuns={seasonRunsMap}
                 mode="full"
               />
             </>

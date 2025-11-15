@@ -2,11 +2,39 @@
 
 .player-best-runs {
   width: 100%;
+
+  .dungeon-cell {
+    display: inline-flex;
+    align-items: center;
+
+    .dungeon-icon {
+      margin-right: 0.4rem;
+    }
+  }
+
+  .best-runs-controls {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    .filter-group {
+      margin-bottom: 0;
+    }
+  }
+
+  .best-runs-season {
+    &[data-active="false"] {
+      display: none;
+    }
+  }
 }
 
 // Mobile layout
 @media (max-width: 1024px) {
   .player-best-runs {
+
     .table-container[data-mode="best-runs"] {
       .table-row {
         display: grid;
