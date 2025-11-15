@@ -26,8 +26,7 @@ const pathSegments = Astro.url.pathname.split("/").filter(Boolean);
 const seasonIdx = pathSegments.findIndex((segment) =>
   /^season\d+$/i.test(segment),
 );
-const slugParts =
-  seasonIdx >= 0 ? pathSegments.slice(seasonIdx + 1) : [];
+const slugParts = seasonIdx >= 0 ? pathSegments.slice(seasonIdx + 1) : [];
 
 // defaults
 let regionParam = "global";

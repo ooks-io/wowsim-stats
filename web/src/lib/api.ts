@@ -115,11 +115,32 @@ export async function fetchLeaderboard(
   seasonId: number = 1,
 ): Promise<LeaderboardData> {
   if (region === "global") {
-    return fetchGlobalLeaderboard(dungeonId, page, teamFilter, origin, seasonId);
+    return fetchGlobalLeaderboard(
+      dungeonId,
+      page,
+      teamFilter,
+      origin,
+      seasonId,
+    );
   } else if (realm === "all") {
-    return fetchRegionalLeaderboard(region, dungeonId, page, teamFilter, origin, seasonId);
+    return fetchRegionalLeaderboard(
+      region,
+      dungeonId,
+      page,
+      teamFilter,
+      origin,
+      seasonId,
+    );
   } else {
-    return fetchRealmLeaderboard(region, realm, dungeonId, page, teamFilter, origin, seasonId);
+    return fetchRealmLeaderboard(
+      region,
+      realm,
+      dungeonId,
+      page,
+      teamFilter,
+      origin,
+      seasonId,
+    );
   }
 }
 

@@ -472,7 +472,9 @@
   border: 1px solid var(--border-color);
   border-radius: $radius-sm;
   font-size: $font-size-md;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:focus {
     outline: none;
@@ -518,7 +520,9 @@
   min-width: 140px;
   font-size: 0.95em;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   &:hover {
     border-color: var(--text-secondary);
@@ -547,7 +551,10 @@
   border: 1px solid transparent;
   font-weight: $font-weight-semibold;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
   text-decoration: none;
 }
 

@@ -18,7 +18,12 @@ let error: string | null = null;
 if (region && realmSlug && playerName) {
   try {
     const origin = Astro.url?.origin || Astro.site || "";
-    playerData = await fetchPlayerProfile(region, realmSlug, playerName, origin);
+    playerData = await fetchPlayerProfile(
+      region,
+      realmSlug,
+      playerName,
+      origin,
+    );
   } catch (err: any) {
     console.error("[PlayerPage] Error fetching player data:", err);
     error = err.message || "Failed to load player data";

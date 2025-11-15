@@ -53,7 +53,12 @@ export function renderRankingsChartHTML(
           ? it.stdev
           : it.value;
   const max = Math.max(...items.map(metric), 0);
-  const min = String(sortBy) === "dps" || String(sortBy) === "max" || String(sortBy) === "min" ? 0 : Math.min(...items.map(metric), max);
+  const min =
+    String(sortBy) === "dps" ||
+    String(sortBy) === "max" ||
+    String(sortBy) === "min"
+      ? 0
+      : Math.min(...items.map(metric), max);
 
   const bars = items
     .map((it, idx) => {
@@ -170,14 +175,20 @@ export function renderComparisonChartHTML(
     String(effectiveSort) === "percent"
       ? (it.percent ?? 0)
       : String(effectiveSort) === "max"
-        ? (it as any).maxIncrease ?? 0
+        ? ((it as any).maxIncrease ?? 0)
         : String(effectiveSort) === "min"
-          ? (it as any).minIncrease ?? 0
+          ? ((it as any).minIncrease ?? 0)
           : String(effectiveSort) === "stdev"
             ? it.stdev
-            : (it as any).dpsIncrease ?? 0;
+            : ((it as any).dpsIncrease ?? 0);
   const max = Math.max(...items.map(metric), 0);
-  const min = String(effectiveSort) === "percent" || String(effectiveSort) === "dps" || String(effectiveSort) === "max" || String(effectiveSort) === "min" ? 0 : Math.min(...items.map(metric), max);
+  const min =
+    String(effectiveSort) === "percent" ||
+    String(effectiveSort) === "dps" ||
+    String(effectiveSort) === "max" ||
+    String(effectiveSort) === "min"
+      ? 0
+      : Math.min(...items.map(metric), max);
 
   const bars = items
     .map((it, idx) => {
