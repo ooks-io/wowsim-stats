@@ -94,6 +94,14 @@
   font-size: 1.1em;
 }
 
+.table-cell[data-label="Time"] {
+  font-weight: bold;
+}
+
+.table-cell[data-label="Date"] {
+  color: var(--text-secondary);
+}
+
 // Responsive
 @media (max-width: 920px) {
   .table-container[data-mode="status"] {
