@@ -7,6 +7,7 @@ import DungeonFilterSelect from "../../../components/Leaderboard/DungeonFilterSe
 import LeaderboardScopeFilter from "../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
 import LeaderboardTypeNav from "../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
 import PlayerSearch from "../../../components/PlayerSearch/PlayerSearch.astro";
+import type { LeaderboardData } from "../../../lib/types";
 import {
   DUNGEON_MAP,
   dungeonNameToSlug,
@@ -75,8 +76,21 @@ if (regionParam === "global") {
   scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
 }
 
-// Fetch leaderboard data
-let data;
+// Fetch leaderboard data with graceful fallback when API file is missing
+const emptyLeaderboardData: LeaderboardData = {
+  leading_groups: [],
+  pagination: {
+    currentPage: currentPage,
+    pageSize: 25,
+    totalPages: 1,
+    hasNextPage: false,
+    hasPrevPage: currentPage > 1,
+    totalRuns: 0,
+  },
+};
+
+let data: LeaderboardData = emptyLeaderboardData;
+
 try {
   data = await fetchLeaderboard(
     regionParam,
@@ -89,7 +103,6 @@ try {
   );
 } catch (error) {
   console.error("[Test Leaderboard] Error:", error);
-  throw error;
 }
 ---
 
