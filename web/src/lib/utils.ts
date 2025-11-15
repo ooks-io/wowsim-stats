@@ -182,16 +182,23 @@ export function buildPlayerProfileURL(
 // Build Players tab URL path from filters
 export function buildPlayersLeaderboardURL(
   scope: "global" | "regional" | "realm",
-  opts?: { region?: string; realmSlug?: string; classKey?: string; page?: number },
+  opts?: {
+    region?: string;
+    realmSlug?: string;
+    classKey?: string;
+    page?: number;
+  },
 ): string {
   const cls = (opts?.classKey || "").toLowerCase();
   const reg = (opts?.region || "").toLowerCase();
   const realm = (opts?.realmSlug || "").toLowerCase();
   let path = "/challenge-mode/players";
   if (scope === "global") {
-    if (cls) path += `/global/${cls}`; else path += `/global`;
+    if (cls) path += `/global/${cls}`;
+    else path += `/global`;
   } else if (scope === "regional") {
-    if (reg) path += `/${reg}`; else path += `/us`;
+    if (reg) path += `/${reg}`;
+    else path += `/us`;
     if (cls) path += `/${cls}`;
   } else if (scope === "realm") {
     if (reg) path += `/${reg}`;
@@ -383,7 +390,9 @@ export function filterByRegion<T extends { region?: string }>(
 ): T[] {
   if (!region) return items;
   const normalized = region.toLowerCase();
-  return items.filter((item) => (item.region || "").toLowerCase() === normalized);
+  return items.filter(
+    (item) => (item.region || "").toLowerCase() === normalized,
+  );
 }
 
 export function safeArray<T>(value: any): T[] {

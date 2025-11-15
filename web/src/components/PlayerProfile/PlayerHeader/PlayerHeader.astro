@@ -2,7 +2,10 @@
 import { formatDurationMMSS } from "../../../lib/utils";
 import { formatRankingWithBracket } from "../../../lib/ranking-utils";
 import { getClassTextClass } from "../../../lib/wow-constants";
-import { getEffectiveRealmSlug, getRealmDisplayName } from "../../../lib/realms";
+import {
+  getEffectiveRealmSlug,
+  getRealmDisplayName,
+} from "../../../lib/realms";
 import "./PlayerHeader.scss";
 
 interface SeasonData {
@@ -80,7 +83,9 @@ const avatarUrl = player.avatar_url
   </div>
 
   <div class="player-info-column">
-    <h1 class={`player-name ${getClassTextClass(player.class_name || "common")}`}>
+    <h1
+      class={`player-name ${getClassTextClass(player.class_name || "common")}`}
+    >
       {player.name}
     </h1>
     {
@@ -136,7 +141,9 @@ const avatarUrl = player.avatar_url
   </div>
 
   <div class="ranking-column">
-    <div class="stat-label">{leaderboardRealmLabel || player.realm_name || player.realm_slug} Rank</div>
+    <div class="stat-label">
+      {leaderboardRealmLabel || player.realm_name || player.realm_slug} Rank
+    </div>
     <div
       class="stat-value"
       set:html={formatRankingWithBracket(

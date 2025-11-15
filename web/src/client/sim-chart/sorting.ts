@@ -1,6 +1,11 @@
 export type SortBy = "dps" | "max" | "min" | "stdev" | "percent" | string;
 
-export function calculateBarWidth(value: number, max: number, min: number, sortBy?: SortBy) {
+export function calculateBarWidth(
+  value: number,
+  max: number,
+  min: number,
+  sortBy?: SortBy,
+) {
   const valueRange = max - min;
   if (valueRange <= 0) return 100;
   return ((value - min) / valueRange) * 100;

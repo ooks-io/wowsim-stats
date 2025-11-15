@@ -37,7 +37,9 @@ export function getBracketClass(bracket: string | null | undefined): string {
 
 // Check if bracket is high tier (excellent, legendary or artifact)
 export function isHighTierBracket(bracket: string | null | undefined): boolean {
-  return bracket === "artifact" || bracket === "excellent" || bracket === "legendary";
+  return (
+    bracket === "artifact" || bracket === "excellent" || bracket === "legendary"
+  );
 }
 
 // Get bracket rank priority (lower number = higher priority)
