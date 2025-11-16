@@ -69,13 +69,13 @@ var investigatePeriodsCmd = &cobra.Command{
 
 		// Track unique runs by completed timestamp + team members
 		type runSignature struct {
-			timestamp     int64
-			duration      int
-			level         int
-			teamSignature string // sorted player IDs to identify unique teams
+			timestamp    int64
+			duration     int
+			level        int
+			teamSignature string  // sorted player IDs to identify unique teams
 		}
 		allRuns := make(map[runSignature][]int) // signature -> list of periods it appeared in
-		periodRunCounts := make(map[int]int)    // period -> run count
+		periodRunCounts := make(map[int]int)     // period -> run count
 
 		// Fetch each period
 		for period := startPeriod; period <= endPeriod; period++ {
@@ -116,9 +116,9 @@ var investigatePeriodsCmd = &cobra.Command{
 				teamSig := fmt.Sprintf("%v", playerIDs)
 
 				sig := runSignature{
-					timestamp:     run.CompletedTimestamp,
-					duration:      run.Duration,
-					level:         run.KeystoneLevel,
+					timestamp:    run.CompletedTimestamp,
+					duration:     run.Duration,
+					level:        run.KeystoneLevel,
 					teamSignature: teamSig,
 				}
 				allRuns[sig] = append(allRuns[sig], period)

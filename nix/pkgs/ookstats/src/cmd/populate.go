@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"os"
-	"strings"
+    "database/sql"
+    "encoding/json"
+    "fmt"
+    "os"
+    "strings"
 
-	"github.com/spf13/cobra"
-	"ookstats/internal/database"
+    "github.com/spf13/cobra"
+    "ookstats/internal/database"
 )
 
 var populateCmd = &cobra.Command{
@@ -24,19 +24,19 @@ var populateItemsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Println("=== Item Population ===")
 
-		wowsimsDBPath, _ := cmd.Flags().GetString("wowsims-db")
+    wowsimsDBPath, _ := cmd.Flags().GetString("wowsims-db")
 
-		db, err := database.Connect()
+    db, err := database.Connect()
 		if err != nil {
 			return fmt.Errorf("failed to connect to database: %w", err)
 		}
 		defer db.Close()
 
-		fmt.Printf("Connected to database: %s\n", database.DBFilePath())
+    fmt.Printf("Connected to database: %s\n", database.DBFilePath())
 
-		if err := populateItems(db, wowsimsDBPath); err != nil {
-			return fmt.Errorf("failed to populate items: %w", err)
-		}
+    if err := populateItems(db, wowsimsDBPath); err != nil {
+        return fmt.Errorf("failed to populate items: %w", err)
+    }
 
 		fmt.Printf("Item population complete!\n")
 		return nil
@@ -82,35 +82,35 @@ type WowSimsEnchant struct {
 }
 
 func populateItems(db *sql.DB, wowsimsDBPath string) error {
-	var wowsimsDB WowSimsDatabase
+    var wowsimsDB WowSimsDatabase
 
-	if strings.TrimSpace(wowsimsDBPath) == "" {
-		// Try environment-provided path via Nix wrapper
-		if envPath := strings.TrimSpace(os.Getenv("OOKSTATS_WOWSIMS_DB")); envPath != "" {
-			fmt.Printf("Loading items from OOKSTATS_WOWSIMS_DB=%s\n", envPath)
-			file, err := os.Open(envPath)
-			if err != nil {
-				return fmt.Errorf("failed to open WoW Sims database file: %w", err)
-			}
-			defer file.Close()
-			if err := json.NewDecoder(file).Decode(&wowsimsDB); err != nil {
-				return fmt.Errorf("failed to parse WoW Sims database: %w", err)
-			}
-		} else {
-			return fmt.Errorf("no items DB provided; set OOKSTATS_WOWSIMS_DB or use --wowsims-db")
-		}
-	} else {
-		fmt.Printf("Loading items from %s\n", wowsimsDBPath)
-		// load WoWSims database JSON from file
-		file, err := os.Open(wowsimsDBPath)
-		if err != nil {
-			return fmt.Errorf("failed to open WoW Sims database file: %w", err)
-		}
-		defer file.Close()
-		if err := json.NewDecoder(file).Decode(&wowsimsDB); err != nil {
-			return fmt.Errorf("failed to parse WoW Sims database: %w", err)
-		}
-	}
+    if strings.TrimSpace(wowsimsDBPath) == "" {
+        // Try environment-provided path via Nix wrapper
+        if envPath := strings.TrimSpace(os.Getenv("OOKSTATS_WOWSIMS_DB")); envPath != "" {
+            fmt.Printf("Loading items from OOKSTATS_WOWSIMS_DB=%s\n", envPath)
+            file, err := os.Open(envPath)
+            if err != nil {
+                return fmt.Errorf("failed to open WoW Sims database file: %w", err)
+            }
+            defer file.Close()
+            if err := json.NewDecoder(file).Decode(&wowsimsDB); err != nil {
+                return fmt.Errorf("failed to parse WoW Sims database: %w", err)
+            }
+        } else {
+            return fmt.Errorf("no items DB provided; set OOKSTATS_WOWSIMS_DB or use --wowsims-db")
+        }
+    } else {
+        fmt.Printf("Loading items from %s\n", wowsimsDBPath)
+        // load WoWSims database JSON from file
+        file, err := os.Open(wowsimsDBPath)
+        if err != nil {
+            return fmt.Errorf("failed to open WoW Sims database file: %w", err)
+        }
+        defer file.Close()
+        if err := json.NewDecoder(file).Decode(&wowsimsDB); err != nil {
+            return fmt.Errorf("failed to parse WoW Sims database: %w", err)
+        }
+    }
 
 	fmt.Printf("Found %d items, %d gems, %d enchants\n",
 		len(wowsimsDB.Items), len(wowsimsDB.Gems), len(wowsimsDB.Enchants))
@@ -217,7 +217,7 @@ func populateItems(db *sql.DB, wowsimsDBPath string) error {
 		return fmt.Errorf("failed to commit items: %w", err)
 	}
 
-	fmt.Printf("[OK] Successfully inserted %d items\n", insertCount)
+fmt.Printf("[OK] Successfully inserted %d items\n", insertCount)
 	return nil
 }
 

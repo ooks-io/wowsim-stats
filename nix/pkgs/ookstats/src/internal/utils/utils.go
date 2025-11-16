@@ -69,3 +69,4 @@ func CalculatePercentileBracket(ranking int, totalCount int) string {
 		return "common"
 	}
 }
+

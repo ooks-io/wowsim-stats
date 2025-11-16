@@ -292,3 +292,4 @@ type SeasonDetailResponse struct {
 		ID int `json:"id"`
 	} `json:"periods"`
 }
+
