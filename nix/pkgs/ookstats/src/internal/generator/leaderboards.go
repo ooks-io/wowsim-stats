@@ -31,15 +31,15 @@ type LeaderboardPageJSON struct {
 
 // LeaderboardRowJSON represents a run in the leaderboard
 type LeaderboardRowJSON struct {
-	ID                 int64                   `json:"id"`
-	Duration           int64                   `json:"duration"`
-	CompletedTimestamp int64                   `json:"completed_timestamp"`
-	KeystoneLevel      int                     `json:"keystone_level"`
-	DungeonName        string                  `json:"dungeon_name"`
-	RealmName          string                  `json:"realm_name"`
-	Region             string                  `json:"region"`
-	RankingPercentile  string                  `json:"ranking_percentile,omitempty"`
-	Members            []LeaderboardMemberJSON `json:"members"`
+	ID                  int64                   `json:"id"`
+	Duration            int64                   `json:"duration"`
+	CompletedTimestamp  int64                   `json:"completed_timestamp"`
+	KeystoneLevel       int                     `json:"keystone_level"`
+	DungeonName         string                  `json:"dungeon_name"`
+	RealmName           string                  `json:"realm_name"`
+	Region              string                  `json:"region"`
+	RankingPercentile   string                  `json:"ranking_percentile,omitempty"`
+	Members             []LeaderboardMemberJSON `json:"members"`
 }
 
 // LeaderboardMemberJSON represents a team member in a leaderboard row

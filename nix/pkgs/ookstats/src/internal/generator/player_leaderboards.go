@@ -3,12 +3,10 @@ package generator
 import (
 	"database/sql"
 	"fmt"
-	"ookstats/internal/realms"
 	"ookstats/internal/wow"
 	"ookstats/internal/writer"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 )
@@ -100,7 +98,7 @@ func generateGlobalPlayerLeaderboard(db *sql.DB, out string, pageSize int, seaso
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.global_ranking ASC, p.name ASC
+			ORDER BY pp.combined_best_time ASC, p.name ASC
 			LIMIT ? OFFSET ?
 		`, seasonID, pageSize, offset)
 		if err != nil {
@@ -151,7 +149,7 @@ func generateRegionalPlayerLeaderboard(db *sql.DB, out, region string, pageSize 
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.regional_ranking ASC, p.name ASC
+			ORDER BY pp.combined_best_time ASC, p.name ASC
 			LIMIT ? OFFSET ?
 		`, seasonID, region, pageSize, offset)
 		if err != nil {
@@ -180,31 +178,17 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 	}
 	defer rrows.Close()
 
-	parentSet := make(map[string]struct{})
+	var slugs []string
 	for rrows.Next() {
-		var slug string
-		if err := rrows.Scan(&slug); err != nil {
+		var s string
+		if err := rrows.Scan(&s); err != nil {
 			return err
 		}
-		parent := realms.EffectiveSlug(region, slug)
-		if parent == "" {
-			parent = slug
-		}
-		parentSet[parent] = struct{}{}
+		slugs = append(slugs, s)
 	}
 
-	var parents []string
-	for slug := range parentSet {
-		parents = append(parents, slug)
-	}
-	if len(parents) == 0 {
-		return nil
-	}
-	// keep deterministic order
-	sort.Strings(parents)
-
-	for _, parentSlug := range parents {
-		dir := filepath.Join(out, "players", "realm", region, parentSlug)
+	for _, rslug := range slugs {
+		dir := filepath.Join(out, "players", "realm", region, rslug)
 		if err := os.MkdirAll(dir, 0o755); err != nil {
 			return err
 		}
@@ -213,11 +197,10 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 		if err := db.QueryRow(`
 			SELECT COUNT(*)
 			FROM players p
+			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
-			JOIN realms parent ON pp.realm_id = parent.id
-			WHERE pp.season_id = ? AND parent.region = ? AND parent.slug = ?
-			  AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-		`, seasonID, region, parentSlug).Scan(&total); err != nil {
+			WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+		`, seasonID, region, rslug).Scan(&total); err != nil {
 			return fmt.Errorf("players total (realm, season %d): %w", seasonID, err)
 		}
 
@@ -226,19 +209,17 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 			offset := (p - 1) * pageSize
 			rows, err := db.Query(`
 				SELECT p.id, p.name, r.slug, r.name, r.region,
-				       COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-				       pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				       COALESCE(pp.realm_ranking_bracket, '')
+					   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+					   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+					   COALESCE(pp.realm_ranking_bracket, '')
 				FROM players p
-				JOIN player_profiles pp ON p.id = pp.player_id
 				JOIN realms r ON p.realm_id = r.id
-				JOIN realms parent ON pp.realm_id = parent.id
+				JOIN player_profiles pp ON p.id = pp.player_id
 				LEFT JOIN player_details pd ON p.id = pd.player_id
-				WHERE pp.season_id = ? AND parent.region = ? AND parent.slug = ?
-				  AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-				ORDER BY pp.realm_ranking ASC, p.name ASC
+				WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+				ORDER BY pp.combined_best_time ASC, p.name ASC
 				LIMIT ? OFFSET ?
-			`, seasonID, region, parentSlug, pageSize, offset)
+			`, seasonID, region, rslug, pageSize, offset)
 			if err != nil {
 				return err
 			}
@@ -248,15 +229,13 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 				return err
 			}
 
-			title := strings.ToUpper(region) + "/" + parentSlug + " Player Rankings"
-
+			title := strings.ToUpper(region) + "/" + rslug + " Player Rankings"
 			page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
 			if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 				return err
 			}
 		}
 	}
-
 	return nil
 }
 
@@ -290,18 +269,8 @@ func generateClassPlayerLeaderboards(db *sql.DB, out, classKey string, pageSize 
 		}
 		rrows.Close()
 
-		seenParents := make(map[string]struct{})
 		for _, rslug := range slugs {
-			parentSlug := realms.EffectiveSlug(reg, rslug)
-			if parentSlug == "" {
-				parentSlug = rslug
-			}
-			if _, exists := seenParents[parentSlug]; exists {
-				continue
-			}
-			seenParents[parentSlug] = struct{}{}
-
-			if err := generateClassScope(db, out, "realm", reg, parentSlug, classKey, pageSize, seasonID); err != nil {
+			if err := generateClassScope(db, out, "realm", reg, rslug, classKey, pageSize, seasonID); err != nil {
 				return err
 			}
 		}
@@ -317,12 +286,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 	} else if scope == "regional" {
 		dir = filepath.Join(out, "players", "class", classKey, "regional", region)
 	} else {
-		effectiveSlug := realms.EffectiveSlug(region, realmSlug)
-		if effectiveSlug == "" {
-			effectiveSlug = realmSlug
-		}
-		realmSlug = effectiveSlug
-		dir = filepath.Join(out, "players", "class", classKey, "realm", region, effectiveSlug)
+		dir = filepath.Join(out, "players", "class", classKey, "realm", region, realmSlug)
 	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
@@ -331,49 +295,51 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 	// Fetch ALL players for this season, then filter by class in Go (to handle fallback logic)
 	var rows *sql.Rows
 	var err error
+	var bracketColumn string
 	if scope == "global" {
+		bracketColumn = "pp.global_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
-			       COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-			       pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-			       COALESCE(pp.global_ranking_bracket, '')
+				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+				   COALESCE(pp.global_ranking_bracket, '')
 			FROM players p
-			JOIN player_profiles pp ON p.id = pp.player_id
 			JOIN realms r ON p.realm_id = r.id
+			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.global_ranking ASC, p.name ASC
+			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID)
 	} else if scope == "regional" {
+		bracketColumn = "pp.regional_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
-			       COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-			       pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-			       COALESCE(pp.regional_ranking_bracket, '')
+				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+				   COALESCE(pp.regional_ranking_bracket, '')
 			FROM players p
-			JOIN player_profiles pp ON p.id = pp.player_id
 			JOIN realms r ON p.realm_id = r.id
+			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.regional_ranking ASC, p.name ASC
+			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID, region)
 	} else {
+		bracketColumn = "pp.realm_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
-			       COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-			       pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-			       COALESCE(pp.realm_ranking_bracket, '')
+				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+				   COALESCE(pp.realm_ranking_bracket, '')
 			FROM players p
-			JOIN player_profiles pp ON p.id = pp.player_id
 			JOIN realms r ON p.realm_id = r.id
-			JOIN realms parent ON pp.realm_id = parent.id
+			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
-			WHERE pp.season_id = ? AND parent.region = ? AND parent.slug = ?
-			  AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.realm_ranking ASC, p.name ASC
+			WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID, region, realmSlug)
 	}
-
+	_ = bracketColumn // unused for now, but documents intent
 	if err != nil {
 		return err
 	}
@@ -543,13 +509,4 @@ func buildPlayerLeaderboardPage(leaderboard []map[string]any, title string, tota
 			"totalRuns":    total, // keep compatibility with frontend
 		},
 	}
-}
-
-// applyPercentileBrackets is left in place for compatibility with older builds that expect
-// client-side recalculation. The new pipeline already emits normalized brackets, so this
-// helper is effectively a no-op; it simply preserves any existing value on the entry.
-func applyPercentileBrackets(entries []map[string]any, offset int, total int) {
-	_ = offset
-	_ = total
-	// nothing to do; the database is already normalized
 }

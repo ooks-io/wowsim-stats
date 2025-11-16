@@ -48,14 +48,31 @@ func LoadAllBestRuns(db *sql.DB, playerIDs []int64) (map[int64][]BestRunData, []
 	}
 
 	query := fmt.Sprintf(`
+        WITH realm_rankings AS (
+            SELECT cr.id as run_id, cr.dungeon_id, cr.realm_id,
+                   ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, cr.realm_id ORDER BY cr.duration ASC, cr.completed_timestamp ASC, cr.id ASC) as realm_ranking,
+                   COUNT(*) OVER (PARTITION BY cr.dungeon_id, cr.realm_id) as total_in_realm_dungeon
+            FROM challenge_runs cr
+        )
         SELECT pbr.player_id, pbr.dungeon_id, d.name, d.slug, pbr.run_id, pbr.duration, pbr.completed_timestamp,
                pbr.season_id,
                rr_global_filtered.ranking as global_ranking_filtered,
                rr_regional_filtered.ranking as regional_ranking_filtered,
-               rr_realm_filtered.ranking as realm_ranking_filtered,
+               realm_rankings.realm_ranking as realm_ranking_filtered,
                COALESCE(rr_global_filtered.percentile_bracket, '') as global_percentile_bracket,
                COALESCE(rr_regional_filtered.percentile_bracket, '') as regional_percentile_bracket,
-               COALESCE(rr_realm_filtered.percentile_bracket, '') as realm_percentile_bracket
+               CASE
+                   WHEN realm_rankings.realm_ranking = 1 THEN 'artifact'
+                   ELSE
+                       CASE
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+                           WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
+                           ELSE 'common'
+                       END
+               END as realm_percentile_bracket
         FROM player_best_runs pbr
         JOIN dungeons d ON pbr.dungeon_id = d.id
         JOIN players p ON pbr.player_id = p.id
@@ -66,9 +83,8 @@ func LoadAllBestRuns(db *sql.DB, playerIDs []int64) (map[int64][]BestRunData, []
         LEFT JOIN run_rankings rr_regional_filtered ON pbr.run_id = rr_regional_filtered.run_id
             AND rr_regional_filtered.ranking_type = 'regional' AND rr_regional_filtered.ranking_scope = r.region || '_filtered'
             AND rr_regional_filtered.season_id = pbr.season_id
-        LEFT JOIN run_rankings rr_realm_filtered ON pbr.run_id = rr_realm_filtered.run_id
-            AND rr_realm_filtered.ranking_type = 'realm' AND rr_realm_filtered.ranking_scope = 'filtered'
-            AND rr_realm_filtered.season_id = pbr.season_id
+        LEFT JOIN realm_rankings ON pbr.run_id = realm_rankings.run_id
+            AND pbr.dungeon_id = realm_rankings.dungeon_id AND r.id = realm_rankings.realm_id
         WHERE pbr.player_id IN (%s)
         ORDER BY pbr.player_id, pbr.season_id, d.name
     `, strings.Join(placeholders, ","))
@@ -170,15 +186,15 @@ type LeaderboardMember struct {
 
 // LeaderboardRow represents a canonical run for leaderboards
 type LeaderboardRow struct {
-	ID                 int64
-	Duration           int64
-	CompletedTimestamp int64
-	KeystoneLevel      int
-	DungeonName        string
-	RealmName          string
-	Region             string
-	RankingPercentile  string // percentile bracket based on scope
-	Members            []LeaderboardMember
+	ID                  int64
+	Duration            int64
+	CompletedTimestamp  int64
+	KeystoneLevel       int
+	DungeonName         string
+	RealmName           string
+	Region              string
+	RankingPercentile   string // percentile bracket based on scope
+	Members             []LeaderboardMember
 }
 
 // LoadCanonicalRuns returns one canonical run per team_signature, ordered, with members
@@ -241,9 +257,9 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
 		rankingType = "regional"
 		rankingScope = region + "_filtered"
 	} else {
-		// Realm leaderboard
+		// Realm leaderboard - compute on the fly
 		rankingType = "realm"
-		rankingScope = "filtered"
+		rankingScope = ""
 	}
 
 	// Load rows
@@ -254,7 +270,48 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
 		iargs[i] = id
 	}
 
-	rQuery := fmt.Sprintf(`
+	var rQuery string
+	if rankingType == "realm" {
+		// For realm scope, compute percentile on the fly
+		// We need to rank ALL runs for the realm/dungeon, not just the page subset
+		rQuery = fmt.Sprintf(`
+      WITH realm_rankings AS (
+        SELECT cr.id as run_id,
+               cr.dungeon_id,
+               cr.realm_id,
+               ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, cr.realm_id ORDER BY cr.duration ASC, cr.completed_timestamp ASC, cr.id ASC) as realm_ranking,
+               COUNT(*) OVER (PARTITION BY cr.dungeon_id, cr.realm_id) as total_in_realm_dungeon
+        FROM challenge_runs cr
+        LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+        WHERE COALESCE(ps.season_id, 1) = ?
+      )
+      SELECT cr.id, cr.duration, cr.completed_timestamp, cr.keystone_level,
+             d.name, rr.name, rr.region,
+             CASE
+               WHEN realm_rankings.realm_ranking = 1 THEN 'artifact'
+               ELSE
+                 CASE
+                   WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+                   WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+                   WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'
+                   WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+                   WHEN (CAST(realm_rankings.realm_ranking AS REAL) / CAST(realm_rankings.total_in_realm_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
+                   ELSE 'common'
+                 END
+             END as percentile_bracket
+      FROM challenge_runs cr
+      JOIN dungeons d ON cr.dungeon_id = d.id
+      JOIN realms rr ON cr.realm_id = rr.id
+      LEFT JOIN realm_rankings ON cr.id = realm_rankings.run_id
+        AND cr.dungeon_id = realm_rankings.dungeon_id
+        AND cr.realm_id = realm_rankings.realm_id
+      WHERE cr.id IN (%s)
+    `, strings.Join(placeholders, ","))
+		// Prepend seasonID for the CTE
+		iargs = append([]any{seasonID}, iargs...)
+	} else {
+		// For global/regional, use pre-computed rankings
+		rQuery = fmt.Sprintf(`
       SELECT cr.id, cr.duration, cr.completed_timestamp, cr.keystone_level,
              d.name, rr.name, rr.region,
              COALESCE(run_rankings.percentile_bracket, '') as percentile_bracket
@@ -267,8 +324,9 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
         AND run_rankings.season_id = ?
       WHERE cr.id IN (%s)
     `, strings.Join(placeholders, ","))
-	// Prepend ranking parameters
-	iargs = append([]any{rankingType, rankingScope, seasonID}, iargs...)
+		// Prepend ranking parameters
+		iargs = append([]any{rankingType, rankingScope, seasonID}, iargs...)
+	}
 
 	rrows, err := db.Query(rQuery, iargs...)
 	if err != nil {
