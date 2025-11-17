@@ -113,13 +113,19 @@ func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
 		return fmt.Errorf("failed to compute regional rankings: %w", err)
 	}
 
+	// step 3: compute realm run rankings (pool-based for connected realms)
+	fmt.Println("\n3. Computing realm run rankings (pool-based)...")
+	if err := computeRealmRankings(tx); err != nil {
+		return fmt.Errorf("failed to compute realm rankings: %w", err)
+	}
+
 	// commit all changes
 	if err := tx.Commit(); err != nil {
 		return fmt.Errorf("failed to commit run rankings: %w", err)
 	}
 
 	// optimize database
-	fmt.Println("\n3. Optimizing database...")
+	fmt.Println("\n4. Optimizing database...")
 	if _, err := db.Exec("VACUUM"); err != nil {
 		fmt.Printf("Warning: database optimization failed: %v\n", err)
 	}
@@ -156,7 +162,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			cr.dungeon_id,
 			cr.id as run_id,
 			cr.duration,
-			COALESCE(ps.season_id, 1) as season_id,
+			COALESCE(s_agg.season_number, 1) as season_id,
 			cr.completed_timestamp,
 			rr_gf.ranking as global_ranking_filtered,
 			rr_rf.ranking as regional_ranking_filtered,
@@ -166,31 +172,41 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			rr_lf.percentile_bracket as realm_percentile_bracket
 		FROM run_members rm
 		INNER JOIN challenge_runs cr ON rm.run_id = cr.id
-		LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+		LEFT JOIN (
+			SELECT ps.period_id, MIN(s.season_number) as season_number
+			FROM period_seasons ps
+			JOIN seasons s ON ps.season_id = s.id
+			GROUP BY ps.period_id
+		) s_agg ON cr.period_id = s_agg.period_id
 		INNER JOIN (
 			SELECT
 				rm2.player_id,
 				cr2.dungeon_id,
-				COALESCE(ps2.season_id, 1) as season_id,
+				COALESCE(s2_agg.season_number, 1) as season_id,
 				MIN(cr2.duration) as best_duration
 			FROM run_members rm2
 			INNER JOIN challenge_runs cr2 ON rm2.run_id = cr2.id
-			LEFT JOIN period_seasons ps2 ON cr2.period_id = ps2.period_id
-			GROUP BY rm2.player_id, cr2.dungeon_id, COALESCE(ps2.season_id, 1)
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s2_agg ON cr2.period_id = s2_agg.period_id
+			GROUP BY rm2.player_id, cr2.dungeon_id, COALESCE(s2_agg.season_number, 1)
 		) best_times ON rm.player_id = best_times.player_id
 					 AND cr.dungeon_id = best_times.dungeon_id
-					 AND COALESCE(ps.season_id, 1) = best_times.season_id
+					 AND COALESCE(s_agg.season_number, 1) = best_times.season_id
 					 AND cr.duration = best_times.best_duration
 		LEFT JOIN run_rankings rr_gf ON cr.id = rr_gf.run_id
 			AND rr_gf.ranking_type = 'global' AND rr_gf.ranking_scope = 'filtered'
-			AND rr_gf.season_id = COALESCE(ps.season_id, 1)
+			AND rr_gf.season_id = COALESCE(s_agg.season_number, 1)
 		LEFT JOIN run_rankings rr_rf ON cr.id = rr_rf.run_id
 			AND rr_rf.ranking_type = 'regional' AND rr_rf.ranking_scope = 'filtered'
-			AND rr_rf.season_id = COALESCE(ps.season_id, 1)
+			AND rr_rf.season_id = COALESCE(s_agg.season_number, 1)
 		LEFT JOIN run_rankings rr_lf ON cr.id = rr_lf.run_id
 			AND rr_lf.ranking_type = 'realm' AND rr_lf.ranking_scope = 'filtered'
-			AND rr_lf.season_id = COALESCE(ps.season_id, 1)
-		GROUP BY rm.player_id, cr.dungeon_id, COALESCE(ps.season_id, 1)
+			AND rr_lf.season_id = COALESCE(s_agg.season_number, 1)
+		GROUP BY rm.player_id, cr.dungeon_id, COALESCE(s_agg.season_number, 1)
 		HAVING cr.id = MIN(cr.id)
 	`)
 	if err != nil {
@@ -225,11 +241,16 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 		FROM players p
 		INNER JOIN player_best_runs pbr ON p.id = pbr.player_id
 		INNER JOIN (
-			SELECT rm.player_id, COALESCE(ps.season_id, 1) as season_id, COUNT(*) as run_count
+			SELECT rm.player_id, COALESCE(s_agg.season_number, 1) as season_id, COUNT(*) as run_count
 			FROM run_members rm
 			INNER JOIN challenge_runs cr ON rm.run_id = cr.id
-			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-			GROUP BY rm.player_id, COALESCE(ps.season_id, 1)
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s_agg ON cr.period_id = s_agg.period_id
+			GROUP BY rm.player_id, COALESCE(s_agg.season_number, 1)
 		) season_runs ON p.id = season_runs.player_id AND pbr.season_id = season_runs.season_id
 		GROUP BY p.id, pbr.season_id, p.name, p.realm_id, season_runs.run_count
 	`, currentTime)
@@ -278,8 +299,8 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 
 	currentTime := time.Now().UnixMilli()
 
-	// Get all seasons
-	seasonRows, err := tx.Query("SELECT DISTINCT season_id FROM player_profiles ORDER BY season_id")
+	// Get all distinct season numbers (global seasons across all regions)
+	seasonRows, err := tx.Query("SELECT DISTINCT season_number FROM seasons ORDER BY season_number")
 	if err != nil {
 		return 0, fmt.Errorf("failed to query seasons: %w", err)
 	}
@@ -287,11 +308,11 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 
 	var seasons []int
 	for seasonRows.Next() {
-		var seasonID int
-		if err := seasonRows.Scan(&seasonID); err != nil {
+		var seasonNumber int
+		if err := seasonRows.Scan(&seasonNumber); err != nil {
 			return 0, err
 		}
-		seasons = append(seasons, seasonID)
+		seasons = append(seasons, seasonNumber)
 	}
 
 	if len(seasons) == 0 {
@@ -547,11 +568,16 @@ func computeGlobalRankings(tx *sql.Tx) error {
 			cr.dungeon_id,
 			'global' as ranking_type,
 			'all' as ranking_scope,
-			ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, COALESCE(ps.season_id, 1) ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as ranking,
-			COALESCE(ps.season_id, 1) as season_id,
+			ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, COALESCE(s_agg.season_number, 1) ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as ranking,
+			COALESCE(s_agg.season_number, 1) as season_id,
 			? as computed_at
 		FROM challenge_runs cr
-		LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+		LEFT JOIN (
+			SELECT ps.period_id, MIN(s.season_number) as season_number
+			FROM period_seasons ps
+			JOIN seasons s ON ps.season_id = s.id
+			GROUP BY ps.period_id
+		) s_agg ON cr.period_id = s_agg.period_id
 	`, currentTime)
 	if err != nil {
 		return err
@@ -616,7 +642,16 @@ func computeGlobalRankings(tx *sql.Tx) error {
 	}
 
 	// Get all seasons (including fallback season 1 for unmapped periods)
-	seasonRows, err := tx.Query("SELECT DISTINCT COALESCE(ps.season_id, 1) as season_id FROM challenge_runs cr LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id")
+	seasonRows, err := tx.Query(`
+		SELECT DISTINCT COALESCE(s_agg.season_number, 1) as season_id
+		FROM challenge_runs cr
+		LEFT JOIN (
+			SELECT ps.period_id, MIN(s.season_number) as season_number
+			FROM period_seasons ps
+			JOIN seasons s ON ps.season_id = s.id
+			GROUP BY ps.period_id
+		) s_agg ON cr.period_id = s_agg.period_id
+	`)
 	if err != nil {
 		return err
 	}
@@ -640,8 +675,13 @@ func computeGlobalRankings(tx *sql.Tx) error {
 						cr.team_signature,
 						MIN(cr.duration) as best_duration
 					FROM challenge_runs cr
-					LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-					WHERE cr.dungeon_id = ? AND COALESCE(ps.season_id, 1) = ?
+					LEFT JOIN (
+						SELECT ps.period_id, MIN(s.season_number) as season_number
+						FROM period_seasons ps
+						JOIN seasons s ON ps.season_id = s.id
+						GROUP BY ps.period_id
+					) s_agg ON cr.period_id = s_agg.period_id
+					WHERE cr.dungeon_id = ? AND COALESCE(s_agg.season_number, 1) = ?
 					GROUP BY cr.team_signature
 				),
 				filtered_runs AS (
@@ -651,10 +691,15 @@ func computeGlobalRankings(tx *sql.Tx) error {
 						cr.completed_timestamp,
 						ROW_NUMBER() OVER (ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as filtered_rank
 					FROM challenge_runs cr
-					LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+					LEFT JOIN (
+						SELECT ps.period_id, MIN(s.season_number) as season_number
+						FROM period_seasons ps
+						JOIN seasons s ON ps.season_id = s.id
+						GROUP BY ps.period_id
+					) s_agg ON cr.period_id = s_agg.period_id
 					INNER JOIN best_team_runs btr ON cr.team_signature = btr.team_signature
 												 AND cr.duration = btr.best_duration
-					WHERE cr.dungeon_id = ? AND COALESCE(ps.season_id, 1) = ?
+					WHERE cr.dungeon_id = ? AND COALESCE(s_agg.season_number, 1) = ?
 					GROUP BY cr.team_signature
 					HAVING cr.id = MIN(cr.id)
 				)
@@ -757,12 +802,17 @@ func computeRegionalRankings(tx *sql.Tx) error {
 				cr.dungeon_id,
 				'regional' as ranking_type,
 				? as ranking_scope,
-				ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, COALESCE(ps.season_id, 1) ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as ranking,
-				COALESCE(ps.season_id, 1) as season_id,
+				ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, COALESCE(s_agg.season_number, 1) ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as ranking,
+				COALESCE(s_agg.season_number, 1) as season_id,
 				? as computed_at
 			FROM challenge_runs cr
 			INNER JOIN realms r ON cr.realm_id = r.id
-			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s_agg ON cr.period_id = s_agg.period_id
 			WHERE r.region = ?
 		`, region, currentTime, region)
 
@@ -830,10 +880,15 @@ func computeRegionalRankings(tx *sql.Tx) error {
 
 		// Get all seasons for this region
 		seasonRows, err := tx.Query(`
-			SELECT DISTINCT COALESCE(ps.season_id, 1) as season_id
+			SELECT DISTINCT COALESCE(s_agg.season_number, 1) as season_id
 			FROM challenge_runs cr
 			INNER JOIN realms r ON cr.realm_id = r.id
-			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s_agg ON cr.period_id = s_agg.period_id
 			WHERE r.region = ?
 		`, region)
 		if err != nil {
@@ -861,8 +916,13 @@ func computeRegionalRankings(tx *sql.Tx) error {
 							MIN(cr.duration) as best_duration
 						FROM challenge_runs cr
 						INNER JOIN realms r ON cr.realm_id = r.id
-						LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-						WHERE cr.dungeon_id = ? AND r.region = ? AND COALESCE(ps.season_id, 1) = ?
+						LEFT JOIN (
+							SELECT ps.period_id, MIN(s.season_number) as season_number
+							FROM period_seasons ps
+							JOIN seasons s ON ps.season_id = s.id
+							GROUP BY ps.period_id
+						) s_agg ON cr.period_id = s_agg.period_id
+						WHERE cr.dungeon_id = ? AND r.region = ? AND COALESCE(s_agg.season_number, 1) = ?
 						GROUP BY cr.team_signature
 					),
 					filtered_runs AS (
@@ -873,10 +933,15 @@ func computeRegionalRankings(tx *sql.Tx) error {
 							ROW_NUMBER() OVER (ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as filtered_rank
 						FROM challenge_runs cr
 						INNER JOIN realms r ON cr.realm_id = r.id
-						LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
+						LEFT JOIN (
+							SELECT ps.period_id, MIN(s.season_number) as season_number
+							FROM period_seasons ps
+							JOIN seasons s ON ps.season_id = s.id
+							GROUP BY ps.period_id
+						) s_agg ON cr.period_id = s_agg.period_id
 						INNER JOIN best_team_runs btr ON cr.team_signature = btr.team_signature
 														AND cr.duration = btr.best_duration
-						WHERE cr.dungeon_id = ? AND r.region = ? AND COALESCE(ps.season_id, 1) = ?
+						WHERE cr.dungeon_id = ? AND r.region = ? AND COALESCE(s_agg.season_number, 1) = ?
 						GROUP BY cr.team_signature
 						HAVING cr.id = MIN(cr.id)
 					)
@@ -942,5 +1007,278 @@ func computeRegionalRankings(tx *sql.Tx) error {
 	}
 
 	fmt.Printf("[OK] Computed regional rankings with percentile brackets for %d regions\n", len(regions))
+	return nil
+}
+
+// computeRealmRankings computes realm rankings per realm pool (connected realms grouped together)
+func computeRealmRankings(tx *sql.Tx) error {
+	fmt.Printf("Computing realm rankings (pool-based for connected realms)...\n")
+
+	currentTime := time.Now().UnixMilli()
+
+	// clear existing realm rankings
+	if _, err := tx.Exec("DELETE FROM run_rankings WHERE ranking_type = 'realm'"); err != nil {
+		return err
+	}
+
+	// get all realm pools (parent realms or independent realms that will be used as pool identifiers)
+	type RealmPool struct {
+		PoolSlug string
+		Region   string
+	}
+
+	poolRows, err := tx.Query(`
+		SELECT DISTINCT
+			COALESCE(parent_r.slug, r.slug) as pool_slug,
+			r.region
+		FROM realms r
+		LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+		ORDER BY r.region, pool_slug
+	`)
+	if err != nil {
+		return err
+	}
+	defer poolRows.Close()
+
+	var pools []RealmPool
+	for poolRows.Next() {
+		var pool RealmPool
+		if err := poolRows.Scan(&pool.PoolSlug, &pool.Region); err != nil {
+			return err
+		}
+		pools = append(pools, pool)
+	}
+
+	fmt.Printf("Found %d realm pools to process\n", len(pools))
+
+	for _, pool := range pools {
+		// unfiltered realm rankings (per season) using pool-based partitioning
+		_, err := tx.Exec(`
+			INSERT INTO run_rankings (run_id, dungeon_id, ranking_type, ranking_scope, ranking, season_id, computed_at)
+			SELECT
+				cr.id as run_id,
+				cr.dungeon_id,
+				'realm' as ranking_type,
+				? as ranking_scope,
+				ROW_NUMBER() OVER (
+					PARTITION BY cr.dungeon_id, COALESCE(s_agg.season_number, 1)
+					ORDER BY cr.duration ASC, cr.completed_timestamp ASC
+				) as ranking,
+				COALESCE(s_agg.season_number, 1) as season_id,
+				? as computed_at
+			FROM challenge_runs cr
+			INNER JOIN realms r ON cr.realm_id = r.id
+			LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s_agg ON cr.period_id = s_agg.period_id
+			WHERE r.region = ? AND COALESCE(parent_r.slug, r.slug) = ?
+		`, pool.PoolSlug, currentTime, pool.Region, pool.PoolSlug)
+
+		if err != nil {
+			return err
+		}
+
+		// update percentile brackets for unfiltered realm rankings
+		_, err = tx.Exec(`
+			UPDATE run_rankings
+			SET percentile_bracket = (
+				CASE
+					WHEN counts.duration = counts.min_duration THEN 'artifact'
+					ELSE
+						CASE
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							ELSE 'common'
+						END
+				END
+			)
+			FROM (
+				SELECT
+					rr.run_id,
+					rr.dungeon_id,
+					rr.season_id,
+					rr.ranking,
+					cr.duration,
+					MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.season_id, rr.ranking_scope) as min_duration,
+					COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.season_id, rr.ranking_scope) as total_in_pool_season_dungeon
+				FROM run_rankings rr
+				INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+				WHERE rr.ranking_type = 'realm' AND rr.ranking_scope = ?
+			) counts
+			WHERE run_rankings.run_id = counts.run_id
+			AND run_rankings.dungeon_id = counts.dungeon_id
+			AND run_rankings.season_id = counts.season_id
+			AND run_rankings.ranking_type = 'realm'
+			AND run_rankings.ranking_scope = ?
+		`, pool.PoolSlug, pool.PoolSlug)
+		if err != nil {
+			return err
+		}
+	}
+
+	// now compute filtered rankings per pool x dungeon x season
+	dungeonRows, err := tx.Query("SELECT id FROM dungeons")
+	if err != nil {
+		return err
+	}
+
+	var dungeonIDs []int
+	for dungeonRows.Next() {
+		var id int
+		if err := dungeonRows.Scan(&id); err != nil {
+			dungeonRows.Close()
+			return err
+		}
+		dungeonIDs = append(dungeonIDs, id)
+	}
+	dungeonRows.Close()
+
+	for _, pool := range pools {
+		// Get seasons for this pool
+		seasonRows, err := tx.Query(`
+			SELECT DISTINCT COALESCE(s_agg.season_number, 1) as season_id
+			FROM challenge_runs cr
+			INNER JOIN realms r ON cr.realm_id = r.id
+			LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+			LEFT JOIN (
+				SELECT ps.period_id, MIN(s.season_number) as season_number
+				FROM period_seasons ps
+				JOIN seasons s ON ps.season_id = s.id
+				GROUP BY ps.period_id
+			) s_agg ON cr.period_id = s_agg.period_id
+			WHERE r.region = ? AND COALESCE(parent_r.slug, r.slug) = ?
+		`, pool.Region, pool.PoolSlug)
+		if err != nil {
+			return err
+		}
+
+		var seasonIDs []int
+		for seasonRows.Next() {
+			var id int
+			if err := seasonRows.Scan(&id); err != nil {
+				seasonRows.Close()
+				return err
+			}
+			seasonIDs = append(seasonIDs, id)
+		}
+		seasonRows.Close()
+
+		// filtered realm rankings - per dungeon x season using pool-based partitioning
+		for _, dungeonID := range dungeonIDs {
+			for _, seasonID := range seasonIDs {
+				_, err := tx.Exec(`
+					WITH best_team_runs AS (
+						SELECT
+							cr.team_signature,
+							MIN(cr.duration) as best_duration
+						FROM challenge_runs cr
+						INNER JOIN realms r ON cr.realm_id = r.id
+						LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+						LEFT JOIN (
+							SELECT ps.period_id, MIN(s.season_number) as season_number
+							FROM period_seasons ps
+							JOIN seasons s ON ps.season_id = s.id
+							GROUP BY ps.period_id
+						) s_agg ON cr.period_id = s_agg.period_id
+						WHERE cr.dungeon_id = ?
+							AND r.region = ?
+							AND COALESCE(parent_r.slug, r.slug) = ?
+							AND COALESCE(s_agg.season_number, 1) = ?
+						GROUP BY cr.team_signature
+					),
+					filtered_runs AS (
+						SELECT
+							cr.id as run_id,
+							cr.duration,
+							cr.completed_timestamp,
+							ROW_NUMBER() OVER (ORDER BY cr.duration ASC, cr.completed_timestamp ASC) as filtered_rank
+						FROM challenge_runs cr
+						INNER JOIN realms r ON cr.realm_id = r.id
+						LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+						LEFT JOIN (
+							SELECT ps.period_id, MIN(s.season_number) as season_number
+							FROM period_seasons ps
+							JOIN seasons s ON ps.season_id = s.id
+							GROUP BY ps.period_id
+						) s_agg ON cr.period_id = s_agg.period_id
+						INNER JOIN best_team_runs btr ON cr.team_signature = btr.team_signature
+														AND cr.duration = btr.best_duration
+						WHERE cr.dungeon_id = ?
+							AND r.region = ?
+							AND COALESCE(parent_r.slug, r.slug) = ?
+							AND COALESCE(s_agg.season_number, 1) = ?
+						GROUP BY cr.team_signature
+						HAVING cr.id = MIN(cr.id)
+					)
+					INSERT INTO run_rankings (run_id, dungeon_id, ranking_type, ranking_scope, ranking, season_id, computed_at)
+					SELECT
+						run_id,
+						? as dungeon_id,
+						'realm' as ranking_type,
+						? as ranking_scope,
+						filtered_rank as ranking,
+						? as season_id,
+						? as computed_at
+					FROM filtered_runs
+				`, dungeonID, pool.Region, pool.PoolSlug, seasonID,
+					dungeonID, pool.Region, pool.PoolSlug, seasonID,
+					dungeonID, pool.PoolSlug+"_filtered", seasonID, currentTime)
+
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		// update percentile brackets for filtered realm rankings
+		filteredScope := pool.PoolSlug + "_filtered"
+		_, err = tx.Exec(`
+			UPDATE run_rankings
+			SET percentile_bracket = (
+				CASE
+					WHEN counts.duration = counts.min_duration THEN 'artifact'
+					ELSE
+						CASE
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.ranking AS REAL) / CAST(counts.total_in_pool_season_dungeon AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							ELSE 'common'
+						END
+				END
+			)
+			FROM (
+				SELECT
+					rr.run_id,
+					rr.dungeon_id,
+					rr.season_id,
+					rr.ranking,
+					cr.duration,
+					MIN(cr.duration) OVER (PARTITION BY rr.dungeon_id, rr.season_id, rr.ranking_scope) as min_duration,
+					COUNT(*) OVER (PARTITION BY rr.dungeon_id, rr.season_id, rr.ranking_scope) as total_in_pool_season_dungeon
+				FROM run_rankings rr
+				INNER JOIN challenge_runs cr ON rr.run_id = cr.id
+				WHERE rr.ranking_type = 'realm' AND rr.ranking_scope = ?
+			) counts
+			WHERE run_rankings.run_id = counts.run_id
+			AND run_rankings.dungeon_id = counts.dungeon_id
+			AND run_rankings.season_id = counts.season_id
+			AND run_rankings.ranking_type = 'realm'
+			AND run_rankings.ranking_scope = ?
+		`, filteredScope, filteredScope)
+		if err != nil {
+			return err
+		}
+	}
+
+	fmt.Printf("[OK] Computed realm rankings with percentile brackets for %d realm pools\n", len(pools))
 	return nil
 }

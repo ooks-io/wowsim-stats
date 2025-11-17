@@ -324,13 +324,15 @@ func EnsureCompleteSchema(db *sql.DB) error {
 
 		// Season tables
 		`CREATE TABLE IF NOT EXISTS seasons (
-			id INTEGER PRIMARY KEY,
-			season_number INTEGER UNIQUE,
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			season_number INTEGER NOT NULL,
+			region TEXT NOT NULL,
 			start_timestamp INTEGER,
 			end_timestamp INTEGER,
 			season_name TEXT,
 			first_period_id INTEGER,
-			last_period_id INTEGER
+			last_period_id INTEGER,
+			UNIQUE(season_number, region)
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS period_seasons (
@@ -350,6 +352,11 @@ fmt.Printf("[OK] All tables created\n")
 	
     // Migrate realms schema if needed (ensure (region, slug) composite uniqueness)
     if err := migrateRealmsCompositeSlug(db); err != nil {
+        return err
+    }
+
+    // Migrate seasons schema if needed (add region column)
+    if err := migrateSeasonsAddRegion(db); err != nil {
         return err
     }
 
@@ -441,5 +448,57 @@ func migrateRealmsCompositeSlug(db *sql.DB) error {
 
     if err := tx.Commit(); err != nil { return err }
     fmt.Printf("[OK] Realms table migrated\n")
+    return nil
+}
+
+// migrateSeasonsAddRegion adds region column to seasons table if it doesn't exist
+func migrateSeasonsAddRegion(db *sql.DB) error {
+    // Check if region column already exists
+    var createSQL string
+    _ = db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='seasons'`).Scan(&createSQL)
+
+    // If table already has region column, nothing to do
+    if strings.Contains(strings.ToLower(createSQL), "region text") {
+        return nil
+    }
+
+    fmt.Printf("[MIGRATE] Adding region column to seasons table...\n")
+    tx, err := db.Begin()
+    if err != nil { return err }
+    defer tx.Rollback()
+
+    // Create new table with region column
+    if _, err := tx.Exec(`
+        CREATE TABLE IF NOT EXISTS seasons_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            season_number INTEGER NOT NULL,
+            region TEXT NOT NULL,
+            start_timestamp INTEGER,
+            end_timestamp INTEGER,
+            season_name TEXT,
+            first_period_id INTEGER,
+            last_period_id INTEGER,
+            UNIQUE(season_number, region)
+        )
+    `); err != nil { return fmt.Errorf("create seasons_new: %w", err) }
+
+    // Copy existing data, defaulting region to 'us' for backward compatibility
+    if _, err := tx.Exec(`
+        INSERT INTO seasons_new (id, season_number, region, start_timestamp, end_timestamp, season_name, first_period_id, last_period_id)
+        SELECT id, season_number, 'us', start_timestamp, end_timestamp, season_name, first_period_id, last_period_id
+        FROM seasons
+    `); err != nil {
+        return fmt.Errorf("copy seasons: %w", err)
+    }
+
+    // Rename old and new
+    if _, err := tx.Exec(`ALTER TABLE seasons RENAME TO seasons_old`); err != nil { return fmt.Errorf("rename old: %w", err) }
+    if _, err := tx.Exec(`ALTER TABLE seasons_new RENAME TO seasons`); err != nil { return fmt.Errorf("rename new: %w", err) }
+
+    // Drop old
+    if _, err := tx.Exec(`DROP TABLE seasons_old`); err != nil { return fmt.Errorf("drop old: %w", err) }
+
+    if err := tx.Commit(); err != nil { return err }
+    fmt.Printf("[OK] Seasons table migrated - added region column\n")
     return nil
 }

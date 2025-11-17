@@ -259,7 +259,7 @@ var fetchSeasonsCmd = &cobra.Command{
 				}
 
 				// Upsert season
-				err = dbService.UpsertSeason(seasonDetail.ID, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
+				dbSeasonID, err := dbService.UpsertSeason(seasonDetail.ID, region, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
 				if err != nil {
 					fmt.Printf("Error upserting season %d: %v\n", seasonID, err)
 					continue
@@ -276,14 +276,14 @@ var fetchSeasonsCmd = &cobra.Command{
 					lastPeriod := seasonDetail.Periods[len(seasonDetail.Periods)-1].ID
 
 					// Update period range
-					err = dbService.UpdateSeasonPeriodRange(seasonDetail.ID, firstPeriod, lastPeriod)
+					err = dbService.UpdateSeasonPeriodRange(dbSeasonID, firstPeriod, lastPeriod)
 					if err != nil {
 						fmt.Printf("Error updating season period range: %v\n", err)
 					}
 
 					// Link each period
 					for _, periodRef := range seasonDetail.Periods {
-						err = dbService.LinkPeriodToSeason(periodRef.ID, seasonDetail.ID)
+						err = dbService.LinkPeriodToSeason(periodRef.ID, dbSeasonID)
 						if err != nil {
 							fmt.Printf("Error linking period %d to season %d: %v\n", periodRef.ID, seasonDetail.ID, err)
 						} else {
@@ -294,10 +294,7 @@ var fetchSeasonsCmd = &cobra.Command{
 				}
 			}
 
-			// Note: We only need to sync from one region since season IDs and periods are global
-			// Breaking after first successful region to avoid redundant work
-			fmt.Printf("\n[OK] Synced seasons from %s (seasons are global across regions)\n", strings.ToUpper(region))
-			break
+			fmt.Printf("\n[OK] Synced seasons for %s\n", strings.ToUpper(region))
 		}
 
 		fmt.Printf("\n=== Sync Complete ===\n")

@@ -1181,17 +1181,19 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 
 // Season management operations
 
-// UpsertSeason inserts or updates a season record
-func (ds *DatabaseService) UpsertSeason(seasonID int, seasonName string, startTimestamp int64) error {
+// UpsertSeason inserts or updates a season record and returns the auto-increment ID
+func (ds *DatabaseService) UpsertSeason(seasonID int, region string, seasonName string, startTimestamp int64) (int, error) {
 	query := `
-		INSERT INTO seasons (id, season_number, season_name, start_timestamp)
+		INSERT INTO seasons (season_number, region, season_name, start_timestamp)
 		VALUES (?, ?, ?, ?)
-		ON CONFLICT(id) DO UPDATE SET
+		ON CONFLICT(season_number, region) DO UPDATE SET
 			season_name = excluded.season_name,
 			start_timestamp = excluded.start_timestamp
+		RETURNING id
 	`
-	_, err := ds.db.Exec(query, seasonID, seasonID, seasonName, startTimestamp)
-	return err
+	var id int
+	err := ds.db.QueryRow(query, seasonID, region, seasonName, startTimestamp).Scan(&id)
+	return id, err
 }
 
 // UpdateSeasonPeriodRange updates the first_period_id and last_period_id for a season
@@ -1360,6 +1362,32 @@ func (ds *DatabaseService) GetSeasonForPeriod(periodID int) (int, error) {
 func (ds *DatabaseService) GetPeriodsForSeason(seasonID int) ([]int, error) {
 	query := `SELECT period_id FROM period_seasons WHERE season_id = ? ORDER BY period_id`
 	rows, err := ds.db.Query(query, seasonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var periods []int
+	for rows.Next() {
+		var periodID int
+		if err := rows.Scan(&periodID); err != nil {
+			return nil, err
+		}
+		periods = append(periods, periodID)
+	}
+	return periods, rows.Err()
+}
+
+// GetPeriodsForRegion retrieves all period IDs for all seasons in a given region
+func (ds *DatabaseService) GetPeriodsForRegion(region string) ([]int, error) {
+	query := `
+		SELECT DISTINCT ps.period_id
+		FROM period_seasons ps
+		JOIN seasons s ON ps.season_id = s.id
+		WHERE s.region = ?
+		ORDER BY ps.period_id DESC
+	`
+	rows, err := ds.db.Query(query, region)
 	if err != nil {
 		return nil, err
 	}

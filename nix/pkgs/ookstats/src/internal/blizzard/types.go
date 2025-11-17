@@ -242,22 +242,6 @@ type MediaAsset struct {
 	Value string `json:"value"`
 }
 
-// PeriodIndexResponse represents the response from the mythic keystone period index API
-type PeriodIndexResponse struct {
-	Periods []struct {
-		Key struct {
-			Href string `json:"href"`
-		} `json:"key"`
-		ID int `json:"id"`
-	} `json:"periods"`
-	CurrentPeriod struct {
-		Key struct {
-			Href string `json:"href"`
-		} `json:"key"`
-		ID int `json:"id"`
-	} `json:"current_period"`
-}
-
 // PeriodDetailResponse represents the response from a specific period detail API
 type PeriodDetailResponse struct {
 	ID             int   `json:"id"`
