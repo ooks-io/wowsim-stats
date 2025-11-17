@@ -180,6 +180,7 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			name TEXT,
 			realm_id INTEGER,
 			main_spec_id INTEGER,
+			class_name TEXT,
 			dungeons_completed INTEGER DEFAULT 0,
 			total_runs INTEGER DEFAULT 0,
 			combined_best_time INTEGER,

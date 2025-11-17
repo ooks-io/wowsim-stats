@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"time"
+
+	"ookstats/internal/wow"
 )
 
 // ProcessPlayersOptions contains options for player processing
@@ -290,7 +292,67 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 	}
 	fmt.Printf("[OK] Updated main specs\n")
 
+	// step 5: derive class from main spec
+	fmt.Printf("Step 5: Deriving class names from main specs...\n")
+	if err := deriveClassFromMainSpec(tx); err != nil {
+		return 0, fmt.Errorf("failed to derive class names: %w", err)
+	}
+	fmt.Printf("[OK] Updated class names\n")
+
 	return profilesCount, nil
+}
+
+// deriveClassFromMainSpec derives class_name from main_spec_id for all player profiles
+func deriveClassFromMainSpec(tx *sql.Tx) error {
+	// Query all player profiles with a main_spec_id
+	rows, err := tx.Query(`
+		SELECT player_id, season_id, main_spec_id
+		FROM player_profiles
+		WHERE main_spec_id IS NOT NULL
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to query player profiles: %w", err)
+	}
+	defer rows.Close()
+
+	// Prepare update statement
+	updateStmt, err := tx.Prepare(`
+		UPDATE player_profiles
+		SET class_name = ?
+		WHERE player_id = ? AND season_id = ?
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to prepare update statement: %w", err)
+	}
+	defer updateStmt.Close()
+
+	updatedCount := 0
+	for rows.Next() {
+		var playerID, seasonID, mainSpecID int
+		if err := rows.Scan(&playerID, &seasonID, &mainSpecID); err != nil {
+			return fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		// Use wow package to get class from spec
+		className, _, ok := wow.GetClassAndSpec(mainSpecID)
+		if !ok {
+			// If spec not found, skip this player (leave class_name NULL)
+			continue
+		}
+
+		// Update player_profiles with derived class
+		if _, err := updateStmt.Exec(className, playerID, seasonID); err != nil {
+			return fmt.Errorf("failed to update class for player %d season %d: %w", playerID, seasonID, err)
+		}
+		updatedCount++
+	}
+
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	fmt.Printf("  Derived class for %d player profiles\n", updatedCount)
+	return nil
 }
 
 // computePlayerRankings computes rankings for players with complete coverage per season
