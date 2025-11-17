@@ -95,101 +95,52 @@ var buildCmd = &cobra.Command{
             return fmt.Errorf("sync seasons: %w", err)
         }
 
-        // 5) Fetch CM runs using global period sweep
+        // 5) Fetch CM runs using pipeline (includes child realm filtering)
         fmt.Println("\n=== Fetching Challenge Mode leaderboards (global period sweep) ===")
 
-        // Realms and dungeons
-        _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
-        allRealms := blizzard.GetAllRealms()
-        fmt.Printf("Dungeons: %d, Realms: %d\n", len(dungeons), len(allRealms))
-
-        // Optional region filter
-        if strings.TrimSpace(regionsCSV) != "" {
-            allowed := map[string]bool{}
-            for _, r := range strings.Split(regionsCSV, ",") { allowed[strings.TrimSpace(r)] = true }
-            for slug, info := range allRealms {
-                if !allowed[info.Region] { delete(allRealms, slug) }
-            }
-        }
-
-        // Ensure dungeons/realms exist
         dbService := database.NewDatabaseService(db)
-        if err := dbService.EnsureDungeonsOnce(dungeons); err != nil {
-            return fmt.Errorf("ensure dungeons: %w", err)
-        }
-        if err := dbService.EnsureRealmsBatch(allRealms); err != nil {
-            return fmt.Errorf("ensure realms: %w", err)
-        }
-        
+
         // control database-internal verbosity (hide 404 noise unless verbose)
         database.SetVerbose(verbose)
 
-        // Group realms by region
-        realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
-        for slug, info := range allRealms {
-            if realmsByRegion[info.Region] == nil {
-                realmsByRegion[info.Region] = make(map[string]blizzard.RealmInfo)
+        // Parse regions for filter
+        var regions []string
+        if strings.TrimSpace(regionsCSV) != "" {
+            for _, r := range strings.Split(regionsCSV, ",") {
+                if trimmed := strings.TrimSpace(r); trimmed != "" {
+                    regions = append(regions, trimmed)
+                }
             }
-            realmsByRegion[info.Region][slug] = info
         }
 
-        ctx, cancel := context.WithTimeout(context.Background(), 45*time.Minute)
-        defer cancel()
-
-        totalRuns := 0
-        totalPlayers := 0
-        sweepStart := time.Now()
-
-        // Process each region independently
-        for region, regionRealms := range realmsByRegion {
-            fmt.Printf("\n========== Region: %s (%d realms) ==========\n", strings.ToUpper(region), len(regionRealms))
-
-            // Determine periods for this region
-            var periods []string
+        // Parse periods (if provided)
+        var periods []string
+        if strings.TrimSpace(periodsCSV) != "" {
             var err error
-
-            if strings.TrimSpace(periodsCSV) != "" {
-                // User-specified periods (support ranges like "1020-1036")
-                periods, err = blizzard.ParsePeriods(periodsCSV)
-                if err != nil {
-                    return fmt.Errorf("failed to parse periods: %w", err)
-                }
-                fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
-            } else {
-                // Fetch periods dynamically from Blizzard API for this region
-                fmt.Printf("Fetching period list dynamically from Blizzard API for %s...\n", strings.ToUpper(region))
-                periods, err = client.GetDynamicPeriodList(region)
-                if err != nil {
-                    fmt.Printf("Failed to fetch period list for %s: %v - skipping region\n", strings.ToUpper(region), err)
-                    continue
-                }
-            }
-
-            if len(periods) == 0 {
-                fmt.Printf("No periods to process for %s - skipping region\n", strings.ToUpper(region))
-                continue
-            }
-
-            // Period sweep for this region
-            fmt.Printf("Starting period sweep for %s: %d periods\n", strings.ToUpper(region), len(periods))
-            for _, period := range periods {
-                fmt.Printf("\n--- %s Period %s ---\n", strings.ToUpper(region), period)
-                realmResults := client.FetchAllRealmsConcurrent(ctx, regionRealms, dungeons, period)
-                runs, players, err := dbService.BatchProcessFetchResults(ctx, realmResults)
-                if err != nil {
-                    fmt.Printf("Batch processing errors in %s period %s: %v\n", strings.ToUpper(region), period, err)
-                }
-                fmt.Printf("%s Period %s -> inserted runs: %d, new players: %d\n", strings.ToUpper(region), period, runs, players)
-                totalRuns += runs
-                totalPlayers += players
+            periods, err = blizzard.ParsePeriods(periodsCSV)
+            if err != nil {
+                return fmt.Errorf("failed to parse periods: %w", err)
             }
         }
-        fmt.Printf("\n========== Sweep complete in %v ==========\n", time.Since(sweepStart))
 
-        if err := dbService.UpdateFetchMetadata("challenge_mode_leaderboard", totalRuns, totalPlayers); err != nil {
-            return fmt.Errorf("update fetch metadata: %w", err)
+        // Use pipeline function (handles child realm filtering automatically)
+        fetchOpts := pipeline.FetchCMOptions{
+            Verbose:     verbose,
+            Regions:     regions,
+            Realms:      []string{}, // no realm filter
+            Dungeons:    []string{}, // no dungeon filter
+            Periods:     periods,    // empty means fetch dynamically
+            Concurrency: concurrency,
+            Timeout:     45 * time.Minute,
         }
-        fmt.Printf("Total inserted runs: %d, new players: %d\n", totalRuns, totalPlayers)
+
+        result, err := pipeline.FetchChallengeMode(dbService, client, fetchOpts)
+        if err != nil {
+            return fmt.Errorf("fetch challenge mode: %w", err)
+        }
+
+        fmt.Printf("\n[OK] Fetch complete: %d runs, %d players in %v\n",
+            result.TotalRuns, result.TotalPlayers, result.Duration)
 
         // 4) Process players (aggregations + rankings)
         fmt.Println("\n=== Processing Players (aggregations + rankings) ===")
@@ -223,6 +174,9 @@ var buildCmd = &cobra.Command{
         fmt.Println("\n=== Generating status API (analyze) ===")
         statusDir := filepath.Join(normalizedOut, "api", "status")
         outPath := filepath.Join(statusDir, "latest-runs.json")
+        // Get realms and dungeons for analyze
+        _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
+        allRealms := blizzard.GetAllRealms()
         if err := runAnalyze(client, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
             return fmt.Errorf("analyze status: %w", err)
         }

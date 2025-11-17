@@ -141,7 +141,8 @@ func EnsureCompleteSchema(db *sql.DB) error {
             slug TEXT,
             name TEXT,
             region TEXT,
-            connected_realm_id INTEGER UNIQUE
+            connected_realm_id INTEGER UNIQUE,
+            parent_realm_slug TEXT
         )`,
 		
 		// Core leaderboard data
@@ -412,13 +413,17 @@ func migrateRealmsCompositeSlug(db *sql.DB) error {
             slug TEXT,
             name TEXT,
             region TEXT,
-            connected_realm_id INTEGER UNIQUE
+            connected_realm_id INTEGER UNIQUE,
+            parent_realm_slug TEXT
         )
     `); err != nil { return fmt.Errorf("create realms_new: %w", err) }
 
     // Copy data
-    if _, err := tx.Exec(`INSERT INTO realms_new (id, slug, name, region, connected_realm_id)
-                          SELECT id, slug, name, region, connected_realm_id FROM realms`); err != nil {
+    if _, err := tx.Exec(`INSERT INTO realms_new (id, slug, name, region, connected_realm_id, parent_realm_slug)
+                          SELECT id, slug, name, region, connected_realm_id,
+                                 CASE WHEN EXISTS(SELECT 1 FROM sqlite_master WHERE type='table' AND name='realms' AND sql LIKE '%parent_realm_slug%')
+                                      THEN parent_realm_slug ELSE NULL END
+                          FROM realms`); err != nil {
         return fmt.Errorf("copy realms: %w", err)
     }
 

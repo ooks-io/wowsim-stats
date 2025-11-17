@@ -55,12 +55,12 @@ func GetAllRealms() map[string]RealmInfo {
 		"maladath":    {ID: 4738, Region: "us", Name: "Maladath", Slug: "maladath"},
 		"angerforge":  {ID: 4795, Region: "us", Name: "Angerforge", Slug: "angerforge"},
 		"eranikus":    {ID: 4800, Region: "us", Name: "Eranikus", Slug: "eranikus"},
-		// New US realms (MoP Classic launch wave)
-		"nazgrim":   {ID: 6359, Region: "us", Name: "Nazgrim", Slug: "nazgrim"},
-		"galakras":  {ID: 6360, Region: "us", Name: "Galakras", Slug: "galakras"},
-		"raden":     {ID: 6361, Region: "us", Name: "Ra-den", Slug: "raden"},
-		"lei-shen":  {ID: 6362, Region: "us", Name: "Lei Shen", Slug: "lei-shen"},
-		"immerseus": {ID: 6363, Region: "us", Name: "Immerseus", Slug: "immerseus"},
+		// New US realms (MoP Classic launch wave) - child realms connecting to Pagle
+		"nazgrim":   {ID: 6359, Region: "us", Name: "Nazgrim", Slug: "nazgrim", ParentRealmSlug: "pagle"},
+		"galakras":  {ID: 6360, Region: "us", Name: "Galakras", Slug: "galakras", ParentRealmSlug: "pagle"},
+		"raden":     {ID: 6361, Region: "us", Name: "Ra-den", Slug: "raden", ParentRealmSlug: "pagle"},
+		"lei-shen":  {ID: 6362, Region: "us", Name: "Lei Shen", Slug: "lei-shen", ParentRealmSlug: "pagle"},
+		"immerseus": {ID: 6363, Region: "us", Name: "Immerseus", Slug: "immerseus", ParentRealmSlug: "pagle"},
 
 		// eu realms
 		"everlook":             {ID: 4440, Region: "eu", Name: "Everlook", Slug: "everlook"},
@@ -88,12 +88,12 @@ func GetAllRealms() map[string]RealmInfo {
 		"mandokir":             {ID: 4813, Region: "eu", Name: "Mandokir", Slug: "mandokir"},
 		"thekal":               {ID: 4815, Region: "eu", Name: "Thekal", Slug: "thekal"},
 		"jindo":                {ID: 4816, Region: "eu", Name: "Jin'do", Slug: "jindo"},
-		// New EU realms (MoP Classic launch wave)
-		"shekzeer":  {ID: 6364, Region: "eu", Name: "Shek'zeer", Slug: "shekzeer"},
-		"garalon":   {ID: 6365, Region: "eu", Name: "Garalon", Slug: "garalon"},
-		"norushen":  {ID: 6366, Region: "eu", Name: "Norushen", Slug: "norushen"},
-		"hoptallus": {ID: 6367, Region: "eu", Name: "Hoptallus", Slug: "hoptallus"},
-		"ook-ook":   {ID: 6368, Region: "eu", Name: "Ook Ook", Slug: "ook-ook"},
+		// New EU realms (MoP Classic launch wave) - child realms connecting to Mirage Raceway and Everlook
+		"shekzeer":  {ID: 6364, Region: "eu", Name: "Shek'zeer", Slug: "shekzeer", ParentRealmSlug: "mirage-raceway"},
+		"garalon":   {ID: 6365, Region: "eu", Name: "Garalon", Slug: "garalon", ParentRealmSlug: "mirage-raceway"},
+		"norushen":  {ID: 6366, Region: "eu", Name: "Norushen", Slug: "norushen", ParentRealmSlug: "mirage-raceway"},
+		"hoptallus": {ID: 6367, Region: "eu", Name: "Hoptallus", Slug: "hoptallus", ParentRealmSlug: "mirage-raceway"},
+		"ook-ook":   {ID: 6368, Region: "eu", Name: "Ook Ook", Slug: "ook-ook", ParentRealmSlug: "everlook"},
 
 		// kr realms
 		"shimmering-flats": {ID: 4417, Region: "kr", Name: "Shimmering Flats", Slug: "shimmering-flats"},

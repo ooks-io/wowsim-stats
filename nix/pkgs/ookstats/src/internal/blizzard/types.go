@@ -2,10 +2,11 @@ package blizzard
 
 // RealmInfo represents a realm
 type RealmInfo struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Region string `json:"region"`
-	Slug   string `json:"slug"`
+	ID              int    `json:"id"`
+	Name            string `json:"name"`
+	Region          string `json:"region"`
+	Slug            string `json:"slug"`
+	ParentRealmSlug string `json:"parent_realm_slug,omitempty"`
 }
 
 // DungeonInfo represents a challenge mode dungeon
