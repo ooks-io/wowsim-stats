@@ -177,7 +177,7 @@ var buildCmd = &cobra.Command{
         // Get realms and dungeons for analyze
         _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
         allRealms := blizzard.GetAllRealms()
-        if err := runAnalyze(client, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
+        if err := runAnalyze(db, client, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
             return fmt.Errorf("analyze status: %w", err)
         }
 
@@ -308,76 +308,88 @@ func summarizeBuild(db *sql.DB, outParent string) {
     }
 }
 
-// syncSeasons syncs season metadata from Blizzard API
+// syncSeasons syncs season metadata from Blizzard API for all regions
 func syncSeasons(db *sql.DB, client *blizzard.Client, regionsCSV string) error {
 	dbService := database.NewDatabaseService(db)
 
-	// Only need one region since seasons are global
-	region := "us"
+	// Parse regions from CSV (seasons and periods are region-specific)
+	var regions []string
 	if strings.TrimSpace(regionsCSV) != "" {
-		parts := strings.Split(regionsCSV, ",")
-		if len(parts) > 0 {
-			region = strings.TrimSpace(parts[0])
+		for _, r := range strings.Split(regionsCSV, ",") {
+			if trimmed := strings.TrimSpace(r); trimmed != "" {
+				regions = append(regions, trimmed)
+			}
 		}
 	}
 
-	fmt.Printf("Fetching season metadata from %s...\n", strings.ToUpper(region))
-
-	// Fetch season index
-	seasonIndex, err := client.FetchSeasonIndex(region)
-	if err != nil {
-		return fmt.Errorf("failed to fetch season index: %w", err)
+	// Default to all regions if none specified
+	if len(regions) == 0 {
+		regions = []string{"us", "eu", "kr", "tw"}
 	}
 
-	if len(seasonIndex.Seasons) == 0 {
-		fmt.Println("No seasons found in API")
-		return nil
-	}
+	fmt.Printf("Fetching season metadata from %d regions...\n", len(regions))
 
-	fmt.Printf("Found %d seasons\n", len(seasonIndex.Seasons))
+	// Process each region
+	for _, region := range regions {
+		fmt.Printf("\n=== Region: %s ===\n", strings.ToUpper(region))
 
-	// Process each season
-	for _, seasonRef := range seasonIndex.Seasons {
-		seasonID := seasonRef.ID
-		fmt.Printf("  Season %d: ", seasonID)
-
-		// Fetch season details
-		seasonDetail, err := client.FetchSeasonDetail(region, seasonID)
+		// Fetch season index for this region
+		seasonIndex, err := client.FetchSeasonIndex(region)
 		if err != nil {
-			fmt.Printf("error fetching details - %v\n", err)
+			fmt.Printf("Failed to fetch season index for %s: %v - skipping region\n", strings.ToUpper(region), err)
 			continue
 		}
 
-		// Upsert season
-		err = dbService.UpsertSeason(seasonDetail.ID, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
-		if err != nil {
-			fmt.Printf("error upserting - %v\n", err)
+		if len(seasonIndex.Seasons) == 0 {
+			fmt.Printf("No seasons found for %s\n", strings.ToUpper(region))
 			continue
 		}
 
-		// Link periods to season
-		if len(seasonDetail.Periods) > 0 {
-			firstPeriod := seasonDetail.Periods[0].ID
-			lastPeriod := seasonDetail.Periods[len(seasonDetail.Periods)-1].ID
+		fmt.Printf("Found %d seasons in %s\n", len(seasonIndex.Seasons), strings.ToUpper(region))
 
-			// Update period range
-			err = dbService.UpdateSeasonPeriodRange(seasonDetail.ID, firstPeriod, lastPeriod)
+		// Process each season for this region
+		for _, seasonRef := range seasonIndex.Seasons {
+			seasonID := seasonRef.ID
+			fmt.Printf("  Season %d: ", seasonID)
+
+			// Fetch season details
+			seasonDetail, err := client.FetchSeasonDetail(region, seasonID)
 			if err != nil {
-				fmt.Printf("error updating period range - %v\n", err)
+				fmt.Printf("error fetching details - %v\n", err)
+				continue
 			}
 
-			// Link each period
-			for _, periodRef := range seasonDetail.Periods {
-				err = dbService.LinkPeriodToSeason(periodRef.ID, seasonDetail.ID)
+			// Upsert season with region
+			dbSeasonID, err := dbService.UpsertSeason(seasonDetail.ID, region, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
+			if err != nil {
+				fmt.Printf("error upserting - %v\n", err)
+				continue
+			}
+
+			// Link periods to season
+			if len(seasonDetail.Periods) > 0 {
+				firstPeriod := seasonDetail.Periods[0].ID
+				lastPeriod := seasonDetail.Periods[len(seasonDetail.Periods)-1].ID
+
+				// Update period range
+				err = dbService.UpdateSeasonPeriodRange(dbSeasonID, firstPeriod, lastPeriod)
 				if err != nil {
-					fmt.Printf("error linking period %d - %v\n", periodRef.ID, err)
+					fmt.Printf("error updating period range - %v\n", err)
+				}
+
+				// Link each period
+				for _, periodRef := range seasonDetail.Periods {
+					err = dbService.LinkPeriodToSeason(periodRef.ID, dbSeasonID)
+					if err != nil {
+						fmt.Printf("error linking period %d - %v\n", periodRef.ID, err)
+					}
 				}
 			}
+			fmt.Printf("%s (%d periods)\n", seasonDetail.SeasonName, len(seasonDetail.Periods))
 		}
-		fmt.Printf("%s (%d periods)\n", seasonDetail.SeasonName, len(seasonDetail.Periods))
 	}
 
-	fmt.Println("[OK] Season metadata synced")
+	fmt.Println("\n[OK] Season metadata synced for all regions")
 	return nil
 }
 

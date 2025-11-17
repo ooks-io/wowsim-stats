@@ -156,9 +156,13 @@ type seasonInfo struct {
 	Name string
 }
 
-// loadSeasons loads all seasons from the database
+// loadSeasons loads all distinct season numbers from the database
 func loadSeasons(db *sql.DB) ([]seasonInfo, error) {
-	rows, err := db.Query(`SELECT id, season_name FROM seasons ORDER BY start_timestamp ASC`)
+	rows, err := db.Query(`
+		SELECT DISTINCT season_number, season_name
+		FROM seasons
+		ORDER BY season_number ASC
+	`)
 	if err != nil {
 		return nil, fmt.Errorf("seasons query: %w", err)
 	}

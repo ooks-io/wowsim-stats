@@ -136,20 +136,33 @@ func FetchChallengeMode(db *database.DatabaseService, client *blizzard.Client, o
 
 		// Determine periods for this region
 		var periods []string
-		var err error
 
 		if len(opts.Periods) > 0 {
 			// User-specified periods
 			periods = opts.Periods
 			fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
 		} else {
-			// Fetch periods dynamically from Blizzard API for this region
-			fmt.Printf("Fetching period list dynamically from Blizzard API for %s...\n", strings.ToUpper(region))
-			periods, err = client.GetDynamicPeriodList(region)
+			// Fetch periods from database (populated by season sync)
+			fmt.Printf("Fetching period list from database for %s...\n", strings.ToUpper(region))
+			periodInts, err := db.GetPeriodsForRegion(region)
 			if err != nil {
-				fmt.Printf("Failed to fetch period list for %s: %v - skipping region\n", strings.ToUpper(region), err)
+				fmt.Printf("Failed to fetch periods from database for %s: %v - skipping region\n", strings.ToUpper(region), err)
 				continue
 			}
+
+			// Convert []int to []string for compatibility
+			periods = make([]string, len(periodInts))
+			for i, p := range periodInts {
+				periods[i] = fmt.Sprintf("%d", p)
+			}
+
+			if len(periods) == 0 {
+				fmt.Printf("No periods found in database for %s (run season sync first) - skipping region\n", strings.ToUpper(region))
+				continue
+			}
+
+			fmt.Printf("[OK] Fetched %d periods from database for %s (newest: %s, oldest: %s)\n",
+				len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
 		}
 
 		if len(periods) == 0 {

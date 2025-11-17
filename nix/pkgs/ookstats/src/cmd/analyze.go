@@ -2,6 +2,7 @@ package cmd
 
 import (
     "context"
+    "database/sql"
     "encoding/json"
     "errors"
     "fmt"
@@ -14,6 +15,7 @@ import (
 
     "github.com/spf13/cobra"
     "ookstats/internal/blizzard"
+    "ookstats/internal/database"
 )
 
 // analyzeCmd performs a quick multi-period sweep to summarize latest runs per realm
@@ -28,6 +30,13 @@ var analyzeCmd = &cobra.Command{
         periodsCSV, _ := cmd.Flags().GetString("periods")
         rng, _ := cmd.Flags().GetString("range")
         concurrency, _ := cmd.Flags().GetInt("concurrency")
+
+        // Connect to database (needed for period fetching from seasons)
+        db, err := database.Connect()
+        if err != nil {
+            return fmt.Errorf("db connect: %w", err)
+        }
+        defer db.Close()
 
         client, err := blizzard.NewClient()
         if err != nil {
@@ -71,7 +80,7 @@ var analyzeCmd = &cobra.Command{
             periodsSpec = strings.Join(periodParts, ",")
         }
 
-        return runAnalyze(client, realms, dungeons, periodsSpec, outPath, statusDir)
+        return runAnalyze(db, client, realms, dungeons, periodsSpec, outPath, statusDir)
     },
 }
 
@@ -85,7 +94,8 @@ func init() {
     analyzeCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 }
 
-func runAnalyze(client *blizzard.Client, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
+func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
+        dbService := database.NewDatabaseService(db)
         fmt.Printf("Analyze: %d realms, %d dungeons\n", len(realms), len(dungeons))
 
         type latest struct{
@@ -153,13 +163,27 @@ func runAnalyze(client *blizzard.Client, realms map[string]blizzard.RealmInfo, d
                 }
                 fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
             } else {
-                // Fetch periods dynamically from Blizzard API for this region
-                fmt.Printf("Fetching period list dynamically from Blizzard API for %s...\n", strings.ToUpper(region))
-                periods, err = client.GetDynamicPeriodList(region)
+                // Fetch periods from database (populated by season sync)
+                fmt.Printf("Fetching period list from database for %s...\n", strings.ToUpper(region))
+                periodInts, err := dbService.GetPeriodsForRegion(region)
                 if err != nil {
-                    fmt.Printf("Failed to fetch period list for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    fmt.Printf("Failed to fetch periods from database for %s: %v - skipping region\n", strings.ToUpper(region), err)
                     continue
                 }
+
+                // Convert []int to []string for compatibility
+                periods = make([]string, len(periodInts))
+                for i, p := range periodInts {
+                    periods[i] = fmt.Sprintf("%d", p)
+                }
+
+                if len(periods) == 0 {
+                    fmt.Printf("No periods found in database for %s (run season sync first) - skipping region\n", strings.ToUpper(region))
+                    continue
+                }
+
+                fmt.Printf("[OK] Fetched %d periods from database for %s (newest: %s, oldest: %s)\n",
+                    len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
             }
 
             if len(periods) == 0 {
