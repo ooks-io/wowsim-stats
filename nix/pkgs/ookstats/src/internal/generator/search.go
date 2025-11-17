@@ -31,11 +31,10 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
 
 	rows, err := db.Query(`
         SELECT p.id, p.name, r.region, r.slug, r.name,
-               COALESCE(pd.class_name, ''), pp.global_ranking, COALESCE(pp.global_ranking_bracket,'')
+               COALESCE(pp.class_name, ''), pp.global_ranking, COALESCE(pp.global_ranking_bracket,'')
         FROM players p
         JOIN player_profiles pp ON p.id = pp.player_id
         JOIN realms r ON p.realm_id = r.id
-        LEFT JOIN player_details pd ON p.id = pd.player_id
         WHERE pp.has_complete_coverage = 1
         ORDER BY pp.global_ranking ASC, p.name ASC
     `)
