@@ -172,7 +172,13 @@ func generateRegionalPlayerLeaderboard(db *sql.DB, out, region string, pageSize 
 
 // generateRealmPlayerLeaderboards generates realm-specific player rankings for a season
 func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize int, seasonID int) error {
-	rrows, err := db.Query(`SELECT slug FROM realms WHERE region = ? ORDER BY slug`, region)
+	// Only generate leaderboards for parent/independent realms (skip child realms)
+	rrows, err := db.Query(`
+		SELECT slug
+		FROM realms
+		WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
+		ORDER BY slug
+	`, region)
 	if err != nil {
 		return fmt.Errorf("players realms list: %w", err)
 	}
@@ -193,14 +199,17 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 			return err
 		}
 
+		// Include players from entire pool (parent + all children)
 		var total int
 		if err := db.QueryRow(`
 			SELECT COUNT(*)
 			FROM players p
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
-			WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-		`, seasonID, region, rslug).Scan(&total); err != nil {
+			WHERE pp.season_id = ? AND r.region = ?
+				AND (r.slug = ? OR r.parent_realm_slug = ?)
+				AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+		`, seasonID, region, rslug, rslug).Scan(&total); err != nil {
 			return fmt.Errorf("players total (realm, season %d): %w", seasonID, err)
 		}
 
@@ -216,10 +225,12 @@ func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize in
 				JOIN realms r ON p.realm_id = r.id
 				JOIN player_profiles pp ON p.id = pp.player_id
 				LEFT JOIN player_details pd ON p.id = pd.player_id
-				WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+				WHERE pp.season_id = ? AND r.region = ?
+					AND (r.slug = ? OR r.parent_realm_slug = ?)
+					AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
 				ORDER BY pp.combined_best_time ASC, p.name ASC
 				LIMIT ? OFFSET ?
-			`, seasonID, region, rslug, pageSize, offset)
+			`, seasonID, region, rslug, rslug, pageSize, offset)
 			if err != nil {
 				return err
 			}
@@ -252,8 +263,13 @@ func generateClassPlayerLeaderboards(db *sql.DB, out, classKey string, pageSize 
 			return err
 		}
 
-		// Realm class leaderboards
-		rrows, err := db.Query(`SELECT slug FROM realms WHERE region = ? ORDER BY slug`, reg)
+		// Realm class leaderboards - only for parent/independent realms (skip child realms)
+		rrows, err := db.Query(`
+			SELECT slug
+			FROM realms
+			WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
+			ORDER BY slug
+		`, reg)
 		if err != nil {
 			return fmt.Errorf("players class realms list: %w", err)
 		}
@@ -325,6 +341,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID, region)
 	} else {
+		// Realm scope - include entire pool (parent + all children)
 		bracketColumn = "pp.realm_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
@@ -335,9 +352,11 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
-			WHERE pp.season_id = ? AND r.region = ? AND r.slug = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+			WHERE pp.season_id = ? AND r.region = ?
+				AND (r.slug = ? OR r.parent_realm_slug = ?)
+				AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
 			ORDER BY pp.combined_best_time ASC, p.name ASC
-		`, seasonID, region, realmSlug)
+		`, seasonID, region, realmSlug, realmSlug)
 	}
 	_ = bracketColumn // unused for now, but documents intent
 	if err != nil {

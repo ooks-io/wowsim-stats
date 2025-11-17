@@ -84,23 +84,39 @@ func FetchChallengeMode(db *database.DatabaseService, client *blizzard.Client, o
 		}
 	}
 
-	// Pre-populate reference data
+	// Pre-populate reference data (includes ALL realms, even children)
 	fmt.Printf("Pre-populating reference data...\n")
 	fmt.Printf("  - Ensuring dungeons (%d)\n", len(dungeons))
 	if err := db.EnsureDungeonsOnce(dungeons); err != nil {
 		return nil, fmt.Errorf("failed to ensure dungeons: %w", err)
 	}
 	fmt.Printf("  [OK] Dungeons ensured\n")
-	fmt.Printf("  - Ensuring realms (%d)\n", len(allRealms))
+	fmt.Printf("  - Ensuring realms (%d, including child realms)\n", len(allRealms))
 	if err := db.EnsureRealmsBatch(allRealms); err != nil {
 		return nil, fmt.Errorf("failed to ensure realms: %w", err)
 	}
 	fmt.Printf("  [OK] Realms ensured\n")
-	fmt.Printf("Reference data populated for %d realms and %d dungeons\n", len(allRealms), len(dungeons))
 
-	// Group realms by region
-	realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
+	// Filter out child realms for fetching (they don't have their own leaderboards)
+	// Players from child realms appear on parent realm leaderboards
+	fetchRealms := make(map[string]blizzard.RealmInfo)
+	childRealmsFiltered := 0
 	for slug, info := range allRealms {
+		if info.ParentRealmSlug != "" {
+			childRealmsFiltered++
+		} else {
+			fetchRealms[slug] = info
+		}
+	}
+	if childRealmsFiltered > 0 {
+		fmt.Printf("Filtered out %d child realms from fetch (no leaderboards to fetch)\n", childRealmsFiltered)
+	}
+	fmt.Printf("Reference data populated for %d realms (%d to fetch from) and %d dungeons\n",
+		len(allRealms), len(fetchRealms), len(dungeons))
+
+	// Group realms by region (only fetch realms, excluding children)
+	realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
+	for slug, info := range fetchRealms {
 		if realmsByRegion[info.Region] == nil {
 			realmsByRegion[info.Region] = make(map[string]blizzard.RealmInfo)
 		}

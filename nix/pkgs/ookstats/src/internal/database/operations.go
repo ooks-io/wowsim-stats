@@ -16,10 +16,10 @@ import (
 func (ds *DatabaseService) EnsureReferenceData(realmInfo blizzard.RealmInfo, dungeons []blizzard.DungeonInfo) error {
 	// insert realm data
 	realmQuery := `
-		INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id)
-		VALUES (?, ?, ?, ?)
+		INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+		VALUES (?, ?, ?, ?, ?)
 	`
-	_, err := ds.db.Exec(realmQuery, realmInfo.Slug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+	_, err := ds.db.Exec(realmQuery, realmInfo.Slug, realmInfo.Name, realmInfo.Region, realmInfo.ID, realmInfo.ParentRealmSlug)
 	if err != nil {
 		return fmt.Errorf("failed to insert realm data: %w", err)
 	}
@@ -76,8 +76,8 @@ func (ds *DatabaseService) EnsureRealmsBatch(realms map[string]blizzard.RealmInf
     defer tx.Rollback()
 
     stmt, err := tx.Prepare(`
-        INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id)
-        VALUES (?, ?, ?, ?)
+        INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+        VALUES (?, ?, ?, ?, ?)
     `)
     if err != nil {
         return err
@@ -97,7 +97,7 @@ func (ds *DatabaseService) EnsureRealmsBatch(realms map[string]blizzard.RealmInf
     total := len(keys)
     for i, slug := range keys {
         ri := realms[slug]
-        if _, err := stmt.Exec(ri.Slug, ri.Name, ri.Region, ri.ID); err != nil {
+        if _, err := stmt.Exec(ri.Slug, ri.Name, ri.Region, ri.ID, ri.ParentRealmSlug); err != nil {
             return fmt.Errorf("failed to insert realm %s: %w", ri.Slug, err)
         }
         // light progress every 10 items
@@ -296,9 +296,9 @@ func (ds *DatabaseService) getOrCreateRealm(tx *sql.Tx, realmSlug string, allRea
 	if realmInfo, exists := allRealms[realmSlug]; exists {
 		// insert known realm
 		result, err := tx.Exec(`
-			INSERT INTO realms (slug, name, region, connected_realm_id)
-			VALUES (?, ?, ?, ?)
-		`, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+			INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+			VALUES (?, ?, ?, ?, ?)
+		`, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID, realmInfo.ParentRealmSlug)
 		if err != nil {
 			return 0, err
 		}
@@ -308,9 +308,9 @@ func (ds *DatabaseService) getOrCreateRealm(tx *sql.Tx, realmSlug string, allRea
 	} else {
 		// insert unknown realm as placeholder
 		result, err := tx.Exec(`
-			INSERT INTO realms (slug, name, region, connected_realm_id)
-			VALUES (?, ?, ?, ?)
-		`, realmSlug, utils.Slugify(realmSlug), "unknown", 0)
+			INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+			VALUES (?, ?, ?, NULL, ?)
+		`, realmSlug, utils.Slugify(realmSlug), "unknown", "")
 		if err != nil {
 			return 0, err
 		}
@@ -552,8 +552,8 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
 // ensureReferenceDataTx ensures reference data within a transaction
 func (ds *DatabaseService) ensureReferenceDataTx(tx *sql.Tx, realmInfo blizzard.RealmInfo, dungeons []blizzard.DungeonInfo) error {
 	// insert realm data
-	realmQuery := `INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id) VALUES (?, ?, ?, ?)`
-	_, err := tx.Exec(realmQuery, realmInfo.Slug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+	realmQuery := `INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id, parent_realm_slug) VALUES (?, ?, ?, ?, ?)`
+	_, err := tx.Exec(realmQuery, realmInfo.Slug, realmInfo.Name, realmInfo.Region, realmInfo.ID, realmInfo.ParentRealmSlug)
 	if err != nil {
 		return fmt.Errorf("failed to insert realm data: %w", err)
 	}
@@ -686,8 +686,8 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
                     return 0, 0, fmt.Errorf("failed to resolve player realm: %w", err)
                 }
                 if playerRealmID == 0 {
-                    if _, err := tx.Exec(`INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id) VALUES (?, ?, ?, ?)`,
-                        playerRealmSlug, playerRealmSlug, realmInfo.Region, 0); err != nil {
+                    if _, err := tx.Exec(`INSERT OR IGNORE INTO realms (slug, name, region, connected_realm_id, parent_realm_slug) VALUES (?, ?, ?, NULL, ?)`,
+                        playerRealmSlug, playerRealmSlug, realmInfo.Region, ""); err != nil {
                         return 0, 0, fmt.Errorf("failed to create placeholder realm: %w", err)
                     }
                     id2, err := ds.getRealmIDTx(tx, playerRealmSlug, realmInfo.Region)
@@ -794,9 +794,9 @@ func (ds *DatabaseService) getOrCreateRealmTx(tx *sql.Tx, realmSlug string, allR
 	// realm doesn't exist, create it
 	if realmInfo, exists := allRealms[realmSlug]; exists {
 		result, err := tx.Exec(`
-			INSERT INTO realms (slug, name, region, connected_realm_id)
-			VALUES (?, ?, ?, ?)
-		`, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+			INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+			VALUES (?, ?, ?, ?, ?)
+		`, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID, realmInfo.ParentRealmSlug)
 		if err != nil {
 			return 0, err
 		}
@@ -805,9 +805,9 @@ func (ds *DatabaseService) getOrCreateRealmTx(tx *sql.Tx, realmSlug string, allR
 		return int(id), err
 	} else {
 		result, err := tx.Exec(`
-			INSERT INTO realms (slug, name, region, connected_realm_id)
-			VALUES (?, ?, ?, ?)
-		`, realmSlug, utils.Slugify(realmSlug), "unknown", 0)
+			INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+			VALUES (?, ?, ?, NULL, ?)
+		`, realmSlug, utils.Slugify(realmSlug), "unknown", "")
 		if err != nil {
 			return 0, err
 		}
@@ -832,9 +832,9 @@ func (ds *DatabaseService) getOrCreateRealmByRegion(tx *sql.Tx, realmSlug string
     // If we know this realm (by slug) from constants, use its canonical region/name/id
     if realmInfo, ok := allRealms[realmSlug]; ok {
         result, err := tx.Exec(`
-            INSERT INTO realms (slug, name, region, connected_realm_id)
-            VALUES (?, ?, ?, ?)
-        `, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID)
+            INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+            VALUES (?, ?, ?, ?, ?)
+        `, realmSlug, realmInfo.Name, realmInfo.Region, realmInfo.ID, realmInfo.ParentRealmSlug)
         if err != nil {
             return 0, err
         }
@@ -844,9 +844,9 @@ func (ds *DatabaseService) getOrCreateRealmByRegion(tx *sql.Tx, realmSlug string
 
     // otherwise create a placeholder scoped to the provided region
     result, err := tx.Exec(`
-        INSERT INTO realms (slug, name, region, connected_realm_id)
-        VALUES (?, ?, ?, ?)
-    `, realmSlug, utils.Slugify(realmSlug), region, 0)
+        INSERT INTO realms (slug, name, region, connected_realm_id, parent_realm_slug)
+        VALUES (?, ?, ?, NULL, ?)
+    `, realmSlug, utils.Slugify(realmSlug), region, "")
     if err != nil {
         return 0, err
     }
@@ -1374,4 +1374,55 @@ func (ds *DatabaseService) GetPeriodsForSeason(seasonID int) ([]int, error) {
 		periods = append(periods, periodID)
 	}
 	return periods, rows.Err()
+}
+
+// GetRealmPoolIDs returns all realm IDs in a realm pool (parent + all children)
+// For a child realm, it returns the parent and all siblings
+// For a parent realm, it returns itself and all children
+// For an independent realm, it returns just itself
+func (ds *DatabaseService) GetRealmPoolIDs(region, slug string) ([]int, error) {
+	// First, get the realm's parent_realm_slug
+	var parentSlug sql.NullString
+	err := ds.db.QueryRow(`
+		SELECT parent_realm_slug
+		FROM realms
+		WHERE region = ? AND slug = ?
+	`, region, slug).Scan(&parentSlug)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return []int{}, nil
+		}
+		return nil, fmt.Errorf("failed to query realm: %w", err)
+	}
+
+	// Determine the pool leader slug
+	poolLeaderSlug := slug
+	if parentSlug.Valid && parentSlug.String != "" {
+		// This is a child realm, use the parent as pool leader
+		poolLeaderSlug = parentSlug.String
+	}
+
+	// Get all realms in the pool: the pool leader + all realms that have it as parent
+	query := `
+		SELECT id FROM realms
+		WHERE region = ? AND (
+			slug = ? OR parent_realm_slug = ?
+		)
+		ORDER BY id
+	`
+	rows, err := ds.db.Query(query, region, poolLeaderSlug, poolLeaderSlug)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query realm pool: %w", err)
+	}
+	defer rows.Close()
+
+	var poolIDs []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		poolIDs = append(poolIDs, id)
+	}
+	return poolIDs, rows.Err()
 }

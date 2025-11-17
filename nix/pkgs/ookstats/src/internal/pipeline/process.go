@@ -445,17 +445,22 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			return 0, err
 		}
 
-		// step 3: realm rankings for this season
-		fmt.Printf("Computing realm rankings for season %d...\n", seasonID)
+		// step 3: realm rankings for this season (pool-based for connected realms)
+		fmt.Printf("Computing realm rankings for season %d (using realm pools)...\n", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET realm_ranking = (
 				SELECT ranking FROM (
 					SELECT
-						player_id,
-						ROW_NUMBER() OVER (PARTITION BY realm_id ORDER BY combined_best_time ASC) as ranking
-					FROM player_profiles
-					WHERE season_id = ? AND has_complete_coverage = 1
+						pp.player_id,
+						ROW_NUMBER() OVER (
+							PARTITION BY COALESCE(parent_r.id, r.id)
+							ORDER BY pp.combined_best_time ASC
+						) as ranking
+					FROM player_profiles pp
+					JOIN realms r ON pp.realm_id = r.id
+					LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+					WHERE pp.season_id = ? AND pp.has_complete_coverage = 1
 				) realm_ranks
 				WHERE realm_ranks.player_id = player_profiles.player_id
 			)
@@ -476,34 +481,36 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			return 0, err
 		}
 
-		// update realm ranking brackets for this season
-		fmt.Printf("Computing realm ranking brackets for season %d...\n", seasonID)
+		// update realm ranking brackets for this season (pool-based for connected realms)
+		fmt.Printf("Computing realm ranking brackets for season %d (using realm pools)...\n", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET realm_ranking_bracket = (
 				CASE
-					WHEN counts.combined_best_time = counts.realm_min_time THEN 'artifact'
+					WHEN counts.combined_best_time = counts.pool_min_time THEN 'artifact'
 					ELSE
 						CASE
-							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 1.0 THEN 'excellent'
-							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 5.0 THEN 'legendary'
-							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 20.0 THEN 'epic'
-							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 40.0 THEN 'rare'
-							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.realm_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.pool_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.pool_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.pool_total AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.pool_total AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.realm_ranking AS REAL) / CAST(counts.pool_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
 							ELSE 'common'
 						END
 				END
 			)
 			FROM (
 				SELECT
-					player_id,
-					realm_ranking,
-					combined_best_time,
-					realm_id,
-					MIN(combined_best_time) OVER (PARTITION BY realm_id) as realm_min_time,
-					COUNT(*) OVER (PARTITION BY realm_id) as realm_total
-				FROM player_profiles
-				WHERE season_id = ? AND has_complete_coverage = 1 AND realm_ranking IS NOT NULL
+					pp.player_id,
+					pp.realm_ranking,
+					pp.combined_best_time,
+					COALESCE(parent_r.id, r.id) as pool_id,
+					MIN(pp.combined_best_time) OVER (PARTITION BY COALESCE(parent_r.id, r.id)) as pool_min_time,
+					COUNT(*) OVER (PARTITION BY COALESCE(parent_r.id, r.id)) as pool_total
+				FROM player_profiles pp
+				JOIN realms r ON pp.realm_id = r.id
+				LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+				WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.realm_ranking IS NOT NULL
 			) counts
 			WHERE player_profiles.player_id = counts.player_id
 			AND player_profiles.season_id = ?
