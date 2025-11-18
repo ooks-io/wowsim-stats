@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"ookstats/internal/wow"
 )
 
@@ -15,14 +16,14 @@ type ProcessPlayersOptions struct {
 
 // ProcessPlayers processes player aggregations and rankings
 func ProcessPlayers(db *sql.DB, opts ProcessPlayersOptions) (profilesCreated int, qualifiedPlayers int, err error) {
-	fmt.Println("=== Player Aggregation ===")
+	log.Info("player aggregation")
 
 	// check if we have data
 	var runCount, playerCount int
 	db.QueryRow("SELECT COUNT(*) FROM challenge_runs").Scan(&runCount)
 	db.QueryRow("SELECT COUNT(*) FROM players").Scan(&playerCount)
 
-	fmt.Printf("Found %d runs and %d players in database\n", runCount, playerCount)
+	log.Info("found data in database", "runs", runCount, "players", playerCount)
 
 	if runCount == 0 {
 		return 0, 0, fmt.Errorf("no runs found in database - run 'fetch cm' first")
@@ -36,27 +37,33 @@ func ProcessPlayers(db *sql.DB, opts ProcessPlayersOptions) (profilesCreated int
 	defer tx.Rollback()
 
 	// step 0: ensure seasons are properly configured
-	fmt.Println("\n0. Checking season configuration...")
+	log.Info("checking season configuration")
 	var seasonCount int
 	tx.QueryRow("SELECT COUNT(*) FROM seasons").Scan(&seasonCount)
 	if seasonCount == 0 {
-		fmt.Printf("Warning: No seasons found in database. Proceeding with legacy all-time processing.\n")
+		log.Warn("no seasons found in database - proceeding with legacy all-time processing")
 	} else {
-		fmt.Printf("Found %d seasons configured\n", seasonCount)
+		log.Info("found seasons configured", "count", seasonCount)
 	}
 
 	// step 1: create player aggregations (season-aware if seasons exist)
-	fmt.Println("\n1. Creating player aggregations...")
+	log.Info("creating player aggregations")
 	profilesCreated, err = createPlayerAggregations(tx)
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to create player aggregations: %w", err)
 	}
 
 	// step 2: compute player rankings (global, regional, realm) per season
-	fmt.Println("\n2. Computing player rankings...")
+	log.Info("computing player rankings")
 	qualifiedPlayers, err = computePlayerRankings(tx)
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to compute player rankings: %w", err)
+	}
+
+	// step 3: compute class-specific rankings per season
+	log.Info("computing class-specific rankings")
+	if err = computePlayerClassRankings(tx); err != nil {
+		return 0, 0, fmt.Errorf("failed to compute class rankings: %w", err)
 	}
 
 	// commit all changes
@@ -65,14 +72,14 @@ func ProcessPlayers(db *sql.DB, opts ProcessPlayersOptions) (profilesCreated int
 	}
 
 	// optimize database
-	fmt.Println("\n3. Optimizing database...")
+	log.Info("optimizing database")
 	if _, err := db.Exec("VACUUM"); err != nil {
-		fmt.Printf("Warning: database optimization failed: %v\n", err)
+		log.Warn("database optimization failed", "error", err)
 	}
 
-	fmt.Printf("\nPlayer aggregation complete!\n")
-	fmt.Printf("   Created %d player profiles\n", profilesCreated)
-	fmt.Printf("   Computed rankings for %d qualified players\n", qualifiedPlayers)
+	log.Info("player aggregation complete",
+		"profiles", profilesCreated,
+		"qualified_players", qualifiedPlayers)
 
 	return profilesCreated, qualifiedPlayers, nil
 }
@@ -84,7 +91,7 @@ type ProcessRunRankingsOptions struct {
 
 // ProcessRunRankings computes global, regional, and realm rankings for all runs
 func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
-	fmt.Println("=== Run Ranking Processor ===")
+	log.Info("run ranking processor")
 
 	// check if we have data
 	var runCount int
@@ -94,7 +101,7 @@ func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
 		return fmt.Errorf("no runs found in database - run 'fetch cm' first")
 	}
 
-	fmt.Printf("Found %d runs in database\n", runCount)
+	log.Info("found runs in database", "runs", runCount)
 
 	// begin transaction for all ranking operations
 	tx, err := db.Begin()
@@ -104,19 +111,19 @@ func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
 	defer tx.Rollback()
 
 	// step 1: compute global run rankings
-	fmt.Println("\n1. Computing global run rankings...")
+	log.Info("computing global run rankings")
 	if err := computeGlobalRankings(tx); err != nil {
 		return fmt.Errorf("failed to compute global rankings: %w", err)
 	}
 
 	// step 2: compute regional run rankings
-	fmt.Println("\n2. Computing regional run rankings...")
+	log.Info("computing regional run rankings")
 	if err := computeRegionalRankings(tx); err != nil {
 		return fmt.Errorf("failed to compute regional rankings: %w", err)
 	}
 
 	// step 3: compute realm run rankings (pool-based for connected realms)
-	fmt.Println("\n3. Computing realm run rankings (pool-based)...")
+	log.Info("computing realm run rankings (pool-based)")
 	if err := computeRealmRankings(tx); err != nil {
 		return fmt.Errorf("failed to compute realm rankings: %w", err)
 	}
@@ -127,18 +134,18 @@ func ProcessRunRankings(db *sql.DB, opts ProcessRunRankingsOptions) error {
 	}
 
 	// optimize database
-	fmt.Println("\n4. Optimizing database...")
+	log.Info("optimizing database")
 	if _, err := db.Exec("VACUUM"); err != nil {
-		fmt.Printf("Warning: database optimization failed: %v\n", err)
+		log.Warn("database optimization failed", "error", err)
 	}
 
-	fmt.Printf("\nRun ranking computation complete!\n")
+	log.Info("run ranking computation complete")
 	return nil
 }
 
 // createPlayerAggregations creates player profiles and best runs
 func createPlayerAggregations(tx *sql.Tx) (int, error) {
-	fmt.Printf("Computing player aggregations...\n")
+	log.Info("computing player aggregations")
 
 	// clear existing aggregation data
 	if _, err := tx.Exec("DELETE FROM player_profiles"); err != nil {
@@ -147,12 +154,12 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 	if _, err := tx.Exec("DELETE FROM player_best_runs"); err != nil {
 		return 0, err
 	}
-	fmt.Printf("Cleared existing player aggregation data\n")
+	log.Info("cleared existing player aggregation data")
 
 	currentTime := time.Now().UnixMilli()
 
 	// step 1: find best run per player per dungeon per season WITH rankings in one efficient query
-	fmt.Printf("Step 1: Computing best runs per player per dungeon per season with rankings...\n")
+	log.Info("computing best runs per player per dungeon per season with rankings")
 	_, err := tx.Exec(`
 		INSERT INTO player_best_runs (
 			player_id, dungeon_id, run_id, duration, season_id, completed_timestamp,
@@ -217,9 +224,9 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 
 	var bestRunsCount int
 	tx.QueryRow("SELECT COUNT(*) FROM player_best_runs").Scan(&bestRunsCount)
-	fmt.Printf("[OK] Computed %d best runs with rankings in single query\n", bestRunsCount)
+	log.Info("computed best runs with rankings", "count", bestRunsCount)
 
-	fmt.Printf("Step 3: Creating player profiles per season...\n")
+	log.Info("creating player profiles per season")
 	_, err = tx.Exec(`
 		INSERT INTO player_profiles (
 			player_id, season_id, name, realm_id, dungeons_completed, total_runs,
@@ -262,10 +269,10 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 
 	var profilesCount int
 	tx.QueryRow("SELECT COUNT(*) FROM player_profiles").Scan(&profilesCount)
-	fmt.Printf("[OK] Created %d player profiles\n", profilesCount)
+	log.Info("created player profiles", "count", profilesCount)
 
 	// step 4: determine main spec for each player per season based on best runs
-	fmt.Printf("Step 4: Computing main specs per season...\n")
+	log.Info("computing main specs per season")
 	_, err = tx.Exec(`
 		UPDATE player_profiles
 		SET main_spec_id = (
@@ -290,14 +297,14 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	fmt.Printf("[OK] Updated main specs\n")
+	log.Info("updated main specs")
 
 	// step 5: derive class from main spec
-	fmt.Printf("Step 5: Deriving class names from main specs...\n")
+	log.Info("deriving class names from main specs")
 	if err := deriveClassFromMainSpec(tx); err != nil {
 		return 0, fmt.Errorf("failed to derive class names: %w", err)
 	}
-	fmt.Printf("[OK] Updated class names\n")
+	log.Info("updated class names")
 
 	return profilesCount, nil
 }
@@ -351,13 +358,13 @@ func deriveClassFromMainSpec(tx *sql.Tx) error {
 		return fmt.Errorf("error iterating rows: %w", err)
 	}
 
-	fmt.Printf("  Derived class for %d player profiles\n", updatedCount)
+	log.Debug("derived class for player profiles", "count", updatedCount)
 	return nil
 }
 
 // computePlayerRankings computes rankings for players with complete coverage per season
 func computePlayerRankings(tx *sql.Tx) (int, error) {
-	fmt.Printf("Computing player rankings per season...\n")
+	log.Info("computing player rankings per season")
 
 	currentTime := time.Now().UnixMilli()
 
@@ -378,13 +385,13 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 	}
 
 	if len(seasons) == 0 {
-		fmt.Printf("No seasons found in player profiles, skipping rankings\n")
+		log.Warn("no seasons found in player profiles - skipping rankings")
 		return 0, nil
 	}
 
 	totalQualified := 0
 	for _, seasonID := range seasons {
-		fmt.Printf("\n=== Processing Season %d ===\n", seasonID)
+		log.Info("processing season", "season_id", seasonID)
 
 		// get qualified players count for this season
 		var qualifiedCount int
@@ -393,17 +400,19 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			return 0, err
 		}
 
-		fmt.Printf("Found %d players with complete coverage in season %d\n", qualifiedCount, seasonID)
+		log.Info("found players with complete coverage",
+			"count", qualifiedCount,
+			"season_id", seasonID)
 
 		if qualifiedCount == 0 {
-			fmt.Printf("No qualified players found for season %d, skipping\n", seasonID)
+			log.Warn("no qualified players found - skipping season", "season_id", seasonID)
 			continue
 		}
 
 		totalQualified += qualifiedCount
 
 		// step 1: global rankings for this season
-		fmt.Printf("Computing global rankings for season %d...\n", seasonID)
+		log.Info("computing global rankings", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET global_ranking = (
@@ -434,7 +443,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		// update global ranking brackets for this season
-		fmt.Printf("Computing global ranking brackets for season %d...\n", seasonID)
+		log.Info("computing global ranking brackets", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET global_ranking_bracket = (
@@ -458,7 +467,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		// step 2: regional rankings for this season
-		fmt.Printf("Computing regional rankings for season %d...\n", seasonID)
+		log.Info("computing regional rankings", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET regional_ranking = (
@@ -491,7 +500,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		// update regional ranking brackets for this season
-		fmt.Printf("Computing regional ranking brackets for season %d...\n", seasonID)
+		log.Info("computing regional ranking brackets", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET regional_ranking_bracket = (
@@ -529,7 +538,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		// step 3: realm rankings for this season (pool-based for connected realms)
-		fmt.Printf("Computing realm rankings for season %d (using realm pools)...\n", seasonID)
+		log.Info("computing realm rankings (using realm pools)", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET realm_ranking = (
@@ -565,7 +574,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		// update realm ranking brackets for this season (pool-based for connected realms)
-		fmt.Printf("Computing realm ranking brackets for season %d (using realm pools)...\n", seasonID)
+		log.Info("computing realm ranking brackets (using realm pools)", "season_id", seasonID)
 		_, err = tx.Exec(`
 			UPDATE player_profiles
 			SET realm_ranking_bracket = (
@@ -604,16 +613,232 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 			return 0, err
 		}
 
-		fmt.Printf("[OK] Computed rankings for season %d with percentile brackets (%d qualified players)\n", seasonID, qualifiedCount)
+		log.Info("computed rankings for season with percentile brackets",
+			"season_id", seasonID,
+			"qualified_players", qualifiedCount)
 	}
 
-	fmt.Printf("\n[OK] Computed rankings for all seasons (total: %d qualified players across all seasons)\n", totalQualified)
+	log.Info("computed rankings for all seasons",
+		"total_qualified_players", totalQualified)
 	return totalQualified, nil
+}
+
+// computePlayerClassRankings computes class-specific rankings for players per season
+func computePlayerClassRankings(tx *sql.Tx) error {
+	log.Info("computing class-specific player rankings per season")
+
+	// get all distinct season numbers
+	seasonRows, err := tx.Query("SELECT DISTINCT season_number FROM seasons ORDER BY season_number")
+	if err != nil {
+		return fmt.Errorf("failed to query seasons: %w", err)
+	}
+	defer seasonRows.Close()
+
+	var seasons []int
+	for seasonRows.Next() {
+		var seasonNumber int
+		if err := seasonRows.Scan(&seasonNumber); err != nil {
+			return err
+		}
+		seasons = append(seasons, seasonNumber)
+	}
+
+	if len(seasons) == 0 {
+		log.Warn("no seasons found, skipping class rankings")
+		return nil
+	}
+
+	for _, seasonID := range seasons {
+		log.Info("processing class rankings for season", "season_id", seasonID)
+
+		// step 1: global class rankings
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET global_class_rank = (
+				SELECT ranking FROM (
+					SELECT
+						player_id,
+						ROW_NUMBER() OVER (PARTITION BY class_name ORDER BY combined_best_time ASC) as ranking
+					FROM player_profiles
+					WHERE season_id = ? AND has_complete_coverage = 1 AND class_name IS NOT NULL
+				) class_ranks
+				WHERE class_ranks.player_id = player_profiles.player_id
+			)
+			WHERE season_id = ? AND has_complete_coverage = 1 AND class_name IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute global class rankings: %w", err)
+		}
+
+		// step 2: global class ranking brackets
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET global_class_bracket = (
+				CASE
+					WHEN counts.combined_best_time = counts.class_min_time THEN 'artifact'
+					ELSE
+						CASE
+							WHEN (CAST(counts.global_class_rank AS REAL) / CAST(counts.class_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.global_class_rank AS REAL) / CAST(counts.class_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.global_class_rank AS REAL) / CAST(counts.class_total AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.global_class_rank AS REAL) / CAST(counts.class_total AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.global_class_rank AS REAL) / CAST(counts.class_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							ELSE 'common'
+						END
+				END
+			)
+			FROM (
+				SELECT
+					pp.player_id,
+					pp.global_class_rank,
+					pp.combined_best_time,
+					MIN(pp.combined_best_time) OVER (PARTITION BY pp.class_name) as class_min_time,
+					COUNT(*) OVER (PARTITION BY pp.class_name) as class_total
+				FROM player_profiles pp
+				WHERE pp.season_id = ? AND pp.has_complete_coverage = 1
+					AND pp.global_class_rank IS NOT NULL AND pp.class_name IS NOT NULL
+			) counts
+			WHERE player_profiles.player_id = counts.player_id
+				AND player_profiles.season_id = ?
+				AND player_profiles.has_complete_coverage = 1
+				AND player_profiles.global_class_rank IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute global class brackets: %w", err)
+		}
+
+		// step 3: regional class rankings
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET region_class_rank = (
+				SELECT ranking FROM (
+					SELECT
+						pp.player_id,
+						ROW_NUMBER() OVER (PARTITION BY r.region, pp.class_name ORDER BY pp.combined_best_time ASC) as ranking
+					FROM player_profiles pp
+					INNER JOIN realms r ON pp.realm_id = r.id
+					WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.class_name IS NOT NULL
+				) class_ranks
+				WHERE class_ranks.player_id = player_profiles.player_id
+			)
+			WHERE season_id = ? AND has_complete_coverage = 1 AND class_name IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute regional class rankings: %w", err)
+		}
+
+		// step 4: regional class ranking brackets
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET region_class_bracket = (
+				CASE
+					WHEN counts.combined_best_time = counts.class_regional_min_time THEN 'artifact'
+					ELSE
+						CASE
+							WHEN (CAST(counts.region_class_rank AS REAL) / CAST(counts.class_regional_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.region_class_rank AS REAL) / CAST(counts.class_regional_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.region_class_rank AS REAL) / CAST(counts.class_regional_total AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.region_class_rank AS REAL) / CAST(counts.class_regional_total AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.region_class_rank AS REAL) / CAST(counts.class_regional_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							ELSE 'common'
+						END
+				END
+			)
+			FROM (
+				SELECT
+					pp.player_id,
+					pp.region_class_rank,
+					pp.combined_best_time,
+					MIN(pp.combined_best_time) OVER (PARTITION BY r.region, pp.class_name) as class_regional_min_time,
+					COUNT(*) OVER (PARTITION BY r.region, pp.class_name) as class_regional_total
+				FROM player_profiles pp
+				INNER JOIN realms r ON pp.realm_id = r.id
+				WHERE pp.season_id = ? AND pp.has_complete_coverage = 1
+					AND pp.region_class_rank IS NOT NULL AND pp.class_name IS NOT NULL
+			) counts
+			WHERE player_profiles.player_id = counts.player_id
+				AND player_profiles.season_id = ?
+				AND player_profiles.has_complete_coverage = 1
+				AND player_profiles.region_class_rank IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute regional class brackets: %w", err)
+		}
+
+		// step 5: realm class rankings (pool-based for connected realms)
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET realm_class_rank = (
+				SELECT ranking FROM (
+					SELECT
+						pp.player_id,
+						ROW_NUMBER() OVER (
+							PARTITION BY COALESCE(parent_r.id, r.id), pp.class_name
+							ORDER BY pp.combined_best_time ASC
+						) as ranking
+					FROM player_profiles pp
+					JOIN realms r ON pp.realm_id = r.id
+					LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+					WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.class_name IS NOT NULL
+				) class_ranks
+				WHERE class_ranks.player_id = player_profiles.player_id
+			)
+			WHERE season_id = ? AND has_complete_coverage = 1 AND class_name IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute realm class rankings: %w", err)
+		}
+
+		// step 6: realm class ranking brackets (pool-based)
+		_, err = tx.Exec(`
+			UPDATE player_profiles
+			SET realm_class_bracket = (
+				CASE
+					WHEN counts.combined_best_time = counts.class_pool_min_time THEN 'artifact'
+					ELSE
+						CASE
+							WHEN (CAST(counts.realm_class_rank AS REAL) / CAST(counts.class_pool_total AS REAL) * 100) <= 1.0 THEN 'excellent'
+							WHEN (CAST(counts.realm_class_rank AS REAL) / CAST(counts.class_pool_total AS REAL) * 100) <= 5.0 THEN 'legendary'
+							WHEN (CAST(counts.realm_class_rank AS REAL) / CAST(counts.class_pool_total AS REAL) * 100) <= 20.0 THEN 'epic'
+							WHEN (CAST(counts.realm_class_rank AS REAL) / CAST(counts.class_pool_total AS REAL) * 100) <= 40.0 THEN 'rare'
+							WHEN (CAST(counts.realm_class_rank AS REAL) / CAST(counts.class_pool_total AS REAL) * 100) <= 60.0 THEN 'uncommon'
+							ELSE 'common'
+						END
+				END
+			)
+			FROM (
+				SELECT
+					pp.player_id,
+					pp.realm_class_rank,
+					pp.combined_best_time,
+					COALESCE(parent_r.id, r.id) as pool_id,
+					MIN(pp.combined_best_time) OVER (PARTITION BY COALESCE(parent_r.id, r.id), pp.class_name) as class_pool_min_time,
+					COUNT(*) OVER (PARTITION BY COALESCE(parent_r.id, r.id), pp.class_name) as class_pool_total
+				FROM player_profiles pp
+				JOIN realms r ON pp.realm_id = r.id
+				LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
+				WHERE pp.season_id = ? AND pp.has_complete_coverage = 1
+					AND pp.realm_class_rank IS NOT NULL AND pp.class_name IS NOT NULL
+			) counts
+			WHERE player_profiles.player_id = counts.player_id
+				AND player_profiles.season_id = ?
+				AND player_profiles.has_complete_coverage = 1
+				AND player_profiles.realm_class_rank IS NOT NULL
+		`, seasonID, seasonID)
+		if err != nil {
+			return fmt.Errorf("failed to compute realm class brackets: %w", err)
+		}
+
+		log.Info("computed class rankings for season", "season_id", seasonID)
+	}
+
+	log.Info("computed class rankings for all seasons")
+	return nil
 }
 
 // computeGlobalRankings computes global rankings for all runs (per season)
 func computeGlobalRankings(tx *sql.Tx) error {
-	fmt.Printf("Computing global rankings per season...\n")
+	log.Info("computing global rankings per season")
 
 	currentTime := time.Now().UnixMilli()
 
@@ -646,7 +871,7 @@ func computeGlobalRankings(tx *sql.Tx) error {
 	}
 
 	// update percentile brackets for unfiltered global rankings using efficient SQL (per season)
-	fmt.Printf("Computing global ranking brackets per season...\n")
+	log.Info("computing global ranking brackets per season")
 	_, err = tx.Exec(`
 		UPDATE run_rankings
 		SET percentile_bracket = (
@@ -784,7 +1009,7 @@ func computeGlobalRankings(tx *sql.Tx) error {
 	}
 
 	// update percentile brackets for filtered global rankings using efficient SQL (per season)
-	fmt.Printf("Computing filtered global ranking brackets per season...\n")
+	log.Info("computing filtered global ranking brackets per season")
 	_, err = tx.Exec(`
 		UPDATE run_rankings
 		SET percentile_bracket = (
@@ -824,13 +1049,13 @@ func computeGlobalRankings(tx *sql.Tx) error {
 		return err
 	}
 
-	fmt.Printf("[OK] Computed global rankings with percentile brackets (all and filtered)\n")
+	log.Info("computed global rankings with percentile brackets (all and filtered)")
 	return nil
 }
 
 // computeRegionalRankings computes regional rankings for all runs
 func computeRegionalRankings(tx *sql.Tx) error {
-	fmt.Printf("Computing regional rankings...\n")
+	log.Info("computing regional rankings")
 
 	currentTime := time.Now().UnixMilli()
 
@@ -883,7 +1108,7 @@ func computeRegionalRankings(tx *sql.Tx) error {
 		}
 
 		// update percentile brackets for unfiltered regional rankings using efficient SQL (per season)
-		fmt.Printf("Computing unfiltered regional ranking brackets for %s per season...\n", region)
+		log.Info("computing unfiltered regional ranking brackets per season", "region", region)
 		_, err = tx.Exec(`
 			UPDATE run_rankings
 			SET percentile_bracket = (
@@ -1027,7 +1252,7 @@ func computeRegionalRankings(tx *sql.Tx) error {
 
 		// update percentile brackets for filtered regional rankings using efficient SQL (per season)
 		filteredScope := region + "_filtered"
-		fmt.Printf("Computing filtered regional ranking brackets for %s per season...\n", region)
+		log.Info("computing filtered regional ranking brackets per season", "region", region)
 		_, err = tx.Exec(`
 			UPDATE run_rankings
 			SET percentile_bracket = (
@@ -1068,13 +1293,13 @@ func computeRegionalRankings(tx *sql.Tx) error {
 		}
 	}
 
-	fmt.Printf("[OK] Computed regional rankings with percentile brackets for %d regions\n", len(regions))
+	log.Info("computed regional rankings with percentile brackets", "regions", len(regions))
 	return nil
 }
 
 // computeRealmRankings computes realm rankings per realm pool (connected realms grouped together)
 func computeRealmRankings(tx *sql.Tx) error {
-	fmt.Printf("Computing realm rankings (pool-based for connected realms)...\n")
+	log.Info("computing realm rankings (pool-based for connected realms)")
 
 	currentTime := time.Now().UnixMilli()
 
@@ -1111,7 +1336,7 @@ func computeRealmRankings(tx *sql.Tx) error {
 		pools = append(pools, pool)
 	}
 
-	fmt.Printf("Found %d realm pools to process\n", len(pools))
+	log.Info("found realm pools to process", "pools", len(pools))
 
 	for _, pool := range pools {
 		// unfiltered realm rankings (per season) using pool-based partitioning
@@ -1341,6 +1566,6 @@ func computeRealmRankings(tx *sql.Tx) error {
 		}
 	}
 
-	fmt.Printf("[OK] Computed realm rankings with percentile brackets for %d realm pools\n", len(pools))
+	log.Info("computed realm rankings with percentile brackets", "pools", len(pools))
 	return nil
 }

@@ -311,43 +311,41 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 	// Fetch ALL players for this season, then filter by class in Go (to handle fallback logic)
 	var rows *sql.Rows
 	var err error
-	var bracketColumn string
 	if scope == "global" {
-		bracketColumn = "pp.global_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
 				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
 				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.global_ranking_bracket, '')
+				   COALESCE(pp.global_class_bracket, '')
 			FROM players p
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+				AND pp.class_name IS NOT NULL
 			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID)
 	} else if scope == "regional" {
-		bracketColumn = "pp.regional_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
 				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
 				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.regional_ranking_bracket, '')
+				   COALESCE(pp.region_class_bracket, '')
 			FROM players p
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
 			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+				AND pp.class_name IS NOT NULL
 			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID, region)
 	} else {
 		// Realm scope - include entire pool (parent + all children)
-		bracketColumn = "pp.realm_ranking_bracket"
 		rows, err = db.Query(`
 			SELECT p.id, p.name, r.slug, r.name, r.region,
 				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
 				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.realm_ranking_bracket, '')
+				   COALESCE(pp.realm_class_bracket, '')
 			FROM players p
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
@@ -355,10 +353,10 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 			WHERE pp.season_id = ? AND r.region = ?
 				AND (r.slug = ? OR r.parent_realm_slug = ?)
 				AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+				AND pp.class_name IS NOT NULL
 			ORDER BY pp.combined_best_time ASC, p.name ASC
 		`, seasonID, region, realmSlug, realmSlug)
 	}
-	_ = bracketColumn // unused for now, but documents intent
 	if err != nil {
 		return err
 	}

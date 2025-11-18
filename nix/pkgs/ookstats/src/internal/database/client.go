@@ -191,6 +191,12 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			global_ranking_bracket TEXT,
 			regional_ranking_bracket TEXT,
 			realm_ranking_bracket TEXT,
+			global_class_rank INTEGER,
+			region_class_rank INTEGER,
+			realm_class_rank INTEGER,
+			global_class_bracket TEXT,
+			region_class_bracket TEXT,
+			realm_class_bracket TEXT,
 			has_complete_coverage INTEGER DEFAULT 0,
 			last_updated INTEGER,
 			PRIMARY KEY (player_id, season_id)
