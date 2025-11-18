@@ -13,6 +13,7 @@ import (
     "strings"
     "time"
 
+    "github.com/charmbracelet/log"
     "github.com/spf13/cobra"
     "ookstats/internal/blizzard"
     "ookstats/internal/database"
@@ -96,7 +97,7 @@ func init() {
 
 func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
         dbService := database.NewDatabaseService(db)
-        fmt.Printf("Analyze: %d realms, %d dungeons\n", len(realms), len(dungeons))
+        log.Info("analyze", "realms", len(realms), "dungeons", len(dungeons))
 
         type latest struct{
             Region        string `json:"region"`
@@ -148,7 +149,9 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
 
         // Process each region independently
         for region, regionRealms := range realmsByRegion {
-            fmt.Printf("\n========== Region: %s (%d realms) ==========\n", strings.ToUpper(region), len(regionRealms))
+            log.Info("processing region",
+                "region", strings.ToUpper(region),
+                "realms", len(regionRealms))
 
             // Determine periods for this region
             var periods []string
@@ -158,16 +161,23 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
                 // User specified periods (support ranges like "1020-1036")
                 periods, err = blizzard.ParsePeriods(periodsSpec)
                 if err != nil {
-                    fmt.Printf("Failed to parse periods for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    log.Error("failed to parse periods - skipping region",
+                        "region", strings.ToUpper(region),
+                        "error", err)
                     continue
                 }
-                fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
+                log.Info("using user-specified periods",
+                    "periods", periods,
+                    "count", len(periods))
             } else {
                 // Fetch periods from database (populated by season sync)
-                fmt.Printf("Fetching period list from database for %s...\n", strings.ToUpper(region))
+                log.Info("fetching period list from database",
+                    "region", strings.ToUpper(region))
                 periodInts, err := dbService.GetPeriodsForRegion(region)
                 if err != nil {
-                    fmt.Printf("Failed to fetch periods from database for %s: %v - skipping region\n", strings.ToUpper(region), err)
+                    log.Error("failed to fetch periods from database - skipping region",
+                        "region", strings.ToUpper(region),
+                        "error", err)
                     continue
                 }
 
@@ -178,16 +188,21 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
                 }
 
                 if len(periods) == 0 {
-                    fmt.Printf("No periods found in database for %s (run season sync first) - skipping region\n", strings.ToUpper(region))
+                    log.Warn("no periods found in database - skipping region",
+                        "region", strings.ToUpper(region))
                     continue
                 }
 
-                fmt.Printf("[OK] Fetched %d periods from database for %s (newest: %s, oldest: %s)\n",
-                    len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
+                log.Info("fetched periods from database",
+                    "count", len(periods),
+                    "region", strings.ToUpper(region),
+                    "newest", periods[0],
+                    "oldest", periods[len(periods)-1])
             }
 
             if len(periods) == 0 {
-                fmt.Printf("No periods to process for %s - skipping region\n", strings.ToUpper(region))
+                log.Warn("no periods to process - skipping region",
+                    "region", strings.ToUpper(region))
                 continue
             }
 
@@ -195,9 +210,14 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
 
             // Iterate periods for this region
             for _, period := range periods {
-                fmt.Printf("\n--- %s Period %s ---\n", strings.ToUpper(region), period)
+                log.Info("processing period",
+                    "region", strings.ToUpper(region),
+                    "period", period)
                 expected := len(regionRealms) * len(dungeons)
-                fmt.Printf("Expecting %d requests (%d realms × %d dungeons)\n", expected, len(regionRealms), len(dungeons))
+                log.Debug("expecting requests",
+                    "count", expected,
+                    "realms", len(regionRealms),
+                    "dungeons", len(dungeons))
                 processed := 0
 
                 ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
@@ -207,10 +227,14 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
                 total++
                 if res.Error != nil {
                     failed++
-                    // Print compact progress line every 50 items, or when a non-404 error occurs
+                    // Log compact progress line every 50 items, or when a non-404 error occurs
                     if !strings.Contains(strings.ToLower(res.Error.Error()), "404") || processed%50 == 0 {
-                        fmt.Printf("  [%4d/%4d] ERR %-3s %-18s %-24s: %v\n",
-                            processed, expected, strings.ToUpper(res.RealmInfo.Region), res.RealmInfo.Slug, res.Dungeon.Slug, res.Error)
+                        log.Error("fetch error",
+                            "progress", fmt.Sprintf("%d/%d", processed, expected),
+                            "region", strings.ToUpper(res.RealmInfo.Region),
+                            "realm", res.RealmInfo.Slug,
+                            "dungeon", res.Dungeon.Slug,
+                            "error", res.Error)
                     }
                     continue
                 }
@@ -307,8 +331,13 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
                 }
                 if processed%50 == 0 {
                     elapsed := time.Since(start)
-                    fmt.Printf("  [%4d/%4d] OK  %-3s %-18s %-24s  ts=%d  (elapsed %s)\n",
-                        processed, expected, strings.ToUpper(res.RealmInfo.Region), res.RealmInfo.Slug, res.Dungeon.Slug, maxTs, elapsed.Truncate(time.Second))
+                    log.Debug("fetch progress",
+                        "progress", fmt.Sprintf("%d/%d", processed, expected),
+                        "region", strings.ToUpper(res.RealmInfo.Region),
+                        "realm", res.RealmInfo.Slug,
+                        "dungeon", res.Dungeon.Slug,
+                        "ts", maxTs,
+                        "elapsed", elapsed.Truncate(time.Second))
                 }
 
                 // Record coverage
@@ -333,10 +362,23 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
 
         // Print summary
         elapsed := time.Since(start)
-        fmt.Printf("\nAnalyze complete in %v: total=%d success=%d failed=%d realms_with_data=%d\n", elapsed, total, success, failed, len(items))
-        fmt.Println("\nLatest recorded run per realm:")
+        log.Info("analyze complete",
+            "elapsed", elapsed,
+            "total", total,
+            "success", success,
+            "failed", failed,
+            "realms_with_data", len(items))
+
+        log.Info("latest recorded run per realm")
         for _, e := range items {
-            fmt.Printf("  %-20s [%s] (%s) -> %s  | %s  period=%s  runs=%d\n", e.RealmName, strings.ToUpper(e.Region), e.RealmSlug, e.MostRecentISO, e.DungeonName, e.PeriodID, e.RunCount)
+            log.Debug("realm run",
+                "realm", e.RealmName,
+                "region", strings.ToUpper(e.Region),
+                "realm_slug", e.RealmSlug,
+                "timestamp", e.MostRecentISO,
+                "dungeon", e.DungeonName,
+                "period", e.PeriodID,
+                "runs", e.RunCount)
         }
 
         // Build realm_status structure for JSON
@@ -441,7 +483,7 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
             enc.SetIndent("", "  ")
             if err := enc.Encode(payload); err != nil { f.Close(); return fmt.Errorf("encode json: %w", err) }
             if err := f.Close(); err != nil { return err }
-            fmt.Printf("\nWrote analysis JSON to %s\n", outPath)
+            log.Info("wrote analysis JSON", "path", outPath)
         }
 
         // Write per-realm status files if requested
@@ -523,7 +565,7 @@ func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.
                 if err := enc.Encode(payload); err != nil { f.Close(); return fmt.Errorf("encode status: %w", err) }
                 if err := f.Close(); err != nil { return err }
             }
-            fmt.Printf("Wrote per-realm status files to %s\n", statusDir)
+            log.Info("wrote per-realm status files", "dir", statusDir)
         }
 
         return nil

@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/charmbracelet/log"
 	"github.com/spf13/cobra"
 	"ookstats/internal/blizzard"
 	"ookstats/internal/database"
@@ -22,7 +23,7 @@ var fetchCMCmd = &cobra.Command{
 	Short: "Fetch challenge mode leaderboards",
 	Long:  `Fetch challenge mode leaderboard data for all realms and dungeons.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("Fetching challenge mode leaderboards...")
+		log.Info("fetching challenge mode leaderboards")
 
 		db, err := database.Connect()
 		if err != nil {
@@ -40,8 +41,8 @@ var fetchCMCmd = &cobra.Command{
 		client.Verbose = verbose
 		database.SetVerbose(verbose)
 
-		fmt.Println("Connected to local database")
-		fmt.Println("Blizzard API client initialized")
+		log.Info("connected to local database")
+		log.Info("blizzard API client initialized")
 
 		// Initialize database service
 		dbService := database.NewDatabaseService(db)
@@ -119,8 +120,10 @@ var fetchCMCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("\nSuccessfully inserted %d runs and %d new players into local database\n", result.TotalRuns, result.TotalPlayers)
-		fmt.Printf("Database saved to: %s\n", database.DBFilePath())
+		log.Info("successfully inserted data into local database",
+			"runs", result.TotalRuns,
+			"players", result.TotalPlayers)
+		log.Info("database saved", "path", database.DBFilePath())
 
 		return nil
 	},
@@ -131,7 +134,7 @@ var fetchProfilesCmd = &cobra.Command{
 	Short: "Fetch detailed player profiles",
 	Long:  `Fetch detailed player profile data including equipment and character information.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("=== Player Profile Fetcher ===")
+		log.Info("player profile fetcher")
 
 		db, err := database.Connect()
 		if err != nil {
@@ -148,8 +151,8 @@ var fetchProfilesCmd = &cobra.Command{
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
 		client.Verbose = verbose
 
-		fmt.Println("Connected to local database")
-		fmt.Println("Blizzard API client initialized")
+		log.Info("connected to local database")
+		log.Info("blizzard API client initialized")
 
 		// Initialize database service
 		dbService := database.NewDatabaseService(db)
@@ -171,18 +174,18 @@ var fetchProfilesCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("\n[OK] Player profile fetching complete!\n")
-		fmt.Printf("   Processed: %d players in %v\n", result.ProcessedCount, result.Duration)
-		fmt.Printf("   Updated: %d player profiles\n", result.TotalProfiles)
-		fmt.Printf("   Updated: %d equipment items\n", result.TotalEquipment)
+		log.Info("player profile fetching complete",
+			"processed", result.ProcessedCount,
+			"duration", result.Duration,
+			"profiles", result.TotalProfiles,
+			"equipment", result.TotalEquipment)
 
 		if result.ProcessedCount > 0 {
 			rate := float64(result.ProcessedCount) / result.Duration.Minutes()
-			fmt.Printf("   Rate: %.1f players/minute\n", rate)
+			log.Info("fetch rate", "players_per_minute", rate)
 		}
 
-		fmt.Println("\nNext steps:")
-		fmt.Println("  Run 'ookstats generate api' to rebuild the website with new player profile data")
+		log.Info("next step: run 'ookstats generate api' to rebuild the website")
 
 		return nil
 	},
@@ -193,7 +196,7 @@ var fetchSeasonsCmd = &cobra.Command{
 	Short: "Fetch and sync season metadata",
 	Long:  `Fetch season metadata from Blizzard API and populate the seasons and period_seasons tables.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Println("=== Season Metadata Sync ===")
+		log.Info("season metadata sync")
 
 		db, err := database.Connect()
 		if err != nil {
@@ -209,8 +212,8 @@ var fetchSeasonsCmd = &cobra.Command{
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
 		client.Verbose = verbose
 
-		fmt.Println("Connected to local database")
-		fmt.Println("Blizzard API client initialized")
+		log.Info("connected to local database")
+		log.Info("blizzard API client initialized")
 
 		dbService := database.NewDatabaseService(db)
 
@@ -229,46 +232,56 @@ var fetchSeasonsCmd = &cobra.Command{
 			regions = []string{"us", "eu", "kr", "tw"}
 		}
 
-		fmt.Printf("Syncing seasons for regions: %v\n\n", regions)
+		log.Info("syncing seasons", "regions", regions)
 
 		totalSeasons := 0
 		totalPeriods := 0
 
 		for _, region := range regions {
-			fmt.Printf("=== Region: %s ===\n", strings.ToUpper(region))
+			log.Info("processing region", "region", strings.ToUpper(region))
 
 			// Fetch season index
 			seasonIndex, err := client.FetchSeasonIndex(region)
 			if err != nil {
-				fmt.Printf("Error fetching season index for %s: %v\n", region, err)
+				log.Error("failed to fetch season index",
+					"region", region,
+					"error", err)
 				continue
 			}
 
-			fmt.Printf("Found %d seasons in %s\n", len(seasonIndex.Seasons), strings.ToUpper(region))
+			log.Info("found seasons",
+				"count", len(seasonIndex.Seasons),
+				"region", strings.ToUpper(region))
 
 			// Process each season
 			for _, seasonRef := range seasonIndex.Seasons {
 				seasonID := seasonRef.ID
-				fmt.Printf("\n--- Season %d ---\n", seasonID)
+				log.Info("processing season", "season_id", seasonID)
 
 				// Fetch season details
 				seasonDetail, err := client.FetchSeasonDetail(region, seasonID)
 				if err != nil {
-					fmt.Printf("Error fetching season %d details: %v\n", seasonID, err)
+					log.Error("failed to fetch season details",
+						"season_id", seasonID,
+						"error", err)
 					continue
 				}
 
 				// Upsert season
 				dbSeasonID, err := dbService.UpsertSeason(seasonDetail.ID, region, seasonDetail.SeasonName, seasonDetail.StartTimestamp)
 				if err != nil {
-					fmt.Printf("Error upserting season %d: %v\n", seasonID, err)
+					log.Error("failed to upsert season",
+						"season_id", seasonID,
+						"error", err)
 					continue
 				}
 				totalSeasons++
 
-				fmt.Printf("Season: %s (ID: %d)\n", seasonDetail.SeasonName, seasonDetail.ID)
-				fmt.Printf("Start: %d\n", seasonDetail.StartTimestamp)
-				fmt.Printf("Periods: %d\n", len(seasonDetail.Periods))
+				log.Info("season details",
+					"name", seasonDetail.SeasonName,
+					"id", seasonDetail.ID,
+					"start", seasonDetail.StartTimestamp,
+					"periods", len(seasonDetail.Periods))
 
 				// Link periods to season
 				if len(seasonDetail.Periods) > 0 {
@@ -278,28 +291,33 @@ var fetchSeasonsCmd = &cobra.Command{
 					// Update period range
 					err = dbService.UpdateSeasonPeriodRange(dbSeasonID, firstPeriod, lastPeriod)
 					if err != nil {
-						fmt.Printf("Error updating season period range: %v\n", err)
+						log.Error("failed to update season period range", "error", err)
 					}
 
 					// Link each period
 					for _, periodRef := range seasonDetail.Periods {
 						err = dbService.LinkPeriodToSeason(periodRef.ID, dbSeasonID)
 						if err != nil {
-							fmt.Printf("Error linking period %d to season %d: %v\n", periodRef.ID, seasonDetail.ID, err)
+							log.Error("failed to link period to season",
+								"period_id", periodRef.ID,
+								"season_id", seasonDetail.ID,
+								"error", err)
 						} else {
 							totalPeriods++
 						}
 					}
-					fmt.Printf("Linked %d periods to season %d\n", len(seasonDetail.Periods), seasonDetail.ID)
+					log.Info("linked periods to season",
+						"periods", len(seasonDetail.Periods),
+						"season_id", seasonDetail.ID)
 				}
 			}
 
-			fmt.Printf("\n[OK] Synced seasons for %s\n", strings.ToUpper(region))
+			log.Info("synced seasons for region", "region", strings.ToUpper(region))
 		}
 
-		fmt.Printf("\n=== Sync Complete ===\n")
-		fmt.Printf("Total seasons synced: %d\n", totalSeasons)
-		fmt.Printf("Total period mappings created: %d\n", totalPeriods)
+		log.Info("sync complete",
+			"total_seasons", totalSeasons,
+			"total_periods", totalPeriods)
 
 		return nil
 	},
