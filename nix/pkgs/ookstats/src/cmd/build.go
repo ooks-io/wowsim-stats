@@ -185,7 +185,7 @@ var buildCmd = &cobra.Command{
         // Get realms and dungeons for analyze
         _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
         allRealms := blizzard.GetAllRealms()
-        if err := runAnalyze(db, client, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
+        if err := runAnalyze(db, allRealms, dungeons, periodsCSV, outPath, statusDir); err != nil {
             return fmt.Errorf("analyze status: %w", err)
         }
 
