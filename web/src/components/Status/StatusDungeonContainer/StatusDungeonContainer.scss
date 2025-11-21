@@ -1,0 +1,71 @@
+@use "../../../styles/core/tokens" as *;
+
+.status-dungeon {
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $spacing-sm;
+  background: rgba(255, 255, 255, 0.01);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.status-dungeon--latest {
+  border-color: var(--success-color);
+}
+
+.status-dungeon__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.status-dungeon__name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.status-dungeon__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-sm;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  object-fit: cover;
+}
+
+.status-dungeon__latest {
+  margin: 0;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+.status-dungeon__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+}
+
+.status-dungeon__badge {
+  padding: 2px 8px;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-dungeon__badge--positive {
+  background: rgba(56, 187, 92, 0.15);
+  color: var(--success-color);
+}
+
+.status-dungeon__badge--negative {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--error-color);
+}
+.status-dungeon--missing {
+  border-color: var(--error-color);
+}

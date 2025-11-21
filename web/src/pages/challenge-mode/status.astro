@@ -1,13 +1,20 @@
 ---
 import Callout from "../../components/Callout/Callout.astro";
-import StatusRunsTable from "../../components/Status/StatusRunsTable/StatusRunsTable.astro";
 import PageLayout from "../../layouts/PageLayout.astro";
+import PlayerSearch from "../../components/PlayerSearch/PlayerSearch.astro";
 import "../../styles/global.scss";
 import "../../components/Status/StatusRunsTable/StatusRunsTable.scss";
+import "../../components/Leaderboard/LeaderboardHeader/LeaderboardHeader.scss";
+import type {
+  CoverageHealth,
+  RealmCoverage,
+  StatusApiResponse,
+} from "../../lib/types";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import StatusRealmContainer from "../../components/Status/StatusRealmContainer/StatusRealmContainer.astro";
+import LeaderboardTypeNav from "../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
 
-// Load global status data server-side
 const filePath = join(
   process.cwd(),
   "public",
@@ -16,24 +23,123 @@ const filePath = join(
   "latest-runs.json",
 );
 const fileContent = await readFile(filePath, "utf-8");
-const data = JSON.parse(fileContent);
+const data = JSON.parse(fileContent) as StatusApiResponse;
+const realms = Array.isArray(data.realms) ? data.realms : [];
+
+const healthLabels: Record<CoverageHealth, string> = {
+  ok: "OK",
+  some_missing: "Some missing",
+  no_data: "No data",
+};
+
+const formatList = (items?: number[]) =>
+  items && items.length ? items.join(", ") : "None";
+
+const latestPeriodByRegion = realms.reduce<Record<string, number | null>>(
+  (acc, realm) => {
+    const regionKey = realm.region.toUpperCase();
+    let currentMax = acc[regionKey] ?? null;
+    realm.dungeons.forEach((dungeon) => {
+      (dungeon.periods || []).forEach((period) => {
+        if (currentMax === null || period > currentMax) {
+          currentMax = period;
+        }
+      });
+    });
+    acc[regionKey] = currentMax;
+    return acc;
+  },
+  {},
+);
+
+const realmsByRegion = realms.reduce<Record<string, RealmCoverage[]>>(
+  (acc, realm) => {
+    const regionKey = realm.region.toUpperCase();
+    if (!acc[regionKey]) {
+      acc[regionKey] = [];
+    }
+    acc[regionKey].push(realm);
+    acc[regionKey].sort((a, b) => a.realm_name.localeCompare(b.realm_name));
+    return acc;
+  },
+  {},
+);
+
+const regionEntries = Object.entries(realmsByRegion).sort((a, b) =>
+  a[0].localeCompare(b[0]),
+);
 ---
 
 <PageLayout title="Challenge Mode Status">
-  <main class="status-page">
-    <h1 class="page-title">Challenge Mode Global Status</h1>
+  <main class="leaderboard-page">
+    <h1 class="leaderboard-header status-page__title">
+      <span class="header-text">Challenge Mode Fetch Status</span>
+    </h1>
+    <PlayerSearch />
+    <LeaderboardTypeNav currentTab="status" />
 
-    <Callout type="note" title="About">
+    <Callout type="note">
       <p>
-        Showing the latest run for each realm across all dungeons. Data
-        generated at {new Date(data.generated_at).toLocaleString()}.
+        Periods refer to one week long intervals within a challenge mode season.
       </p>
     </Callout>
 
-    <div id="status-content">
-      <StatusRunsTable runs={data.latest_runs} />
+    <div class="status-content">
+      {
+        regionEntries.length === 0 ? (
+          <p class="status-empty">
+            No fetch results have been recorded yet. Run `ookstats fetch cm`
+            first.
+          </p>
+        ) : (
+          regionEntries.map(([region, realms]) => {
+            const latest = latestPeriodByRegion[region] ?? null;
+            return (
+              <details
+                class="region-section"
+                data-region={region.toLowerCase()}
+              >
+                <summary class="region-summary">
+                  <span>{region}</span>
+                  {latest !== null && (
+                    <span class="region-summary__latest">
+                      Latest period: {latest}
+                    </span>
+                  )}
+                </summary>
+                <div class="region-grid">
+                  {realms.map((realm) => (
+                    <StatusRealmContainer
+                      realm={realm}
+                      healthLabels={healthLabels}
+                      formatList={formatList}
+                      latestPeriod={latest}
+                    />
+                  ))}
+                </div>
+              </details>
+            );
+          })
+        )
+      }
     </div>
   </main>
-
-  <script src="../../client/best-runs-decorate.ts"></script>
 </PageLayout>
+
+<style>
+  .leaderboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .status-page__title {
+    margin-top: 0;
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-page {
+      padding: 15px;
+    }
+  }
+</style>

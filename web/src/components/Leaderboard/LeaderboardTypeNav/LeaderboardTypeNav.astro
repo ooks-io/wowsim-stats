@@ -2,7 +2,8 @@
 import "./LeaderboardTypeNav.scss";
 
 interface Props {
-  currentType: "dungeon" | "player";
+  currentType?: "dungeon" | "player";
+  currentTab?: "dungeon" | "player" | "status";
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
@@ -11,7 +12,8 @@ interface Props {
 }
 
 const {
-  currentType,
+  currentType = "dungeon",
+  currentTab = currentType,
   currentRegion = "global",
   currentRealm = "",
   currentSeason = 1,
@@ -47,15 +49,21 @@ if (currentRegion === "global") {
 <nav class="leaderboard-type-nav">
   <a
     href={dungeonUrl}
-    class:list={["nav-tab", { active: currentType === "dungeon" }]}
+    class:list={["nav-tab", { active: currentTab === "dungeon" }]}
   >
     Dungeons
   </a>
   <a
     href={playerUrl}
-    class:list={["nav-tab", { active: currentType === "player" }]}
+    class:list={["nav-tab", { active: currentTab === "player" }]}
   >
     Players
+  </a>
+  <a
+    href="/challenge-mode/status"
+    class:list={["nav-tab", { active: currentTab === "status" }]}
+  >
+    Status
   </a>
   <a
     class="nav-tab discord-link"

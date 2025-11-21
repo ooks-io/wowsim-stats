@@ -1,0 +1,52 @@
+@use "../../../styles/core/tokens" as *;
+
+.status-realm {
+  border-radius: $radius-lg;
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+  padding: $spacing-sm $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  min-height: 160px;
+}
+
+.status-realm__header {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-md;
+  align-items: flex-start;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+}
+
+.status-realm__region {
+  font-size: $font-size-xs;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.status-realm__meta {
+  margin: $spacing-xs 0 0;
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+}
+
+.status-realm__dungeons {
+  list-style: none;
+  padding: 0;
+  margin: $spacing-sm 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+@media (max-width: 768px) {
+  .status-realm__header {
+    flex-direction: column;
+  }
+}

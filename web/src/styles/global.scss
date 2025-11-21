@@ -2,12 +2,28 @@
 @use "./core/utilities";
 @use "./core/best-runs";
 
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+}
+
+.site-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-content {
+  flex: 1 0 auto;
+  width: 100%;
 }
 
 .page-header {

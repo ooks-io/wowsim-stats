@@ -6,6 +6,7 @@
   margin-bottom: $spacing-lg;
   border-bottom: 2px solid var(--border-color);
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .nav-tab {
@@ -49,9 +50,19 @@
 }
 
 @media (max-width: 768px) {
+  .leaderboard-type-nav {
+    gap: $spacing-xs;
+  }
+
   .nav-tab {
-    flex: 1;
+    flex: 1 1 calc(50% - $spacing-xs);
     text-align: center;
     padding: $spacing-sm $spacing-md;
+  }
+
+  .discord-link {
+    flex: 1 1 100%;
+    margin-left: 0;
+    margin-top: $spacing-xs;
   }
 }

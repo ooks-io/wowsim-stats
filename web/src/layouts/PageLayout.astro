@@ -59,11 +59,13 @@ const fullUrl = new URL(url, Astro.site || Astro.url.origin).toString();
       content={new URL(ogImage, Astro.url.origin).toString()}
     />
   </head>
-  <body>
+  <body class="site-body">
     <WoWClassColors />
     <Navigation />
 
-    <slot />
+    <div class="site-content">
+      <slot />
+    </div>
 
     <Footer />
   </body>

@@ -1,36 +1,116 @@
 @use "../../../styles/core/tokens" as *;
 
-.status-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: $spacing-xl;
+.status-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
 
-  .page-title {
-    margin: $spacing-sm 0 $spacing-lg 0;
+.status-empty {
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.region-section {
+  border: 1px solid var(--border-color);
+  border-radius: $radius-lg;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+
+.region-section[open] {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.region-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: $spacing-sm;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  list-style: none;
+}
+
+.region-summary::-webkit-details-marker {
+  display: none;
+}
+
+.region-summary::before {
+  content: "▾";
+  margin-right: $spacing-sm;
+  transition: transform 0.2s ease;
+}
+
+.region-section:not([open]) .region-summary::before {
+  transform: rotate(-90deg);
+}
+
+.region-summary__latest {
+  font-size: $font-size-sm;
+  text-transform: none;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+.region-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.health-pill {
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-weight: 600;
+  font-size: $font-size-sm;
+  text-transform: uppercase;
+
+  &.health-ok {
+    background: rgba(56, 187, 92, 0.15);
+    color: #6ee7b7;
+  }
+
+  &.health-some_missing {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+  }
+
+  &.health-no_data {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
   }
 }
 
-.dungeon-cell {
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-}
-
-.dungeon-icon {
-  width: 24px;
-  height: 24px;
+.status-pill {
+  padding: $spacing-xs $spacing-sm;
   border-radius: $radius-sm;
-  flex-shrink: 0;
-}
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-weight: 600;
+  font-size: $font-size-xs;
+  text-transform: uppercase;
 
-.timestamp-cell {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: $spacing-xs;
-}
+  &.status-ok {
+    background: rgba(56, 187, 92, 0.15);
+    color: #6ee7b7;
+  }
 
-.time-ago {
-  color: var(--text-secondary);
-  font-size: $font-size-sm;
+  &.status-some_missing {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fcd34d;
+  }
+
+  &.status-no_data {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+  }
 }

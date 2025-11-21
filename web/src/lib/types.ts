@@ -225,80 +225,35 @@ export interface FuseSearchResult<T> {
 }
 
 // Status page types
-export interface LatestRunMember {
-  name: string;
-  spec_id: number;
-  realm_slug: string;
-  region: string;
+export type CoverageHealth = "ok" | "some_missing" | "no_data";
+
+export interface DungeonCoverage {
+  dungeon_id: number;
+  dungeon_slug: string;
+  dungeon_name: string;
+  status: CoverageHealth;
+  periods: number[];
+  missing_periods: number[];
+  error_periods: number[];
 }
 
-export interface LatestRunDetails {
-  completed_timestamp: number;
-  duration_ms: number;
-  keystone_level: number;
-  members: LatestRunMember[];
-}
-
-export interface LatestRunEntry {
+export interface RealmCoverage {
   region: string;
   realm_slug: string;
   realm_name: string;
-  realm_id: number;
-  most_recent: number;
-  most_recent_iso: string;
-  period_id: string;
-  dungeon_slug: string;
-  dungeon_name: string;
-  run_count: number;
-  has_runs: boolean;
-  latest_run: LatestRunDetails;
-}
-
-export interface PeriodCoverage {
-  period_id: string;
-  has_runs: boolean;
-  latest_ts: number;
-  latest_iso: string;
-  run_count: number;
-}
-
-export interface DungeonStatus {
-  dungeon_slug: string;
-  dungeon_name: string;
-  latest_ts: number;
-  latest_iso: string;
-  latest_period: string;
-  periods: PeriodCoverage[];
-  missing_periods: string[];
-  latest_run?: LatestRunDetails;
-}
-
-export interface RealmStatus {
-  region: string;
-  realm_slug: string;
-  realm_name: string;
-  realm_id: number;
-  dungeons: DungeonStatus[];
+  health: CoverageHealth;
+  total_periods: number;
+  missing_periods: number;
+  error_periods: number;
+  dungeons: DungeonCoverage[];
 }
 
 export interface StatusApiResponse {
-  generated_at: number;
-  periods: string[];
-  summary: {
-    endpoints_tested: number;
-    success: number;
-    failed: number;
-  };
-  latest_runs: LatestRunEntry[];
-  realm_status: RealmStatus[];
+  generated_at: string;
+  realms: RealmCoverage[];
 }
 
 export interface RealmStatusApiResponse {
-  generated_at: number;
-  region: string;
-  realm_slug: string;
-  realm_name: string;
-  realm_id: number;
-  periods: string[];
-  dungeons: DungeonStatus[];
+  generated_at: string;
+  realm: RealmCoverage;
 }
