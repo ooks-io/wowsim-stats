@@ -1,0 +1,74 @@
+---
+import type { CoverageHealth, RealmCoverage } from "../../../lib/types";
+import StatusDungeonContainer from "../StatusDungeonContainer/StatusDungeonContainer.astro";
+import "./StatusRealmContainer.scss";
+
+interface Props {
+  realm: RealmCoverage;
+  healthLabels: Record<CoverageHealth, string>;
+  formatList: (items?: number[]) => string;
+  latestPeriod?: number | null;
+}
+
+const { realm, healthLabels, formatList, latestPeriod } = Astro.props;
+
+const regionLabel = realm.region.toUpperCase();
+const latestPeriodNumber =
+  typeof latestPeriod === "number" ? latestPeriod : null;
+const hasGoodLatest =
+  latestPeriodNumber !== null &&
+  realm.dungeons.some((d) => {
+    const periods = d.periods || [];
+    const missing = d.missing_periods || [];
+    return (
+      periods.includes(latestPeriodNumber) &&
+      !missing.includes(latestPeriodNumber)
+    );
+  });
+
+const latestMissing =
+  !hasGoodLatest &&
+  latestPeriodNumber !== null &&
+  realm.dungeons.some((d) =>
+    (d.missing_periods || []).includes(latestPeriodNumber),
+  );
+
+const derivedHealth: CoverageHealth =
+  latestPeriodNumber !== null
+    ? hasGoodLatest
+      ? "ok"
+      : latestMissing
+        ? "some_missing"
+        : realm.health
+    : realm.health;
+const healthLabel = healthLabels[derivedHealth];
+---
+
+<article
+  class={`status-realm ${
+    hasGoodLatest
+      ? "status-realm--healthy"
+      : latestMissing
+        ? "status-realm--missing"
+        : ""
+  }`}
+>
+  <header class="status-realm__header">
+    <div>
+      <h3>{realm.realm_name}</h3>
+    </div>
+  </header>
+
+  <ul class="status-realm__dungeons">
+    {
+      realm.dungeons.map((dungeon) => (
+        <StatusDungeonContainer
+          dungeon={dungeon}
+          formatList={formatList}
+          healthLabels={healthLabels}
+          latestPeriod={latestPeriodNumber}
+        />
+      ))
+    }
+  </ul>
+</article>

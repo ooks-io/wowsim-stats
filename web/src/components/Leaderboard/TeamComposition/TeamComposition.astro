@@ -1,12 +1,12 @@
 ---
-import type { LatestRunMember, TeamMember } from "../../../lib/types";
+import type { TeamMember } from "../../../lib/types";
 import PlayerLink from "../PlayerLink/PlayerLink.astro";
 import { getSpecInfo } from "../../../lib/wow-constants";
 import { getEffectiveRealmSlug } from "../../../lib/realms";
 import "./TeamComposition.scss";
 
 interface Props {
-  members: LatestRunMember[] | TeamMember[];
+  members: TeamMember[];
   currentRegion?: string;
   currentRealm?: string;
 }

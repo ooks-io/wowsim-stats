@@ -1,0 +1,69 @@
+---
+import type { CoverageHealth, DungeonCoverage } from "../../../lib/types";
+import "./StatusDungeonContainer.scss";
+import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+
+interface Props {
+  dungeon: DungeonCoverage;
+  healthLabels: Record<CoverageHealth, string>;
+  formatList: (items?: number[]) => string;
+  latestPeriod?: number | null;
+}
+
+const { dungeon, healthLabels, formatList, latestPeriod } = Astro.props;
+const latestPeriodNumber =
+  typeof latestPeriod === "number" ? latestPeriod : null;
+const coversLatest =
+  latestPeriodNumber !== null &&
+  Array.isArray(dungeon.periods) &&
+  dungeon.periods.includes(latestPeriodNumber);
+const missingLatest =
+  latestPeriodNumber !== null &&
+  (!coversLatest ||
+    (Array.isArray(dungeon.missing_periods) &&
+      dungeon.missing_periods.includes(latestPeriodNumber)));
+
+const latestObserved = (() => {
+  const periods = dungeon.periods || [];
+  const missing = new Set(dungeon.missing_periods || []);
+  const candidates = periods.filter((p) => !missing.has(p));
+  if (candidates.length === 0) {
+    return null;
+  }
+  return candidates.reduce(
+    (max, val) => (val > max ? val : max),
+    candidates[0],
+  );
+})();
+
+const dungeonIconUrl = getDungeonIconUrl(
+  dungeon.dungeon_slug,
+  dungeon.dungeon_name,
+);
+---
+
+<li
+  class={`status-dungeon ${
+    coversLatest ? "status-dungeon--latest" : ""
+  } ${missingLatest ? "status-dungeon--missing" : ""}`}
+>
+  <div class="status-dungeon__head">
+    <span class="status-dungeon__name">
+      {
+        dungeonIconUrl && (
+          <img
+            src={dungeonIconUrl}
+            alt={dungeon.dungeon_name}
+            loading="lazy"
+            class="status-dungeon__icon"
+          />
+        )
+      }
+      {dungeon.dungeon_name}
+    </span>
+  </div>
+
+  <p class="status-dungeon__latest">
+    Latest period seen: {latestObserved ?? "None"}
+  </p>
+</li>
