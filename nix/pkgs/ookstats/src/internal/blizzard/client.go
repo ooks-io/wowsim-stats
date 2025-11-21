@@ -3,10 +3,12 @@ package blizzard
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -14,21 +16,31 @@ import (
 )
 
 type Client struct {
-    HTTPClient  *http.Client
-    Token       string
-    rateLimiter chan struct{} // semaphore for rate limiting
-    // Verbose controls extra per-request logging
-    Verbose bool
-    // metrics
-    reqCount       int64
-    notFoundCount  int64
-    totalLatencyMs int64
+	HTTPClient  *http.Client
+	Token       string
+	concurrency chan struct{}
+	rateTicker  *time.Ticker
+	rateMu      sync.Mutex
+	ratePrimed  bool
+	// Verbose controls extra per-request logging
+	Verbose bool
+	// metrics
+	reqCount       int64
+	notFoundCount  int64
+	totalLatencyMs int64
 }
+
+const (
+	defaultConcurrency          = 20
+	DefaultRequestRatePerSecond = 90
+	minRatePerSecond            = 1
+)
 
 // FetchResult represents the result of a fetch operation
 type FetchResult struct {
 	RealmInfo   RealmInfo
 	Dungeon     DungeonInfo
+	PeriodID    string
 	Leaderboard *LeaderboardResponse
 	Error       error
 }
@@ -44,37 +56,84 @@ func NewClient() (*Client, error) {
 		MaxIdleConnsPerHost: 10,
 	}
 
-	// create rate limiter with 20 concurrent requests max
-	rateLimiter := make(chan struct{}, 20)
+	// create concurrency limiter with default slots
+	concurrency := make(chan struct{}, defaultConcurrency)
 
-    client := &Client{
-        HTTPClient: &http.Client{
-            Timeout:   15 * time.Second,
-            Transport: transport,
-        },
-        Token:       token,
-        rateLimiter: rateLimiter,
-    }
+	client := &Client{
+		HTTPClient: &http.Client{
+			Timeout:   15 * time.Second,
+			Transport: transport,
+		},
+		Token:       token,
+		concurrency: concurrency,
+	}
+	client.setRequestRate(DefaultRequestRatePerSecond)
 
-    return client, nil
+	return client, nil
 }
 
 // SetConcurrency adjusts the maximum concurrent API requests.
 func (c *Client) SetConcurrency(n int) {
-    if n <= 0 {
-        n = 1
-    }
-    c.rateLimiter = make(chan struct{}, n)
+	if n <= 0 {
+		n = 1
+	}
+	c.concurrency = make(chan struct{}, n)
+}
+
+// SetRequestRate updates the max requests per second.
+func (c *Client) SetRequestRate(rps int) {
+	c.setRequestRate(rps)
 }
 
 // SetTimeout updates the HTTP client timeout.
 func (c *Client) SetTimeout(d time.Duration) {
-    if d <= 0 {
-        return
-    }
-    if c.HTTPClient != nil {
-        c.HTTPClient.Timeout = d
-    }
+	if d <= 0 {
+		return
+	}
+	if c.HTTPClient != nil {
+		c.HTTPClient.Timeout = d
+	}
+}
+
+func (c *Client) setRequestRate(rps int) {
+	c.rateMu.Lock()
+	defer c.rateMu.Unlock()
+
+	if c.rateTicker != nil {
+		c.rateTicker.Stop()
+		c.rateTicker = nil
+		c.ratePrimed = false
+	}
+
+	if rps < minRatePerSecond {
+		return
+	}
+
+	interval := time.Second / time.Duration(rps)
+	if interval <= 0 {
+		interval = time.Second
+	}
+
+	c.rateTicker = time.NewTicker(interval)
+	c.ratePrimed = false
+}
+
+func (c *Client) waitForRateSlot() {
+	c.rateMu.Lock()
+	ticker := c.rateTicker
+	primed := c.ratePrimed
+	if !primed {
+		c.ratePrimed = true
+		c.rateMu.Unlock()
+		return
+	}
+	c.rateMu.Unlock()
+
+	if ticker == nil {
+		return
+	}
+
+	<-ticker.C
 }
 
 // FetchLeaderboardData fetches leaderboard data for a specific realm and dungeon with retries
@@ -83,28 +142,43 @@ func (c *Client) FetchLeaderboardData(realmInfo RealmInfo, dungeon DungeonInfo, 
 	const baseDelay = 1 * time.Second
 
 	var lastErr error
-	for attempt := 0; attempt < maxRetries; attempt++ {
+	attempt := 0
+	for {
 		if attempt > 0 {
-			// exponential backoff with jitter
+			// exponential backoff between full retries (non-429)
 			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
 			time.Sleep(delay)
-			fmt.Printf("    [RETRY %d/%d] Retrying after %v delay...\n", attempt+1, maxRetries, delay)
+			if c.Verbose {
+				fmt.Printf("    [RETRY %d/%d] Retrying after %v delay...\n", attempt, maxRetries, delay)
+			}
 		}
 
-        result, err := c.fetchLeaderboardDataOnce(realmInfo, dungeon, periodID)
-        if err == nil {
-            return result, nil
-        }
+		result, err := c.fetchLeaderboardDataOnce(realmInfo, dungeon, periodID)
+		if err == nil {
+			return result, nil
+		}
 
 		lastErr = err
 
-        // dont retry on certain errors (4xx client errors)
-        if strings.Contains(err.Error(), "status 4") {
-            if c.Verbose {
-                fmt.Printf("    [ERROR] Client error, not retrying: %v\n", err)
-            }
-            break
-        }
+		var apiErr *APIError
+		if errors.As(err, &apiErr) {
+			switch apiErr.Status {
+			case http.StatusTooManyRequests:
+				delay := apiErr.retryDelay()
+				if c.Verbose {
+					fmt.Printf("    [WARN] 429 received, backing off for %v\n", delay)
+				}
+				time.Sleep(delay)
+				continue
+			case http.StatusNotFound:
+				return nil, err
+			}
+		}
+
+		attempt++
+		if attempt >= maxRetries {
+			break
+		}
 	}
 
 	return nil, fmt.Errorf("failed after %d attempts: %w", maxRetries, lastErr)
@@ -112,10 +186,9 @@ func (c *Client) FetchLeaderboardData(realmInfo RealmInfo, dungeon DungeonInfo, 
 
 // fetchLeaderboardDataOnce performs a single fetch attempt
 func (c *Client) fetchLeaderboardDataOnce(realmInfo RealmInfo, dungeon DungeonInfo, periodID string) (*LeaderboardResponse, error) {
-    // rate limiting - 50ms delay between requests
-    time.Sleep(50 * time.Millisecond)
+	c.waitForRateSlot()
 
-    start := time.Now()
+	start := time.Now()
 
 	region := realmInfo.Region
 	realmID := realmInfo.ID
@@ -141,44 +214,69 @@ func (c *Client) fetchLeaderboardDataOnce(realmInfo RealmInfo, dungeon DungeonIn
 	}
 	defer resp.Body.Close()
 
-    if resp.StatusCode != http.StatusOK {
-        bodyBytes, _ := io.ReadAll(resp.Body)
-        // metrics
-        atomic.AddInt64(&c.reqCount, 1)
-        if resp.StatusCode == http.StatusNotFound {
-            atomic.AddInt64(&c.notFoundCount, 1)
-        }
-        atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
-        if c.Verbose {
-            fmt.Printf("HTTP %d %-3s %-20s %-26s in %dms\n", resp.StatusCode, realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
-        }
-        return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
-    }
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		// metrics
+		atomic.AddInt64(&c.reqCount, 1)
+		if resp.StatusCode == http.StatusNotFound {
+			atomic.AddInt64(&c.notFoundCount, 1)
+		}
+		atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
+		if c.Verbose {
+			fmt.Printf("HTTP %d %-3s %-20s %-26s in %dms\n", resp.StatusCode, realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
+		}
+		return nil, newAPIError(resp.StatusCode, bodyBytes, resp.Header.Get("Retry-After"))
+	}
 
 	var leaderboard LeaderboardResponse
 	if err := json.NewDecoder(resp.Body).Decode(&leaderboard); err != nil {
 		return nil, fmt.Errorf("failed to decode response: %w", err)
 	}
 
-    // successfully decoded
-    atomic.AddInt64(&c.reqCount, 1)
-    atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
-    if c.Verbose {
-        fmt.Printf("HTTP 200 %-3s %-20s %-26s in %dms\n", realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
-    }
-    return &leaderboard, nil
+	// successfully decoded
+	atomic.AddInt64(&c.reqCount, 1)
+	atomic.AddInt64(&c.totalLatencyMs, time.Since(start).Milliseconds())
+	if c.Verbose {
+		fmt.Printf("HTTP 200 %-3s %-20s %-26s in %dms\n", realmInfo.Region, realmInfo.Name, dungeon.Name, time.Since(start).Milliseconds())
+	}
+	return &leaderboard, nil
 }
 
 // Stats returns simple client-side metrics for diagnostics
 func (c *Client) Stats() (requests int64, notFound int64, avgLatencyMs float64) {
-    req := atomic.LoadInt64(&c.reqCount)
-    nf := atomic.LoadInt64(&c.notFoundCount)
-    tot := atomic.LoadInt64(&c.totalLatencyMs)
-    var avg float64
-    if req > 0 {
-        avg = float64(tot) / float64(req)
-    }
-    return req, nf, avg
+	req := atomic.LoadInt64(&c.reqCount)
+	nf := atomic.LoadInt64(&c.notFoundCount)
+	tot := atomic.LoadInt64(&c.totalLatencyMs)
+	var avg float64
+	if req > 0 {
+		avg = float64(tot) / float64(req)
+	}
+	return req, nf, avg
+}
+
+type APIError struct {
+	Status     int
+	Body       string
+	retryAfter time.Duration
+}
+
+func newAPIError(status int, body []byte, retryHeader string) *APIError {
+	return &APIError{
+		Status:     status,
+		Body:       strings.TrimSpace(string(body)),
+		retryAfter: parseRetryAfter(retryHeader),
+	}
+}
+
+func (e *APIError) Error() string {
+	return fmt.Sprintf("API request failed with status %d: %s", e.Status, e.Body)
+}
+
+func (e *APIError) retryDelay() time.Duration {
+	if e.retryAfter > 0 {
+		return e.retryAfter
+	}
+	return 2 * time.Second
 }
 
 // FetchLeaderboardsConcurrent fetches multiple leaderboards concurrently
@@ -191,14 +289,15 @@ func (c *Client) FetchLeaderboardsConcurrent(ctx context.Context, realmInfo Real
 		go func(d DungeonInfo) {
 			defer wg.Done()
 
-			// Acquire rate limiter token
+			// Acquire concurrency slot
 			select {
-			case c.rateLimiter <- struct{}{}:
-				defer func() { <-c.rateLimiter }() // Release token
+			case c.concurrency <- struct{}{}:
+				defer func() { <-c.concurrency }() // Release slot
 			case <-ctx.Done():
 				results <- FetchResult{
 					RealmInfo: realmInfo,
 					Dungeon:   d,
+					PeriodID:  periodID,
 					Error:     ctx.Err(),
 				}
 				return
@@ -211,6 +310,7 @@ func (c *Client) FetchLeaderboardsConcurrent(ctx context.Context, realmInfo Real
 			results <- FetchResult{
 				RealmInfo:   realmInfo,
 				Dungeon:     d,
+				PeriodID:    periodID,
 				Leaderboard: leaderboard,
 				Error:       err,
 			}
@@ -300,7 +400,8 @@ func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 	const baseDelay = 1 * time.Second
 
 	var lastErr error
-	for attempt := 0; attempt < maxRetries; attempt++ {
+	attempt := 0
+	for {
 		if attempt > 0 {
 			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
 			time.Sleep(delay)
@@ -313,8 +414,19 @@ func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 
 		lastErr = err
 
-		// don't retry on certain errors (4xx client errors)
-		if strings.Contains(err.Error(), "status 4") {
+		var apiErr *APIError
+		if errors.As(err, &apiErr) {
+			switch apiErr.Status {
+			case http.StatusTooManyRequests:
+				time.Sleep(apiErr.retryDelay())
+				continue
+			case http.StatusNotFound:
+				return nil, err
+			}
+		}
+
+		attempt++
+		if attempt >= maxRetries {
 			break
 		}
 	}
@@ -324,8 +436,7 @@ func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 
 // fetchPlayerProfileAPIOnce performs a single player profile API fetch attempt
 func fetchPlayerProfileAPIOnce[T any](c *Client, url string) (*T, error) {
-	// Rate limiting - 50ms delay between requests
-	time.Sleep(50 * time.Millisecond)
+	c.waitForRateSlot()
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -343,7 +454,7 @@ func fetchPlayerProfileAPIOnce[T any](c *Client, url string) (*T, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+		return nil, newAPIError(resp.StatusCode, bodyBytes, resp.Header.Get("Retry-After"))
 	}
 
 	var result T
@@ -376,10 +487,10 @@ func (c *Client) FetchPlayerProfilesConcurrent(ctx context.Context, players []Pl
 		go func(p PlayerInfo) {
 			defer wg.Done()
 
-			// Acquire rate limiter token
+			// Acquire concurrency slot
 			select {
-			case c.rateLimiter <- struct{}{}:
-				defer func() { <-c.rateLimiter }() // Release token
+			case c.concurrency <- struct{}{}:
+				defer func() { <-c.concurrency }() // Release slot
 			case <-ctx.Done():
 				results <- PlayerProfileResult{
 					PlayerID:   p.ID,
@@ -501,7 +612,8 @@ func (c *Client) FetchSeasonIndex(region string) (*SeasonIndexResponse, error) {
 	const baseDelay = 1 * time.Second
 
 	var lastErr error
-	for attempt := 0; attempt < maxRetries; attempt++ {
+	attempt := 0
+	for {
 		if attempt > 0 {
 			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
 			time.Sleep(delay)
@@ -514,7 +626,19 @@ func (c *Client) FetchSeasonIndex(region string) (*SeasonIndexResponse, error) {
 
 		lastErr = err
 
-		if strings.Contains(err.Error(), "status 4") {
+		var apiErr *APIError
+		if errors.As(err, &apiErr) {
+			switch apiErr.Status {
+			case http.StatusTooManyRequests:
+				time.Sleep(apiErr.retryDelay())
+				continue
+			case http.StatusNotFound:
+				return nil, err
+			}
+		}
+
+		attempt++
+		if attempt >= maxRetries {
 			break
 		}
 	}
@@ -523,7 +647,7 @@ func (c *Client) FetchSeasonIndex(region string) (*SeasonIndexResponse, error) {
 }
 
 func (c *Client) fetchSeasonIndexOnce(url string) (*SeasonIndexResponse, error) {
-	time.Sleep(50 * time.Millisecond)
+	c.waitForRateSlot()
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -541,7 +665,7 @@ func (c *Client) fetchSeasonIndexOnce(url string) (*SeasonIndexResponse, error) 
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+		return nil, newAPIError(resp.StatusCode, bodyBytes, resp.Header.Get("Retry-After"))
 	}
 
 	var result SeasonIndexResponse
@@ -564,7 +688,8 @@ func (c *Client) FetchSeasonDetail(region string, seasonID int) (*SeasonDetailRe
 	const baseDelay = 1 * time.Second
 
 	var lastErr error
-	for attempt := 0; attempt < maxRetries; attempt++ {
+	attempt := 0
+	for {
 		if attempt > 0 {
 			delay := time.Duration(1<<uint(attempt-1)) * baseDelay
 			time.Sleep(delay)
@@ -577,7 +702,19 @@ func (c *Client) FetchSeasonDetail(region string, seasonID int) (*SeasonDetailRe
 
 		lastErr = err
 
-		if strings.Contains(err.Error(), "status 4") {
+		var apiErr *APIError
+		if errors.As(err, &apiErr) {
+			switch apiErr.Status {
+			case http.StatusTooManyRequests:
+				time.Sleep(apiErr.retryDelay())
+				continue
+			case http.StatusNotFound:
+				return nil, err
+			}
+		}
+
+		attempt++
+		if attempt >= maxRetries {
 			break
 		}
 	}
@@ -586,7 +723,7 @@ func (c *Client) FetchSeasonDetail(region string, seasonID int) (*SeasonDetailRe
 }
 
 func (c *Client) fetchSeasonDetailOnce(url string) (*SeasonDetailResponse, error) {
-	time.Sleep(50 * time.Millisecond)
+	c.waitForRateSlot()
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -604,7 +741,7 @@ func (c *Client) fetchSeasonDetailOnce(url string) (*SeasonDetailResponse, error
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("API request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
+		return nil, newAPIError(resp.StatusCode, bodyBytes, resp.Header.Get("Retry-After"))
 	}
 
 	var result SeasonDetailResponse
@@ -622,4 +759,20 @@ func getEnvOrFail(key string) string {
 		os.Exit(1)
 	}
 	return value
+}
+
+func parseRetryAfter(v string) time.Duration {
+	v = strings.TrimSpace(v)
+	if v == "" {
+		return 0
+	}
+	if secs, err := strconv.Atoi(v); err == nil && secs > 0 {
+		return time.Duration(secs) * time.Second
+	}
+	if t, err := http.ParseTime(v); err == nil {
+		if until := time.Until(t); until > 0 {
+			return until
+		}
+	}
+	return 0
 }

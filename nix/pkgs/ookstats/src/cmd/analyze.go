@@ -1,572 +1,350 @@
 package cmd
 
 import (
-    "context"
-    "database/sql"
-    "encoding/json"
-    "errors"
-    "fmt"
-    "os"
-    "path/filepath"
-    "sort"
-    "strconv"
-    "strings"
-    "time"
+	"database/sql"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
 
-    "github.com/charmbracelet/log"
-    "github.com/spf13/cobra"
-    "ookstats/internal/blizzard"
-    "ookstats/internal/database"
+	"github.com/charmbracelet/log"
+	"github.com/spf13/cobra"
+	"ookstats/internal/blizzard"
+	"ookstats/internal/database"
 )
 
-// analyzeCmd performs a quick multi-period sweep to summarize latest runs per realm
+// analyzeCmd summarizes CM fetch coverage to power the status API.
 var analyzeCmd = &cobra.Command{
-    Use:   "analyze",
-    Short: "Analyze CM endpoints and output latest runs per realm",
-    Long:  `Fetches leaderboards across a set of periods and summarizes the latest recorded run timestamp per realm. Optionally writes a JSON file for the website.`,
-    RunE: func(cmd *cobra.Command, args []string) error {
-        outPath, _ := cmd.Flags().GetString("out")
-        statusDir, _ := cmd.Flags().GetString("status-dir")
-        regionsCSV, _ := cmd.Flags().GetString("regions")
-        periodsCSV, _ := cmd.Flags().GetString("periods")
-        rng, _ := cmd.Flags().GetString("range")
-        concurrency, _ := cmd.Flags().GetInt("concurrency")
+	Use:   "analyze",
+	Short: "Summarize CM fetch coverage and write status JSON",
+	Long:  `Reads previously recorded fetch results and outputs per-realm/dungeon coverage data for the status page.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outPath, _ := cmd.Flags().GetString("out")
+		statusDir, _ := cmd.Flags().GetString("status-dir")
+		regionsCSV, _ := cmd.Flags().GetString("regions")
+		periodsCSV, _ := cmd.Flags().GetString("periods")
+		rng, _ := cmd.Flags().GetString("range")
+		concurrency, _ := cmd.Flags().GetInt("concurrency") // retained for compatibility
+		_ = concurrency
 
-        // Connect to database (needed for period fetching from seasons)
-        db, err := database.Connect()
-        if err != nil {
-            return fmt.Errorf("db connect: %w", err)
-        }
-        defer db.Close()
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("db connect: %w", err)
+		}
+		defer db.Close()
 
-        client, err := blizzard.NewClient()
-        if err != nil {
-            return fmt.Errorf("blizzard client: %w", err)
-        }
-        if concurrency > 0 {
-            client.SetConcurrency(concurrency)
-        }
+		_, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
 
-        // Dungeons from constants
-        _, dungeons := blizzard.GetHardcodedPeriodAndDungeons()
+		realms := blizzard.GetAllRealms()
+		if strings.TrimSpace(regionsCSV) != "" {
+			allowed := map[string]bool{}
+			for _, r := range strings.Split(regionsCSV, ",") {
+				r = strings.ToLower(strings.TrimSpace(r))
+				if r != "" {
+					allowed[r] = true
+				}
+			}
+			for slug, info := range realms {
+				if !allowed[strings.ToLower(info.Region)] {
+					delete(realms, slug)
+				}
+			}
+		}
 
-        // Realms from constants
-        realms := blizzard.GetAllRealms()
-        if strings.TrimSpace(regionsCSV) != "" {
-            allowed := map[string]bool{}
-            for _, r := range strings.Split(regionsCSV, ",") {
-                r = strings.TrimSpace(strings.ToLower(r))
-                if r != "" { allowed[r] = true }
-            }
-            for slug, info := range realms {
-                if !allowed[strings.ToLower(info.Region)] {
-                    delete(realms, slug)
-                }
-            }
-        }
+		var periodsSpec string
+		if strings.TrimSpace(periodsCSV) != "" {
+			periodsSpec = periodsCSV
+		} else if strings.TrimSpace(rng) != "" {
+			parts := strings.Split(strings.TrimSpace(rng), "-")
+			if len(parts) != 2 {
+				return errors.New("invalid --range format (expected start-end)")
+			}
+			a, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+			b, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+			if err1 != nil || err2 != nil || a <= 0 || b <= 0 || b < a {
+				return errors.New("invalid --range values")
+			}
+			var list []string
+			for i := a; i <= b; i++ {
+				list = append(list, fmt.Sprintf("%d", i))
+			}
+			periodsSpec = strings.Join(list, ",")
+		}
 
-        // Determine period spec (parse once, apply per-region)
-        var periodsSpec string
-        if strings.TrimSpace(periodsCSV) != "" {
-            periodsSpec = periodsCSV
-        } else if strings.TrimSpace(rng) != "" {
-            rangeParts := strings.Split(strings.TrimSpace(rng), "-")
-            if len(rangeParts) != 2 { return errors.New("invalid --range format (expected start-end)") }
-            a, err1 := strconv.Atoi(strings.TrimSpace(rangeParts[0]))
-            b, err2 := strconv.Atoi(strings.TrimSpace(rangeParts[1]))
-            if err1 != nil || err2 != nil || a <= 0 || b <= 0 || b < a { return errors.New("invalid --range values") }
-            // Convert range to comma-separated list
-            var periodParts []string
-            for i := a; i <= b; i++ { periodParts = append(periodParts, fmt.Sprintf("%d", i)) }
-            periodsSpec = strings.Join(periodParts, ",")
-        }
-
-        return runAnalyze(db, client, realms, dungeons, periodsSpec, outPath, statusDir)
-    },
+		return runAnalyze(db, realms, dungeons, periodsSpec, outPath, statusDir)
+	},
 }
 
 func init() {
-    rootCmd.AddCommand(analyzeCmd)
-    analyzeCmd.Flags().String("out", "", "Optional path to write latest-runs JSON (default: {status-dir}/latest-runs.json)")
-    analyzeCmd.Flags().String("status-dir", "web/public/api/status", "Base dir to write status JSON files (latest-runs and per-realm)")
-    analyzeCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
-    analyzeCmd.Flags().String("periods", "", "Comma-separated period IDs to test (default: global periods)")
-    analyzeCmd.Flags().String("range", "", "Period range to test (e.g., 1026-1030)")
-    analyzeCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
+	rootCmd.AddCommand(analyzeCmd)
+	analyzeCmd.Flags().String("out", "", "Optional path to write status JSON (default: {status-dir}/latest-runs.json)")
+	analyzeCmd.Flags().String("status-dir", "web/public/api/status", "Base directory for status JSON files")
+	analyzeCmd.Flags().String("regions", "", "Comma-separated regions to include (us,eu,kr,tw)")
+	analyzeCmd.Flags().String("periods", "", "Comma-separated period IDs to include")
+	analyzeCmd.Flags().String("range", "", "Period range to include (e.g., 1026-1030)")
+	analyzeCmd.Flags().Int("concurrency", 0, "Deprecated (no longer used)")
 }
 
-func runAnalyze(db *sql.DB, client *blizzard.Client, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
-        dbService := database.NewDatabaseService(db)
-        log.Info("analyze", "realms", len(realms), "dungeons", len(dungeons))
+type statusDungeonEntry struct {
+	DungeonID    int    `json:"dungeon_id"`
+	DungeonSlug  string `json:"dungeon_slug"`
+	DungeonName  string `json:"dungeon_name"`
+	Status       string `json:"status"`
+	Periods      []int  `json:"periods"`
+	Missing      []int  `json:"missing_periods"`
+	ErrorPeriods []int  `json:"error_periods"`
+}
 
-        type latest struct{
-            Region        string `json:"region"`
-            RealmSlug     string `json:"realm_slug"`
-            RealmName     string `json:"realm_name"`
-            RealmID       int    `json:"realm_id"`
-            MostRecent    int64  `json:"most_recent"`
-            MostRecentISO string `json:"most_recent_iso"`
-            PeriodID      string `json:"period_id"`
-            DungeonSlug   string `json:"dungeon_slug"`
-            DungeonName   string `json:"dungeon_name"`
-            RunCount      int    `json:"run_count"`
-            HasRuns       bool   `json:"has_runs"`
-            LatestRun     struct{
-                CompletedTimestamp int64  `json:"completed_timestamp"`
-                Duration           int    `json:"duration_ms"`
-                KeystoneLevel      int    `json:"keystone_level"`
-                Members            []struct{
-                    Name      string `json:"name"`
-                    SpecID    int    `json:"spec_id"`
-                    RealmSlug string `json:"realm_slug"`
-                    Region    string `json:"region"`
-                } `json:"members"`
-            } `json:"latest_run"`
-        }
+type statusRealmEntry struct {
+	Region         string               `json:"region"`
+	RealmSlug      string               `json:"realm_slug"`
+	RealmName      string               `json:"realm_name"`
+	Health         string               `json:"health"`
+	TotalPeriods   int                  `json:"total_periods"`
+	MissingPeriods int                  `json:"missing_periods"`
+	ErrorPeriods   int                  `json:"error_periods"`
+	Dungeons       []statusDungeonEntry `json:"dungeons"`
+}
 
-        latestByRealm := map[string]latest{} // key: region|realm_slug
-        // Track latest run per realm+dungeon for per-realm status files
-        perRealmDungeonLatest := map[string]latest{} // key: region|realm_slug|dungeon_slug
-        // coverage[realmKey][dungeonSlug][period] = {latest ts, run_count}
-        type agg struct{ ts int64; runs int }
-        coverage := map[string]map[string]map[string]agg{}
-        total := 0
-        success := 0
-        failed := 0
-        start := time.Now()
+type statusPayload struct {
+	GeneratedAt string             `json:"generated_at"`
+	Realms      []statusRealmEntry `json:"realms"`
+}
 
-        // Group realms by region
-        realmsByRegion := make(map[string]map[string]blizzard.RealmInfo)
-        for slug, info := range realms {
-            if realmsByRegion[info.Region] == nil {
-                realmsByRegion[info.Region] = make(map[string]blizzard.RealmInfo)
-            }
-            realmsByRegion[info.Region][slug] = info
-        }
+func runAnalyze(db *sql.DB, realms map[string]blizzard.RealmInfo, dungeons []blizzard.DungeonInfo, periodsSpec string, outPath, statusDir string) error {
+	log.Info("building status coverage", "realms", len(realms), "dungeons", len(dungeons))
 
-        // Track periods per region for JSON output
-        allPeriodsByRegion := make(map[string][]string)
+	allowedPeriods := make(map[int]bool)
+	if strings.TrimSpace(periodsSpec) != "" {
+		parsed, err := blizzard.ParsePeriods(periodsSpec)
+		if err != nil {
+			return fmt.Errorf("parse periods: %w", err)
+		}
+		for _, p := range parsed {
+			if pid, err := strconv.Atoi(p); err == nil {
+				allowedPeriods[pid] = true
+			}
+		}
+	}
+	filterPeriods := len(allowedPeriods) > 0
 
-        // Process each region independently
-        for region, regionRealms := range realmsByRegion {
-            log.Info("processing region",
-                "region", strings.ToUpper(region),
-                "realms", len(regionRealms))
+	realmFilter := make(map[string]blizzard.RealmInfo)
+	for _, info := range realms {
+		realmFilter[realmMapKey(info.Region, info.Slug)] = info
+	}
 
-            // Determine periods for this region
-            var periods []string
-            var err error
+	dungeonLookup := make(map[int]blizzard.DungeonInfo)
+	for _, d := range dungeons {
+		dungeonLookup[d.ID] = d
+	}
 
-            if strings.TrimSpace(periodsSpec) != "" {
-                // User specified periods (support ranges like "1020-1036")
-                periods, err = blizzard.ParsePeriods(periodsSpec)
-                if err != nil {
-                    log.Error("failed to parse periods - skipping region",
-                        "region", strings.ToUpper(region),
-                        "error", err)
-                    continue
-                }
-                log.Info("using user-specified periods",
-                    "periods", periods,
-                    "count", len(periods))
-            } else {
-                // Fetch periods from database (populated by season sync)
-                log.Info("fetching period list from database",
-                    "region", strings.ToUpper(region))
-                periodInts, err := dbService.GetPeriodsForRegion(region)
-                if err != nil {
-                    log.Error("failed to fetch periods from database - skipping region",
-                        "region", strings.ToUpper(region),
-                        "error", err)
-                    continue
-                }
+	type dungeonAgg struct {
+		info    blizzard.DungeonInfo
+		periods []int
+		missing []int
+		errors  []int
+	}
+	type realmAgg struct {
+		info     blizzard.RealmInfo
+		dungeons map[int]*dungeonAgg
+	}
 
-                // Convert []int to []string for compatibility
-                periods = make([]string, len(periodInts))
-                for i, p := range periodInts {
-                    periods[i] = fmt.Sprintf("%d", p)
-                }
+	agg := make(map[string]*realmAgg)
 
-                if len(periods) == 0 {
-                    log.Warn("no periods found in database - skipping region",
-                        "region", strings.ToUpper(region))
-                    continue
-                }
+	rows, err := db.Query(`SELECT region, realm_slug, dungeon_id, period_id, status FROM fetch_status`)
+	if err != nil {
+		return fmt.Errorf("query fetch_status: %w", err)
+	}
+	defer rows.Close()
 
-                log.Info("fetched periods from database",
-                    "count", len(periods),
-                    "region", strings.ToUpper(region),
-                    "newest", periods[0],
-                    "oldest", periods[len(periods)-1])
-            }
+	for rows.Next() {
+		var region, realmSlug string
+		var dungeonID, periodID int
+		var status string
+		if err := rows.Scan(&region, &realmSlug, &dungeonID, &periodID, &status); err != nil {
+			return fmt.Errorf("scan fetch_status: %w", err)
+		}
+		if filterPeriods && !allowedPeriods[periodID] {
+			continue
+		}
+		key := realmMapKey(region, realmSlug)
+		info, ok := realmFilter[key]
+		if !ok {
+			continue // skip realms outside requested filters
+		}
+		ra := agg[key]
+		if ra == nil {
+			ra = &realmAgg{info: info, dungeons: make(map[int]*dungeonAgg)}
+			agg[key] = ra
+		}
+		dagg := ra.dungeons[dungeonID]
+		if dagg == nil {
+			dInfo, ok := dungeonLookup[dungeonID]
+			if !ok {
+				dInfo = blizzard.DungeonInfo{
+					ID:   dungeonID,
+					Slug: fmt.Sprintf("dungeon-%d", dungeonID),
+					Name: fmt.Sprintf("Dungeon %d", dungeonID),
+				}
+			}
+			dagg = &dungeonAgg{info: dInfo}
+			ra.dungeons[dungeonID] = dagg
+		}
+		switch strings.ToLower(status) {
+		case "ok":
+			dagg.periods = append(dagg.periods, periodID)
+		case "missing":
+			dagg.missing = append(dagg.missing, periodID)
+		case "error":
+			dagg.errors = append(dagg.errors, periodID)
+		default:
+			// treat unknown statuses conservatively as errors
+			dagg.errors = append(dagg.errors, periodID)
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate fetch_status: %w", err)
+	}
 
-            if len(periods) == 0 {
-                log.Warn("no periods to process - skipping region",
-                    "region", strings.ToUpper(region))
-                continue
-            }
+	realmKeys := make([]string, 0, len(agg))
+	for key := range agg {
+		realmKeys = append(realmKeys, key)
+	}
+	sort.Slice(realmKeys, func(i, j int) bool {
+		ri := agg[realmKeys[i]].info
+		rj := agg[realmKeys[j]].info
+		if ri.Region == rj.Region {
+			return ri.Slug < rj.Slug
+		}
+		return ri.Region < rj.Region
+	})
 
-            allPeriodsByRegion[region] = periods
+	realmsOut := make([]statusRealmEntry, 0, len(realmKeys))
+	for _, key := range realmKeys {
+		ra := agg[key]
+		realmEntry := statusRealmEntry{
+			Region:    ra.info.Region,
+			RealmSlug: ra.info.Slug,
+			RealmName: ra.info.Name,
+		}
+		var realmMissing, realmErrors int
 
-            // Iterate periods for this region
-            for _, period := range periods {
-                log.Info("processing period",
-                    "region", strings.ToUpper(region),
-                    "period", period)
-                expected := len(regionRealms) * len(dungeons)
-                log.Debug("expecting requests",
-                    "count", expected,
-                    "realms", len(regionRealms),
-                    "dungeons", len(dungeons))
-                processed := 0
+		dungeonIDs := make([]int, 0, len(ra.dungeons))
+		for id := range ra.dungeons {
+			dungeonIDs = append(dungeonIDs, id)
+		}
+		sort.Ints(dungeonIDs)
 
-                ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
-                results := client.FetchAllRealmsConcurrent(ctx, regionRealms, dungeons, period)
-                for res := range results {
-                processed++
-                total++
-                if res.Error != nil {
-                    failed++
-                    // Log compact progress line every 50 items, or when a non-404 error occurs
-                    if !strings.Contains(strings.ToLower(res.Error.Error()), "404") || processed%50 == 0 {
-                        log.Error("fetch error",
-                            "progress", fmt.Sprintf("%d/%d", processed, expected),
-                            "region", strings.ToUpper(res.RealmInfo.Region),
-                            "realm", res.RealmInfo.Slug,
-                            "dungeon", res.Dungeon.Slug,
-                            "error", res.Error)
-                    }
-                    continue
-                }
-                success++
-                // compute latest run timestamp, run count, and capture latest run details
-                lb := res.Leaderboard
-                maxTs := int64(0)
-                var latestRun blizzard.ChallengeRun
-                if lb != nil {
-                    for _, run := range lb.LeadingGroups {
-                        if run.CompletedTimestamp > maxTs {
-                            maxTs = run.CompletedTimestamp
-                            latestRun = run
-                        }
-                    }
-                }
-                key := res.RealmInfo.Region + "|" + res.RealmInfo.Slug
-                cur := latestByRealm[key]
-                if maxTs > cur.MostRecent {
-                    entry := latest{
-                        Region: res.RealmInfo.Region,
-                        RealmSlug: res.RealmInfo.Slug,
-                        RealmName: res.RealmInfo.Name,
-                        RealmID: res.RealmInfo.ID,
-                        MostRecent: maxTs,
-                        MostRecentISO: time.UnixMilli(maxTs).UTC().Format("2006-01-02 15:04:05 UTC"),
-                        PeriodID: period,
-                        DungeonSlug: res.Dungeon.Slug,
-                        DungeonName: res.Dungeon.Name,
-                        RunCount: len(lb.LeadingGroups),
-                        HasRuns: len(lb.LeadingGroups) > 0,
-                    }
-                    // enrich latest run members/specs for status page
-                    entry.LatestRun.CompletedTimestamp = latestRun.CompletedTimestamp
-                    entry.LatestRun.Duration = latestRun.Duration
-                    entry.LatestRun.KeystoneLevel = latestRun.KeystoneLevel
-                    entry.LatestRun.Members = make([]struct{
-                        Name string "json:\"name\""
-                        SpecID int "json:\"spec_id\""
-                        RealmSlug string "json:\"realm_slug\""
-                        Region string "json:\"region\""
-                    }, 0, len(latestRun.Members))
-                    for _, m := range latestRun.Members {
-                        nm := ""; if v, ok := m.GetPlayerName(); ok { nm = v }
-                        sid := 0; if v, ok := m.GetSpecID(); ok { sid = v }
-                        rslug := ""; if v, ok := m.GetRealmSlug(); ok { rslug = v }
-                        entry.LatestRun.Members = append(entry.LatestRun.Members, struct{
-                            Name string "json:\"name\""
-                            SpecID int "json:\"spec_id\""
-                            RealmSlug string "json:\"realm_slug\""
-                            Region string "json:\"region\""
-                        }{ Name: nm, SpecID: sid, RealmSlug: rslug, Region: res.RealmInfo.Region })
-                    }
-                    latestByRealm[key] = entry
-                }
-                // Track latest per realm+dungeon
-                rdKey := res.RealmInfo.Region + "|" + res.RealmInfo.Slug + "|" + res.Dungeon.Slug
-                curRD := perRealmDungeonLatest[rdKey]
-                if maxTs > curRD.MostRecent {
-                    entry := latest{
-                        Region: res.RealmInfo.Region,
-                        RealmSlug: res.RealmInfo.Slug,
-                        RealmName: res.RealmInfo.Name,
-                        RealmID: res.RealmInfo.ID,
-                        MostRecent: maxTs,
-                        MostRecentISO: time.UnixMilli(maxTs).UTC().Format("2006-01-02 15:04:05 UTC"),
-                        PeriodID: period,
-                        DungeonSlug: res.Dungeon.Slug,
-                        DungeonName: res.Dungeon.Name,
-                        RunCount: len(lb.LeadingGroups),
-                        HasRuns: len(lb.LeadingGroups) > 0,
-                    }
-                    entry.LatestRun.CompletedTimestamp = latestRun.CompletedTimestamp
-                    entry.LatestRun.Duration = latestRun.Duration
-                    entry.LatestRun.KeystoneLevel = latestRun.KeystoneLevel
-                    entry.LatestRun.Members = make([]struct{
-                        Name string "json:\"name\""
-                        SpecID int "json:\"spec_id\""
-                        RealmSlug string "json:\"realm_slug\""
-                        Region string "json:\"region\""
-                    }, 0, len(latestRun.Members))
-                    for _, m := range latestRun.Members {
-                        nm := ""; if v, ok := m.GetPlayerName(); ok { nm = v }
-                        sid := 0; if v, ok := m.GetSpecID(); ok { sid = v }
-                        rslug := ""; if v, ok := m.GetRealmSlug(); ok { rslug = v }
-                        entry.LatestRun.Members = append(entry.LatestRun.Members, struct{
-                            Name string "json:\"name\""
-                            SpecID int "json:\"spec_id\""
-                            RealmSlug string "json:\"realm_slug\""
-                            Region string "json:\"region\""
-                        }{ Name: nm, SpecID: sid, RealmSlug: rslug, Region: res.RealmInfo.Region })
-                    }
-                    perRealmDungeonLatest[rdKey] = entry
-                }
-                if processed%50 == 0 {
-                    elapsed := time.Since(start)
-                    log.Debug("fetch progress",
-                        "progress", fmt.Sprintf("%d/%d", processed, expected),
-                        "region", strings.ToUpper(res.RealmInfo.Region),
-                        "realm", res.RealmInfo.Slug,
-                        "dungeon", res.Dungeon.Slug,
-                        "ts", maxTs,
-                        "elapsed", elapsed.Truncate(time.Second))
-                }
+		for _, id := range dungeonIDs {
+			dagg := ra.dungeons[id]
+			sort.Ints(dagg.periods)
+			sort.Ints(dagg.missing)
+			sort.Ints(dagg.errors)
 
-                // Record coverage
-                key = res.RealmInfo.Region + "|" + res.RealmInfo.Slug
-                if _, ok := coverage[key]; !ok { coverage[key] = map[string]map[string]agg{} }
-                if _, ok := coverage[key][res.Dungeon.Slug]; !ok { coverage[key][res.Dungeon.Slug] = map[string]agg{} }
-                prev := coverage[key][res.Dungeon.Slug][period]
-                if maxTs > prev.ts {
-                    coverage[key][res.Dungeon.Slug][period] = agg{ ts: maxTs, runs: len(lb.LeadingGroups) }
-                } else if prev.ts == 0 {
-                    coverage[key][res.Dungeon.Slug][period] = agg{ ts: maxTs, runs: len(lb.LeadingGroups) }
-                }
-            }
-            cancel()
-            }
-        }
+			status := coverageStatus(len(dagg.periods), len(dagg.missing), len(dagg.errors))
+			entry := statusDungeonEntry{
+				DungeonID:    dagg.info.ID,
+				DungeonSlug:  dagg.info.Slug,
+				DungeonName:  dagg.info.Name,
+				Status:       status,
+				Periods:      append([]int(nil), dagg.periods...),
+				Missing:      append([]int(nil), dagg.missing...),
+				ErrorPeriods: append([]int(nil), dagg.errors...),
+			}
+			realmEntry.Dungeons = append(realmEntry.Dungeons, entry)
+			realmEntry.TotalPeriods += len(dagg.periods)
+			realmMissing += len(dagg.missing)
+			realmErrors += len(dagg.errors)
+		}
 
-        // Prepare sorted slice
-        items := make([]latest, 0, len(latestByRealm))
-        for _, v := range latestByRealm { items = append(items, v) }
-        sort.Slice(items, func(i,j int) bool { return items[i].MostRecent > items[j].MostRecent })
+		realmEntry.MissingPeriods = realmMissing
+		realmEntry.ErrorPeriods = realmErrors
+		realmEntry.Health = coverageStatus(realmEntry.TotalPeriods, realmMissing, realmErrors)
+		realmsOut = append(realmsOut, realmEntry)
+	}
 
-        // Print summary
-        elapsed := time.Since(start)
-        log.Info("analyze complete",
-            "elapsed", elapsed,
-            "total", total,
-            "success", success,
-            "failed", failed,
-            "realms_with_data", len(items))
+	generatedAt := time.Now().UTC().Format(time.RFC3339)
+	payload := statusPayload{
+		GeneratedAt: generatedAt,
+		Realms:      realmsOut,
+	}
 
-        log.Info("latest recorded run per realm")
-        for _, e := range items {
-            log.Debug("realm run",
-                "realm", e.RealmName,
-                "region", strings.ToUpper(e.Region),
-                "realm_slug", e.RealmSlug,
-                "timestamp", e.MostRecentISO,
-                "dungeon", e.DungeonName,
-                "period", e.PeriodID,
-                "runs", e.RunCount)
-        }
+	if strings.TrimSpace(statusDir) == "" && strings.TrimSpace(outPath) == "" {
+		return errors.New("status output path not specified")
+	}
 
-        // Build realm_status structure for JSON
-        type periodCoverage struct{
-            PeriodID   string `json:"period_id"`
-            HasRuns    bool   `json:"has_runs"`
-            LatestTs   int64  `json:"latest_ts"`
-            LatestISO  string `json:"latest_iso"`
-            RunCount   int    `json:"run_count"`
-        }
-        type dungeonStatus struct{
-            DungeonSlug string `json:"dungeon_slug"`
-            DungeonName string `json:"dungeon_name"`
-            LatestTs    int64  `json:"latest_ts"`
-            LatestISO   string `json:"latest_iso"`
-            LatestPeriod string `json:"latest_period"`
-            Periods      []periodCoverage `json:"periods"`
-            MissingPeriods []string `json:"missing_periods"`
-        }
-        type realmStatus struct{
-            Region    string `json:"region"`
-            RealmSlug string `json:"realm_slug"`
-            RealmName string `json:"realm_name"`
-            RealmID   int    `json:"realm_id"`
-            Dungeons  []dungeonStatus `json:"dungeons"`
-        }
+	if strings.TrimSpace(outPath) == "" {
+		if err := os.MkdirAll(statusDir, 0o755); err != nil {
+			return fmt.Errorf("mkdir status dir: %w", err)
+		}
+		outPath = filepath.Join(statusDir, "latest-runs.json")
+	} else if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
+		return fmt.Errorf("mkdir output dir: %w", err)
+	}
 
-        // Map for realm info lookup
-        realmInfoByKey := map[string]blizzard.RealmInfo{}
-        for _, ri := range realms {
-            realmInfoByKey[ri.Region+"|"+ri.Slug] = ri
-        }
-        // Build realmStatus slice
-        realmStatuses := make([]realmStatus, 0, len(coverage))
-        for key, byDungeon := range coverage {
-            ri := realmInfoByKey[key]
-            rs := realmStatus{ Region: ri.Region, RealmSlug: ri.Slug, RealmName: ri.Name, RealmID: ri.ID }
-            // For stable order, sort dungeon slugs by name
-            type dn struct{ slug, name string }
-            dns := make([]dn, 0, len(byDungeon))
-            // get dungeon names from constants dungeons list
-            dName := func(slug string) string {
-                for _, d := range dungeons { if d.Slug == slug { return d.Name } }
-                return slug
-            }
-            for slug := range byDungeon { dns = append(dns, dn{slug: slug, name: dName(slug)}) }
-            sort.Slice(dns, func(i,j int) bool { return dns[i].name < dns[j].name })
+	if err := writeStatusJSON(outPath, payload); err != nil {
+		return err
+	}
 
-            for _, d := range dns {
-                perMap := byDungeon[d.slug]
-                ds := dungeonStatus{ DungeonSlug: d.slug, DungeonName: d.name }
-                // collect coverages per tested period order for this realm's region
-                periods := allPeriodsByRegion[ri.Region]
-                latestTs := int64(0)
-                latestPer := ""
-                periodsCover := make([]periodCoverage, 0, len(periods))
-                missing := []string{}
-                for _, p := range periods {
-                    if ag, ok := perMap[p]; ok && ag.ts > 0 {
-                        if ag.ts > latestTs { latestTs = ag.ts; latestPer = p }
-                        periodsCover = append(periodsCover, periodCoverage{ PeriodID: p, HasRuns: ag.runs > 0, LatestTs: ag.ts, LatestISO: time.UnixMilli(ag.ts).UTC().Format("2006-01-02 15:04:05 UTC"), RunCount: ag.runs })
-                    } else {
-                        periodsCover = append(periodsCover, periodCoverage{ PeriodID: p, HasRuns: false, LatestTs: 0, LatestISO: "", RunCount: 0 })
-                        missing = append(missing, p)
-                    }
-                }
-                ds.LatestTs = latestTs
-                if latestTs > 0 { ds.LatestISO = time.UnixMilli(latestTs).UTC().Format("2006-01-02 15:04:05 UTC") }
-                ds.LatestPeriod = latestPer
-                ds.Periods = periodsCover
-                ds.MissingPeriods = missing
-                rs.Dungeons = append(rs.Dungeons, ds)
-            }
-            realmStatuses = append(realmStatuses, rs)
-        }
-        sort.Slice(realmStatuses, func(i,j int) bool { if realmStatuses[i].Region == realmStatuses[j].Region { return realmStatuses[i].RealmName < realmStatuses[j].RealmName }; return realmStatuses[i].Region < realmStatuses[j].Region })
+	if strings.TrimSpace(statusDir) != "" {
+		for _, realm := range realmsOut {
+			dir := filepath.Join(statusDir, realm.Region)
+			if err := os.MkdirAll(dir, 0o755); err != nil {
+				return fmt.Errorf("mkdir realm dir: %w", err)
+			}
+			realmPath := filepath.Join(dir, fmt.Sprintf("%s.json", realm.RealmSlug))
+			realmPayload := struct {
+				GeneratedAt string           `json:"generated_at"`
+				Realm       statusRealmEntry `json:"realm"`
+			}{
+				GeneratedAt: generatedAt,
+				Realm:       realm,
+			}
+			if err := writeStatusJSON(realmPath, realmPayload); err != nil {
+				return err
+			}
+		}
+		log.Info("wrote per-realm status files", "dir", statusDir, "count", len(realmsOut))
+	}
 
-        // If a statusDir is provided (default), prefer writing latest-runs under it when --out not set
-        if strings.TrimSpace(outPath) == "" && strings.TrimSpace(statusDir) != "" {
-            outPath = filepath.Join(statusDir, "latest-runs.json")
-        }
+	log.Info("status coverage generated", "realms", len(realmsOut))
+	return nil
+}
 
-        // Write single combined JSON if requested or derived
-        if strings.TrimSpace(outPath) != "" {
-            payload := map[string]any{
-                "generated_at": time.Now().UnixMilli(),
-                "periods_by_region": allPeriodsByRegion,
-                "summary": map[string]any{
-                    "endpoints_tested": total,
-                    "success": success,
-                    "failed": failed,
-                },
-                "latest_runs": items,
-                "realm_status": realmStatuses,
-            }
-            if err := os.MkdirAll(filepath.Dir(outPath), 0o755); err != nil {
-                return fmt.Errorf("mkdir out: %w", err)
-            }
-            f, err := os.Create(outPath)
-            if err != nil { return fmt.Errorf("create out: %w", err) }
-            enc := json.NewEncoder(f)
-            enc.SetIndent("", "  ")
-            if err := enc.Encode(payload); err != nil { f.Close(); return fmt.Errorf("encode json: %w", err) }
-            if err := f.Close(); err != nil { return err }
-            log.Info("wrote analysis JSON", "path", outPath)
-        }
+func writeStatusJSON(path string, payload any) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return fmt.Errorf("create %s: %w", path, err)
+	}
+	defer f.Close()
 
-        // Write per-realm status files if requested
-        if strings.TrimSpace(statusDir) != "" {
-            type latestRunOut struct{
-                CompletedTimestamp int64  `json:"completed_timestamp"`
-                Duration           int    `json:"duration_ms"`
-                KeystoneLevel      int    `json:"keystone_level"`
-                Members            []struct{
-                    Name      string `json:"name"`
-                    SpecID    int    `json:"spec_id"`
-                    RealmSlug string `json:"realm_slug"`
-                    Region    string `json:"region"`
-                } `json:"members"`
-            }
-            type dungeonOut struct{
-                DungeonSlug string `json:"dungeon_slug"`
-                DungeonName string `json:"dungeon_name"`
-                LatestTs    int64  `json:"latest_ts"`
-                LatestISO   string `json:"latest_iso"`
-                LatestPeriod string `json:"latest_period"`
-                Periods      []periodCoverage `json:"periods"`
-                MissingPeriods []string `json:"missing_periods"`
-                LatestRun    latestRunOut `json:"latest_run"`
-            }
-            type realmOut struct{
-                GeneratedAt int64  `json:"generated_at"`
-                Region    string `json:"region"`
-                RealmSlug string `json:"realm_slug"`
-                RealmName string `json:"realm_name"`
-                RealmID   int    `json:"realm_id"`
-                Periods   []string `json:"periods"`
-                Dungeons  []dungeonOut `json:"dungeons"`
-            }
+	enc := json.NewEncoder(f)
+	enc.SetIndent("", "  ")
+	if err := enc.Encode(payload); err != nil {
+		return fmt.Errorf("encode %s: %w", path, err)
+	}
+	return nil
+}
 
-            // For each realm in realmStatuses, construct file
-            for _, rs := range realmStatuses {
-                // compile dungeons with latest runs
-                dout := make([]dungeonOut, 0, len(rs.Dungeons))
-                for _, d := range rs.Dungeons {
-                    rdKey := rs.Region + "|" + rs.RealmSlug + "|" + d.DungeonSlug
-                    lr := perRealmDungeonLatest[rdKey]
-                    od := dungeonOut{
-                        DungeonSlug: d.DungeonSlug,
-                        DungeonName: d.DungeonName,
-                        LatestTs:    d.LatestTs,
-                        LatestISO:   d.LatestISO,
-                        LatestPeriod: d.LatestPeriod,
-                        Periods:     d.Periods,
-                        MissingPeriods: d.MissingPeriods,
-                    }
-                    if lr.MostRecent > 0 {
-                        od.LatestRun.CompletedTimestamp = lr.LatestRun.CompletedTimestamp
-                        od.LatestRun.Duration = lr.LatestRun.Duration
-                        od.LatestRun.KeystoneLevel = lr.LatestRun.KeystoneLevel
-                        od.LatestRun.Members = lr.LatestRun.Members
-                    }
-                    dout = append(dout, od)
-                }
-                payload := realmOut{
-                    GeneratedAt: time.Now().UnixMilli(),
-                    Region: rs.Region,
-                    RealmSlug: rs.RealmSlug,
-                    RealmName: rs.RealmName,
-                    RealmID: rs.RealmID,
-                    Periods: allPeriodsByRegion[rs.Region],
-                    Dungeons: dout,
-                }
-                // path: statusDir/{region}/{realmSlug}.json
-                dir := filepath.Join(statusDir, rs.Region)
-                if err := os.MkdirAll(dir, 0o755); err != nil {
-                    return fmt.Errorf("mkdir status %s: %w", dir, err)
-                }
-                fp := filepath.Join(dir, rs.RealmSlug+".json")
-                f, err := os.Create(fp)
-                if err != nil { return fmt.Errorf("create status file: %w", err) }
-                enc := json.NewEncoder(f)
-                enc.SetIndent("", "  ")
-                if err := enc.Encode(payload); err != nil { f.Close(); return fmt.Errorf("encode status: %w", err) }
-                if err := f.Close(); err != nil { return err }
-            }
-            log.Info("wrote per-realm status files", "dir", statusDir)
-        }
+func realmMapKey(region, slug string) string {
+	return fmt.Sprintf("%s|%s", strings.ToLower(region), strings.ToLower(slug))
+}
 
-        return nil
+func coverageStatus(total, missing, errors int) string {
+	if total == 0 {
+		return "no_data"
+	}
+	deficit := missing + errors
+	if deficit == 0 {
+		return "ok"
+	}
+	if deficit >= total {
+		return "no_data"
+	}
+	return "some_missing"
 }
