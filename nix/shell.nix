@@ -12,7 +12,7 @@
           (inputs'.wowsims.packages)
           wowsimcli
           ;
-        inherit (pkgs) nodejs just sqlite turso-cli go gcc pkg-config sqld yarn;
+        inherit (pkgs) nodejs just sqlite awscli2 go gcc pkg-config sqld yarn;
         inherit (pkgs.python3Packages) python requests;
         inherit (config.packages) ookstats;
         inherit (pkgs.nodePackages) vercel;
