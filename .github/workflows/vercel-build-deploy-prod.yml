@@ -4,8 +4,8 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 */2 * * *"
+  # schedule:
+  #   - cron: "0 */2 * * *"
 
 permissions:
   contents: read
@@ -62,8 +62,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
           cache-dependency-path: web/package-lock.json
 
       - name: Install web dependencies
