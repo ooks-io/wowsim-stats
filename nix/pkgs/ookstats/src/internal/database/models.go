@@ -22,9 +22,50 @@ type ChallengeRun struct {
 
 // Player represents a database player record
 type Player struct {
-	ID      int64
-	Name    string
-	RealmID int
+	ID                   int64
+	BlizzardCharacterID  sql.NullInt64
+	Name                 string
+	RealmID              int
+	IsValid              bool
+	StatusCheckedAtMilli sql.NullInt64
+}
+
+// PlayerFingerprint represents a fingerprint record
+type PlayerFingerprint struct {
+	PlayerID                int64
+	FingerprintHash         string
+	ClassID                 int
+	Level85Timestamp        int64
+	Level90Timestamp        int64
+	EarliestHeroicTimestamp int64
+	LastSeenName            string
+	LastSeenRealmSlug       string
+	LastSeenTimestamp       int64
+	FirstRunTimestamp       int64
+	CreatedAt               int64
+}
+
+// PlayerFingerprintCandidate holds upstream data required to compute a fingerprint
+type PlayerFingerprintCandidate struct {
+	PlayerID            int64
+	Name                string
+	Region              string
+	RealmSlug           string
+	BlizzardCharacterID sql.NullInt64
+	LatestSpecID        sql.NullInt64
+	DetailsClassID      sql.NullInt64
+	FirstRunTimestamp   sql.NullInt64
+	LastRunTimestamp    sql.NullInt64
+}
+
+// PlayerStatusCandidate represents a player requiring a status check.
+type PlayerStatusCandidate struct {
+	PlayerID            int64
+	Name                string
+	Region              string
+	RealmSlug           string
+	StatusCheckedAt     sql.NullInt64
+	BlizzardCharacterID sql.NullInt64
 }
 
 // RunMember represents a database run member record

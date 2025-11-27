@@ -162,9 +162,12 @@ func EnsureCompleteSchema(db *sql.DB) error {
 
 		`CREATE TABLE IF NOT EXISTS players (
 			id INTEGER PRIMARY KEY,
+			blizzard_character_id INTEGER,
 			name TEXT,
 			name_lower TEXT,
-			realm_id INTEGER
+			realm_id INTEGER,
+			is_valid INTEGER DEFAULT 1,
+			status_checked_at INTEGER
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS run_members (
@@ -172,6 +175,20 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			player_id INTEGER,
 			spec_id INTEGER,
 			faction TEXT
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS player_fingerprints (
+			player_id INTEGER PRIMARY KEY REFERENCES players(id),
+			fingerprint_hash TEXT UNIQUE,
+			class_id INTEGER NOT NULL,
+			level85_timestamp INTEGER NOT NULL,
+			level90_timestamp INTEGER NOT NULL,
+			earliest_heroic_timestamp INTEGER NOT NULL,
+			last_seen_name TEXT,
+			last_seen_realm_slug TEXT,
+			last_seen_timestamp INTEGER,
+			first_run_timestamp INTEGER,
+			created_at INTEGER
 		)`,
 
 		// Player aggregation and rankings (season-scoped)
@@ -380,6 +397,11 @@ func EnsureCompleteSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Ensure players table has identity/status columns
+	if err := migratePlayersIdentityColumns(db); err != nil {
+		return err
+	}
+
 	// Create indexes
 	return ensureRecommendedIndexes(db)
 }
@@ -395,9 +417,12 @@ func ensureRecommendedIndexes(db *sql.DB) error {
 		"CREATE UNIQUE INDEX IF NOT EXISTS idx_runs_unique ON challenge_runs(completed_timestamp, dungeon_id, duration, realm_id, team_signature)",
 		// Lookups used elsewhere
 		"CREATE INDEX IF NOT EXISTS idx_players_name_lower ON players(name_lower)",
+		"CREATE INDEX IF NOT EXISTS idx_players_blizzard_id ON players(blizzard_character_id)",
+		"CREATE INDEX IF NOT EXISTS idx_players_status_checked ON players(status_checked_at)",
 		"CREATE UNIQUE INDEX IF NOT EXISTS idx_run_members_pair ON run_members(run_id, player_id)",
 		"CREATE INDEX IF NOT EXISTS idx_fetch_status_realm ON fetch_status(region, realm_slug)",
 		"CREATE INDEX IF NOT EXISTS idx_fetch_status_dungeon ON fetch_status(dungeon_id)",
+		"CREATE UNIQUE INDEX IF NOT EXISTS idx_player_fingerprints_hash ON player_fingerprints(fingerprint_hash)",
 		// Speed up canonical run selection: partition/order by team per dungeon
 		"CREATE INDEX IF NOT EXISTS idx_runs_dungeon_team_duration ON challenge_runs(dungeon_id, team_signature, duration, completed_timestamp, id)",
 		// Additional indexes for performance
@@ -547,4 +572,70 @@ func migrateSeasonsAddRegion(db *sql.DB) error {
 	}
 	fmt.Printf("[OK] Seasons table migrated - added region column\n")
 	return nil
+}
+
+// migratePlayersIdentityColumns ensures identity + status metadata columns exist on players.
+func migratePlayersIdentityColumns(db *sql.DB) error {
+	hasBlizzardID, err := columnExists(db, "players", "blizzard_character_id")
+	if err != nil {
+		return err
+	}
+	if !hasBlizzardID {
+		if _, err := db.Exec(`ALTER TABLE players ADD COLUMN blizzard_character_id INTEGER`); err != nil {
+			return fmt.Errorf("add blizzard_character_id: %w", err)
+		}
+		if _, err := db.Exec(`UPDATE players SET blizzard_character_id = id WHERE blizzard_character_id IS NULL`); err != nil {
+			return fmt.Errorf("backfill blizzard_character_id: %w", err)
+		}
+	}
+
+	hasIsValid, err := columnExists(db, "players", "is_valid")
+	if err != nil {
+		return err
+	}
+	if !hasIsValid {
+		if _, err := db.Exec(`ALTER TABLE players ADD COLUMN is_valid INTEGER DEFAULT 1`); err != nil {
+			return fmt.Errorf("add is_valid: %w", err)
+		}
+		if _, err := db.Exec(`UPDATE players SET is_valid = 1 WHERE is_valid IS NULL`); err != nil {
+			return fmt.Errorf("backfill is_valid: %w", err)
+		}
+	}
+
+	hasStatusChecked, err := columnExists(db, "players", "status_checked_at")
+	if err != nil {
+		return err
+	}
+	if !hasStatusChecked {
+		if _, err := db.Exec(`ALTER TABLE players ADD COLUMN status_checked_at INTEGER`); err != nil {
+			return fmt.Errorf("add status_checked_at: %w", err)
+		}
+	}
+	return nil
+}
+
+func columnExists(db *sql.DB, table, column string) (bool, error) {
+	rows, err := db.Query(fmt.Sprintf(`PRAGMA table_info(%s)`, table))
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			cid        int
+			name       string
+			ctype      string
+			notnull    int
+			dfltValue  any
+			primaryKey int
+		)
+		if err := rows.Scan(&cid, &name, &ctype, &notnull, &dfltValue, &primaryKey); err != nil {
+			return false, err
+		}
+		if strings.EqualFold(name, column) {
+			return true, nil
+		}
+	}
+	return false, rows.Err()
 }

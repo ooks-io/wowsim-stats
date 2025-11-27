@@ -232,16 +232,17 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 
 			// insert or ignore player
 			playerQuery := `
-				INSERT INTO players (id, name, name_lower, realm_id)
-				VALUES (?, ?, lower(?), ?)
+				INSERT INTO players (id, blizzard_character_id, name, name_lower, realm_id)
+				VALUES (?, ?, ?, lower(?), ?)
 				ON CONFLICT(id) DO UPDATE SET
+				  blizzard_character_id = excluded.blizzard_character_id,
 				  name = excluded.name,
 				  name_lower = lower(excluded.name),
 				  realm_id = excluded.realm_id
-				WHERE excluded.name != name OR excluded.realm_id != realm_id
+				WHERE excluded.name != name OR excluded.realm_id != realm_id OR excluded.blizzard_character_id != blizzard_character_id
 			`
 
-			playerResult, err := tx.Exec(playerQuery, playerID, playerName, playerName, playerRealmID)
+			playerResult, err := tx.Exec(playerQuery, playerID, playerID, playerName, playerName, playerRealmID)
 			if err != nil {
 				return 0, 0, fmt.Errorf("failed to insert player: %w", err)
 			}
@@ -946,17 +947,40 @@ func (ds *DatabaseService) getOrCreateRealmByRegion(tx *sql.Tx, realmSlug string
 // player profile database operations
 
 // GetEligiblePlayersForProfileFetch returns players with complete coverage (9/9 dungeons)
-func (ds *DatabaseService) GetEligiblePlayersForProfileFetch() ([]blizzard.PlayerInfo, error) {
-	query := `
-		SELECT p.id, p.name, r.slug as realm_slug, r.region
-		FROM players p
-		JOIN player_profiles pp ON p.id = pp.player_id
-		JOIN realms r ON p.realm_id = r.id
-		WHERE pp.has_complete_coverage = 1
-		ORDER BY pp.global_ranking
-	`
+// staleBefore: Unix timestamp in milliseconds. If > 0, returns players whose profile is NULL or older than this.
+// If 0, returns only players who have never had a profile fetched.
+func (ds *DatabaseService) GetEligiblePlayersForProfileFetch(staleBefore int64) ([]blizzard.PlayerInfo, error) {
+	var rows *sql.Rows
+	var err error
 
-	rows, err := ds.db.Query(query)
+	if staleBefore > 0 {
+		// Fetch profiles that are stale OR never fetched
+		rows, err = ds.db.Query(`
+			SELECT p.id, p.name, r.slug as realm_slug, r.region
+			FROM players p
+			JOIN player_profiles pp ON p.id = pp.player_id
+			JOIN realms r ON p.realm_id = r.id
+			LEFT JOIN player_details pd ON p.id = pd.player_id
+			WHERE pp.has_complete_coverage = 1
+			  AND COALESCE(p.is_valid, 1) = 1
+			  AND (pd.last_updated IS NULL OR pd.last_updated < ?)
+			ORDER BY pp.global_ranking
+		`, staleBefore)
+	} else {
+		// Fetch only profiles that have never been fetched
+		rows, err = ds.db.Query(`
+			SELECT p.id, p.name, r.slug as realm_slug, r.region
+			FROM players p
+			JOIN player_profiles pp ON p.id = pp.player_id
+			JOIN realms r ON p.realm_id = r.id
+			LEFT JOIN player_details pd ON p.id = pd.player_id
+			WHERE pp.has_complete_coverage = 1
+			  AND COALESCE(p.is_valid, 1) = 1
+			  AND pd.last_updated IS NULL
+			ORDER BY pp.global_ranking
+		`)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to query eligible players: %w", err)
 	}
@@ -1542,4 +1566,314 @@ func (ds *DatabaseService) GetRealmPoolIDs(region, slug string) ([]int, error) {
 		poolIDs = append(poolIDs, id)
 	}
 	return poolIDs, rows.Err()
+}
+
+// CountPlayersMissingFingerprints returns how many valid players still lack a fingerprint.
+func (ds *DatabaseService) CountPlayersMissingFingerprints() (int, error) {
+	var count int
+	err := ds.db.QueryRow(`
+		SELECT COUNT(*)
+		FROM players p
+		LEFT JOIN player_fingerprints pf ON pf.player_id = p.id
+		WHERE pf.player_id IS NULL AND COALESCE(p.is_valid, 1) != 0
+	`).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("count missing fingerprints: %w", err)
+	}
+	return count, nil
+}
+
+// CountPlayersNeedingStatusCheck returns how many players require a new status check.
+func (ds *DatabaseService) CountPlayersNeedingStatusCheck(staleBefore int64) (int, error) {
+	var count int
+	var err error
+	if staleBefore > 0 {
+		err = ds.db.QueryRow(`
+			SELECT COUNT(*)
+			FROM players
+			WHERE status_checked_at IS NULL OR status_checked_at < ?
+		`, staleBefore).Scan(&count)
+	} else {
+		err = ds.db.QueryRow(`
+			SELECT COUNT(*)
+			FROM players
+			WHERE status_checked_at IS NULL
+		`).Scan(&count)
+	}
+	if err != nil {
+		return 0, fmt.Errorf("count stale statuses: %w", err)
+	}
+	return count, nil
+}
+
+// UpdatePlayerStatus updates the cached status flags for a player.
+func (ds *DatabaseService) UpdatePlayerStatus(playerID int64, isValid bool, checkedAt int64, blizzardID *int) error {
+	statusInt := 0
+	if isValid {
+		statusInt = 1
+	}
+
+	if blizzardID != nil {
+		return retryOnBusy(func() error {
+			_, err := ds.db.Exec(`
+				UPDATE players
+				SET is_valid = ?, status_checked_at = ?, blizzard_character_id = ?
+				WHERE id = ?
+			`, statusInt, checkedAt, *blizzardID, playerID)
+			return err
+		})
+	}
+
+	return retryOnBusy(func() error {
+		_, err := ds.db.Exec(`
+			UPDATE players
+			SET is_valid = ?, status_checked_at = ?
+			WHERE id = ?
+		`, statusInt, checkedAt, playerID)
+		return err
+	})
+}
+
+// GetPlayersNeedingFingerprints returns a batch of players lacking fingerprint data.
+func (ds *DatabaseService) GetPlayersNeedingFingerprints(limit int) ([]PlayerFingerprintCandidate, error) {
+	if limit <= 0 {
+		limit = 50
+	}
+
+	query := `
+		SELECT
+			p.id,
+			p.name,
+			r.region,
+			r.slug,
+			p.blizzard_character_id,
+			(
+				SELECT rm.spec_id
+				FROM run_members rm
+				WHERE rm.player_id = p.id AND rm.spec_id IS NOT NULL
+				ORDER BY rm.run_id DESC
+				LIMIT 1
+			) AS latest_spec_id,
+			pd.class_id,
+			(
+				SELECT MIN(cr.completed_timestamp)
+				FROM run_members rm
+				JOIN challenge_runs cr ON cr.id = rm.run_id
+				WHERE rm.player_id = p.id
+			) AS first_run_ts,
+			(
+				SELECT MAX(cr.completed_timestamp)
+				FROM run_members rm
+				JOIN challenge_runs cr ON cr.id = rm.run_id
+				WHERE rm.player_id = p.id
+			) AS last_run_ts
+		FROM players p
+		JOIN realms r ON r.id = p.realm_id
+		LEFT JOIN player_fingerprints pf ON pf.player_id = p.id
+		LEFT JOIN player_details pd ON pd.player_id = p.id
+		WHERE pf.player_id IS NULL AND COALESCE(p.is_valid, 1) != 0
+		ORDER BY last_run_ts DESC
+		LIMIT ?
+	`
+
+	rows, err := ds.db.Query(query, limit)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query fingerprint candidates: %w", err)
+	}
+	defer rows.Close()
+
+	var candidates []PlayerFingerprintCandidate
+	for rows.Next() {
+		var c PlayerFingerprintCandidate
+		if err := rows.Scan(
+			&c.PlayerID,
+			&c.Name,
+			&c.Region,
+			&c.RealmSlug,
+			&c.BlizzardCharacterID,
+			&c.LatestSpecID,
+			&c.DetailsClassID,
+			&c.FirstRunTimestamp,
+			&c.LastRunTimestamp,
+		); err != nil {
+			return nil, err
+		}
+		candidates = append(candidates, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return candidates, nil
+}
+
+// GetPlayersNeedingStatusCheck returns players whose status check is stale.
+func (ds *DatabaseService) GetPlayersNeedingStatusCheck(limit int, staleBefore int64) ([]PlayerStatusCandidate, error) {
+	if limit <= 0 {
+		limit = 100
+	}
+
+	var rows *sql.Rows
+	var err error
+	if staleBefore > 0 {
+		rows, err = ds.db.Query(`
+			SELECT p.id, p.name, r.region, r.slug, p.status_checked_at, p.blizzard_character_id
+			FROM players p
+			JOIN realms r ON r.id = p.realm_id
+			WHERE p.status_checked_at IS NULL OR p.status_checked_at < ?
+			ORDER BY CASE WHEN p.status_checked_at IS NULL THEN 0 ELSE 1 END, p.status_checked_at ASC
+			LIMIT ?
+		`, staleBefore, limit)
+	} else {
+		rows, err = ds.db.Query(`
+			SELECT p.id, p.name, r.region, r.slug, p.status_checked_at, p.blizzard_character_id
+			FROM players p
+			JOIN realms r ON r.id = p.realm_id
+			WHERE p.status_checked_at IS NULL
+			ORDER BY p.id
+			LIMIT ?
+		`, limit)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("failed to query status candidates: %w", err)
+	}
+	defer rows.Close()
+
+	var candidates []PlayerStatusCandidate
+	for rows.Next() {
+		var c PlayerStatusCandidate
+		if err := rows.Scan(&c.PlayerID, &c.Name, &c.Region, &c.RealmSlug, &c.StatusCheckedAt, &c.BlizzardCharacterID); err != nil {
+			return nil, err
+		}
+		candidates = append(candidates, c)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return candidates, nil
+}
+
+// GetPlayerIDByFingerprintHash returns the player_id owning a fingerprint hash.
+func (ds *DatabaseService) GetPlayerIDByFingerprintHash(hash string) (int64, error) {
+	if strings.TrimSpace(hash) == "" {
+		return 0, nil
+	}
+	var playerID int64
+	err := retryOnBusy(func() error {
+		return ds.db.QueryRow(`SELECT player_id FROM player_fingerprints WHERE fingerprint_hash = ?`, hash).Scan(&playerID)
+	})
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	return playerID, err
+}
+
+// UpsertPlayerFingerprint inserts or updates a player's fingerprint record.
+func (ds *DatabaseService) UpsertPlayerFingerprint(fp PlayerFingerprint) error {
+	return retryOnBusy(func() error {
+		_, err := ds.db.Exec(`
+			INSERT INTO player_fingerprints (
+				player_id,
+				fingerprint_hash,
+				class_id,
+				level85_timestamp,
+				level90_timestamp,
+				earliest_heroic_timestamp,
+				last_seen_name,
+				last_seen_realm_slug,
+				last_seen_timestamp,
+				first_run_timestamp,
+				created_at
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			ON CONFLICT(player_id) DO UPDATE SET
+				fingerprint_hash = excluded.fingerprint_hash,
+				class_id = excluded.class_id,
+				level85_timestamp = excluded.level85_timestamp,
+				level90_timestamp = excluded.level90_timestamp,
+				earliest_heroic_timestamp = excluded.earliest_heroic_timestamp,
+				last_seen_name = excluded.last_seen_name,
+				last_seen_realm_slug = excluded.last_seen_realm_slug,
+				last_seen_timestamp = excluded.last_seen_timestamp,
+				first_run_timestamp = excluded.first_run_timestamp
+		`, fp.PlayerID, fp.FingerprintHash, fp.ClassID, fp.Level85Timestamp, fp.Level90Timestamp, fp.EarliestHeroicTimestamp,
+			fp.LastSeenName, fp.LastSeenRealmSlug, fp.LastSeenTimestamp, fp.FirstRunTimestamp, fp.CreatedAt)
+		return err
+	})
+}
+
+// GetAllFingerprintHashes loads all existing fingerprint hashes into memory for collision detection
+func (ds *DatabaseService) GetAllFingerprintHashes() (map[string]int64, error) {
+	query := `SELECT fingerprint_hash, player_id FROM player_fingerprints`
+
+	rows, err := ds.db.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("query all fingerprint hashes: %w", err)
+	}
+	defer rows.Close()
+
+	result := make(map[string]int64)
+	for rows.Next() {
+		var hash string
+		var playerID int64
+		if err := rows.Scan(&hash, &playerID); err != nil {
+			return nil, err
+		}
+		result[hash] = playerID
+	}
+	return result, rows.Err()
+}
+
+// MigratePlayerRuns updates all run_members records from one player to another
+func (ds *DatabaseService) MigratePlayerRuns(fromPlayerID, toPlayerID int64) (int, error) {
+	var rowsAffected int
+	err := retryOnBusy(func() error {
+		result, err := ds.db.Exec(`
+			UPDATE run_members
+			SET player_id = ?
+			WHERE player_id = ?
+		`, toPlayerID, fromPlayerID)
+
+		if err != nil {
+			return fmt.Errorf("migrate runs %d→%d: %w", fromPlayerID, toPlayerID, err)
+		}
+
+		rows, _ := result.RowsAffected()
+		rowsAffected = int(rows)
+		return nil
+	})
+	return rowsAffected, err
+}
+
+// InvalidatePlayerProfile deletes cached profile to force rebuild
+func (ds *DatabaseService) InvalidatePlayerProfile(playerID int64) error {
+	return retryOnBusy(func() error {
+		_, err := ds.db.Exec(`
+			DELETE FROM player_profiles
+			WHERE player_id = ?
+		`, playerID)
+		return err
+	})
+}
+
+// GetPlayerByNameRealmRegion looks up a player by name, realm slug, and region
+func (ds *DatabaseService) GetPlayerByNameRealmRegion(name, realmSlug, region string) (int64, error) {
+	var playerID int64
+	err := retryOnBusy(func() error {
+		return ds.db.QueryRow(`
+			SELECT p.id
+			FROM players p
+			JOIN realms r ON r.id = p.realm_id
+			WHERE p.name_lower = LOWER(?)
+			  AND r.slug = ?
+			  AND r.region = ?
+			LIMIT 1
+		`, name, realmSlug, region).Scan(&playerID)
+	})
+
+	if err == sql.ErrNoRows {
+		return 0, fmt.Errorf("player not found: %s-%s (%s)", name, realmSlug, region)
+	}
+	if err != nil {
+		return 0, fmt.Errorf("query player: %w", err)
+	}
+	return playerID, nil
 }
