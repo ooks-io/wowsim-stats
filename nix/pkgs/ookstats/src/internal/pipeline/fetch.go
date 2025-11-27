@@ -205,6 +205,7 @@ type FetchProfilesOptions struct {
 	Verbose    bool
 	BatchSize  int
 	MaxPlayers int
+	StaleAfter time.Duration
 }
 
 // FetchProfilesResult contains statistics from the profile fetch operation
@@ -217,9 +218,15 @@ type FetchProfilesResult struct {
 
 // FetchPlayerProfiles fetches detailed player profile data including equipment
 func FetchPlayerProfiles(db *database.DatabaseService, client *blizzard.Client, opts FetchProfilesOptions) (*FetchProfilesResult, error) {
+	// Compute staleness cutoff
+	staleCutoff := int64(0)
+	if opts.StaleAfter > 0 {
+		staleCutoff = time.Now().Add(-opts.StaleAfter).UnixMilli()
+	}
+
 	// Get eligible players (9/9 completion)
 	fmt.Println("Finding eligible players with complete coverage (9/9 dungeons)...")
-	players, err := db.GetEligiblePlayersForProfileFetch()
+	players, err := db.GetEligiblePlayersForProfileFetch(staleCutoff)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get eligible players: %w", err)
 	}

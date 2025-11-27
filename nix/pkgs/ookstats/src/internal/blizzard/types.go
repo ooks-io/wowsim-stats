@@ -200,6 +200,46 @@ type ItemQuality struct {
 	Type string `json:"type"`
 }
 
+// CharacterAchievementsResponse represents the achievements summary payload.
+type CharacterAchievementsResponse struct {
+	Achievements []CharacterAchievement `json:"achievements"`
+	Character    CharacterReference     `json:"character"`
+}
+
+// CharacterAchievement represents an individual achievement entry.
+type CharacterAchievement struct {
+	ID                 int                          `json:"id"`
+	CompletedTimestamp *int64                       `json:"completed_timestamp,omitempty"`
+	Criteria           CharacterAchievementCriteria `json:"criteria"`
+}
+
+// CharacterAchievementCriteria captures completion metadata.
+type CharacterAchievementCriteria struct {
+	ID          int  `json:"id"`
+	IsCompleted bool `json:"is_completed"`
+}
+
+// CharacterReference includes the canonical ID + realm info for a character.
+type CharacterReference struct {
+	Name  string              `json:"name"`
+	ID    int                 `json:"id"`
+	Realm CharacterRealmBrief `json:"realm"`
+}
+
+// CharacterRealmBrief is a slim realm reference within profile APIs.
+type CharacterRealmBrief struct {
+	Name string `json:"name,omitempty"`
+	ID   int    `json:"id,omitempty"`
+	Slug string `json:"slug"`
+}
+
+// CharacterStatusResponse represents the /status payload for a character.
+type CharacterStatusResponse struct {
+	IsValid  bool               `json:"is_valid"`
+	Reason   string             `json:"reason,omitempty"`
+	Character CharacterReference `json:"character"`
+}
+
 // ItemEnchantment represents an enchantment, gem, or tinker
 type ItemEnchantment struct {
 	EnchantmentID   *int         `json:"enchantment_id,omitempty"`
@@ -277,4 +317,3 @@ type SeasonDetailResponse struct {
 		ID int `json:"id"`
 	} `json:"periods"`
 }
-

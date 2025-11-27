@@ -150,13 +150,19 @@ var buildCmd = &cobra.Command{
             "players", result.TotalPlayers,
             "duration", result.Duration)
 
-        // 4) Process players (aggregations + rankings)
+        // 4) Fingerprint players (merge duplicates)
+        log.Info("fingerprinting players", "stage", "identity detection + merge")
+        if err := fingerprintPlayersOnce(db, client); err != nil {
+            return err
+        }
+
+        // 5) Process players (aggregations + rankings)
         log.Info("processing players", "stage", "aggregations + rankings")
         if err := processPlayersOnce(db); err != nil {
             return err
         }
 
-        // 5) Fetch detailed player profiles (optional)
+        // 6) Fetch detailed player profiles (optional)
         if !skipProfiles {
             log.Info("fetching detailed player profiles", "coverage", "9/9")
             if err := fetchProfilesOnce(db, client); err != nil {
@@ -166,19 +172,19 @@ var buildCmd = &cobra.Command{
             log.Info("skipping player profile fetch", "reason", "flag")
         }
 
-        // 6) Process run rankings (global/regional)
+        // 7) Process run rankings (global/regional)
         log.Info("processing run rankings", "scopes", "global + regional")
         if err := processRunRankingsOnce(db); err != nil {
             return err
         }
 
-        // 7) Generate static API
+        // 8) Generate static API
         log.Info("generating static API")
         if err := generateAllAPI(db, normalizedOut, pageSize, shardSize, regionsCSV); err != nil {
             return err
         }
 
-        // 8) Generate status API via analyze
+        // 9) Generate status API via analyze
         log.Info("generating status API", "method", "analyze")
         statusDir := filepath.Join(normalizedOut, "api", "status")
         outPath := filepath.Join(statusDir, "latest-runs.json")
@@ -214,10 +220,31 @@ func processRunRankingsOnce(db *sql.DB) error {
     return pipeline.ProcessRunRankings(db, opts)
 }
 
+// fingerprintPlayersOnce runs fingerprinting to detect and merge duplicate player identities
+func fingerprintPlayersOnce(db *sql.DB, client *blizzard.Client) error {
+    dbService := database.NewDatabaseService(db)
+    opts := pipeline.FingerprintOptions{
+        Verbose:    false,
+        BatchSize:  25,
+        MaxPlayers: 0, // process all players
+    }
+    result, err := pipeline.BuildPlayerFingerprints(dbService, client, opts)
+    if err != nil {
+        return fmt.Errorf("fingerprint players: %w", err)
+    }
+    log.Info("fingerprinting complete",
+        "processed", result.Processed,
+        "created", result.Created,
+        "merged", result.MarkedInvalid,
+        "duration", result.Duration)
+    return nil
+}
+
 // fetchProfilesOnce runs the same logic as `fetch profiles`
 func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
     dbService := database.NewDatabaseService(db)
-    players, err := dbService.GetEligiblePlayersForProfileFetch()
+    // Pass 0 to fetch only profiles that have never been fetched during build
+    players, err := dbService.GetEligiblePlayersForProfileFetch(0)
     if err != nil { return fmt.Errorf("eligible players: %w", err) }
     if len(players) == 0 {
         log.Info("no eligible players with 9/9 coverage - skipping profiles")
@@ -441,7 +468,7 @@ func syncSeasons(db *sql.DB, client *blizzard.Client, regionsCSV string) error {
 func init() {
     rootCmd.AddCommand(buildCmd)
     buildCmd.Flags().String("out", "", "Parent output directory for static API (e.g. web/public or web/public/api)")
-    buildCmd.Flags().Bool("from-scratch", true, "Delete local DB file first if using a file-based DSN")
+    buildCmd.Flags().Bool("from-scratch", false, "Delete local DB file first if using a file-based DSN")
     buildCmd.Flags().String("regions", "", "Comma-separated regions to include (default: all)")
     buildCmd.Flags().Int("page-size", 25, "Leaderboard pagination size")
     buildCmd.Flags().Int("shard-size", 5000, "Search index shard size")

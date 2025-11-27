@@ -394,6 +394,28 @@ func (c *Client) FetchCharacterMedia(playerName, realmSlug, region string) (*Cha
 	return fetchPlayerProfileAPI[CharacterMediaResponse](c, url)
 }
 
+// FetchCharacterStatus fetches the status response for a character (valid/moved/deleted).
+func (c *Client) FetchCharacterStatus(playerName, realmSlug, region string) (*CharacterStatusResponse, error) {
+	namespace := fmt.Sprintf("profile-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/profile/wow/character/%s/%s/status?namespace=%s&locale=en_US",
+		region, realmSlug, strings.ToLower(playerName), namespace,
+	)
+
+	return fetchPlayerProfileAPI[CharacterStatusResponse](c, url)
+}
+
+// FetchCharacterAchievements fetches the achievements summary for a character.
+func (c *Client) FetchCharacterAchievements(playerName, realmSlug, region string) (*CharacterAchievementsResponse, error) {
+	namespace := fmt.Sprintf("profile-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/profile/wow/character/%s/%s/achievements?namespace=%s&locale=en_US",
+		region, realmSlug, strings.ToLower(playerName), namespace,
+	)
+
+	return fetchPlayerProfileAPI[CharacterAchievementsResponse](c, url)
+}
+
 // fetchPlayerProfileAPI is a generic function for fetching player profile data
 func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 	const maxRetries = 3

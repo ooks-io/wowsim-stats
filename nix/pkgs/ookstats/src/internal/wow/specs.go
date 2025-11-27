@@ -57,6 +57,43 @@ var SpecByID = map[int]SpecInfo{
 	103: {ClassName: "Druid", SpecName: "Feral"},
 }
 
+var specClassIDs = map[int]int{
+	73:  1,
+	71:  1,
+	72:  1,
+	66:  2,
+	65:  2,
+	70:  2,
+	253: 3,
+	254: 3,
+	255: 3,
+	259: 4,
+	260: 4,
+	261: 4,
+	256: 5,
+	257: 5,
+	258: 5,
+	250: 6,
+	251: 6,
+	252: 6,
+	262: 7,
+	263: 7,
+	264: 7,
+	62:  8,
+	63:  8,
+	64:  8,
+	265: 9,
+	266: 9,
+	267: 9,
+	268: 10,
+	269: 10,
+	270: 10,
+	102: 11,
+	103: 11,
+	104: 11,
+	105: 11,
+}
+
 // GetClassAndSpec returns the class and spec name for a given spec ID.
 // Returns empty strings and false if the spec ID is not found.
 func GetClassAndSpec(specID int) (className, specName string, ok bool) {
@@ -96,4 +133,10 @@ func FallbackClassAndSpec(className, specName string, specID *int) (string, stri
 	}
 
 	return className, specName
+}
+
+// GetClassIDForSpec returns the numeric class ID for a spec ID.
+func GetClassIDForSpec(specID int) (int, bool) {
+	classID, ok := specClassIDs[specID]
+	return classID, ok
 }

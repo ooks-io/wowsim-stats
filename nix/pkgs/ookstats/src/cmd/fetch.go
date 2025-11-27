@@ -160,12 +160,19 @@ var fetchProfilesCmd = &cobra.Command{
 		// Parse flags
 		batchSize, _ := cmd.Flags().GetInt("batch-size")
 		maxPlayers, _ := cmd.Flags().GetInt("max-players")
+		staleHours, _ := cmd.Flags().GetFloat64("stale-hours")
+
+		var staleDuration time.Duration
+		if staleHours > 0 {
+			staleDuration = time.Duration(staleHours * float64(time.Hour))
+		}
 
 		// Build options
 		opts := pipeline.FetchProfilesOptions{
 			Verbose:    verbose,
 			BatchSize:  batchSize,
 			MaxPlayers: maxPlayers,
+			StaleAfter: staleDuration,
 		}
 
 		// Fetch player profiles
@@ -187,6 +194,62 @@ var fetchProfilesCmd = &cobra.Command{
 
 		log.Info("next step: run 'ookstats generate api' to rebuild the website")
 
+		return nil
+	},
+}
+
+var fetchFingerprintsCmd = &cobra.Command{
+	Use:   "fingerprints",
+	Short: "Fetch player achievements to build fingerprints",
+	Long:  `Fetch achievement timestamps for players lacking fingerprints and store canonical identity hashes.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		log.Info("player fingerprint fetcher")
+
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer db.Close()
+
+		client, err := blizzard.NewClient()
+		if err != nil {
+			return fmt.Errorf("failed to create Blizzard API client: %w", err)
+		}
+
+		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
+		client.Verbose = verbose
+		database.SetVerbose(verbose)
+
+		batchSize, _ := cmd.Flags().GetInt("batch-size")
+		maxPlayers, _ := cmd.Flags().GetInt("max-players")
+		maxRPS, _ := cmd.Flags().GetFloat64("max-rps")
+		concurrency, _ := cmd.Flags().GetInt("concurrency")
+
+		if concurrency > 0 {
+			client.SetConcurrency(concurrency)
+		}
+		if maxRPS > 0 {
+			client.SetRequestRate(int(maxRPS))
+		}
+
+		dbService := database.NewDatabaseService(db)
+		opts := pipeline.FingerprintOptions{
+			Verbose:    verbose,
+			BatchSize:  batchSize,
+			MaxPlayers: maxPlayers,
+		}
+
+		result, err := pipeline.BuildPlayerFingerprints(dbService, client, opts)
+		if err != nil {
+			return err
+		}
+
+		log.Info("fingerprint fetching complete",
+			"processed", result.Processed,
+			"created", result.Created,
+			"skipped", result.Skipped,
+			"invalidated", result.MarkedInvalid,
+			"duration", result.Duration)
 		return nil
 	},
 }
@@ -323,11 +386,79 @@ var fetchSeasonsCmd = &cobra.Command{
 	},
 }
 
+var fetchStatusCmd = &cobra.Command{
+	Use:   "status",
+	Short: "Refresh player status metadata",
+	Long:  `Call the Blizzard character status endpoint for players whose status is stale.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		log.Info("player status refresher")
+
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer db.Close()
+
+		client, err := blizzard.NewClient()
+		if err != nil {
+			return fmt.Errorf("failed to create Blizzard API client: %w", err)
+		}
+
+		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
+		client.Verbose = verbose
+		database.SetVerbose(verbose)
+
+		batchSize, _ := cmd.Flags().GetInt("batch-size")
+		maxPlayers, _ := cmd.Flags().GetInt("max-players")
+		staleHours, _ := cmd.Flags().GetFloat64("stale-hours")
+		maxRPS, _ := cmd.Flags().GetFloat64("max-rps")
+		concurrency, _ := cmd.Flags().GetInt("concurrency")
+
+		if concurrency > 0 {
+			client.SetConcurrency(concurrency)
+		}
+		if maxRPS > 0 {
+			client.SetRequestRate(int(maxRPS))
+		}
+
+		dbService := database.NewDatabaseService(db)
+
+		var staleDuration time.Duration
+		if staleHours > 0 {
+			staleDuration = time.Duration(staleHours * float64(time.Hour))
+		}
+
+		opts := pipeline.StatusOptions{
+			Verbose:     verbose,
+			BatchSize:   batchSize,
+			MaxPlayers:  maxPlayers,
+			StaleAfter:  staleDuration,
+			Concurrency: concurrency,
+			MaxRPS:      maxRPS,
+		}
+
+		result, err := pipeline.RefreshPlayerStatuses(dbService, client, opts)
+		if err != nil {
+			return err
+		}
+
+		log.Info("status refresh complete",
+			"processed", result.Processed,
+			"valid", result.Valid,
+			"invalid", result.Invalid,
+			"errors", result.Errors,
+			"duration", result.Duration)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(fetchCmd)
 	fetchCmd.AddCommand(fetchCMCmd)
 	fetchCmd.AddCommand(fetchProfilesCmd)
 	fetchCmd.AddCommand(fetchSeasonsCmd)
+	fetchCmd.AddCommand(fetchFingerprintsCmd)
+	fetchCmd.AddCommand(fetchStatusCmd)
 
 	// CM fetching flags
 	fetchCMCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
@@ -340,6 +471,20 @@ func init() {
 	// add player profile fetching flags
 	fetchProfilesCmd.Flags().Int("batch-size", 20, "Number of players to process per batch")
 	fetchProfilesCmd.Flags().Int("max-players", 0, "Maximum number of players to process (0 = no limit)")
+	fetchProfilesCmd.Flags().Float64("stale-hours", 72, "Only fetch profiles older than this many hours (0 = only never-fetched)")
+
+	// fingerprint fetching flags
+	fetchFingerprintsCmd.Flags().Int("batch-size", 25, "Number of players to process per batch")
+	fetchFingerprintsCmd.Flags().Int("max-players", 0, "Maximum number of players to process (0 = no limit)")
+	fetchFingerprintsCmd.Flags().Int("concurrency", 20, "Number of concurrent fingerprint workers")
+	fetchFingerprintsCmd.Flags().Float64("max-rps", 100, "Maximum requests per second to send to Blizzard (0 = unlimited)")
+
+	// status fetching flags
+	fetchStatusCmd.Flags().Int("batch-size", 200, "Number of players to process per batch")
+	fetchStatusCmd.Flags().Int("max-players", 0, "Maximum number of players to process (0 = no limit)")
+	fetchStatusCmd.Flags().Float64("stale-hours", 168, "Only refresh players whose status check is older than this many hours (0 = only unset)")
+	fetchStatusCmd.Flags().Float64("max-rps", 100, "Maximum requests per second to send to Blizzard (0 = unlimited)")
+	fetchStatusCmd.Flags().Int("concurrency", 20, "Number of concurrent status requests")
 
 	// season syncing flags
 	fetchSeasonsCmd.Flags().String("regions", "us", "Comma-separated regions to query (only one needed since seasons are global)")
