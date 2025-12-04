@@ -186,15 +186,15 @@ type LeaderboardMember struct {
 
 // LeaderboardRow represents a canonical run for leaderboards
 type LeaderboardRow struct {
-	ID                  int64
-	Duration            int64
-	CompletedTimestamp  int64
-	KeystoneLevel       int
-	DungeonName         string
-	RealmName           string
-	Region              string
-	RankingPercentile   string // percentile bracket based on scope
-	Members             []LeaderboardMember
+	ID                 int64
+	Duration           int64
+	CompletedTimestamp int64
+	KeystoneLevel      int
+	DungeonName        string
+	RealmName          string
+	Region             string
+	RankingPercentile  string // percentile bracket based on scope
+	Members            []LeaderboardMember
 }
 
 // LoadCanonicalRuns returns one canonical run per team_signature, ordered, with members

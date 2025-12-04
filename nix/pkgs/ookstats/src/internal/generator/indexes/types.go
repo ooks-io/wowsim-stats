@@ -42,12 +42,12 @@ type SeasonLinks struct {
 }
 
 type SeasonData struct {
-	ID             int          `json:"id"`
-	Name           string       `json:"name"`
-	StartTimestamp *int64       `json:"start_timestamp"`
-	EndTimestamp   *int64       `json:"end_timestamp"`
-	IsCurrent      bool         `json:"is_current"`
-	Links          SeasonLinks  `json:"_links"`
+	ID             int         `json:"id"`
+	Name           string      `json:"name"`
+	StartTimestamp *int64      `json:"start_timestamp"`
+	EndTimestamp   *int64      `json:"end_timestamp"`
+	IsCurrent      bool        `json:"is_current"`
+	Links          SeasonLinks `json:"_links"`
 }
 
 type SeasonsIndex struct {
@@ -98,12 +98,12 @@ type RealmLinks struct {
 }
 
 type RealmData struct {
-	Slug             string      `json:"slug"`
-	Name             string      `json:"name"`
-	ConnectedRealmID *int        `json:"connected_realm_id"`
-	ParentRealm      *string     `json:"parent_realm"`
-	PlayerCount      int         `json:"player_count"`
-	Links            RealmLinks  `json:"_links"`
+	Slug             string     `json:"slug"`
+	Name             string     `json:"name"`
+	ConnectedRealmID *int       `json:"connected_realm_id"`
+	ParentRealm      *string    `json:"parent_realm"`
+	PlayerCount      int        `json:"player_count"`
+	Links            RealmLinks `json:"_links"`
 }
 
 type RegionalAllLink struct {

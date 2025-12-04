@@ -15,11 +15,11 @@ type BatchConfig struct {
 }
 
 type BatchCallbacks[T any] struct {
-	CountTotal    func() (int, error)
-	FetchBatch    func(limit int) ([]T, error)
-	ProcessBatch  func([]T) error
-	ShouldSkip    func(T) bool
-	OnComplete    func()
+	CountTotal   func() (int, error)
+	FetchBatch   func(limit int) ([]T, error)
+	ProcessBatch func([]T) error
+	ShouldSkip   func(T) bool
+	OnComplete   func()
 }
 
 type BatchResult struct {

@@ -235,8 +235,8 @@ type CharacterRealmBrief struct {
 
 // CharacterStatusResponse represents the /status payload for a character.
 type CharacterStatusResponse struct {
-	IsValid  bool               `json:"is_valid"`
-	Reason   string             `json:"reason,omitempty"`
+	IsValid   bool               `json:"is_valid"`
+	Reason    string             `json:"reason,omitempty"`
 	Character CharacterReference `json:"character"`
 }
 

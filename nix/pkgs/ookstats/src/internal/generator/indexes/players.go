@@ -9,8 +9,8 @@ import (
 
 	"github.com/charmbracelet/log"
 
-	"ookstats/internal/writer"
 	"ookstats/internal/wow"
+	"ookstats/internal/writer"
 )
 
 var classKeys = map[string]int{
