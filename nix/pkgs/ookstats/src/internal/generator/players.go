@@ -3,11 +3,11 @@ package generator
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"ookstats/internal/loader"
 	"ookstats/internal/utils"
 	"ookstats/internal/wow"
 	"ookstats/internal/writer"
+	"os"
 	"path/filepath"
 	"sync"
 	"time"
@@ -15,18 +15,18 @@ import (
 
 // PlayerJSON represents the JSON structure for a player profile
 type PlayerJSON struct {
-	ID                int64                      `json:"id"`
-	Name              string                     `json:"name"`
-	RealmSlug         string                     `json:"realm_slug"`
-	RealmName         string                     `json:"realm_name"`
-	Region            string                     `json:"region"`
-	ClassName         string                     `json:"class_name,omitempty"`
-	ActiveSpecName    string                     `json:"active_spec_name,omitempty"`
-	AvatarURL         string                     `json:"avatar_url,omitempty"`
-	GuildName         string                     `json:"guild_name,omitempty"`
-	RaceName          string                     `json:"race_name,omitempty"`
-	AverageItemLevel  *int                       `json:"average_item_level,omitempty"`
-	EquippedItemLevel *int                       `json:"equipped_item_level,omitempty"`
+	ID                int64                       `json:"id"`
+	Name              string                      `json:"name"`
+	RealmSlug         string                      `json:"realm_slug"`
+	RealmName         string                      `json:"realm_name"`
+	Region            string                      `json:"region"`
+	ClassName         string                      `json:"class_name,omitempty"`
+	ActiveSpecName    string                      `json:"active_spec_name,omitempty"`
+	AvatarURL         string                      `json:"avatar_url,omitempty"`
+	GuildName         string                      `json:"guild_name,omitempty"`
+	RaceName          string                      `json:"race_name,omitempty"`
+	AverageItemLevel  *int                        `json:"average_item_level,omitempty"`
+	EquippedItemLevel *int                        `json:"equipped_item_level,omitempty"`
 	Seasons           map[string]PlayerSeasonJSON `json:"seasons"`
 }
 
@@ -195,17 +195,17 @@ func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64
 func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64]map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
 	// Build PlayerJSON with base info
 	pj := PlayerJSON{
-		ID:                player.ID,
-		Name:              player.Name,
-		RealmSlug:         player.RealmSlug,
-		RealmName:         player.RealmName,
-		Region:            player.Region,
-		ClassName:         player.ClassName.String,
-		ActiveSpecName:    player.ActiveSpecName.String,
-		AvatarURL:         player.AvatarURL,
-		GuildName:         player.GuildName.String,
-		RaceName:          player.RaceName.String,
-		Seasons:           make(map[string]PlayerSeasonJSON),
+		ID:             player.ID,
+		Name:           player.Name,
+		RealmSlug:      player.RealmSlug,
+		RealmName:      player.RealmName,
+		Region:         player.Region,
+		ClassName:      player.ClassName.String,
+		ActiveSpecName: player.ActiveSpecName.String,
+		AvatarURL:      player.AvatarURL,
+		GuildName:      player.GuildName.String,
+		RaceName:       player.RaceName.String,
+		Seasons:        make(map[string]PlayerSeasonJSON),
 	}
 
 	if player.AverageItemLevel.Valid {

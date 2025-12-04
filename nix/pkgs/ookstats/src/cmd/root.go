@@ -1,12 +1,12 @@
 package cmd
 
 import (
-    "fmt"
-    "os"
+	"fmt"
+	"os"
 
-    "github.com/charmbracelet/log"
-    "github.com/spf13/cobra"
-    "ookstats/internal/database"
+	"github.com/charmbracelet/log"
+	"github.com/spf13/cobra"
+	"ookstats/internal/database"
 )
 
 var rootCmd = &cobra.Command{
@@ -57,23 +57,23 @@ func Execute() {
 }
 
 func init() {
-    // enable completion commands (bash, zsh, fish, powershell)
-    rootCmd.CompletionOptions.DisableDefaultCmd = false
+	// enable completion commands (bash, zsh, fish, powershell)
+	rootCmd.CompletionOptions.DisableDefaultCmd = false
 
-    // global flag for local db path
-    rootCmd.PersistentFlags().String("db-file", "", "Path to local SQLite database file (default: local.db). Also reads OOKSTATS_DB or ASTRO_DATABASE_FILE.")
-    // global verbose flag
-    rootCmd.PersistentFlags().Bool("verbose", false, "Enable verbose logging for debugging and benchmarking")
+	// global flag for local db path
+	rootCmd.PersistentFlags().String("db-file", "", "Path to local SQLite database file (default: local.db). Also reads OOKSTATS_DB or ASTRO_DATABASE_FILE.")
+	// global verbose flag
+	rootCmd.PersistentFlags().Bool("verbose", false, "Enable verbose logging for debugging and benchmarking")
 
-    // Set override before running any subcommand
-    rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
-        // Initialize logger with verbose setting
-        verbose, _ := cmd.Flags().GetBool("verbose")
-        initLogger(verbose)
+	// Set override before running any subcommand
+	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
+		// Initialize logger with verbose setting
+		verbose, _ := cmd.Flags().GetBool("verbose")
+		initLogger(verbose)
 
-        // Set database path override
-        if v, _ := cmd.Flags().GetString("db-file"); v != "" {
-            database.SetDBPath(v)
-        }
-    }
+		// Set database path override
+		if v, _ := cmd.Flags().GetString("db-file"); v != "" {
+			database.SetDBPath(v)
+		}
+	}
 }

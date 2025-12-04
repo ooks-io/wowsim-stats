@@ -11,13 +11,13 @@ import (
 
 // FetchCMOptions contains options for fetching challenge mode leaderboards
 type FetchCMOptions struct {
-	Verbose       bool
-	Regions       []string
-	Realms        []string
-	Dungeons      []string
-	Periods       []string
-	Concurrency   int
-	Timeout       time.Duration
+	Verbose     bool
+	Regions     []string
+	Realms      []string
+	Dungeons    []string
+	Periods     []string
+	Concurrency int
+	Timeout     time.Duration
 }
 
 // FetchCMResult contains statistics from the fetch operation
