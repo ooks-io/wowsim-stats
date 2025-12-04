@@ -31,13 +31,14 @@
     };
 
     ookstats = callPackage ./ookstats {inherit go-libsql-src wowsims-db;};
+    ookstats-deploy = callPackage ./ookstats-deploy {inherit ookstats;};
   in {
     packages =
       simulationPackages
       // racePackages
       // trinketPackages
       // {
-        inherit ookstats;
+        inherit ookstats ookstats-deploy;
         allSimulations = simulation.generateAllSimulationsScript pkgs;
         simInputs = simulation.generateSimInputs pkgs;
         testRaid = callPackage ./testRaid.nix {

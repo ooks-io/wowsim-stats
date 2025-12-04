@@ -42,6 +42,10 @@
           type = "app";
           program = lib.getExe config.packages.ookstats;
         };
+        ookstats-deploy = {
+          type = "app";
+          program = lib.getExe config.packages.ookstats-deploy;
+        };
         default = config.apps.ookstats;
         allSimulations = {
           type = "app";
