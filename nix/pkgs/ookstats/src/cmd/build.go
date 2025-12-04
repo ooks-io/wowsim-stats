@@ -15,6 +15,7 @@ import (
     "ookstats/internal/blizzard"
     "ookstats/internal/database"
     "ookstats/internal/generator"
+    "ookstats/internal/generator/indexes"
     "ookstats/internal/pipeline"
 )
 
@@ -332,6 +333,9 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regio
 
     // search index
     if err := generator.GenerateSearchIndex(db, filepath.Join(base, "search"), shardSize); err != nil { return err }
+
+    // indexes
+    if err := indexes.GenerateAllIndexes(db, outParent); err != nil { return err }
 
     log.Info("static API generated")
     return nil
