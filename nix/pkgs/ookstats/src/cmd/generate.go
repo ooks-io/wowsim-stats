@@ -11,6 +11,7 @@ import (
 	_ "github.com/tursodatabase/go-libsql"
 	"ookstats/internal/database"
 	"ookstats/internal/generator"
+	"ookstats/internal/generator/indexes"
 )
 
 var generateCmd = &cobra.Command{
@@ -27,6 +28,7 @@ var generateAPICmd = &cobra.Command{
 		onlyPlayers, _ := cmd.Flags().GetBool("players")
 		doLeaderboards, _ := cmd.Flags().GetBool("leaderboards")
 		doSearch, _ := cmd.Flags().GetBool("search")
+		doIndexes, _ := cmd.Flags().GetBool("indexes")
 		pageSize, _ := cmd.Flags().GetInt("page-size")
 		shardSize, _ := cmd.Flags().GetInt("shard-size")
 		regionsCSV, _ := cmd.Flags().GetString("regions")
@@ -76,6 +78,12 @@ var generateAPICmd = &cobra.Command{
 			}
 		}
 
+		if doIndexes {
+			if err := indexes.GenerateAllIndexes(db, outDir); err != nil {
+				return err
+			}
+		}
+
 		fmt.Printf("\nStatic API generated at %s\n", base)
 		return nil
 	},
@@ -88,6 +96,7 @@ func init() {
 	generateAPICmd.Flags().Bool("players", true, "Generate player profile JSON endpoints")
 	generateAPICmd.Flags().Bool("leaderboards", true, "Generate leaderboard JSON endpoints")
 	generateAPICmd.Flags().Bool("search", true, "Generate search index JSON shards")
+	generateAPICmd.Flags().Bool("indexes", true, "Generate API discovery indexes")
 	generateAPICmd.Flags().Int("page-size", 25, "Leaderboard page size")
 	generateAPICmd.Flags().Int("shard-size", 5000, "Search index shard size")
 	generateAPICmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional leaderboards")
