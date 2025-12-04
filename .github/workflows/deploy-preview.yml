@@ -1,0 +1,58 @@
+name: Deploy Preview
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: database-builder-preview
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+
+      - name: Authenticate with Blizzard API
+        id: blizzard_auth
+        run: |
+          echo "Authenticating with Blizzard API..."
+
+          RESPONSE=$(curl -s -X POST "https://oauth.battle.net/token" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d "grant_type=client_credentials" \
+            -u "${{ secrets.BLIZZARD_CLIENT_ID }}:${{ secrets.BLIZZARD_CLIENT_SECRET }}")
+
+          ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+
+          if [ "$ACCESS_TOKEN" = "null" ] || [ -z "$ACCESS_TOKEN" ]; then
+            echo "Failed to authenticate with Blizzard API"
+            exit 1
+          fi
+
+          echo "::add-mask::$ACCESS_TOKEN"
+          echo "Successfully authenticated with Blizzard API"
+          echo "BLIZZARD_API_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
+
+      - name: Deploy ookstats (preview)
+        env:
+          BLIZZARD_API_TOKEN: ${{ env.BLIZZARD_API_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ vars.AWS_ENDPOINT_URL }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: nix run .#ookstats-deploy -- --preview
