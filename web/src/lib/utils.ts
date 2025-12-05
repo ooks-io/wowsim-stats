@@ -1,5 +1,5 @@
 // Common utility functions
-import { DUNGEON_MAP, dungeonNameToSlug } from "./wow-constants";
+import { DUNGEON_MAP, dungeonNameToSlug } from "./wow-constants.js";
 
 // Time formatting utilities
 export function formatDuration(seconds: number): string {

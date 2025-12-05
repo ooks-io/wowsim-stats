@@ -7,18 +7,25 @@
     "build": "astro build",
     "build:full": "echo '[INFO] Full static build requires running: ookstats generate api --out dist && npm run build'",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "discord:deploy": "tsx src/scripts/deploy-commands.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/vercel": "^8.2.7",
+    "@discordjs/builders": "^1.13.1",
+    "@discordjs/rest": "^2.6.0",
     "astro": "^5.12.0",
+    "discord-api-types": "^0.38.36",
+    "discord-interactions": "^4.4.0",
     "fuse.js": "^7.0.0",
     "sass": "^1.90.0",
     "typescript": "^5.8.3"
   },
   "devDependencies": {
+    "@vercel/node": "^5.5.14",
     "prettier": "^3.6.2",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "tsx": "^4.21.0"
   }
 }
