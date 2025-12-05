@@ -146,10 +146,9 @@ writeShellApplication {
       # cleanup function for trap
       cleanup() {
         local exit_code=$?
-        if [ "$DRY_RUN" = false ] && [ -f ".lock_acquired" ]; then
+        if [ "$DRY_RUN" = false ]; then
           log info "Lock File" "Releasing lock"
           s3 rm "s3://$AWS_BUCKET/$LOCK_PATH" 2>/dev/null || true
-          rm -f .lock_acquired
         fi
         exit $exit_code
       }
