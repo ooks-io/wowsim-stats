@@ -7,6 +7,7 @@ import {
   SPEC_EMOJI_IDS,
   API_BASE_URL,
   DUNGEON_EMOJI_IDS,
+  CLASS_COLORS,
 } from "../constants.js";
 import { formatDurationFromMs } from "../../lib/utils.js";
 
@@ -68,15 +69,18 @@ export function createPlayerProfileEmbed(profile: PlayerProfileData): Embed {
 
     if (seasonData.global_ranking) {
       // only show percentile if not rank 1 (would be redundant)
-      const percentileText = seasonData.global_ranking === 1 ? "" : ` (${globalPercentile})`;
+      const percentileText =
+        seasonData.global_ranking === 1 ? "" : ` (${globalPercentile})`;
       rankingsText += `**Global:** #${seasonData.global_ranking}${percentileText}\n`;
     }
     if (seasonData.regional_ranking) {
-      const percentileText = seasonData.regional_ranking === 1 ? "" : ` (${regionalPercentile})`;
+      const percentileText =
+        seasonData.regional_ranking === 1 ? "" : ` (${regionalPercentile})`;
       rankingsText += `**Regional:** #${seasonData.regional_ranking}${percentileText}\n`;
     }
     if (seasonData.realm_ranking) {
-      const percentileText = seasonData.realm_ranking === 1 ? "" : ` (${realmPercentile})`;
+      const percentileText =
+        seasonData.realm_ranking === 1 ? "" : ` (${realmPercentile})`;
       rankingsText += `**Realm:** #${seasonData.realm_ranking}${percentileText}`;
     }
 
@@ -113,10 +117,17 @@ export function createPlayerProfileEmbed(profile: PlayerProfileData): Embed {
     }
   }
 
+  // get class color for embed sidebar
+  const classKey = player.class_name
+    ?.toLowerCase()
+    .replace(/\s+/g, "_") as keyof typeof CLASS_COLORS;
+  const color = CLASS_COLORS[classKey] || 0x5865f2; // fallback to discord blurple
+
   return {
     title,
     description,
     fields,
+    color,
     footer: {
       text: "wowsimstats.com",
     },

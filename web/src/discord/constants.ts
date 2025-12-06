@@ -1,16 +1,16 @@
-// colors for embeds (hex converted to decimal)
-export const COLORS = {
-  ARTIFACT: 0xe6cc80, // gold/legendary
-  EXCELLENT: 0xa335ee, // purple/epic
-  EPIC: 0xa335ee, // purple/epic
-  RARE: 0x0070dd, // blue/rare
-  UNCOMMON: 0x1eff00, // green/uncommon
-  COMMON: 0x9d9d9d, // gray/common
-  DEFAULT: 0x5865f2, // discord blurple
-  SUCCESS: 0x57f287, // green
-  WARNING: 0xfee75c, // yellow
-  ERROR: 0xed4245, // red
-  INFO: 0x3498db, // blue
+// class colors for embeds (hex converted to decimal)
+export const CLASS_COLORS = {
+  death_knight: 0xc41e3a,
+  druid: 0xff7c0a,
+  hunter: 0xaad372,
+  mage: 0x3fc7eb,
+  monk: 0x00ff98,
+  paladin: 0xf48cba,
+  priest: 0xffffff,
+  rogue: 0xfff468,
+  shaman: 0x0070dd,
+  warlock: 0x8788ee,
+  warrior: 0xc69b6d,
 } as const;
 
 // discord custom emoji IDs for specs
@@ -76,16 +76,6 @@ export const DUNGEON_EMOJI_IDS: Record<string, string> = {
   "stormstout-brewery": "1446337557234188351",
   "temple-of-the-jade-serpent": "1446337487612936332",
 };
-
-// ranking bracket colors (match website colors)
-export const BRACKET_COLORS = {
-  artifact: COLORS.ARTIFACT,
-  excellent: COLORS.EXCELLENT,
-  epic: COLORS.EPIC,
-  rare: COLORS.RARE,
-  uncommon: COLORS.UNCOMMON,
-  common: COLORS.COMMON,
-} as const;
 
 // ranking bracket display names
 export const BRACKET_NAMES = {
