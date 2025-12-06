@@ -1,30 +1,59 @@
 ---
-import {
-  SPEC_MAP,
-  SPEC_ICON_MAP,
-  getClassColor,
-  getSpecInfo,
-  getSpecIcon,
-  createPlayerElement,
-} from "../lib/wow-constants.ts";
+import { SPEC_MAP, SPEC_ICON_MAP, CLASS_COLORS } from "../lib/wow-constants.ts";
 ---
 
-<script
-  is:inline
-  define:vars={{
-    SPEC_MAP,
-    SPEC_ICON_MAP,
-    getClassColor,
-    getSpecInfo,
-    getSpecIcon,
-    createPlayerElement,
-  }}
->
+<script is:inline define:vars={{ SPEC_MAP, SPEC_ICON_MAP, CLASS_COLORS }}>
   window.WoW = window.WoW || {};
   window.WoW.specMap = SPEC_MAP;
   window.WoW.specIconMap = SPEC_ICON_MAP;
-  window.WoW.getClassColor = getClassColor;
-  window.WoW.getSpecInfo = getSpecInfo;
-  window.WoW.getSpecIcon = getSpecIcon;
-  window.WoW.createPlayerElement = createPlayerElement;
+
+  window.WoW.getClassColor = function (className) {
+    const normalizedClass = className.toLowerCase().replace(/\s+/g, "_");
+    return CLASS_COLORS[normalizedClass] || "#FFFFFF";
+  };
+
+  window.WoW.getSpecInfo = function (specId) {
+    return SPEC_MAP[specId] || null;
+  };
+
+  window.WoW.getSpecIcon = function (className, specName) {
+    const key = `${className}|${specName}`;
+    return SPEC_ICON_MAP[key] || null;
+  };
+
+  window.WoW.createPlayerElement = function (player) {
+    const wrapper = document.createElement("span");
+    wrapper.className = "player-link-wrapper";
+
+    const link = document.createElement("a");
+    const region = player.region || "global";
+    const realm = player.realm_name || "unknown";
+    link.href = `/player/${region}/${realm}/${player.name}`;
+    link.className = "player-link";
+
+    if (player.spec_id) {
+      const specInfo = window.WoW.getSpecInfo(player.spec_id);
+      if (specInfo) {
+        const icon = document.createElement("img");
+        icon.src = window.WoW.getSpecIcon(specInfo.class, specInfo.spec) || "";
+        icon.alt = specInfo.spec;
+        icon.className = "spec-icon";
+        icon.loading = "lazy";
+        link.appendChild(icon);
+      }
+    }
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "player-link-name";
+    if (player.class_name) {
+      nameSpan.classList.add(
+        `text-${player.class_name.toLowerCase().replace(/\s+/g, "-")}`,
+      );
+    }
+    nameSpan.textContent = player.name;
+    link.appendChild(nameSpan);
+
+    wrapper.appendChild(link);
+    return wrapper;
+  };
 </script>
