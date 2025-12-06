@@ -15,12 +15,17 @@ import { handlePlayerCommand } from "../src/discord/commands/player.js";
 import { handleLeaderboardCommand } from "../src/discord/commands/leaderboard.js";
 import { autocompleteDungeon } from "../src/discord/autocomplete/dungeons.js";
 import { autocompleteRealm } from "../src/discord/autocomplete/realms.js";
+import { autocompleteRegionByPlayer } from "../src/discord/autocomplete/regions.js";
 import { autocompletePlayer } from "../src/discord/autocomplete/players.js";
 import { autocompleteClass } from "../src/discord/autocomplete/classes.js";
 import { createGenericErrorEmbed } from "../src/discord/embeds/error.js";
 
 // cache initialization flag
 let cacheInitialized = false;
+
+// refresh cooldown tracking (message_id -> timestamp)
+const refreshCooldowns = new Map<string, number>();
+const REFRESH_COOLDOWN_MS = 30000; // 30 seconds
 
 /**
  * Main Discord interaction handler
@@ -147,7 +152,10 @@ async function handleAutocomplete(interaction: DiscordInteraction) {
     if (focusedOption.name === "realm") {
       const region = getOptionValue(options[0]?.options || [], "region");
       const regionStr = typeof region === "string" ? region : undefined;
-      return autocompleteRealm(query, regionStr as "us" | "eu" | "kr" | "tw" | undefined);
+      return autocompleteRealm(
+        query,
+        regionStr as "us" | "eu" | "kr" | "tw" | undefined,
+      );
     }
     if (focusedOption.name === "class") {
       return autocompleteClass(query);
@@ -164,10 +172,34 @@ async function handleAutocomplete(interaction: DiscordInteraction) {
         typeof realm === "string" ? realm : undefined,
       );
     }
+    if (focusedOption.name === "region") {
+      const name = getOptionValue(options, "name");
+      console.log("[Discord Handler] All options:", JSON.stringify(options));
+      console.log(
+        "[Discord Handler] Region autocomplete - name option value:",
+        name,
+        "type:",
+        typeof name,
+      );
+      console.log(
+        "[Discord Handler] Focused option:",
+        JSON.stringify(focusedOption),
+      );
+      return autocompleteRegionByPlayer(
+        query,
+        typeof name === "string" ? name : undefined,
+      );
+    }
     if (focusedOption.name === "realm") {
       const region = getOptionValue(options, "region");
+      const name = getOptionValue(options, "name");
       const regionStr = typeof region === "string" ? region : undefined;
-      return autocompleteRealm(query, regionStr as "us" | "eu" | "kr" | "tw" | undefined);
+      const nameStr = typeof name === "string" ? name : undefined;
+      return autocompleteRealm(
+        query,
+        regionStr as "us" | "eu" | "kr" | "tw" | undefined,
+        nameStr,
+      );
     }
   }
 
@@ -199,11 +231,38 @@ async function handleCommand(interaction: DiscordInteraction) {
 async function handleButton(interaction: DiscordInteraction) {
   const customId = interaction.data?.custom_id || "";
 
+  // check cooldown for all refresh actions
+  if (customId.startsWith("refresh_")) {
+    const messageId = interaction.message?.id;
+    if (messageId) {
+      const lastRefresh = refreshCooldowns.get(messageId);
+      const now = Date.now();
+
+      if (lastRefresh && now - lastRefresh < REFRESH_COOLDOWN_MS) {
+        // silently ignore refresh attempts within cooldown
+        // return current message unchanged
+        return interaction.message || {};
+      }
+
+      // update cooldown timestamp
+      refreshCooldowns.set(messageId, now);
+
+      // cleanup old entries (older than 5 minutes)
+      for (const [id, timestamp] of refreshCooldowns.entries()) {
+        if (now - timestamp > 300000) {
+          refreshCooldowns.delete(id);
+        }
+      }
+    }
+  }
+
   // handle refresh player profile
   if (customId.startsWith("refresh_player:")) {
     const [, region, realm, name] = customId.split(":");
 
-    const { handlePlayerCommand } = await import("../src/discord/commands/player.js");
+    const { handlePlayerCommand } = await import(
+      "../src/discord/commands/player.js"
+    );
 
     const fakeInteraction: DiscordInteraction = {
       ...interaction,
@@ -223,9 +282,12 @@ async function handleButton(interaction: DiscordInteraction) {
 
   // handle refresh dungeon leaderboard
   if (customId.startsWith("refresh_dungeon:")) {
-    const [, dungeon, scope, region, realm, limit, season] = customId.split(":");
+    const [, dungeon, scope, region, realm, limit, season] =
+      customId.split(":");
 
-    const { handleLeaderboardCommand } = await import("../src/discord/commands/leaderboard.js");
+    const { handleLeaderboardCommand } = await import(
+      "../src/discord/commands/leaderboard.js"
+    );
 
     const options: any[] = [
       { name: "dungeon", type: 3, value: dungeon }, // STRING
@@ -250,9 +312,12 @@ async function handleButton(interaction: DiscordInteraction) {
 
   // handle refresh player leaderboard
   if (customId.startsWith("refresh_players:")) {
-    const [, scope, region, realm, className, limit, season] = customId.split(":");
+    const [, scope, region, realm, className, limit, season] =
+      customId.split(":");
 
-    const { handleLeaderboardCommand } = await import("../src/discord/commands/leaderboard.js");
+    const { handleLeaderboardCommand } = await import(
+      "../src/discord/commands/leaderboard.js"
+    );
 
     const options: any[] = [{ name: "scope", type: 3, value: scope }]; // STRING
     if (region) options.push({ name: "region", type: 3, value: region }); // STRING
