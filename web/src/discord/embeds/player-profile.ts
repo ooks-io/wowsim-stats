@@ -91,6 +91,17 @@ export function createPlayerProfileEmbed(profile: PlayerProfileData): Embed {
     });
   }
 
+  // combined time field
+  if (seasonData?.combined_best_time) {
+    const combinedTime = formatDurationFromMs(seasonData.combined_best_time);
+    const dungeonsCompleted = seasonData.dungeons_completed || 0;
+    fields.push({
+      name: "Combined Time",
+      value: `\`${combinedTime}\` (${dungeonsCompleted}/9 dungeons)`,
+      inline: false,
+    });
+  }
+
   // best runs field
   if (seasonData?.best_runs) {
     const bestRunsArray = Object.values(seasonData.best_runs);
