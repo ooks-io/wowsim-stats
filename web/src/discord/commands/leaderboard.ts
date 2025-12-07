@@ -44,6 +44,7 @@ export async function handleLeaderboardCommand(
   if (!subcommand) {
     return {
       embeds: [createInvalidInputEmbed("subcommand", "missing")],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -55,6 +56,7 @@ export async function handleLeaderboardCommand(
 
   return {
     embeds: [createInvalidInputEmbed("subcommand", subcommand.name)],
+    flags: 64, // EPHEMERAL
   };
 }
 
@@ -79,6 +81,7 @@ async function handleDungeonLeaderboard(
       embeds: [
         createInvalidInputEmbed("options", "dungeon and scope are required"),
       ],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -86,6 +89,7 @@ async function handleDungeonLeaderboard(
   if (!["global", "region", "realm"].includes(scope)) {
     return {
       embeds: [createInvalidInputEmbed("scope", scope)],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -93,6 +97,7 @@ async function handleDungeonLeaderboard(
   if ((scope === "region" || scope === "realm") && !region) {
     return {
       embeds: [createInvalidInputEmbed("region", "required for this scope")],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -100,6 +105,7 @@ async function handleDungeonLeaderboard(
   if (scope === "realm" && !realm) {
     return {
       embeds: [createInvalidInputEmbed("realm", "required for realm scope")],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -110,6 +116,7 @@ async function handleDungeonLeaderboard(
     if (!dungeonInfo) {
       return {
         embeds: [createInvalidInputEmbed("dungeon", dungeon)],
+        flags: 64, // EPHEMERAL
       };
     }
 
@@ -148,6 +155,7 @@ async function handleDungeonLeaderboard(
     if (!data || !data.leading_groups) {
       return {
         embeds: [createAPIErrorEmbed("No leaderboard data found")],
+        flags: 64, // EPHEMERAL
       };
     }
 
@@ -189,6 +197,7 @@ async function handleDungeonLeaderboard(
     console.error("Error fetching dungeon leaderboard:", error);
     return {
       embeds: [createAPIErrorEmbed()],
+      flags: 64, // EPHEMERAL
     };
   }
 }
@@ -210,6 +219,7 @@ async function handlePlayersLeaderboard(
   if (!scopeValue) {
     return {
       embeds: [createInvalidInputEmbed("scope", "required")],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -217,6 +227,7 @@ async function handlePlayersLeaderboard(
   if (!["global", "region", "realm"].includes(scopeValue)) {
     return {
       embeds: [createInvalidInputEmbed("scope", scopeValue)],
+      flags: 64, // EPHEMERAL
     };
   }
 
@@ -245,6 +256,7 @@ async function handlePlayersLeaderboard(
     if (!data || !data.leaderboard) {
       return {
         embeds: [createAPIErrorEmbed("No player leaderboard data found")],
+        flags: 64, // EPHEMERAL
       };
     }
 
@@ -290,6 +302,7 @@ async function handlePlayersLeaderboard(
     console.error("Error fetching player leaderboard:", error);
     return {
       embeds: [createAPIErrorEmbed()],
+      flags: 64, // EPHEMERAL
     };
   }
 }
