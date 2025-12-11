@@ -151,19 +151,25 @@ var buildCmd = &cobra.Command{
 			"players", result.TotalPlayers,
 			"duration", result.Duration)
 
-		// 4) Fingerprint players (merge duplicates)
+		// 4) Assign seasons to runs based on timestamps
+		log.Info("assigning seasons to runs", "method", "timestamp-based")
+		if err := dbService.AssignRunsToSeasons(); err != nil {
+			return fmt.Errorf("assign seasons: %w", err)
+		}
+
+		// 5) Fingerprint players (merge duplicates)
 		log.Info("fingerprinting players", "stage", "identity detection + merge")
 		if err := fingerprintPlayersOnce(db, client); err != nil {
 			return err
 		}
 
-		// 5) Process players (aggregations + rankings)
+		// 6) Process players (aggregations + rankings)
 		log.Info("processing players", "stage", "aggregations + rankings")
 		if err := processPlayersOnce(db); err != nil {
 			return err
 		}
 
-		// 6) Fetch detailed player profiles (optional)
+		// 7) Fetch detailed player profiles (optional)
 		if !skipProfiles {
 			log.Info("fetching detailed player profiles", "coverage", "9/9")
 			if err := fetchProfilesOnce(db, client); err != nil {
@@ -173,19 +179,19 @@ var buildCmd = &cobra.Command{
 			log.Info("skipping player profile fetch", "reason", "flag")
 		}
 
-		// 7) Process run rankings (global/regional)
+		// 8) Process run rankings (global/regional)
 		log.Info("processing run rankings", "scopes", "global + regional")
 		if err := processRunRankingsOnce(db); err != nil {
 			return err
 		}
 
-		// 8) Generate static API
+		// 9) Generate static API
 		log.Info("generating static API")
 		if err := generateAllAPI(db, normalizedOut, pageSize, shardSize, regionsCSV); err != nil {
 			return err
 		}
 
-		// 9) Generate status API via analyze
+		// 10) Generate status API via analyze
 		log.Info("generating status API", "method", "analyze")
 		statusDir := filepath.Join(normalizedOut, "api", "status")
 		outPath := filepath.Join(statusDir, "latest-runs.json")

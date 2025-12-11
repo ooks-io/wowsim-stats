@@ -1,6 +1,27 @@
 ---
-// redirect to default dungeon leaderboard
+// fetch current season and redirect to default dungeon leaderboard
+let currentSeasonId = 1; // fallback
+try {
+  const response = await fetch(
+    `${Astro.url.origin}/api/leaderboard/season/index.json`,
+  );
+  if (response.ok) {
+    const data = await response.json();
+    // find the most recent current season (highest ID with is_current: true)
+    const currentSeasons = data.data.filter((s: any) => s.is_current);
+    const currentSeason =
+      currentSeasons.length > 0
+        ? currentSeasons[currentSeasons.length - 1] // last current season (highest ID)
+        : data.data[data.data.length - 1]; // or just the last season
+    if (currentSeason) {
+      currentSeasonId = currentSeason.id;
+    }
+  }
+} catch (error) {
+  console.error("Failed to fetch current season:", error);
+}
+
 return Astro.redirect(
-  "/challenge-mode/season1/global/temple-of-the-jade-serpent",
+  `/challenge-mode/season${currentSeasonId}/global/temple-of-the-jade-serpent`,
 );
 ---

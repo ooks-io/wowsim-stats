@@ -148,6 +148,18 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 	playersInserted := 0
 	allRealms := blizzard.GetAllRealms()
 
+	// determine season for runs based on completed timestamp
+	var seasonID *int
+	if leaderboard.LeadingGroups[0].CompletedTimestamp > 0 {
+		sid, err := ds.DetermineSeasonForRun(realmInfo.Region, leaderboard.LeadingGroups[0].CompletedTimestamp)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to determine season: %w", err)
+		}
+		if sid > 0 {
+			seasonID = &sid
+		}
+	}
+
 	// begin transaction
 	tx, err := ds.db.Begin()
 	if err != nil {
@@ -170,11 +182,25 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 
 		teamSignature := utils.ComputeTeamSignature(playerIDs)
 
+		// determine season for this specific run if different from first
+		runSeasonID := seasonID
+		if run.CompletedTimestamp != leaderboard.LeadingGroups[0].CompletedTimestamp {
+			sid, err := ds.DetermineSeasonForRun(realmInfo.Region, run.CompletedTimestamp)
+			if err != nil {
+				return 0, 0, fmt.Errorf("failed to determine season for run: %w", err)
+			}
+			if sid > 0 {
+				runSeasonID = &sid
+			} else {
+				runSeasonID = nil
+			}
+		}
+
 		// insert run with team signature to prevent duplicates
 		runQuery := `
 			INSERT OR IGNORE INTO challenge_runs
-			(duration, completed_timestamp, keystone_level, dungeon_id, realm_id, period_id, period_start_timestamp, period_end_timestamp, team_signature)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			(duration, completed_timestamp, keystone_level, dungeon_id, realm_id, period_id, period_start_timestamp, period_end_timestamp, team_signature, season_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`
 
 		result, err := tx.Exec(runQuery,
@@ -187,6 +213,7 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 			leaderboard.PeriodStartTimestamp,
 			leaderboard.PeriodEndTimestamp,
 			teamSignature,
+			runSeasonID,
 		)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed to insert run: %w", err)
@@ -718,11 +745,23 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 
 		teamSignature := utils.ComputeTeamSignature(playerIDs)
 
+		// determine season for this run
+		var runSeasonID *int
+		if run.CompletedTimestamp > 0 {
+			sid, err := ds.DetermineSeasonForRun(realmInfo.Region, run.CompletedTimestamp)
+			if err != nil {
+				return 0, 0, fmt.Errorf("failed to determine season for run: %w", err)
+			}
+			if sid > 0 {
+				runSeasonID = &sid
+			}
+		}
+
 		// insert run
 		runQuery := `
 			INSERT OR IGNORE INTO challenge_runs
-			(duration, completed_timestamp, keystone_level, dungeon_id, realm_id, period_id, period_start_timestamp, period_end_timestamp, team_signature)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			(duration, completed_timestamp, keystone_level, dungeon_id, realm_id, period_id, period_start_timestamp, period_end_timestamp, team_signature, season_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`
 
 		result, err := tx.Exec(runQuery,
@@ -735,6 +774,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 			leaderboard.PeriodStartTimestamp,
 			leaderboard.PeriodEndTimestamp,
 			teamSignature,
+			runSeasonID,
 		)
 		if err != nil {
 			return 0, 0, fmt.Errorf("failed to insert run: %w", err)
@@ -1515,6 +1555,80 @@ func (ds *DatabaseService) GetPeriodsForRegion(region string) ([]int, error) {
 		periods = append(periods, periodID)
 	}
 	return periods, rows.Err()
+}
+
+// DetermineSeasonForRun determines which season a run belongs to based on
+// completed_timestamp and region. Returns season_number (not id) for the matching season.
+func (ds *DatabaseService) DetermineSeasonForRun(region string, completedTimestamp int64) (int, error) {
+	query := `
+		SELECT season_number
+		FROM seasons
+		WHERE region = ?
+		  AND start_timestamp <= ?
+		  AND (end_timestamp IS NULL OR end_timestamp > ?)
+		ORDER BY start_timestamp DESC
+		LIMIT 1
+	`
+	var seasonNumber int
+	err := ds.db.QueryRow(query, region, completedTimestamp, completedTimestamp).Scan(&seasonNumber)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	return seasonNumber, err
+}
+
+// AssignRunsToSeasons assigns season_id to all challenge_runs based on completed_timestamp
+// and realm region. This is used to backfill existing data.
+func (ds *DatabaseService) AssignRunsToSeasons() error {
+	// get all regions
+	regions := []string{"us", "eu", "kr", "tw"}
+
+	for _, region := range regions {
+		fmt.Printf("Assigning runs to seasons for region: %s\n", region)
+
+		// update runs for this region
+		query := `
+			UPDATE challenge_runs
+			SET season_id = (
+				SELECT s.season_number
+				FROM seasons s
+				JOIN realms r ON r.region = s.region
+				WHERE r.id = challenge_runs.realm_id
+				  AND s.start_timestamp <= challenge_runs.completed_timestamp
+				  AND (s.end_timestamp IS NULL OR s.end_timestamp > challenge_runs.completed_timestamp)
+				ORDER BY s.start_timestamp DESC
+				LIMIT 1
+			)
+			WHERE realm_id IN (
+				SELECT id FROM realms WHERE region = ?
+			)
+		`
+
+		result, err := ds.db.Exec(query, region)
+		if err != nil {
+			return fmt.Errorf("failed to assign seasons for region %s: %w", region, err)
+		}
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			return fmt.Errorf("failed to get rows affected for region %s: %w", region, err)
+		}
+
+		fmt.Printf("  Updated %d runs for region %s\n", rowsAffected, region)
+	}
+
+	// count runs without season assignment
+	var orphanedRuns int
+	err := ds.db.QueryRow("SELECT COUNT(*) FROM challenge_runs WHERE season_id IS NULL").Scan(&orphanedRuns)
+	if err != nil {
+		return fmt.Errorf("failed to count orphaned runs: %w", err)
+	}
+
+	if orphanedRuns > 0 {
+		fmt.Printf("Warning: %d runs could not be assigned to any season\n", orphanedRuns)
+	}
+
+	return nil
 }
 
 // GetRealmPoolIDs returns all realm IDs in a realm pool (parent + all children)

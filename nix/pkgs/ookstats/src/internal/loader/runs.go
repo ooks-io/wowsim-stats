@@ -211,7 +211,7 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
 		args = append(args, realmSlug)
 	}
 	// Filter by season
-	where += " AND COALESCE(ps.season_id, 1) = ?"
+	where += " AND cr.season_id = ?"
 	args = append(args, seasonID)
 
 	q := fmt.Sprintf(`
@@ -220,7 +220,6 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
                ROW_NUMBER() OVER (PARTITION BY cr.team_signature ORDER BY cr.duration ASC, cr.completed_timestamp ASC, cr.id ASC) AS rn
         FROM challenge_runs cr
         JOIN realms r ON cr.realm_id = r.id
-        LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
         %s
       )
       SELECT id FROM ranked WHERE rn = 1
@@ -282,8 +281,7 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
                ROW_NUMBER() OVER (PARTITION BY cr.dungeon_id, cr.realm_id ORDER BY cr.duration ASC, cr.completed_timestamp ASC, cr.id ASC) as realm_ranking,
                COUNT(*) OVER (PARTITION BY cr.dungeon_id, cr.realm_id) as total_in_realm_dungeon
         FROM challenge_runs cr
-        LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-        WHERE COALESCE(ps.season_id, 1) = ?
+        WHERE cr.season_id = ?
       )
       SELECT cr.id, cr.duration, cr.completed_timestamp, cr.keystone_level,
              d.name, rr.name, rr.region,
