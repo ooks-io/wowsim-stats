@@ -210,8 +210,8 @@ func generateGlobalLeaderboard(db *sql.DB, out string, d dungeonInfo, seasonID, 
 	err := db.QueryRow(`
 		SELECT COUNT(DISTINCT team_signature)
 		FROM challenge_runs cr
-		LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-		WHERE cr.dungeon_id = ? AND COALESCE(ps.season_id, 1) = ?
+		
+		WHERE cr.dungeon_id = ? AND cr.season_id = ?
 	`, d.ID, seasonID).Scan(&total)
 	if err != nil {
 		return fmt.Errorf("global count: %w", err)
@@ -245,8 +245,8 @@ func generateRegionalLeaderboard(db *sql.DB, out, region string, d dungeonInfo, 
 			SELECT team_signature
 			FROM challenge_runs cr
 			JOIN realms r ON cr.realm_id = r.id
-			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-			WHERE cr.dungeon_id = ? AND r.region = ? AND COALESCE(ps.season_id, 1) = ?
+			
+			WHERE cr.dungeon_id = ? AND r.region = ? AND cr.season_id = ?
 			GROUP BY team_signature
 		) x
 	`, d.ID, region, seasonID).Scan(&total)
@@ -288,8 +288,8 @@ func generateRealmLeaderboard(db *sql.DB, out, region, realmSlug string, d dunge
 			SELECT team_signature
 			FROM challenge_runs cr
 			JOIN realms rr ON cr.realm_id = rr.id
-			LEFT JOIN period_seasons ps ON cr.period_id = ps.period_id
-			WHERE cr.dungeon_id = ? AND rr.region = ? AND rr.slug = ? AND COALESCE(ps.season_id, 1) = ?
+			
+			WHERE cr.dungeon_id = ? AND rr.region = ? AND rr.slug = ? AND cr.season_id = ?
 			GROUP BY team_signature
 		) x
 	`, d.ID, region, realmSlug, seasonID).Scan(&total); err != nil {

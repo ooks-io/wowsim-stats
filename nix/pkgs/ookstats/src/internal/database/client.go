@@ -157,7 +157,8 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			period_id INTEGER,
 			period_start_timestamp INTEGER,
 			period_end_timestamp INTEGER,
-			team_signature TEXT
+			team_signature TEXT,
+			season_id INTEGER
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS players (
@@ -429,6 +430,7 @@ func ensureRecommendedIndexes(db *sql.DB) error {
 		"CREATE INDEX IF NOT EXISTS idx_run_members_player_id ON run_members(player_id)",
 		"CREATE INDEX IF NOT EXISTS idx_challenge_runs_dungeon_duration ON challenge_runs(dungeon_id, duration)",
 		// Season-related indexes
+		"CREATE INDEX IF NOT EXISTS idx_challenge_runs_season ON challenge_runs(season_id, dungeon_id, completed_timestamp)",
 		"CREATE INDEX IF NOT EXISTS idx_run_rankings_season ON run_rankings(season_id, ranking_type, ranking_scope, dungeon_id)",
 		"CREATE INDEX IF NOT EXISTS idx_player_best_runs_season ON player_best_runs(season_id, player_id)",
 		"CREATE INDEX IF NOT EXISTS idx_player_profiles_season ON player_profiles(season_id, global_ranking)",

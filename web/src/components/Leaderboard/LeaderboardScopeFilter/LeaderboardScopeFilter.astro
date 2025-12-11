@@ -21,6 +21,25 @@ const {
   currentClass = "all",
 } = Astro.props;
 
+// Fetch available seasons from API
+let seasonOptions: { id: number; name: string }[] = [];
+try {
+  const response = await fetch(
+    `${Astro.url.origin}/api/leaderboard/season/index.json`,
+  );
+  if (response.ok) {
+    const data = await response.json();
+    seasonOptions = data.data.map((season: any) => ({
+      id: season.id,
+      name: season.name || `Season ${season.id}`,
+    }));
+  }
+} catch (error) {
+  console.error("Failed to fetch seasons:", error);
+  // Fallback to current season if API fails
+  seasonOptions = [{ id: currentSeason, name: `Season ${currentSeason}` }];
+}
+
 // Scope options: Global + individual regions
 const scopeOptions = [
   { value: "global", label: "Global" },
@@ -82,7 +101,20 @@ function buildUrl(region: string, realm: string = ""): string {
   <div class="filter-group">
     <label for="season-filter">Season</label>
     <select id="season-filter" data-param="season">
-      <option value="1" selected={currentSeason === 1}>Season 1</option>
+      {
+        seasonOptions.map((season) => (
+          <option
+            value={season.id}
+            selected={season.id === currentSeason}
+            data-url={buildUrl(currentRegion, currentRealm).replace(
+              `season${currentSeason}`,
+              `season${season.id}`,
+            )}
+          >
+            {season.name}
+          </option>
+        ))
+      }
     </select>
   </div>
 
@@ -127,12 +159,27 @@ function buildUrl(region: string, realm: string = ""): string {
 </div>
 
 <script>
+  const seasonSelect = document.getElementById(
+    "season-filter",
+  ) as HTMLSelectElement;
   const scopeSelect = document.getElementById(
     "scope-filter",
   ) as HTMLSelectElement;
   const realmSelect = document.getElementById(
     "realm-filter",
   ) as HTMLSelectElement | null;
+
+  // Handle season change - just read the URL from the data attribute
+  if (seasonSelect) {
+    seasonSelect.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const selectedOption = target.options[target.selectedIndex];
+      const url = selectedOption.dataset.url;
+      if (url) {
+        window.location.href = url;
+      }
+    });
+  }
 
   // Handle scope change - just read the URL from the data attribute
   if (scopeSelect) {
@@ -157,6 +204,4 @@ function buildUrl(region: string, realm: string = ""): string {
       }
     });
   }
-
-  // TODO: Handle season change (for now, only season 1 exists)
 </script>
