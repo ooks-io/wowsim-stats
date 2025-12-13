@@ -36,6 +36,7 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
         JOIN player_profiles pp ON p.id = pp.player_id
         JOIN realms r ON p.realm_id = r.id
         WHERE pp.has_complete_coverage = 1
+          AND pp.season_id = (SELECT MAX(season_number) FROM seasons)
         ORDER BY pp.global_ranking ASC, p.name ASC
     `)
 	if err != nil {
@@ -55,6 +56,7 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
       JOIN player_profiles pp ON p.id = pp.player_id
       JOIN realms r ON p.realm_id = r.id
       WHERE pp.has_complete_coverage = 1
+        AND pp.season_id = (SELECT MAX(season_number) FROM seasons)
     `).Scan(&totalPlayers); err != nil {
 		return err
 	}

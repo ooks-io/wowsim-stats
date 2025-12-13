@@ -97,7 +97,7 @@ async function loadDungeons(): Promise<CachedDungeon[]> {
   }
 
   try {
-    const url = `${API_BASE_URL}/api/leaderboard/season/1/global/index.json`;
+    const url = `${API_BASE_URL}/api/leaderboard/season/2/global/index.json`;
     const response = await fetch(url);
     if (!response.ok)
       throw new Error(`Failed to fetch dungeons: ${response.statusText}`);
@@ -124,7 +124,7 @@ async function loadClasses(): Promise<CachedClass[]> {
   }
 
   try {
-    const url = `${API_BASE_URL}/api/leaderboard/season/1/players/class/index.json`;
+    const url = `${API_BASE_URL}/api/leaderboard/season/2/players/class/index.json`;
     const response = await fetch(url);
     if (!response.ok)
       throw new Error(`Failed to fetch classes: ${response.statusText}`);
@@ -151,8 +151,8 @@ async function loadPlayers(): Promise<CachedPlayer[]> {
   }
 
   try {
-    // load both shards
-    const shards = ["000", "001"];
+    // load all shards (000, 001, 002, ...)
+    const shards = ["000", "001", "002"];
     const allPlayers: CachedPlayer[] = [];
 
     for (const shard of shards) {
@@ -196,7 +196,7 @@ async function loadRealms(
   }
 
   try {
-    const url = `${API_BASE_URL}/api/leaderboard/season/1/${region}/index.json`;
+    const url = `${API_BASE_URL}/api/leaderboard/season/2/${region}/index.json`;
     const response = await fetch(url);
     if (!response.ok)
       throw new Error(

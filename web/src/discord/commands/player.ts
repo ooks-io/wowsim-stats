@@ -6,7 +6,7 @@ import type {
   PlayerCommandOptions,
 } from "../types.js";
 import { fetchPlayerProfile } from "../../lib/api.js";
-import { API_BASE_URL } from "../constants.js";
+import { API_BASE_URL, DEFAULT_SEASON_ID } from "../constants.js";
 import {
   createPlayerProfileEmbed,
   createViewProfileButton,
@@ -43,6 +43,7 @@ export async function handlePlayerCommand(
   const name = options.name.trim();
   const region = options.region.toLowerCase();
   const realm = options.realm.toLowerCase();
+  const season = options.season || DEFAULT_SEASON_ID;
 
   // validate region
   if (!["us", "eu", "kr", "tw"].includes(region)) {
@@ -64,8 +65,8 @@ export async function handlePlayerCommand(
     }
 
     // create embed and button
-    const embed = createPlayerProfileEmbed(profile);
-    const buttons = createViewProfileButton(name, realm, region);
+    const embed = createPlayerProfileEmbed(profile, season);
+    const buttons = createViewProfileButton(name, realm, region, season);
 
     return {
       embeds: [embed],
@@ -101,6 +102,7 @@ function parsePlayerOptions(
     name: getOptionValue(options, "name") as string,
     region: getOptionValue(options, "region") as "us" | "eu" | "kr" | "tw",
     realm: getOptionValue(options, "realm") as string,
+    season: getOptionValue(options, "season") as string | undefined,
   };
 }
 

@@ -23,14 +23,29 @@ const BRACKET_PERCENTILES: Record<string, string> = {
 };
 
 // creates a player profile embed
-export function createPlayerProfileEmbed(profile: PlayerProfileData): Embed {
+export function createPlayerProfileEmbed(
+  profile: PlayerProfileData,
+  season: string = "2",
+): Embed {
   const player = profile.player;
   if (!player) {
     throw new Error("Player data not found");
   }
 
-  // get season 1 data (current season)
-  const seasonData = player.seasons?.["1"];
+  // get specified season data, fallback to latest season if requested season doesn't exist
+  let seasonData = player.seasons?.[season];
+  let actualSeason = season;
+
+  if (!seasonData && player.seasons) {
+    // find the highest season number available
+    const availableSeasons = Object.keys(player.seasons)
+      .map(Number)
+      .sort((a, b) => b - a);
+    if (availableSeasons.length > 0) {
+      actualSeason = String(availableSeasons[0]);
+      seasonData = player.seasons[actualSeason];
+    }
+  }
 
   // determine ranking bracket
   const bracket = seasonData?.global_ranking_bracket || "common";
@@ -134,13 +149,19 @@ export function createPlayerProfileEmbed(profile: PlayerProfileData): Embed {
     .replace(/\s+/g, "_") as keyof typeof CLASS_COLORS;
   const color = CLASS_COLORS[classKey] || 0x5865f2; // fallback to discord blurple
 
+  // add footer with season info
+  const seasonNote =
+    actualSeason !== season
+      ? ` • Showing Season ${actualSeason} (Season ${season} data not available)`
+      : ` • Season ${actualSeason}`;
+
   return {
     title,
     description,
     fields,
     color,
     footer: {
-      text: "wowsimstats.com",
+      text: `wowsimstats.com${seasonNote}`,
     },
     timestamp: new Date().toISOString(),
   };
@@ -151,8 +172,9 @@ export function createViewProfileButton(
   name: string,
   realm: string,
   region: string,
+  season: string = "2",
 ): MessageComponent[] {
-  const profileUrl = `${API_BASE_URL}/player/${region}/${realm}/${name}`;
+  const profileUrl = `${API_BASE_URL}/player/${region}/${realm}/${name}?season=${season}`;
   const armoryUrl = `https://classic-armory.org/character/${region}/mop/${realm}/${name}`;
 
   return [
@@ -163,7 +185,7 @@ export function createViewProfileButton(
           type: ComponentType.BUTTON,
           style: ButtonStyle.PRIMARY,
           label: "🔄 Refresh",
-          custom_id: `refresh_player:${region}:${realm}:${name}`,
+          custom_id: `refresh_player:${region}:${realm}:${name}:${season}`,
         },
         {
           type: ComponentType.BUTTON,

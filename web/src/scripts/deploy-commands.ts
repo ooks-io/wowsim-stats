@@ -43,6 +43,16 @@ const commands = [
         .setDescription("Realm")
         .setRequired(true)
         .setAutocomplete(true),
+    )
+    .addStringOption((option) =>
+      option
+        .setName("season")
+        .setDescription("Season (default: current season)")
+        .setRequired(false)
+        .addChoices(
+          { name: "Season 1", value: "1" },
+          { name: "Season 2", value: "2" },
+        ),
     ),
 
   // /leaderboard command
@@ -102,7 +112,11 @@ const commands = [
           option
             .setName("season")
             .setDescription("Season (default: current season)")
-            .setRequired(false),
+            .setRequired(false)
+            .addChoices(
+              { name: "Season 1", value: "1" },
+              { name: "Season 2", value: "2" },
+            ),
         ),
     )
     .addSubcommand((subcommand) =>
@@ -160,7 +174,11 @@ const commands = [
           option
             .setName("season")
             .setDescription("Season (default: current season)")
-            .setRequired(false),
+            .setRequired(false)
+            .addChoices(
+              { name: "Season 1", value: "1" },
+              { name: "Season 2", value: "2" },
+            ),
         ),
     ),
 ].map((command) => command.toJSON());

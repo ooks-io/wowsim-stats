@@ -137,4 +137,4 @@ export const CACHE = {
 } as const;
 
 // default season (current)
-export const DEFAULT_SEASON_ID = "1";
+export const DEFAULT_SEASON_ID = "2";
