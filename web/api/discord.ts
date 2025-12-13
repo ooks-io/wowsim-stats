@@ -258,21 +258,24 @@ async function handleButton(interaction: DiscordInteraction) {
 
   // handle refresh player profile
   if (customId.startsWith("refresh_player:")) {
-    const [, region, realm, name] = customId.split(":");
+    const [, region, realm, name, season] = customId.split(":");
 
     const { handlePlayerCommand } = await import(
       "../src/discord/commands/player.js"
     );
 
+    const options: any[] = [
+      { name: "name", type: 3, value: name }, // STRING
+      { name: "region", type: 3, value: region }, // STRING
+      { name: "realm", type: 3, value: realm }, // STRING
+    ];
+    if (season) options.push({ name: "season", type: 3, value: season }); // STRING
+
     const fakeInteraction: DiscordInteraction = {
       ...interaction,
       data: {
         name: "player",
-        options: [
-          { name: "name", type: 3, value: name }, // STRING
-          { name: "region", type: 3, value: region }, // STRING
-          { name: "realm", type: 3, value: realm }, // STRING
-        ],
+        options,
       },
     };
 

@@ -200,6 +200,7 @@ export interface PlayerCommandOptions {
   name: string;
   region: "us" | "eu" | "kr" | "tw";
   realm: string;
+  season?: string;
 }
 
 export interface PaginationData {
