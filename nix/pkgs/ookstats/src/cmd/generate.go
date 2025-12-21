@@ -32,6 +32,7 @@ var generateAPICmd = &cobra.Command{
 		pageSize, _ := cmd.Flags().GetInt("page-size")
 		shardSize, _ := cmd.Flags().GetInt("shard-size")
 		regionsCSV, _ := cmd.Flags().GetString("regions")
+		workers, _ := cmd.Flags().GetInt("workers")
 
 		if strings.TrimSpace(outDir) == "" {
 			return errors.New("--out is required")
@@ -64,10 +65,10 @@ var generateAPICmd = &cobra.Command{
 					}
 				}
 			}
-			if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil {
+			if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 				return err
 			}
-			if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil {
+			if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 				return err
 			}
 		}
@@ -100,4 +101,5 @@ func init() {
 	generateAPICmd.Flags().Int("page-size", 25, "Leaderboard page size")
 	generateAPICmd.Flags().Int("shard-size", 5000, "Search index shard size")
 	generateAPICmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional leaderboards")
+	generateAPICmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
 }

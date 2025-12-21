@@ -73,7 +73,7 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
 			"limit":            shardSize,
 			"last_updated":     time.Now().Format(time.RFC3339),
 		}
-		if err := writer.WriteJSONFile(path, map[string]any{"players": buf, "metadata": meta}); err != nil {
+		if err := writer.WriteJSONFileCompact(path, map[string]any{"players": buf, "metadata": meta}); err != nil {
 			return err
 		}
 		shard++

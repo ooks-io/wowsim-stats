@@ -8,13 +8,32 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
+// playerLeaderboardJob represents a single player leaderboard generation task
+type playerLeaderboardJob struct {
+	seasonID   int
+	seasonName string
+	scope      string // "global", "regional", "realm", "class"
+	region     string // for regional/realm/class scopes
+	realmSlug  string // for realm scope
+	classKey   string // for class scope
+	out        string
+	pageSize   int
+	regions    []string // for class scope
+}
+
 // GeneratePlayerLeaderboards generates player ranking JSON files for all scopes per season
-func GeneratePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []string) error {
+// Uses a worker pool for parallel generation
+func GeneratePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []string, workers int) error {
 	if pageSize <= 0 {
 		pageSize = 25
+	}
+	if workers <= 0 {
+		workers = 10
 	}
 
 	// Default regions
@@ -33,39 +52,146 @@ func GeneratePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
 		return nil
 	}
 
-	// Generate leaderboards for each season
+	// Pre-load realm slugs per region (only parent realms)
+	realmSlugs := make(map[string][]string)
+	for _, reg := range regions {
+		rrows, err := db.Query(`
+			SELECT slug
+			FROM realms
+			WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
+			ORDER BY slug
+		`, reg)
+		if err != nil {
+			return fmt.Errorf("load realm slugs: %w", err)
+		}
+		var slugs []string
+		for rrows.Next() {
+			var s string
+			if err := rrows.Scan(&s); err != nil {
+				rrows.Close()
+				return err
+			}
+			slugs = append(slugs, s)
+		}
+		rrows.Close()
+		realmSlugs[reg] = slugs
+	}
+
+	classKeys := []string{"death_knight", "druid", "hunter", "mage", "monk", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"}
+
+	// Count total jobs
+	var totalJobs int
+	for range seasons {
+		totalJobs += 1            // global
+		totalJobs += len(regions) // regional
+		for _, reg := range regions {
+			totalJobs += len(realmSlugs[reg]) // realm
+		}
+		totalJobs += len(classKeys) // class (each handles all scopes internally)
+	}
+
+	fmt.Printf("Generating player leaderboards with %d workers (%d total jobs)...\n", workers, totalJobs)
+
+	// Create job channel
+	jobs := make(chan playerLeaderboardJob, 100)
+	var firstErr atomic.Value
+	var completed atomic.Int64
+	var wg sync.WaitGroup
+
+	// Start workers
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for job := range jobs {
+				if firstErr.Load() != nil {
+					continue
+				}
+
+				var err error
+				switch job.scope {
+				case "global":
+					err = generateGlobalPlayerLeaderboard(db, job.out, job.pageSize, job.seasonID)
+				case "regional":
+					err = generateRegionalPlayerLeaderboard(db, job.out, job.region, job.pageSize, job.seasonID)
+				case "realm":
+					err = generateSingleRealmPlayerLeaderboard(db, job.out, job.region, job.realmSlug, job.pageSize, job.seasonID)
+				case "class":
+					err = generateClassPlayerLeaderboards(db, job.out, job.classKey, job.pageSize, job.regions, job.seasonID)
+				}
+
+				if err != nil {
+					firstErr.CompareAndSwap(nil, err)
+					continue
+				}
+
+				c := completed.Add(1)
+				if c%50 == 0 {
+					fmt.Printf("  ... %d/%d player leaderboards generated\n", c, totalJobs)
+				}
+			}
+		}()
+	}
+
+	// Queue all jobs
 	for _, season := range seasons {
-		fmt.Printf("\n=== Generating Player Leaderboards for Season %d (%s) ===\n", season.ID, season.Name)
+		fmt.Printf("\n=== Queuing Player Leaderboards for Season %d (%s) ===\n", season.ID, season.Name)
 		seasonOut := filepath.Join(out, "season", fmt.Sprintf("%d", season.ID))
 
-		// Generate global and regional scopes for this season
-		if err := generateGlobalPlayerLeaderboard(db, seasonOut, pageSize, season.ID); err != nil {
-			return err
+		// Global
+		jobs <- playerLeaderboardJob{
+			seasonID: season.ID,
+			scope:    "global",
+			out:      seasonOut,
+			pageSize: pageSize,
 		}
 
+		// Regional
 		for _, reg := range regions {
-			if err := generateRegionalPlayerLeaderboard(db, seasonOut, reg, pageSize, season.ID); err != nil {
-				return err
+			jobs <- playerLeaderboardJob{
+				seasonID: season.ID,
+				scope:    "regional",
+				region:   reg,
+				out:      seasonOut,
+				pageSize: pageSize,
 			}
 		}
 
-		// Generate realm scopes for this season
+		// Realm
 		for _, reg := range regions {
-			if err := generateRealmPlayerLeaderboards(db, seasonOut, reg, pageSize, season.ID); err != nil {
-				return err
+			for _, rslug := range realmSlugs[reg] {
+				jobs <- playerLeaderboardJob{
+					seasonID:  season.ID,
+					scope:     "realm",
+					region:    reg,
+					realmSlug: rslug,
+					out:       seasonOut,
+					pageSize:  pageSize,
+				}
 			}
 		}
 
-		// Generate class-filtered variants for this season
-		classKeys := []string{"death_knight", "druid", "hunter", "mage", "monk", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"}
+		// Class (each handles global/regional/realm internally)
 		for _, cls := range classKeys {
-			if err := generateClassPlayerLeaderboards(db, seasonOut, cls, pageSize, regions, season.ID); err != nil {
-				return err
+			jobs <- playerLeaderboardJob{
+				seasonID: season.ID,
+				scope:    "class",
+				classKey: cls,
+				out:      seasonOut,
+				pageSize: pageSize,
+				regions:  regions,
 			}
 		}
 	}
+	close(jobs)
 
-	fmt.Println("[OK] Player leaderboards generated for all seasons")
+	wg.Wait()
+
+	if err := firstErr.Load(); err != nil {
+		return err.(error)
+	}
+
+	fmt.Printf("\n[OK] Generated %d player leaderboards\n", completed.Load())
 	return nil
 }
 
@@ -111,7 +237,7 @@ func generateGlobalPlayerLeaderboard(db *sql.DB, out string, pageSize int, seaso
 		}
 
 		page := buildPlayerLeaderboardPage(list, "Global Player Rankings", total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}
@@ -163,88 +289,65 @@ func generateRegionalPlayerLeaderboard(db *sql.DB, out, region string, pageSize 
 
 		title := strings.ToUpper(region) + " Player Rankings"
 		page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// generateRealmPlayerLeaderboards generates realm-specific player rankings for a season
-func generateRealmPlayerLeaderboards(db *sql.DB, out, region string, pageSize int, seasonID int) error {
-	// Only generate leaderboards for parent/independent realms (skip child realms)
-	rrows, err := db.Query(`
-		SELECT slug
-		FROM realms
-		WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
-		ORDER BY slug
-	`, region)
-	if err != nil {
-		return fmt.Errorf("players realms list: %w", err)
-	}
-	defer rrows.Close()
-
-	var slugs []string
-	for rrows.Next() {
-		var s string
-		if err := rrows.Scan(&s); err != nil {
-			return err
-		}
-		slugs = append(slugs, s)
+// generateSingleRealmPlayerLeaderboard generates player rankings for a single realm
+func generateSingleRealmPlayerLeaderboard(db *sql.DB, out, region, rslug string, pageSize int, seasonID int) error {
+	dir := filepath.Join(out, "players", "realm", region, rslug)
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return err
 	}
 
-	for _, rslug := range slugs {
-		dir := filepath.Join(out, "players", "realm", region, rslug)
-		if err := os.MkdirAll(dir, 0o755); err != nil {
-			return err
-		}
+	// Include players from entire pool (parent + all children)
+	var total int
+	if err := db.QueryRow(`
+		SELECT COUNT(*)
+		FROM players p
+		JOIN realms r ON p.realm_id = r.id
+		JOIN player_profiles pp ON p.id = pp.player_id
+		WHERE pp.season_id = ? AND r.region = ?
+			AND (r.slug = ? OR r.parent_realm_slug = ?)
+			AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+	`, seasonID, region, rslug, rslug).Scan(&total); err != nil {
+		return fmt.Errorf("players total (realm, season %d): %w", seasonID, err)
+	}
 
-		// Include players from entire pool (parent + all children)
-		var total int
-		if err := db.QueryRow(`
-			SELECT COUNT(*)
+	pages := (total + pageSize - 1) / pageSize
+	for p := 1; p <= pages; p++ {
+		offset := (p - 1) * pageSize
+		rows, err := db.Query(`
+			SELECT p.id, p.name, r.slug, r.name, r.region,
+				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+				   COALESCE(pp.realm_ranking_bracket, '')
 			FROM players p
 			JOIN realms r ON p.realm_id = r.id
 			JOIN player_profiles pp ON p.id = pp.player_id
+			LEFT JOIN player_details pd ON p.id = pd.player_id
 			WHERE pp.season_id = ? AND r.region = ?
 				AND (r.slug = ? OR r.parent_realm_slug = ?)
 				AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-		`, seasonID, region, rslug, rslug).Scan(&total); err != nil {
-			return fmt.Errorf("players total (realm, season %d): %w", seasonID, err)
+			ORDER BY pp.combined_best_time ASC, p.name ASC
+			LIMIT ? OFFSET ?
+		`, seasonID, region, rslug, rslug, pageSize, offset)
+		if err != nil {
+			return err
 		}
 
-		pages := (total + pageSize - 1) / pageSize
-		for p := 1; p <= pages; p++ {
-			offset := (p - 1) * pageSize
-			rows, err := db.Query(`
-				SELECT p.id, p.name, r.slug, r.name, r.region,
-					   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-					   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-					   COALESCE(pp.realm_ranking_bracket, '')
-				FROM players p
-				JOIN realms r ON p.realm_id = r.id
-				JOIN player_profiles pp ON p.id = pp.player_id
-				LEFT JOIN player_details pd ON p.id = pd.player_id
-				WHERE pp.season_id = ? AND r.region = ?
-					AND (r.slug = ? OR r.parent_realm_slug = ?)
-					AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-				ORDER BY pp.combined_best_time ASC, p.name ASC
-				LIMIT ? OFFSET ?
-			`, seasonID, region, rslug, rslug, pageSize, offset)
-			if err != nil {
-				return err
-			}
+		list, err := scanPlayerRows(rows)
+		if err != nil {
+			return err
+		}
 
-			list, err := scanPlayerRows(rows)
-			if err != nil {
-				return err
-			}
-
-			title := strings.ToUpper(region) + "/" + rslug + " Player Rankings"
-			page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
-			if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-				return err
-			}
+		title := strings.ToUpper(region) + "/" + rslug + " Player Rankings"
+		page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+			return err
 		}
 	}
 	return nil
@@ -446,7 +549,7 @@ func generateClassScope(db *sql.DB, out, scope, region, realmSlug, classKey stri
 		}
 
 		page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}
