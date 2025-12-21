@@ -7,7 +7,8 @@ import (
 	"ookstats/internal/writer"
 	"os"
 	"path/filepath"
-	"strings"
+	"sync"
+	"sync/atomic"
 )
 
 // LeaderboardPageJSON represents a paginated leaderboard response
@@ -56,10 +57,25 @@ type dungeonInfo struct {
 	Slug, Name string
 }
 
+// leaderboardJob represents a single leaderboard generation task
+type leaderboardJob struct {
+	seasonID   int
+	seasonName string
+	dungeon    dungeonInfo
+	region     string // empty for global
+	realmSlug  string // empty for global/regional
+	out        string
+	pageSize   int
+}
+
 // GenerateLeaderboards generates leaderboard JSON files for all scopes (global, regional, realm) per season
-func GenerateLeaderboards(db *sql.DB, out string, pageSize int, regions []string) error {
+// Uses a worker pool for parallel generation
+func GenerateLeaderboards(db *sql.DB, out string, pageSize int, regions []string, workers int) error {
 	if pageSize <= 0 {
 		pageSize = 25
+	}
+	if workers <= 0 {
+		workers = 10
 	}
 	if err := os.MkdirAll(out, 0o755); err != nil {
 		return err
@@ -87,47 +103,128 @@ func GenerateLeaderboards(db *sql.DB, out string, pageSize int, regions []string
 		regions = []string{"us", "eu", "kr", "tw"}
 	}
 
-	// Generate leaderboards for each season
+	// Pre-load all realm slugs per region
+	realmSlugs := make(map[string][]string)
+	for _, reg := range regions {
+		slugs, err := loadRealmSlugs(db, reg)
+		if err != nil {
+			return err
+		}
+		realmSlugs[reg] = slugs
+	}
+
+	// Count total jobs for progress reporting
+	var totalJobs int
+	for range seasons {
+		totalJobs += len(dungeons) // global
+		for _, reg := range regions {
+			totalJobs += len(dungeons)                        // regional
+			totalJobs += len(realmSlugs[reg]) * len(dungeons) // realm
+		}
+	}
+
+	fmt.Printf("Generating leaderboards with %d workers (%d total jobs)...\n", workers, totalJobs)
+
+	// Create job channel and error channel
+	jobs := make(chan leaderboardJob, 100)
+	var firstErr atomic.Value
+	var completed atomic.Int64
+	var wg sync.WaitGroup
+
+	// Start workers
+	for i := 0; i < workers; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for job := range jobs {
+				// Skip if we already have an error
+				if firstErr.Load() != nil {
+					continue
+				}
+
+				var err error
+				if job.realmSlug != "" {
+					err = generateRealmLeaderboard(db, job.out, job.region, job.realmSlug, job.dungeon, job.seasonID, job.pageSize)
+				} else if job.region != "" {
+					err = generateRegionalLeaderboard(db, job.out, job.region, job.dungeon, job.seasonID, job.pageSize)
+				} else {
+					err = generateGlobalLeaderboard(db, job.out, job.dungeon, job.seasonID, job.pageSize)
+				}
+
+				if err != nil {
+					firstErr.CompareAndSwap(nil, err)
+					continue
+				}
+
+				c := completed.Add(1)
+				if c%100 == 0 {
+					fmt.Printf("  ... %d/%d leaderboards generated\n", c, totalJobs)
+				}
+			}
+		}()
+	}
+
+	// Queue all jobs
 	for _, season := range seasons {
-		fmt.Printf("\n=== Season %d (%s) ===\n", season.ID, season.Name)
+		fmt.Printf("\n=== Queuing Season %d (%s) ===\n", season.ID, season.Name)
 		seasonOut := filepath.Join(out, "season", fmt.Sprintf("%d", season.ID))
 
-		// Process globals for this season
-		fmt.Println("Generating global leaderboards...")
+		// Global leaderboards
 		for _, d := range dungeons {
-			if err := generateGlobalLeaderboard(db, seasonOut, d, season.ID, pageSize); err != nil {
-				return err
+			jobs <- leaderboardJob{
+				seasonID:   season.ID,
+				seasonName: season.Name,
+				dungeon:    d,
+				region:     "",
+				realmSlug:  "",
+				out:        seasonOut,
+				pageSize:   pageSize,
 			}
 		}
 
-		// Regions for this season
+		// Regional leaderboards
 		for _, reg := range regions {
-			fmt.Printf("Generating %s leaderboards...\n", strings.ToUpper(reg))
 			for _, d := range dungeons {
-				if err := generateRegionalLeaderboard(db, seasonOut, reg, d, season.ID, pageSize); err != nil {
-					return err
+				jobs <- leaderboardJob{
+					seasonID:   season.ID,
+					seasonName: season.Name,
+					dungeon:    d,
+					region:     reg,
+					realmSlug:  "",
+					out:        seasonOut,
+					pageSize:   pageSize,
 				}
 			}
 		}
 
-		// Realm leaderboards for each region+realm for this season
+		// Realm leaderboards
 		for _, reg := range regions {
-			slugs, err := loadRealmSlugs(db, reg)
-			if err != nil {
-				return err
-			}
-			for _, rslug := range slugs {
-				fmt.Printf("Generating realm %s/%s leaderboards...\n", reg, rslug)
+			for _, rslug := range realmSlugs[reg] {
 				for _, d := range dungeons {
-					if err := generateRealmLeaderboard(db, seasonOut, reg, rslug, d, season.ID, pageSize); err != nil {
-						return err
+					jobs <- leaderboardJob{
+						seasonID:   season.ID,
+						seasonName: season.Name,
+						dungeon:    d,
+						region:     reg,
+						realmSlug:  rslug,
+						out:        seasonOut,
+						pageSize:   pageSize,
 					}
 				}
 			}
 		}
 	}
+	close(jobs)
 
-	fmt.Println("\n[OK] Season-scoped leaderboards generated")
+	// Wait for all workers to complete
+	wg.Wait()
+
+	// Check for errors
+	if err := firstErr.Load(); err != nil {
+		return err.(error)
+	}
+
+	fmt.Printf("\n[OK] Generated %d leaderboards\n", completed.Load())
 	return nil
 }
 
@@ -225,7 +322,7 @@ func generateGlobalLeaderboard(db *sql.DB, out string, d dungeonInfo, seasonID, 
 		}
 
 		page := buildLeaderboardPage(rows, d.Name, "", total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}
@@ -262,7 +359,7 @@ func generateRegionalLeaderboard(db *sql.DB, out, region string, d dungeonInfo, 
 		}
 
 		page := buildLeaderboardPage(rows, d.Name, "", total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}
@@ -304,7 +401,7 @@ func generateRealmLeaderboard(db *sql.DB, out, region, realmSlug string, d dunge
 		}
 
 		page := buildLeaderboardPage(rows, d.Name, realmName, total, pages, p, pageSize)
-		if err := writer.WriteJSONFile(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
+		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
 	}

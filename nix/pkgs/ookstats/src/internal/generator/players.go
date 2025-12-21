@@ -392,5 +392,5 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 	// Write file
 	dir := filepath.Join(out, pj.Region, pj.RealmSlug)
 	fname := filepath.Join(dir, utils.SafeSlugName(pj.Name)+".json")
-	return writer.WriteJSONFile(fname, page)
+	return writer.WriteJSONFileCompact(fname, page)
 }

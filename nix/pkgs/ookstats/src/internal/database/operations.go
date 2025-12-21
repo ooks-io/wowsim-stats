@@ -11,7 +11,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -443,72 +442,9 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 	processedCount := 0
 	errorCount := 0
 
-	// channel to collect results for batching
-	batchChan := make(chan blizzard.FetchResult, 50) // Buffer for batching
+	batch := make([]blizzard.FetchResult, 0, 10)
+	batchNumber := 0
 
-	// batch processor goroutine
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-		fmt.Printf("[INFO] Batch processor goroutine started\n")
-
-		batch := make([]blizzard.FetchResult, 0, 10) // Process in batches of 10
-		batchNumber := 0
-
-		for {
-			select {
-			case result, ok := <-batchChan:
-				if !ok {
-					fmt.Printf("[INFO] Batch channel closed, processing final batch...\n")
-					// channel closed, process remaining batch
-					if len(batch) > 0 {
-						batchNumber++
-						fmt.Printf("[INFO] Processing final batch %d with %d items...\n", batchNumber, len(batch))
-						runs, players, err := ds.processBatch(batch)
-						if err != nil {
-							fmt.Printf("[ERROR] Final batch %d failed: %v\n", batchNumber, err)
-						} else {
-							totalRuns += runs
-							totalPlayers += players
-							if runs > 0 || players > 0 {
-								fmt.Printf("[OK] Final batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
-									batchNumber, runs, players, totalRuns, totalPlayers)
-							}
-						}
-					}
-					fmt.Printf("[INFO] Batch processor goroutine ending\n")
-					return
-				}
-
-				batch = append(batch, result)
-
-				// process batch when full
-				if len(batch) >= 10 {
-					batchNumber++
-					runs, players, err := ds.processBatch(batch)
-					if err != nil {
-						fmt.Printf("[ERROR] Batch %d failed: %v\n", batchNumber, err)
-					} else {
-						totalRuns += runs
-						totalPlayers += players
-						if runs > 0 || players > 0 {
-							fmt.Printf("[INFO] Batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
-								batchNumber, runs, players, totalRuns, totalPlayers)
-						}
-					}
-					batch = batch[:0] // Clear batch
-				}
-
-			case <-ctx.Done():
-				fmt.Printf("[WARN] Batch processor context cancelled\n")
-				return
-			}
-		}
-	}()
-
-	// forward results to batch processor with progress tracking
 	fmt.Printf("[INFO] Starting to process API results...\n")
 	for result := range results {
 		processedCount++
@@ -525,27 +461,52 @@ func (ds *DatabaseService) BatchProcessFetchResults(ctx context.Context, results
 			continue
 		}
 
+		batch = append(batch, result)
+
+		// process batch when full
+		if len(batch) >= 10 {
+			batchNumber++
+			runs, players, err := ds.processBatch(batch)
+			if err != nil {
+				fmt.Printf("[ERROR] Batch %d failed: %v\n", batchNumber, err)
+			} else {
+				totalRuns += runs
+				totalPlayers += players
+				if runs > 0 || players > 0 {
+					fmt.Printf("[INFO] Batch %d: +%d runs, +%d players (total: %d runs, %d players)\n",
+						batchNumber, runs, players, totalRuns, totalPlayers)
+				}
+			}
+			batch = batch[:0]
+		}
+
 		// show periodic progress
 		if processedCount%10 == 0 {
-			fmt.Printf("[INFO] Progress: %d requests processed, %d errors, queued for batch processing...\n", processedCount, errorCount)
+			fmt.Printf("[INFO] Progress: %d requests processed, %d errors\n", processedCount, errorCount)
 		}
 
 		select {
-		case batchChan <- result:
 		case <-ctx.Done():
 			fmt.Printf("[WARN] Context cancelled, stopping processing\n")
-			close(batchChan)
-			wg.Wait()
-			fmt.Printf("\n[INFO] Final stats: %d requests processed, %d errors, %d runs, %d players\n",
-				processedCount, errorCount, totalRuns, totalPlayers)
 			return totalRuns, totalPlayers, ctx.Err()
+		default:
 		}
 	}
 
-	fmt.Printf("[INFO] Finished processing all API results, closing batch channel...\n")
-
-	close(batchChan)
-	wg.Wait()
+	// process remaining batch
+	if len(batch) > 0 {
+		batchNumber++
+		runs, players, err := ds.processBatch(batch)
+		if err != nil {
+			fmt.Printf("[ERROR] Final batch %d failed: %v\n", batchNumber, err)
+		} else {
+			totalRuns += runs
+			totalPlayers += players
+			if runs > 0 || players > 0 {
+				fmt.Printf("[INFO] Final batch %d: +%d runs, +%d players\n", batchNumber, runs, players)
+			}
+		}
+	}
 
 	fmt.Printf("\n[INFO] Final stats: %d requests processed, %d errors, %d runs, %d players\n",
 		processedCount, errorCount, totalRuns, totalPlayers)
@@ -559,18 +520,12 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
 		return 0, 0, nil
 	}
 
-	// Pre-scan batch to decide which items actually need writes (local diff -> insert-new)
+	// collect items with valid leaderboard data
 	type batchItem struct {
-		idx         int
-		r           blizzard.RealmInfo
-		d           blizzard.DungeonInfo
-		board       *blizzard.LeaderboardResponse
-		realmID     int
-		dungeonID   int
-		existingMax int64
-		marker      int64
-		maxCT       int64
-		needsWrite  bool
+		idx   int
+		r     blizzard.RealmInfo
+		d     blizzard.DungeonInfo
+		board *blizzard.LeaderboardResponse
 	}
 
 	items := make([]batchItem, 0, len(batch))
@@ -578,64 +533,19 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
 		if res.Leaderboard == nil || len(res.Leaderboard.LeadingGroups) == 0 {
 			continue
 		}
-		// resolve IDs (read-only)
-		realmID, err := ds.GetRealmIDByRegionAndSlug(res.RealmInfo.Region, res.RealmInfo.Slug)
-		if err != nil {
-			return 0, 0, fmt.Errorf("failed to resolve realm id: %w", err)
-		}
-		dungeonID, err := ds.GetDungeonID(res.Dungeon.Slug)
-		if err != nil {
-			return 0, 0, fmt.Errorf("failed to resolve dungeon id: %w", err)
-		}
-		// compute payload maxCT
-		maxCT := int64(0)
-		for _, run := range res.Leaderboard.LeadingGroups {
-			if run.CompletedTimestamp > maxCT {
-				maxCT = run.CompletedTimestamp
-			}
-		}
-		// read DB high-water and marker (read-only; outside TX)
-		var existingMax sql.NullInt64
-		_ = ds.db.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax)
-		var marker int64
-		_ = ds.db.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, res.RealmInfo.Slug, dungeonID, res.Leaderboard.Period).Scan(&marker)
-		minCT := marker
-		if existingMax.Valid && existingMax.Int64 > minCT {
-			minCT = existingMax.Int64
-		}
-		needsWrite := maxCT > 0 && maxCT > minCT
-
-		if !needsWrite {
-			fmt.Printf("    [SKIP] %s/%s: up-to-date (minCT=%d, maxCT=%d)\n", res.RealmInfo.Name, res.Dungeon.Name, minCT, maxCT)
-		}
 		items = append(items, batchItem{
-			idx:         i + 1,
-			r:           res.RealmInfo,
-			d:           res.Dungeon,
-			board:       res.Leaderboard,
-			realmID:     realmID,
-			dungeonID:   dungeonID,
-			existingMax: existingMax.Int64,
-			marker:      marker,
-			maxCT:       maxCT,
-			needsWrite:  needsWrite,
+			idx:   i + 1,
+			r:     res.RealmInfo,
+			d:     res.Dungeon,
+			board: res.Leaderboard,
 		})
 	}
 
-	// filter to items needing writes
-	toWrite := make([]batchItem, 0, len(items))
-	for _, it := range items {
-		if it.needsWrite {
-			toWrite = append(toWrite, it)
-		}
-	}
-
-	if len(toWrite) == 0 {
-		// nothing to write; avoid starting a transaction
+	if len(items) == 0 {
 		return 0, 0, nil
 	}
 
-	// begin transaction for write set only
+	// begin transaction
 	startBatch := time.Now()
 	tx, err := ds.db.Begin()
 	if err != nil {
@@ -646,7 +556,7 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
 	totalRuns := 0
 	totalPlayers := 0
 
-	for _, it := range toWrite {
+	for _, it := range items {
 		itemStart := time.Now()
 		runs, players, err := ds.insertLeaderboardDataTx(tx, it.board, it.r, it.d)
 		if err != nil {
@@ -654,8 +564,10 @@ func (ds *DatabaseService) processBatch(batch []blizzard.FetchResult) (int, int,
 		}
 		totalRuns += runs
 		totalPlayers += players
-		fmt.Printf("    - Batch item %d: %s/%s -> +%d runs, +%d players in %dms\n",
-			it.idx, it.r.Name, it.d.Name, runs, players, time.Since(itemStart).Milliseconds())
+		if runs > 0 || players > 0 {
+			fmt.Printf("    - Batch item %d: %s/%s -> +%d runs, +%d players in %dms\n",
+				it.idx, it.r.Name, it.d.Name, runs, players, time.Since(itemStart).Milliseconds())
+		}
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -699,38 +611,18 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 		return 0, 0, fmt.Errorf("failed to get dungeon ID: %w", err)
 	}
 
-	// Compute newest completed_timestamp in this leaderboard
+	// Compute newest completed_timestamp in this leaderboard (for marker update)
 	maxCT := int64(0)
 	for _, run := range leaderboard.LeadingGroups {
 		if run.CompletedTimestamp > maxCT {
 			maxCT = run.CompletedTimestamp
 		}
 	}
-	// Quick skip using existing DB max completed_timestamp for this realm+dungeon
-	var existingMax sql.NullInt64
-	if err := tx.QueryRow(`SELECT MAX(completed_timestamp) FROM challenge_runs WHERE realm_id = ? AND dungeon_id = ?`, realmID, dungeonID).Scan(&existingMax); err == nil {
-		if existingMax.Valid && maxCT > 0 && existingMax.Int64 >= maxCT {
-			fmt.Printf("    [SKIP] %s/%s: existingMax=%d >= maxCT=%d (DB)\n", realmInfo.Name, dungeon.Name, existingMax.Int64, maxCT)
-			return 0, 0, nil
-		}
-	}
-	var marker int64
-	if err := tx.QueryRow(`SELECT last_completed_ts FROM api_fetch_markers WHERE realm_slug = ? AND dungeon_id = ? AND period_id = ?`, realmInfo.Slug, dungeonID, leaderboard.Period).Scan(&marker); err != nil && err != sql.ErrNoRows {
-		return 0, 0, fmt.Errorf("failed to read fetch marker: %w", err)
-	}
-	if marker >= maxCT && maxCT > 0 {
-		fmt.Printf("    [SKIP] %s/%s: up-to-date (marker=%d, maxCT=%d)\n", realmInfo.Name, dungeon.Name, marker, maxCT)
-		return 0, 0, nil
-	}
 
 	runsInserted := 0
 	playersInserted := 0
 
 	for _, run := range leaderboard.LeadingGroups {
-		// fast-skip duplicates using DB max and marker
-		if (existingMax.Valid && run.CompletedTimestamp <= existingMax.Int64) || (marker > 0 && run.CompletedTimestamp <= marker) {
-			continue
-		}
 		// extract player IDs for team signature
 		var playerIDs []int
 		for _, member := range run.Members {
@@ -748,7 +640,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 		// determine season for this run
 		var runSeasonID *int
 		if run.CompletedTimestamp > 0 {
-			sid, err := ds.DetermineSeasonForRun(realmInfo.Region, run.CompletedTimestamp)
+			sid, err := ds.determineSeasonForRunTx(tx, realmInfo.Region, run.CompletedTimestamp)
 			if err != nil {
 				return 0, 0, fmt.Errorf("failed to determine season for run: %w", err)
 			}
@@ -876,8 +768,8 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 		}
 	}
 
-	// update marker inside the transaction if we progressed
-	if maxCT > marker && maxCT > 0 {
+	// update marker inside the transaction
+	if maxCT > 0 {
 		if _, err := tx.Exec(`INSERT INTO api_fetch_markers (realm_slug, dungeon_id, period_id, last_completed_ts)
                                VALUES (?, ?, ?, ?)
                                ON CONFLICT(realm_slug, dungeon_id, period_id)
@@ -1571,6 +1463,25 @@ func (ds *DatabaseService) DetermineSeasonForRun(region string, completedTimesta
 	`
 	var seasonNumber int
 	err := ds.db.QueryRow(query, region, completedTimestamp, completedTimestamp).Scan(&seasonNumber)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	return seasonNumber, err
+}
+
+// determineSeasonForRunTx is a transaction-aware version of DetermineSeasonForRun
+func (ds *DatabaseService) determineSeasonForRunTx(tx *sql.Tx, region string, completedTimestamp int64) (int, error) {
+	query := `
+		SELECT season_number
+		FROM seasons
+		WHERE region = ?
+		  AND start_timestamp <= ?
+		  AND (end_timestamp IS NULL OR end_timestamp > ?)
+		ORDER BY start_timestamp DESC
+		LIMIT 1
+	`
+	var seasonNumber int
+	err := tx.QueryRow(query, region, completedTimestamp, completedTimestamp).Scan(&seasonNumber)
 	if err == sql.ErrNoRows {
 		return 0, nil
 	}

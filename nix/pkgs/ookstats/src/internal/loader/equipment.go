@@ -74,39 +74,54 @@ func LoadAllEquipment(db *sql.DB, playerIDs []int64) (map[int64]map[int64][]Equi
 		return make(map[int64]map[int64][]EquipmentData), make(map[int64][]EnchantmentData), nil
 	}
 
-	// Load equipment for latest timestamps
+	// Load equipment for latest timestamps in a single batched query
 	equipmentMap := make(map[int64]map[int64][]EquipmentData)
 	var allEquipmentIDs []int64
 
+	// Build VALUES clause for all player/timestamp pairs
+	valuesBuilder := strings.Builder{}
+	eqArgs := make([]any, 0, len(playerTimestamps)*2)
+	first := true
 	for playerID, timestamp := range playerTimestamps {
-		rows, err := db.Query(`
-            SELECT e.id, e.slot_type, e.item_id, e.upgrade_id, e.quality, e.item_name, e.snapshot_timestamp,
-                   i.icon AS item_icon_slug, i.type AS item_type
-            FROM player_equipment e
-            LEFT JOIN items i ON e.item_id = i.id
-            WHERE e.player_id = ? AND e.snapshot_timestamp = ?
-            ORDER BY e.slot_type
-        `, playerID, timestamp)
-		if err != nil {
-			return nil, nil, err
+		if !first {
+			valuesBuilder.WriteString(",")
+		}
+		valuesBuilder.WriteString("(?,?)")
+		eqArgs = append(eqArgs, playerID, timestamp)
+		first = false
+	}
+
+	// Single query to load all equipment
+	eqQuery := fmt.Sprintf(`
+		WITH pairs(player_id, ts) AS (VALUES %s)
+		SELECT e.player_id, e.id, e.slot_type, e.item_id, e.upgrade_id, e.quality, e.item_name, e.snapshot_timestamp,
+		       i.icon AS item_icon_slug, i.type AS item_type
+		FROM pairs
+		JOIN player_equipment e ON e.player_id = pairs.player_id AND e.snapshot_timestamp = pairs.ts
+		LEFT JOIN items i ON e.item_id = i.id
+		ORDER BY e.player_id, e.slot_type
+	`, valuesBuilder.String())
+
+	eqRows, err := db.Query(eqQuery, eqArgs...)
+	if err != nil {
+		return nil, nil, fmt.Errorf("batch equipment query: %w", err)
+	}
+	defer eqRows.Close()
+
+	for eqRows.Next() {
+		var playerID int64
+		var eq EquipmentData
+		if err := eqRows.Scan(
+			&playerID, &eq.ID, &eq.SlotType, &eq.ItemID, &eq.UpgradeID, &eq.Quality, &eq.ItemName, &eq.SnapshotTs,
+			&eq.ItemIcon, &eq.ItemType); err != nil {
+			return nil, nil, fmt.Errorf("scan equipment: %w", err)
 		}
 
 		if equipmentMap[playerID] == nil {
 			equipmentMap[playerID] = make(map[int64][]EquipmentData)
 		}
-
-		for rows.Next() {
-			var eq EquipmentData
-			if err := rows.Scan(
-				&eq.ID, &eq.SlotType, &eq.ItemID, &eq.UpgradeID, &eq.Quality, &eq.ItemName, &eq.SnapshotTs,
-				&eq.ItemIcon, &eq.ItemType); err != nil {
-				rows.Close()
-				return nil, nil, fmt.Errorf("scan equipment: %w", err)
-			}
-			equipmentMap[playerID][timestamp] = append(equipmentMap[playerID][timestamp], eq)
-			allEquipmentIDs = append(allEquipmentIDs, eq.ID)
-		}
-		rows.Close()
+		equipmentMap[playerID][eq.SnapshotTs] = append(equipmentMap[playerID][eq.SnapshotTs], eq)
+		allEquipmentIDs = append(allEquipmentIDs, eq.ID)
 	}
 
 	// Load enchantments in batches

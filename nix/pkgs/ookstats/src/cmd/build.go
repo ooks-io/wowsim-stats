@@ -44,6 +44,7 @@ var buildCmd = &cobra.Command{
 		skipProfiles, _ := cmd.Flags().GetBool("skip-profiles")
 		periodsCSV, _ := cmd.Flags().GetString("periods")
 		concurrency, _ := cmd.Flags().GetInt("concurrency")
+		workers, _ := cmd.Flags().GetInt("workers")
 
 		// optional verbose logging propagated to API client
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
@@ -187,7 +188,7 @@ var buildCmd = &cobra.Command{
 
 		// 9) Generate static API
 		log.Info("generating static API")
-		if err := generateAllAPI(db, normalizedOut, pageSize, shardSize, regionsCSV); err != nil {
+		if err := generateAllAPI(db, normalizedOut, pageSize, shardSize, workers, regionsCSV); err != nil {
 			return err
 		}
 
@@ -326,7 +327,7 @@ func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
 }
 
 // generateAllAPI mirrors the behavior of `generate api`
-func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regionsCSV string) error {
+func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize, workers int, regionsCSV string) error {
 	base := filepath.Join(outParent, "api")
 	if err := os.MkdirAll(base, 0o755); err != nil {
 		return fmt.Errorf("mkdir: %w", err)
@@ -347,10 +348,10 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize int, regio
 			}
 		}
 	}
-	if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil {
+	if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 		return err
 	}
-	if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions); err != nil {
+	if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 		return err
 	}
 
@@ -509,4 +510,5 @@ func init() {
 	buildCmd.Flags().Bool("skip-profiles", false, "Skip fetching player detailed profiles")
 	buildCmd.Flags().String("periods", "", "Period specification: comma-separated list or ranges (e.g., '1020-1036' or '1020,1025,1030-1036'). Default: fetch all periods from API")
 	buildCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
+	buildCmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
 }
