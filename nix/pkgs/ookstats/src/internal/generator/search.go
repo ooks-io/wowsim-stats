@@ -33,10 +33,15 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
         SELECT p.id, p.name, r.region, r.slug, r.name,
                COALESCE(pp.class_name, ''), pp.global_ranking, COALESCE(pp.global_ranking_bracket,'')
         FROM players p
-        JOIN player_profiles pp ON p.id = pp.player_id
+        JOIN (
+            SELECT player_id, MAX(season_id) as max_season_id
+            FROM player_profiles
+            WHERE has_complete_coverage = 1
+            GROUP BY player_id
+        ) latest ON p.id = latest.player_id
+        JOIN player_profiles pp ON pp.player_id = latest.player_id
+                                AND pp.season_id = latest.max_season_id
         JOIN realms r ON p.realm_id = r.id
-        WHERE pp.has_complete_coverage = 1
-          AND pp.season_id = (SELECT MAX(season_number) FROM seasons)
         ORDER BY pp.global_ranking ASC, p.name ASC
     `)
 	if err != nil {
@@ -53,10 +58,15 @@ func GenerateSearchIndex(db *sql.DB, out string, shardSize int) error {
 	if err := db.QueryRow(`
       SELECT COUNT(*)
       FROM players p
-      JOIN player_profiles pp ON p.id = pp.player_id
+      JOIN (
+          SELECT player_id, MAX(season_id) as max_season_id
+          FROM player_profiles
+          WHERE has_complete_coverage = 1
+          GROUP BY player_id
+      ) latest ON p.id = latest.player_id
+      JOIN player_profiles pp ON pp.player_id = latest.player_id
+                              AND pp.season_id = latest.max_season_id
       JOIN realms r ON p.realm_id = r.id
-      WHERE pp.has_complete_coverage = 1
-        AND pp.season_id = (SELECT MAX(season_number) FROM seasons)
     `).Scan(&totalPlayers); err != nil {
 		return err
 	}
