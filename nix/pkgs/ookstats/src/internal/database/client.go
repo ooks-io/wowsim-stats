@@ -242,12 +242,13 @@ func EnsureCompleteSchema(db *sql.DB) error {
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS player_rankings (
-			player_id INTEGER,
-			ranking_type TEXT,
-			ranking_scope TEXT,
+			player_id INTEGER NOT NULL,
+			ranking_type TEXT NOT NULL,
+			ranking_scope TEXT NOT NULL,
 			ranking INTEGER,
 			combined_best_time INTEGER,
-			last_updated INTEGER
+			last_updated INTEGER,
+			PRIMARY KEY (player_id, ranking_type, ranking_scope)
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS player_seasonal_rankings (
@@ -403,6 +404,11 @@ func EnsureCompleteSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Migrate player_rankings to add PRIMARY KEY constraint
+	if err := migratePlayerRankingsPrimaryKey(db); err != nil {
+		return err
+	}
+
 	// Create indexes
 	return ensureRecommendedIndexes(db)
 }
@@ -435,6 +441,9 @@ func ensureRecommendedIndexes(db *sql.DB) error {
 		"CREATE INDEX IF NOT EXISTS idx_player_best_runs_season ON player_best_runs(season_id, player_id)",
 		"CREATE INDEX IF NOT EXISTS idx_player_profiles_season ON player_profiles(season_id, global_ranking)",
 		"CREATE INDEX IF NOT EXISTS idx_player_profiles_season_coverage ON player_profiles(season_id, has_complete_coverage, combined_best_time)",
+		// Player rankings indexes
+		"CREATE INDEX IF NOT EXISTS idx_player_rankings_scope ON player_rankings(ranking_type, ranking_scope)",
+		"CREATE INDEX IF NOT EXISTS idx_player_rankings_player ON player_rankings(player_id)",
 	}
 	for _, s := range stmts {
 		if _, err := db.Exec(s); err != nil {
@@ -640,4 +649,81 @@ func columnExists(db *sql.DB, table, column string) (bool, error) {
 		}
 	}
 	return false, rows.Err()
+}
+
+// migratePlayerRankingsPrimaryKey adds PRIMARY KEY constraint to player_rankings table if missing
+func migratePlayerRankingsPrimaryKey(db *sql.DB) error {
+	// Check if table already has PRIMARY KEY by inspecting schema
+	var createSQL string
+	err := db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='player_rankings'`).Scan(&createSQL)
+	if err != nil {
+		// Table doesn't exist yet, skip migration
+		return nil
+	}
+
+	// If PRIMARY KEY already exists, skip migration
+	if strings.Contains(strings.ToUpper(createSQL), "PRIMARY KEY") {
+		return nil
+	}
+
+	fmt.Printf("Migrating player_rankings table to add PRIMARY KEY constraint...\n")
+
+	// Begin transaction for safe migration
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Create new table with PRIMARY KEY
+	if _, err := tx.Exec(`
+		CREATE TABLE player_rankings_new (
+			player_id INTEGER NOT NULL,
+			ranking_type TEXT NOT NULL,
+			ranking_scope TEXT NOT NULL,
+			ranking INTEGER,
+			combined_best_time INTEGER,
+			last_updated INTEGER,
+			PRIMARY KEY (player_id, ranking_type, ranking_scope)
+		)
+	`); err != nil {
+		return fmt.Errorf("create new table: %w", err)
+	}
+
+	// Copy data, keeping only the most recent entry per (player_id, ranking_type, ranking_scope)
+	if _, err := tx.Exec(`
+		INSERT INTO player_rankings_new
+		SELECT
+			player_id,
+			ranking_type,
+			ranking_scope,
+			ranking,
+			combined_best_time,
+			last_updated
+		FROM player_rankings
+		WHERE rowid IN (
+			SELECT MAX(rowid)
+			FROM player_rankings
+			GROUP BY player_id, ranking_type, ranking_scope
+		)
+	`); err != nil {
+		return fmt.Errorf("copy data: %w", err)
+	}
+
+	// Drop old table
+	if _, err := tx.Exec(`DROP TABLE player_rankings`); err != nil {
+		return fmt.Errorf("drop old table: %w", err)
+	}
+
+	// Rename new table
+	if _, err := tx.Exec(`ALTER TABLE player_rankings_new RENAME TO player_rankings`); err != nil {
+		return fmt.Errorf("rename new table: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit transaction: %w", err)
+	}
+
+	fmt.Printf("[OK] player_rankings table migrated - added PRIMARY KEY and removed duplicates\n")
+	return nil
 }

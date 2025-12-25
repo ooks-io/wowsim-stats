@@ -417,7 +417,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		_, err = tx.Exec(`
-			INSERT INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
+			INSERT OR REPLACE INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
 			SELECT
 				player_id, 'best_overall', 'global', global_ranking, combined_best_time, ?
 			FROM player_profiles
@@ -473,7 +473,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		_, err = tx.Exec(`
-			INSERT INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
+			INSERT OR REPLACE INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
 			SELECT
 				pp.player_id, 'best_overall', r.region, pp.regional_ranking, pp.combined_best_time, ?
 			FROM player_profiles pp
@@ -548,7 +548,7 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 		}
 
 		_, err = tx.Exec(`
-			INSERT INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
+			INSERT OR REPLACE INTO player_rankings (player_id, ranking_type, ranking_scope, ranking, combined_best_time, last_updated)
 			SELECT
 				player_id, 'best_overall', CAST(realm_id AS TEXT), realm_ranking, combined_best_time, ?
 			FROM player_profiles
