@@ -582,8 +582,8 @@ func computePlayerRankings(tx *sql.Tx) (int, error) {
 					pp.realm_ranking,
 					pp.combined_best_time,
 					COALESCE(parent_r.id, r.id) as pool_id,
-					MIN(pp.combined_best_time) OVER (PARTITION BY COALESCE(parent_r.id, r.id)) as pool_min_time,
-					COUNT(*) OVER (PARTITION BY COALESCE(parent_r.id, r.id)) as pool_total
+					MIN(pp.combined_best_time) OVER (PARTITION BY pp.season_id, COALESCE(parent_r.id, r.id)) as pool_min_time,
+					COUNT(*) OVER (PARTITION BY pp.season_id, COALESCE(parent_r.id, r.id)) as pool_total
 				FROM player_profiles pp
 				JOIN realms r ON pp.realm_id = r.id
 				LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
