@@ -256,7 +256,30 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 				playerRealmID = realmID // Fallback to run realm
 			}
 
-			// insert or ignore player
+			// check if player with same name+realm already exists (handles faction transfers where Blizzard ID changes)
+			existingPlayerID, err := getExistingPlayerIDTx(tx, playerName, playerRealmID)
+			if err != nil {
+				return 0, 0, fmt.Errorf("failed to check existing player: %w", err)
+			}
+
+			// always use the NEW Blizzard ID as canonical
+			effectivePlayerID := playerID
+
+			if existingPlayerID != 0 && existingPlayerID != int64(playerID) {
+				// player exists with different ID (likely faction transfer)
+				// migrate old runs to the new player ID and mark old player invalid
+				_, err := tx.Exec(`UPDATE run_members SET player_id = ? WHERE player_id = ?`, playerID, existingPlayerID)
+				if err != nil {
+					return 0, 0, fmt.Errorf("failed to migrate runs to new player ID: %w", err)
+				}
+				// mark old player as invalid
+				_, err = tx.Exec(`UPDATE players SET is_valid = 0 WHERE id = ?`, existingPlayerID)
+				if err != nil {
+					return 0, 0, fmt.Errorf("failed to invalidate old player: %w", err)
+				}
+			}
+
+			// insert/update player with the new ID
 			playerQuery := `
 				INSERT INTO players (id, blizzard_character_id, name, name_lower, realm_id)
 				VALUES (?, ?, ?, lower(?), ?)
@@ -301,7 +324,7 @@ func (ds *DatabaseService) InsertLeaderboardData(leaderboard *blizzard.Leaderboa
 				factionPtr = &faction
 			}
 
-			_, err = tx.Exec(memberQuery, runID, playerID, specPtr, factionPtr)
+			_, err = tx.Exec(memberQuery, runID, effectivePlayerID, specPtr, factionPtr)
 			if err != nil {
 				return 0, 0, fmt.Errorf("failed to insert run member: %w", err)
 			}
@@ -722,7 +745,30 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 				playerRealmID = realmID
 			}
 
-			// insert player
+			// check if player with same name+realm already exists (handles faction transfers where Blizzard ID changes)
+			existingPlayerID, err := getExistingPlayerIDTx(tx, playerName, playerRealmID)
+			if err != nil {
+				return 0, 0, fmt.Errorf("failed to check existing player: %w", err)
+			}
+
+			// always use the NEW Blizzard ID as canonical
+			effectivePlayerID := playerID
+
+			if existingPlayerID != 0 && existingPlayerID != int64(playerID) {
+				// player exists with different ID (likely faction transfer)
+				// migrate old runs to the new player ID and mark old player invalid
+				_, err := tx.Exec(`UPDATE run_members SET player_id = ? WHERE player_id = ?`, playerID, existingPlayerID)
+				if err != nil {
+					return 0, 0, fmt.Errorf("failed to migrate runs to new player ID: %w", err)
+				}
+				// mark old player as invalid
+				_, err = tx.Exec(`UPDATE players SET is_valid = 0 WHERE id = ?`, existingPlayerID)
+				if err != nil {
+					return 0, 0, fmt.Errorf("failed to invalidate old player: %w", err)
+				}
+			}
+
+			// insert/update player with the new ID
 			playerQuery := `
 				INSERT INTO players (id, name, name_lower, realm_id)
 				VALUES (?, ?, lower(?), ?)
@@ -761,7 +807,7 @@ func (ds *DatabaseService) insertLeaderboardDataTx(tx *sql.Tx, leaderboard *bliz
 				factionPtr = &faction
 			}
 
-			_, err = tx.Exec(memberQuery, runID, playerID, specPtr, factionPtr)
+			_, err = tx.Exec(memberQuery, runID, effectivePlayerID, specPtr, factionPtr)
 			if err != nil {
 				return 0, 0, fmt.Errorf("failed to insert run member: %w", err)
 			}
@@ -1875,6 +1921,14 @@ func (ds *DatabaseService) GetAllFingerprintHashes() (map[string]int64, error) {
 	return result, rows.Err()
 }
 
+// DeletePlayerFingerprint removes a player's fingerprint record
+func (ds *DatabaseService) DeletePlayerFingerprint(playerID int64) error {
+	return retryOnBusy(func() error {
+		_, err := ds.db.Exec(`DELETE FROM player_fingerprints WHERE player_id = ?`, playerID)
+		return err
+	})
+}
+
 // MigratePlayerRuns updates all run_members records from one player to another
 func (ds *DatabaseService) MigratePlayerRuns(fromPlayerID, toPlayerID int64) (int, error) {
 	var rowsAffected int
@@ -1927,6 +1981,25 @@ func (ds *DatabaseService) GetPlayerByNameRealmRegion(name, realmSlug, region st
 	}
 	if err != nil {
 		return 0, fmt.Errorf("query player: %w", err)
+	}
+	return playerID, nil
+}
+
+// getExistingPlayerIDTx looks up an existing player by name+realm within a transaction.
+// Returns 0 if no player found (not an error).
+func getExistingPlayerIDTx(tx *sql.Tx, name string, realmID int) (int64, error) {
+	var playerID int64
+	err := tx.QueryRow(`
+		SELECT id FROM players
+		WHERE name_lower = LOWER(?) AND realm_id = ?
+		LIMIT 1
+	`, name, realmID).Scan(&playerID)
+
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, err
 	}
 	return playerID, nil
 }
