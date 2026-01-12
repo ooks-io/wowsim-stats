@@ -52,6 +52,7 @@ var fetchCMCmd = &cobra.Command{
 		realmsCSV, _ := cmd.Flags().GetString("realms")
 		dungeonsCSV, _ := cmd.Flags().GetString("dungeons")
 		periodsSpec, _ := cmd.Flags().GetString("periods")
+		latestPeriodsOnly, _ := cmd.Flags().GetBool("latest-periods")
 		concurrency, _ := cmd.Flags().GetInt("concurrency")
 		timeoutSecs, _ := cmd.Flags().GetInt("api-timeout-seconds")
 
@@ -102,13 +103,14 @@ var fetchCMCmd = &cobra.Command{
 
 		// Build options
 		opts := pipeline.FetchCMOptions{
-			Verbose:     verbose,
-			Regions:     regions,
-			Realms:      realms,
-			Dungeons:    dungeons,
-			Periods:     periods,
-			Concurrency: concurrency,
-			Timeout:     time.Duration(timeoutSecs) * time.Second,
+			Verbose:           verbose,
+			Regions:           regions,
+			Realms:            realms,
+			Dungeons:          dungeons,
+			Periods:           periods,
+			LatestPeriodsOnly: latestPeriodsOnly,
+			Concurrency:       concurrency,
+			Timeout:           time.Duration(timeoutSecs) * time.Second,
 		}
 		if opts.Timeout == 0 {
 			opts.Timeout = 45 * time.Minute
@@ -467,6 +469,7 @@ func init() {
 	fetchCMCmd.Flags().String("realms", "", "Comma-separated realm slugs to include")
 	fetchCMCmd.Flags().String("dungeons", "", "Comma-separated dungeon IDs or slugs to include")
 	fetchCMCmd.Flags().String("periods", "", "Period specification: comma-separated list or ranges (e.g., '1020-1036' or '1020,1025,1030-1036'). Default: fetch all periods from API")
+	fetchCMCmd.Flags().Bool("latest-periods", false, "Only fetch the latest 2 periods from the current season per region (optimized for persistent databases)")
 
 	// add player profile fetching flags
 	fetchProfilesCmd.Flags().Int("batch-size", 20, "Number of players to process per batch")

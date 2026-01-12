@@ -11,13 +11,14 @@ import (
 
 // FetchCMOptions contains options for fetching challenge mode leaderboards
 type FetchCMOptions struct {
-	Verbose     bool
-	Regions     []string
-	Realms      []string
-	Dungeons    []string
-	Periods     []string
-	Concurrency int
-	Timeout     time.Duration
+	Verbose           bool
+	Regions           []string
+	Realms            []string
+	Dungeons          []string
+	Periods           []string
+	LatestPeriodsOnly bool
+	Concurrency       int
+	Timeout           time.Duration
 }
 
 // FetchCMResult contains statistics from the fetch operation
@@ -143,8 +144,17 @@ func FetchChallengeMode(db *database.DatabaseService, client *blizzard.Client, o
 			fmt.Printf("Using user-specified periods: %v (%d periods)\n", periods, len(periods))
 		} else {
 			// Fetch periods from database (populated by season sync)
-			fmt.Printf("Fetching period list from database for %s...\n", strings.ToUpper(region))
-			periodInts, err := db.GetPeriodsForRegion(region)
+			var periodInts []int
+			var err error
+
+			if opts.LatestPeriodsOnly {
+				fmt.Printf("Fetching latest 2 periods from current season for %s...\n", strings.ToUpper(region))
+				periodInts, err = db.GetLatestPeriodsPerRegion(region)
+			} else {
+				fmt.Printf("Fetching period list from database for %s...\n", strings.ToUpper(region))
+				periodInts, err = db.GetPeriodsForRegion(region)
+			}
+
 			if err != nil {
 				fmt.Printf("Failed to fetch periods from database for %s: %v - skipping region\n", strings.ToUpper(region), err)
 				continue
@@ -161,8 +171,13 @@ func FetchChallengeMode(db *database.DatabaseService, client *blizzard.Client, o
 				continue
 			}
 
-			fmt.Printf("[OK] Fetched %d periods from database for %s (newest: %s, oldest: %s)\n",
-				len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
+			if opts.LatestPeriodsOnly {
+				fmt.Printf("[OK] Using latest %d period(s) from current season for %s: %v\n",
+					len(periods), strings.ToUpper(region), periods)
+			} else {
+				fmt.Printf("[OK] Fetched %d periods from database for %s (newest: %s, oldest: %s)\n",
+					len(periods), strings.ToUpper(region), periods[0], periods[len(periods)-1])
+			}
 		}
 
 		if len(periods) == 0 {
