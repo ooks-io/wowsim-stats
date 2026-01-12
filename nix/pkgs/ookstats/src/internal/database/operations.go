@@ -1449,6 +1449,34 @@ func (ds *DatabaseService) GetPeriodsForRegion(region string) ([]int, error) {
 	return periods, rows.Err()
 }
 
+// GetLatestPeriodsPerRegion retrieves only the latest 2 periods from the current season for a given region
+func (ds *DatabaseService) GetLatestPeriodsPerRegion(region string) ([]int, error) {
+	query := `
+		SELECT DISTINCT ps.period_id
+		FROM period_seasons ps
+		JOIN seasons s ON ps.season_id = s.id
+		WHERE s.region = ?
+		  AND s.end_timestamp IS NULL
+		ORDER BY ps.period_id DESC
+		LIMIT 2
+	`
+	rows, err := ds.db.Query(query, region)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var periods []int
+	for rows.Next() {
+		var periodID int
+		if err := rows.Scan(&periodID); err != nil {
+			return nil, err
+		}
+		periods = append(periods, periodID)
+	}
+	return periods, rows.Err()
+}
+
 // DetermineSeasonForRun determines which season a run belongs to based on
 // completed_timestamp and region. Returns season_number (not id) for the matching season.
 func (ds *DatabaseService) DetermineSeasonForRun(region string, completedTimestamp int64) (int, error) {

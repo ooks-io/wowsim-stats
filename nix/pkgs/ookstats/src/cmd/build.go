@@ -45,6 +45,7 @@ var buildCmd = &cobra.Command{
 		periodsCSV, _ := cmd.Flags().GetString("periods")
 		concurrency, _ := cmd.Flags().GetInt("concurrency")
 		workers, _ := cmd.Flags().GetInt("workers")
+		latestPeriodsOnly, _ := cmd.Flags().GetBool("latest-periods")
 
 		// optional verbose logging propagated to API client
 		verbose, _ := cmd.InheritedFlags().GetBool("verbose")
@@ -133,13 +134,14 @@ var buildCmd = &cobra.Command{
 
 		// Use pipeline function (handles child realm filtering automatically)
 		fetchOpts := pipeline.FetchCMOptions{
-			Verbose:     verbose,
-			Regions:     regions,
-			Realms:      []string{}, // no realm filter
-			Dungeons:    []string{}, // no dungeon filter
-			Periods:     periods,    // empty means fetch dynamically
-			Concurrency: concurrency,
-			Timeout:     45 * time.Minute,
+			Verbose:           verbose,
+			Regions:           regions,
+			Realms:            []string{}, // no realm filter
+			Dungeons:          []string{}, // no dungeon filter
+			Periods:           periods,    // empty means fetch dynamically
+			LatestPeriodsOnly: latestPeriodsOnly,
+			Concurrency:       concurrency,
+			Timeout:           45 * time.Minute,
 		}
 
 		result, err := pipeline.FetchChallengeMode(dbService, client, fetchOpts)
@@ -509,6 +511,7 @@ func init() {
 	buildCmd.Flags().String("wowsims-db", "", "Optional path to WoWSims items JSON for item enrichment")
 	buildCmd.Flags().Bool("skip-profiles", false, "Skip fetching player detailed profiles")
 	buildCmd.Flags().String("periods", "", "Period specification: comma-separated list or ranges (e.g., '1020-1036' or '1020,1025,1030-1036'). Default: fetch all periods from API")
+	buildCmd.Flags().Bool("latest-periods", false, "Only fetch the latest 2 periods from the current season per region (optimized for persistent databases)")
 	buildCmd.Flags().Int("concurrency", 20, "Max concurrent API requests")
 	buildCmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
 }

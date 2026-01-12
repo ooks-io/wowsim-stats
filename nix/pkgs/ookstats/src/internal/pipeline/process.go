@@ -184,6 +184,8 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			rr_lf.percentile_bracket as realm_percentile_bracket
 		FROM run_members rm
 		INNER JOIN challenge_runs cr ON rm.run_id = cr.id
+		INNER JOIN realms r ON cr.realm_id = r.id
+		LEFT JOIN realms parent_r ON r.parent_realm_slug = parent_r.slug AND r.region = parent_r.region
 		INNER JOIN (
 			SELECT
 				rm2.player_id,
@@ -204,7 +206,7 @@ func createPlayerAggregations(tx *sql.Tx) (int, error) {
 			AND rr_rf.ranking_type = 'regional' AND rr_rf.ranking_scope = 'filtered'
 			AND rr_rf.season_id = cr.season_id
 		LEFT JOIN run_rankings rr_lf ON cr.id = rr_lf.run_id
-			AND rr_lf.ranking_type = 'realm' AND rr_lf.ranking_scope = 'filtered'
+			AND rr_lf.ranking_type = 'realm' AND rr_lf.ranking_scope = COALESCE(parent_r.slug, r.slug) || '_filtered'
 			AND rr_lf.season_id = cr.season_id
 		GROUP BY rm.player_id, cr.dungeon_id, cr.season_id
 		HAVING cr.id = MIN(cr.id)
