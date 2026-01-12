@@ -334,27 +334,38 @@ func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.
 
 	existing := collisionMap[hash]
 	if existing != 0 && existing != cand.PlayerID {
-		// Merge: migrate runs from duplicate → canonical
-		runsMigrated, err := db.MigratePlayerRuns(cand.PlayerID, existing)
+		// Merge: the candidate (cand) is the newer player, existing is the old one
+		// Migrate runs FROM old (existing) TO new (cand)
+		runsMigrated, err := db.MigratePlayerRuns(existing, cand.PlayerID)
 		if err != nil {
 			out.err = fmt.Errorf("failed to migrate runs: %w", err)
 			return out
 		}
 
-		// Invalidate canonical player's profile for rebuild
-		if err := db.InvalidatePlayerProfile(existing); err != nil {
-			logger.Warn("failed to invalidate profile", "player_id", existing, "error", err)
+		// Mark the old player as invalid
+		if err := db.UpdatePlayerStatus(existing, false, nowMillis(), nil); err != nil {
+			logger.Warn("failed to invalidate old player",
+				"player_id", existing,
+				"error", err)
 		}
 
-		logger.Info("merged player identity",
-			"duplicate_id", cand.PlayerID,
-			"canonical_id", existing,
+		// Delete old player's fingerprint so the new one becomes canonical
+		if err := db.DeletePlayerFingerprint(existing); err != nil {
+			logger.Warn("failed to delete old fingerprint",
+				"player_id", existing,
+				"error", err)
+		}
+
+		// Update collision map to point to the new canonical player
+		collisionMap[hash] = cand.PlayerID
+
+		logger.Info("merged player identity (old → new)",
+			"old_id", existing,
+			"new_id", cand.PlayerID,
 			"runs_migrated", runsMigrated,
 			"hash", hash[:16])
 
-		out.invalid = true
-		out.statusValid = false
-		return out
+		// Continue processing to create fingerprint for the new canonical player
 	}
 
 	now := nowMillis()
