@@ -60,6 +60,9 @@ func BuildPlayerFingerprints(db *database.DatabaseService, client *blizzard.Clie
 	}
 	logger.Info("loaded fingerprint collision map", "existing_fingerprints", len(collisionMap))
 
+	// Mutex to protect concurrent access to collisionMap
+	var collisionMapMutex sync.RWMutex
+
 	batchNumber := 0
 	for {
 		if tracker.ShouldStop(result.Processed) {
@@ -105,7 +108,7 @@ func BuildPlayerFingerprints(db *database.DatabaseService, client *blizzard.Clie
 			wg.Add(1)
 			go func(c database.PlayerFingerprintCandidate) {
 				defer wg.Done()
-				outcomes <- processFingerprintCandidate(db, client, c, collisionMap, logger)
+				outcomes <- processFingerprintCandidate(db, client, c, collisionMap, &collisionMapMutex, logger)
 			}(cand)
 		}
 
@@ -128,7 +131,9 @@ func BuildPlayerFingerprints(db *database.DatabaseService, client *blizzard.Clie
 				if err := db.UpsertPlayerFingerprint(*oc.fingerprint); err != nil {
 					return nil, err
 				}
+				collisionMapMutex.Lock()
 				collisionMap[oc.fingerprint.FingerprintHash] = oc.fingerprint.PlayerID
+				collisionMapMutex.Unlock()
 			}
 			if oc.created {
 				result.Created++
@@ -218,7 +223,7 @@ type fingerprintOutcome struct {
 	err           error
 }
 
-func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.Client, cand database.PlayerFingerprintCandidate, collisionMap map[string]int64, logger *log.Logger) fingerprintOutcome {
+func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.Client, cand database.PlayerFingerprintCandidate, collisionMap map[string]int64, collisionMapMutex *sync.RWMutex, logger *log.Logger) fingerprintOutcome {
 	out := fingerprintOutcome{playerID: cand.PlayerID}
 	logger.Info("fingerprinting player",
 		"player_id", cand.PlayerID,
@@ -332,7 +337,11 @@ func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.
 		return out
 	}
 
+	// Check for collision with mutex protection
+	collisionMapMutex.RLock()
 	existing := collisionMap[hash]
+	collisionMapMutex.RUnlock()
+
 	if existing != 0 && existing != cand.PlayerID {
 		// Merge: the candidate (cand) is the newer player, existing is the old one
 		// Migrate runs FROM old (existing) TO new (cand)
@@ -357,7 +366,9 @@ func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.
 		}
 
 		// Update collision map to point to the new canonical player
+		collisionMapMutex.Lock()
 		collisionMap[hash] = cand.PlayerID
+		collisionMapMutex.Unlock()
 
 		logger.Info("merged player identity (old → new)",
 			"old_id", existing,
