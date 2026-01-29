@@ -253,8 +253,9 @@ func fingerprintPlayersOnce(db *sql.DB, client *blizzard.Client) error {
 // fetchProfilesOnce runs the same logic as `fetch profiles`
 func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
 	dbService := database.NewDatabaseService(db)
-	// Pass 0 to fetch only profiles that have never been fetched during build
-	players, err := dbService.GetEligiblePlayersForProfileFetch(0)
+	// refetch profiles older than 72 hours
+	staleThreshold := time.Now().Add(-72 * time.Hour).UnixMilli()
+	players, err := dbService.GetEligiblePlayersForProfileFetch(staleThreshold)
 	if err != nil {
 		return fmt.Errorf("eligible players: %w", err)
 	}
