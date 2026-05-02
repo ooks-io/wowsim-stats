@@ -1,0 +1,55 @@
+---
+import "./TopPlayersList.scss";
+import PlayerRankRow from "../PlayerRankRow/PlayerRankRow.astro";
+import type { HomePlayerEntry } from "../../../lib/types";
+
+interface Props {
+  title: string;
+  players: HomePlayerEntry[];
+  scope: "global" | "regional";
+  viewAllHref?: string;
+}
+
+const { title, players, scope, viewAllHref } = Astro.props;
+
+// Pick the bracket that matches the scope of this list.
+// Global list shows global rank; regional list shows regional rank — color the badge accordingly.
+function bracketFor(p: HomePlayerEntry): string | undefined {
+  return scope === "global" ? p.global_ranking_bracket : p.regional_ranking_bracket;
+}
+---
+
+<section class="top-players-list">
+  <header class="top-players-list__header">
+    <h3>{title}</h3>
+    {
+      viewAllHref && (
+        <a class="top-players-list__view-all" href={viewAllHref}>
+          View all →
+        </a>
+      )
+    }
+  </header>
+
+  {
+    players.length === 0 ? (
+      <p class="top-players-list__empty">No ranked players in this scope yet.</p>
+    ) : (
+      <div class="top-players-list__rows">
+        {players.map((p) => (
+          <PlayerRankRow
+            rank={p.rank}
+            bracket={bracketFor(p)}
+            name={p.name}
+            realmSlug={p.realm_slug}
+            realmName={p.realm_name}
+            region={p.region}
+            activeSpecId={p.active_spec_id}
+            combinedBestTimeMs={p.combined_best_time_ms}
+            avatarUrl={p.avatar_url}
+          />
+        ))}
+      </div>
+    )
+  }
+</section>

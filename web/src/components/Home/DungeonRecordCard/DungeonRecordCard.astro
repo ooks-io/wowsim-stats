@@ -1,0 +1,56 @@
+---
+import "./DungeonRecordCard.scss";
+import ChallengeRun from "../ChallengeRun/ChallengeRun.astro";
+import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+import type { HomeRunEntry } from "../../../lib/types";
+
+interface Props {
+  dungeonName: string;
+  dungeonSlug: string;
+  runs: HomeRunEntry[];
+  seasonId: number;
+}
+
+const { dungeonName, dungeonSlug, runs, seasonId } = Astro.props;
+const dungeonIcon = getDungeonIconUrl(dungeonSlug, dungeonName);
+---
+
+<section class="dungeon-record-card">
+  <header class="dungeon-record-card__header">
+    {
+      dungeonIcon && (
+        <img
+          class="dungeon-record-card__icon"
+          src={dungeonIcon}
+          alt={dungeonName}
+          loading="lazy"
+        />
+      )
+    }
+    <h3 class="dungeon-record-card__title">{dungeonName}</h3>
+    <a
+      class="dungeon-record-card__view-all"
+      href={`/challenge-mode/season${seasonId}/global/${dungeonSlug}`}
+    >
+      View →
+    </a>
+  </header>
+
+  <div class="dungeon-record-card__runs">
+    {
+      runs.map((r, i) => (
+        <ChallengeRun
+          dungeonName={r.dungeon_name}
+          dungeonSlug={r.dungeon_slug}
+          durationMs={r.duration_ms}
+          completedTimestamp={r.completed_timestamp}
+          teamMembers={r.team_members}
+          showDungeonIcon={false}
+          showDungeonName={false}
+          rank={r.rank ?? i + 1}
+          bracket={r.bracket}
+        />
+      ))
+    }
+  </div>
+</section>

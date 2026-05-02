@@ -172,6 +172,42 @@ export interface APIResponse<T> {
   error?: string;
 }
 
+// Home page types — mirror nix/pkgs/ookstats/src/internal/generator/home.go
+// (HomeRunEntry / HomePlayerEntry). Keep field names in sync with that file.
+
+export interface HomeRunEntry {
+  rank?: number;
+  bracket?: string;
+  run_id: number;
+  dungeon_id: number;
+  dungeon_name: string;
+  dungeon_slug: string;
+  duration_ms: number;
+  completed_timestamp: number;
+  // Only set on entries in `recent_top_runs` (cross-season feed):
+  season_id?: number;
+  rankings?: { global?: number };
+  team_members: TeamMember[];
+}
+
+export interface HomePlayerEntry {
+  rank: number;
+  player_id: number;
+  name: string;
+  realm_slug: string;
+  realm_name?: string;
+  region: string;
+  class_name?: string;
+  active_spec_id?: number;
+  active_spec_name?: string;
+  combined_best_time_ms: number;
+  global_ranking?: number;
+  global_ranking_bracket?: string;
+  regional_ranking?: number;
+  regional_ranking_bracket?: string;
+  avatar_url?: string;
+}
+
 // frontend component props
 export interface LeaderboardTableProps {
   initialData?: LeaderboardData;

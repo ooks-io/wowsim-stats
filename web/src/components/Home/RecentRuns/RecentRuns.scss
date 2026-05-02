@@ -1,0 +1,39 @@
+@use "../../../styles/core/tokens" as *;
+
+.recent-runs {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  &__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $spacing-md;
+
+    h2 {
+      margin: 0;
+      font-size: $font-size-2xl;
+      color: var(--text-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__subtitle {
+    margin: $spacing-xs 0 0;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+
+  &__empty {
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: $spacing-2xl;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+}

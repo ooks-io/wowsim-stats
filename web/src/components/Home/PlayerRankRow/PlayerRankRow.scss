@@ -1,0 +1,83 @@
+@use "../../../styles/core/tokens" as *;
+
+.player-rank-row {
+  display: grid;
+  grid-template-columns: 48px 40px 1fr auto;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    border-color: var(--highlight-color);
+    text-decoration: none;
+  }
+
+  &__rank {
+    text-align: center;
+    min-width: 2.2em;
+    // colors from .ranking-number + .bracket-{name} (global ranking-utils convention)
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+
+    &--placeholder {
+      background: var(--bg-primary);
+    }
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 2px;
+    overflow: hidden;
+  }
+
+  &__name-line {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    min-width: 0;
+    overflow: hidden;
+
+    .player-link-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__realm {
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+    display: inline-flex;
+    gap: $spacing-xs;
+    align-items: center;
+  }
+
+  &__region {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-sm;
+    padding: 0 4px;
+    font-size: 10px;
+    font-weight: $font-weight-bold;
+    color: var(--text-secondary);
+  }
+
+  &__time {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--text-primary);
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-md;
+  }
+}

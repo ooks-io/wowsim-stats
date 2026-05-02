@@ -1,0 +1,44 @@
+@use "../../../styles/core/tokens" as *;
+
+.top-players-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-md;
+
+    h3 {
+      margin: 0;
+      font-size: $font-size-xl;
+      color: var(--text-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &__view-all {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: $font-size-sm;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--highlight-color);
+    }
+  }
+
+  &__empty {
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: $spacing-lg;
+  }
+
+  &__rows {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}

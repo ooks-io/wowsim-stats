@@ -1,15 +1,266 @@
 ---
-import SimulationLayout from "../layouts/SimulationLayout.astro";
+import PageLayout from "../layouts/PageLayout.astro";
+import PlayerSearch from "../components/PlayerSearch/PlayerSearch.astro";
+import LeaderboardTypeNav from "../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import RecentRuns from "../components/Home/RecentRuns/RecentRuns.astro";
+import DungeonRecordCard from "../components/Home/DungeonRecordCard/DungeonRecordCard.astro";
+import TopPlayersList from "../components/Home/TopPlayersList/TopPlayersList.astro";
+
+export const prerender = false;
+
+let home: any = null;
+try {
+  const response = await fetch(`${Astro.url.origin}/api/home.json`);
+  if (response.ok) {
+    home = await response.json();
+  }
+} catch (error) {
+  console.error("[Home] Failed to load home.json:", error);
+}
+
+// Pick the latest season (highest key) as the focus
+const seasonKeys = home ? Object.keys(home.seasons).sort((a, b) => parseInt(b) - parseInt(a)) : [];
+const currentSeasonKey = seasonKeys[0];
+const currentSeason = currentSeasonKey ? home.seasons[currentSeasonKey] : null;
+
+const recentRuns = home?.recent_top_runs ?? [];
+
+// Sort dungeons by ID for consistent layout
+const dungeonEntries = currentSeason
+  ? Object.entries(currentSeason.top_runs_per_dungeon as Record<string, any[]>)
+      .filter(([_, runs]) => runs && runs.length > 0)
+      .sort(([_, a], [__, b]) => (a[0]?.dungeon_id ?? 0) - (b[0]?.dungeon_id ?? 0))
+  : [];
+
+const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
 ---
 
-<SimulationLayout title="Simulations" description="Redirecting...">
-  <div class="card">
-    <p>Redirecting to benchmarks...</p>
+<PageLayout
+  title="WoW Mists of Pandaria Challenge Mode Leaderboards"
+  description="Top challenge mode times, recent record-setting runs, and the world's best players for World of Warcraft: Mists of Pandaria Classic."
+>
+  <div class="home">
+    {
+      !home && (
+        <div class="home__error">
+          <h2>Couldn't load home data</h2>
+          <p>The home.json file is missing or unreachable. Try regenerating it via <code>ookstats generate home</code>.</p>
+        </div>
+      )
+    }
+
+    {
+      home && (
+        <>
+          <header class="home__hero">
+            <h1>Challenge Mode Leaderboards</h1>
+            {generatedAt && (
+              <span class="home__updated">
+                Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </header>
+
+          <PlayerSearch />
+
+          <LeaderboardTypeNav
+            currentTab="home"
+            currentSeason={parseInt(currentSeasonKey)}
+          />
+
+          {currentSeason && (
+            <section class="home__section">
+              <header class="home__section-header">
+                <h2>Top Players — {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
+              </header>
+              <div class="home__players-grid">
+                <TopPlayersList
+                  title="Global"
+                  scope="global"
+                  players={currentSeason.top_players.global}
+                  viewAllHref={`/challenge-mode/season${currentSeasonKey}/players/global`}
+                />
+                <TopPlayersList
+                  title="US"
+                  scope="regional"
+                  players={currentSeason.top_players.us}
+                  viewAllHref={`/challenge-mode/season${currentSeasonKey}/players/us`}
+                />
+                <TopPlayersList
+                  title="EU"
+                  scope="regional"
+                  players={currentSeason.top_players.eu}
+                  viewAllHref={`/challenge-mode/season${currentSeasonKey}/players/eu`}
+                />
+                <TopPlayersList
+                  title="KR"
+                  scope="regional"
+                  players={currentSeason.top_players.kr}
+                  viewAllHref={`/challenge-mode/season${currentSeasonKey}/players/kr`}
+                />
+                <TopPlayersList
+                  title="TW"
+                  scope="regional"
+                  players={currentSeason.top_players.tw}
+                  viewAllHref={`/challenge-mode/season${currentSeasonKey}/players/tw`}
+                />
+              </div>
+            </section>
+          )}
+
+          {currentSeason && (
+            <section class="home__section">
+              <header class="home__section-header">
+                <h2>Dungeon Records — {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
+              </header>
+              <div class="home__dungeon-grid">
+                {dungeonEntries.map(([slug, runs]) => (
+                  <DungeonRecordCard
+                    dungeonName={runs[0].dungeon_name}
+                    dungeonSlug={slug}
+                    runs={runs}
+                    seasonId={parseInt(currentSeasonKey)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section class="home__section">
+            <RecentRuns runs={recentRuns} />
+          </section>
+        </>
+      )
+    }
   </div>
-  <script is:inline>
-    (function () {
-      var url = new URL(window.location.href);
-      window.location.replace("/simulation/benchmark" + url.search);
-    })();
-  </script>
-</SimulationLayout>
+</PageLayout>
+
+<style lang="scss">
+  @use "../styles/core/tokens" as *;
+
+  // Match CM page wrapper (.leaderboard-page on /challenge-mode/* pages)
+  // so navigating between sections feels cohesive. No flex-gap on the wrapper —
+  // each child component (LeaderboardHeader-style hero, PlayerSearch, nav) carries
+  // its own bottom margin to match the CM page rhythm.
+  .home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .home__error {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-lg;
+    padding: $spacing-2xl;
+    text-align: center;
+    color: var(--text-secondary);
+    code {
+      background: var(--bg-primary);
+      padding: 2px 6px;
+      border-radius: $radius-sm;
+      color: var(--highlight-color);
+    }
+  }
+
+  // Mirror LeaderboardHeader's spacing/typography exactly so home title flows
+  // visually like every other CM-section page header.
+  .home__hero {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+    margin: 8px 0 16px 0;
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      color: var(--text-primary);
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  .home__updated {
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+  }
+
+  .home__section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+
+    & + & {
+      margin-top: $spacing-2xl;
+    }
+  }
+
+  .home__section-header {
+    h2 {
+      margin: 0;
+      font-size: $font-size-2xl;
+      color: var(--text-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  // Flexbox (not grid) so an incomplete last row centers horizontally.
+  // The `:global()` is needed because Astro scopes `> *` to local elements,
+  // but the children are component roots from DungeonRecordCard / TopPlayersList.
+  .home__dungeon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-md $spacing-lg;
+  }
+
+  .home__dungeon-grid > :global(.dungeon-record-card) {
+    flex: 1 1 calc(50% - #{$spacing-lg * 0.5});
+    max-width: calc(50% - #{$spacing-lg * 0.5});
+    min-width: 0;
+  }
+
+  .home__players-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-lg;
+  }
+
+  .home__players-grid > :global(.top-players-list) {
+    // 1px fudge to avoid sub-pixel rounding pushing the 3rd item to a new row
+    flex: 1 1 calc(33.333% - #{$spacing-lg * 2 * 0.333} - 1px);
+    max-width: calc(33.333% - #{$spacing-lg * 2 * 0.333} - 1px);
+    min-width: 280px;
+  }
+
+  // Mobile overrides — placed at the end of the stylesheet so they win the
+  // cascade over the desktop rules above (same selector specificity).
+  @media (max-width: 768px) {
+    .home {
+      padding: 15px;
+    }
+
+    // Mirror LeaderboardHeader's mobile font-size drop (~1.5em).
+    .home__hero h1 {
+      font-size: 1.5em;
+    }
+
+    // Stack dungeon cards full-width on mobile so TeamComposition's vertical
+    // member stack (its own ~720px breakpoint) has room to read; the 2-col 165px
+    // grid otherwise overlapped player names with time/date.
+    .home__dungeon-grid > :global(.dungeon-record-card) {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+
+    // Player lists also fill the row; otherwise the 280px min-width caps each
+    // list below the available content area, leaving wasted right-margin.
+    .home__players-grid > :global(.top-players-list) {
+      flex: 1 1 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+  }
+</style>

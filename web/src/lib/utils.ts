@@ -26,6 +26,14 @@ export function formatTimestamp(timestamp: number): string {
   });
 }
 
+// Compact "Mar 27" — for dense layouts where formatTimestamp's time-of-day eats space.
+export function formatShortDate(timestamp: number): string {
+  return new Date(timestamp).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export function formatSimulationDate(timestamp: string | number): string {
   return new Date(timestamp).toLocaleString("en-US", {
     year: "numeric",

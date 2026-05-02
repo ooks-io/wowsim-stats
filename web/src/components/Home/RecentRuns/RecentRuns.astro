@@ -1,0 +1,39 @@
+---
+import "./RecentRuns.scss";
+import ChallengeRun from "../ChallengeRun/ChallengeRun.astro";
+import type { HomeRunEntry } from "../../../lib/types";
+
+interface Props {
+  runs: HomeRunEntry[];
+}
+
+const { runs } = Astro.props;
+---
+
+<section class="recent-runs">
+  <header class="recent-runs__header">
+    <h2>Recent Top Runs</h2>
+  </header>
+
+  {
+    runs.length === 0 ? (
+      <p class="recent-runs__empty">No recent top runs yet.</p>
+    ) : (
+      <div class="recent-runs__list">
+        {runs.map((r) => (
+          <ChallengeRun
+            dungeonName={r.dungeon_name}
+            dungeonSlug={r.dungeon_slug}
+            durationMs={r.duration_ms}
+            completedTimestamp={r.completed_timestamp}
+            teamMembers={r.team_members}
+            showDungeonIcon={true}
+            showDungeonName={false}
+            rank={r.rankings?.global}
+            bracket={r.bracket}
+          />
+        ))}
+      </div>
+    )
+  }
+</section>

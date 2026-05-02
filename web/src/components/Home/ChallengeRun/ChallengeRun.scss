@@ -1,0 +1,94 @@
+@use "../../../styles/core/tokens" as *;
+
+.challenge-run {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+
+  &__dungeon {
+    flex: 0 0 auto;
+    display: block;
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    &:hover {
+      border-color: var(--highlight-color);
+    }
+  }
+
+  &__rank {
+    flex: 0 0 auto;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-base;
+    min-width: 2.2em;
+    text-align: center;
+    line-height: 1.4;
+    // colors come from .ranking-number .bracket-{name} (global ranking-utils convention)
+  }
+
+  &__dungeon-name {
+    flex: 0 0 auto;
+    color: var(--text-primary);
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 18ch;
+  }
+
+  &__team {
+    flex: 1 1 auto;
+    min-width: 0;
+
+    // Tighten TeamComposition's default 12px gap for the dense home page rows.
+    // Scoped override; doesn't affect leaderboard pages where 12px is appropriate.
+    .team-composition {
+      gap: 4px $spacing-sm;
+
+      // TeamComposition's stock mobile rule (≤720px) makes each .team-member
+      // full-width with a dark bubble background — designed for leaderboard
+      // table rows, not our flex-row ChallengeRun. The full-width bubbles
+      // collide with the rank/time/date positioned next to the team. Override
+      // back to inline rendering for the home page context.
+      @media (max-width: 720px) {
+        flex-direction: row;
+
+        .team-member {
+          width: auto;
+          background: transparent;
+          padding: 0;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+
+  &__duration {
+    flex: 0 0 auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--text-primary);
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-base;
+  }
+
+  &__date {
+    flex: 0 0 auto;
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+    white-space: nowrap;
+  }
+}

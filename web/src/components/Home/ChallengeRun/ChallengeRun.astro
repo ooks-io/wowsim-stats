@@ -1,0 +1,74 @@
+---
+import "./ChallengeRun.scss";
+import { formatDurationMMSS, formatShortDate } from "../../../lib/utils";
+import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
+import TeamComposition from "../../Leaderboard/TeamComposition/TeamComposition.astro";
+import type { TeamMember } from "../../../lib/types";
+
+interface Props {
+  dungeonName: string;
+  dungeonSlug: string;
+  durationMs: number;
+  completedTimestamp: number;
+  teamMembers: TeamMember[];
+  showDungeonIcon?: boolean;
+  showDungeonName?: boolean;
+  rank?: number;
+  bracket?: string;
+}
+
+const {
+  dungeonName,
+  dungeonSlug,
+  durationMs,
+  completedTimestamp,
+  teamMembers,
+  showDungeonIcon = true,
+  showDungeonName = true,
+  rank,
+  bracket,
+} = Astro.props;
+
+const dungeonIcon = getDungeonIconUrl(dungeonSlug, dungeonName);
+const bracketClass = bracket ? `bracket-${bracket}` : "";
+---
+
+<article class="challenge-run">
+  {
+    showDungeonIcon && dungeonIcon && (
+      <a
+        class="challenge-run__dungeon"
+        href={`/challenge-mode/season2/global/${dungeonSlug}`}
+        title={dungeonName}
+      >
+        <img src={dungeonIcon} alt={dungeonName} loading="lazy" />
+      </a>
+    )
+  }
+
+  {
+    rank && (
+      <span class:list={["challenge-run__rank", "ranking-number", bracketClass]}>{rank}</span>
+    )
+  }
+
+  {
+    showDungeonName && (
+      <span class="challenge-run__dungeon-name">{dungeonName}</span>
+    )
+  }
+
+  <div class="challenge-run__team">
+    <TeamComposition members={teamMembers} />
+  </div>
+
+  <span class="challenge-run__duration">{formatDurationMMSS(durationMs)}</span>
+
+  <time
+    class="challenge-run__date"
+    datetime={new Date(completedTimestamp).toISOString()}
+    title={new Date(completedTimestamp).toLocaleString()}
+  >
+    {formatShortDate(completedTimestamp)}
+  </time>
+</article>

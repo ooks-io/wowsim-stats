@@ -3,7 +3,7 @@ import "./LeaderboardTypeNav.scss";
 
 interface Props {
   currentType?: "dungeon" | "player";
-  currentTab?: "dungeon" | "player" | "status";
+  currentTab?: "home" | "dungeon" | "player" | "status";
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
@@ -47,6 +47,12 @@ if (currentRegion === "global") {
 ---
 
 <nav class="leaderboard-type-nav">
+  <a
+    href="/"
+    class:list={["nav-tab", { active: currentTab === "home" }]}
+  >
+    Home
+  </a>
   <a
     href={dungeonUrl}
     class:list={["nav-tab", { active: currentTab === "dungeon" }]}

@@ -1,0 +1,60 @@
+@use "../../../styles/core/tokens" as *;
+
+// No outer border / background — the page bg shows through. Matches the visual
+// pattern used by TopPlayersList and RecentRuns (header + rows; no card chrome).
+.dungeon-record-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding-bottom: $spacing-xs;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    border: 1px solid var(--border-color);
+    display: block;
+  }
+
+  &__title {
+    margin: 0;
+    flex: 1;
+    font-size: $font-size-md;
+    color: var(--text-primary);
+    font-weight: $font-weight-semibold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__view-all {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: $font-size-xs;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--highlight-color);
+    }
+  }
+
+  &__runs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    // Most rows fit on one line at 2-col grid widths; a few still wrap when names
+    // are long. Sized to the natural wrap so 1-line rows pad up to match.
+    .challenge-run {
+      min-height: 54px;
+    }
+  }
+}
