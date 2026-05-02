@@ -1,0 +1,24 @@
+---
+import "./ItemTooltip.scss";
+---
+
+<div id="item-tooltip" class="item-tooltip" style="display:none">
+  <div class="tooltip-header">
+    <span class="tooltip-item-name"></span>
+  </div>
+  <div class="tooltip-ilvl"></div>
+  <div class="tooltip-slot-armor"></div>
+  <div class="tooltip-stats"></div>
+  <div class="tooltip-gems"></div>
+  <div class="tooltip-enchant"></div>
+  <div class="tooltip-effect"></div>
+  <div class="tooltip-set"></div>
+</div>
+
+<script>
+  import { initItemTooltip } from "./ItemTooltip.ts";
+  // run on initial load
+  initItemTooltip();
+  // also handle View Transitions if enabled
+  document.addEventListener("astro:page-load", initItemTooltip);
+</script>

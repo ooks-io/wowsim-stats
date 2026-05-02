@@ -6,6 +6,7 @@ import {
   getZamimgIconUrl,
   getWowheadUrl,
 } from "../../../lib/equipment-utils";
+import ItemTooltip from "../../ItemTooltip/ItemTooltip.astro";
 import "./PlayerEquipment.scss";
 
 interface Props {
@@ -63,9 +64,14 @@ if (equipment && Object.keys(equipment).length > 0) {
                 <a
                   href={href}
                   class={`equip-icon-wrap ${qualityClass}`}
-                  title={title}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-item-id={itemId}
+                  data-item-name={title}
+                  data-quality={item.quality || "COMMON"}
+                  data-enchants={JSON.stringify(item.enchantments || [])}
+                  data-scaling={JSON.stringify(item.scaling_options || {})}
+                  data-spell-description={item.spell_description || undefined}
                 >
                   <div class="equip-icon-inner">
                     {iconUrl ? (
@@ -105,4 +111,5 @@ if (equipment && Object.keys(equipment).length > 0) {
       )
     }
   </div>
+  <ItemTooltip />
 </div>

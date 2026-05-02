@@ -75,6 +75,13 @@ export interface Equipment {
   [slot: string]: EquipmentItem;
 }
 
+export interface ScalingOption {
+  stats?: Record<string, number>;
+  ilvl?: number;
+  weaponDamageMin?: number;
+  weaponDamageMax?: number;
+}
+
 export interface EquipmentItem {
   id: number;
   slot_type: string;
@@ -83,6 +90,7 @@ export interface EquipmentItem {
   quality: string;
   item_icon_slug?: string;
   enchantments?: Enchantment[];
+  scaling_options?: Record<string, ScalingOption>;
 }
 
 export interface Enchantment {
