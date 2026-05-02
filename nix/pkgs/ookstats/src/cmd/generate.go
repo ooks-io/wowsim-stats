@@ -90,6 +90,32 @@ var generateAPICmd = &cobra.Command{
 	},
 }
 
+var generateHomeCmd = &cobra.Command{
+	Use:   "home",
+	Short: "Generate home page JSON (top runs + top players + recent feed)",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outDir, _ := cmd.Flags().GetString("out")
+		if strings.TrimSpace(outDir) == "" {
+			return errors.New("--out is required")
+		}
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to db: %w", err)
+		}
+		defer db.Close()
+
+		if err := os.MkdirAll(filepath.Join(outDir, "api"), 0o755); err != nil {
+			return fmt.Errorf("mkdir base: %w", err)
+		}
+
+		if err := generator.GenerateHome(db, outDir); err != nil {
+			return err
+		}
+		fmt.Printf("\nHome JSON generated at %s/api/home.json\n", outDir)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.AddCommand(generateAPICmd)
@@ -102,4 +128,7 @@ func init() {
 	generateAPICmd.Flags().Int("shard-size", 5000, "Search index shard size")
 	generateAPICmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional leaderboards")
 	generateAPICmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
+
+	generateCmd.AddCommand(generateHomeCmd)
+	generateHomeCmd.Flags().String("out", "web/public", "Output directory (api/home.json will be written under it)")
 }

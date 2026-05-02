@@ -194,6 +194,12 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
+		// 9a) Generate home page JSON
+		log.Info("generating home page JSON")
+		if err := generator.GenerateHome(db, normalizedOut); err != nil {
+			return err
+		}
+
 		// 10) Generate status API via analyze
 		log.Info("generating status API", "method", "analyze")
 		statusDir := filepath.Join(normalizedOut, "api", "status")
