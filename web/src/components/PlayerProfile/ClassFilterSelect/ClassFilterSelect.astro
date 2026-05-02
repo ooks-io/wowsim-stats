@@ -80,6 +80,14 @@ const classes = [
       let newPath: string;
       const scopeParts = pathParts.slice(playersIndex + 1);
 
+      // Class slugs (must match wow-constants.ts CLASSES). Used to disambiguate
+      // `players/<region>/<class>` from `players/<region>/<realm>` — the previous
+      // `.includes("_")` heuristic only matched `death_knight`.
+      const CLASS_SLUGS = [
+        "death_knight", "druid", "hunter", "mage", "monk", "paladin",
+        "priest", "rogue", "shaman", "warlock", "warrior",
+      ];
+
       if (scopeParts.length === 0 || scopeParts[0] === "global") {
         // Global scope
         newPath = `/${basePath}/${seasonSlug}/players/global${selectedClass !== "all" ? "/" + selectedClass : ""}`;
@@ -89,7 +97,7 @@ const classes = [
         // Check if second part is a class or realm
         if (
           scopeParts.length === 1 ||
-          (scopeParts.length >= 2 && scopeParts[1].includes("_"))
+          (scopeParts.length >= 2 && CLASS_SLUGS.includes(scopeParts[1]))
         ) {
           // Regional scope (region or region/class)
           newPath = `/${basePath}/${seasonSlug}/players/${region}${selectedClass !== "all" ? "/" + selectedClass : ""}`;
