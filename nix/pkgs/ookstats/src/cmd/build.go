@@ -264,11 +264,7 @@ func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
 		return nil
 	}
 
-	// batch in reasonable size
 	batchSize := 20
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
-	defer cancel()
-
 	totalProfiles := 0
 	totalItems := 0
 	processed := 0
@@ -286,7 +282,8 @@ func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
 			"batch", batchNum,
 			"total_batches", totalBatches,
 			"players", len(batch))
-		results := client.FetchPlayerProfilesConcurrent(ctx, batch)
+		batchCtx, batchCancel := context.WithTimeout(context.Background(), 2*time.Minute)
+		results := client.FetchPlayerProfilesConcurrent(batchCtx, batch)
 		ts := time.Now().UnixMilli()
 		batchProfiles := 0
 		batchItems := 0
@@ -310,6 +307,7 @@ func fetchProfilesOnce(db *sql.DB, client *blizzard.Client) error {
 			batchProfiles += profs
 			batchItems += items
 		}
+		batchCancel()
 		totalProfiles += batchProfiles
 		totalItems += batchItems
 		log.Info("batch complete",

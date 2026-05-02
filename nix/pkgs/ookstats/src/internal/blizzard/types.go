@@ -317,3 +317,24 @@ type SeasonDetailResponse struct {
 		ID int `json:"id"`
 	} `json:"periods"`
 }
+
+// ItemDetailResponse represents the response from the item detail API
+type ItemDetailResponse struct {
+	ID          int              `json:"id"`
+	Name        string           `json:"name"`
+	PreviewItem *ItemPreviewData `json:"preview_item,omitempty"`
+}
+
+// ItemPreviewData contains the preview_item section with spells
+type ItemPreviewData struct {
+	Spells []ItemSpellInfo `json:"spells,omitempty"`
+}
+
+// ItemSpellInfo contains spell information including description
+type ItemSpellInfo struct {
+	Spell struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+	} `json:"spell"`
+	Description string `json:"description"`
+}

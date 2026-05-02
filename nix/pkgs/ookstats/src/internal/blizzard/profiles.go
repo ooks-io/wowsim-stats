@@ -87,6 +87,18 @@ func (c *Client) FetchCharacterAchievements(playerName, realmSlug, region string
 	return fetchPlayerProfileAPI[CharacterAchievementsResponse](c, url)
 }
 
+// FetchItem fetches item details from the static game data API
+func (c *Client) FetchItem(itemID int, region string) (*ItemDetailResponse, error) {
+	// hardcoded namespace version - update when game patches
+	namespace := fmt.Sprintf("static-5.5.3_64530-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/data/wow/item/%d?namespace=%s&locale=en_US",
+		region, itemID, namespace,
+	)
+
+	return fetchPlayerProfileAPI[ItemDetailResponse](c, url)
+}
+
 // fetchPlayerProfileAPI is a generic function for fetching player profile data
 func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 	const maxRetries = 3

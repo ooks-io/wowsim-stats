@@ -3,11 +3,15 @@ package cmd
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
+	"ookstats/internal/blizzard"
 	"ookstats/internal/database"
 )
 
@@ -51,12 +55,13 @@ type WowSimsDatabase struct {
 }
 
 type WowSimsItem struct {
-	ID      int    `json:"id"`
-	Name    string `json:"name"`
-	Icon    string `json:"icon"`
-	Quality int    `json:"quality"`
-	Type    int    `json:"type"`
-	// items don't have stats array, they have other fields like weaponType, etc.
+	ID             int             `json:"id"`
+	Name           string          `json:"name"`
+	Icon           string          `json:"icon"`
+	Quality        int             `json:"quality"`
+	Type           int             `json:"type"`
+	ScalingOptions json.RawMessage `json:"scalingOptions,omitempty"`
+	ItemEffect     json.RawMessage `json:"itemEffect,omitempty"`
 }
 
 type WowSimsGem struct {
@@ -131,16 +136,26 @@ func populateItems(db *sql.DB, wowsimsDBPath string) error {
 	fmt.Println("Inserting items...")
 	insertCount := 0
 
-	// insert items (no stats array)
 	for _, item := range wowsimsDB.Items {
 		if item.ID == 0 {
 			continue
 		}
 
+		statsJSON := "{}"
+		if len(item.ScalingOptions) > 0 {
+			statsJSON = string(item.ScalingOptions)
+		}
+
+		var itemEffectJSON *string
+		if len(item.ItemEffect) > 0 {
+			s := string(item.ItemEffect)
+			itemEffectJSON = &s
+		}
+
 		_, err = tx.Exec(`
-			INSERT OR REPLACE INTO items (id, name, icon, quality, type, stats)
-			VALUES (?, ?, ?, ?, ?, ?)
-		`, item.ID, item.Name, item.Icon, item.Quality, item.Type, "{}")
+			INSERT OR REPLACE INTO items (id, name, icon, quality, type, stats, item_effect)
+			VALUES (?, ?, ?, ?, ?, ?, ?)
+		`, item.ID, item.Name, item.Icon, item.Quality, item.Type, statsJSON, itemEffectJSON)
 
 		if err != nil {
 			return fmt.Errorf("failed to insert item %d: %w", item.ID, err)
@@ -221,10 +236,149 @@ func populateItems(db *sql.DB, wowsimsDBPath string) error {
 	return nil
 }
 
+var populateItemsEnrichCmd = &cobra.Command{
+	Use:   "items-enrich",
+	Short: "Enrich items with Blizzard spell descriptions",
+	Long:  `Fetch spell descriptions from Blizzard API for items missing them.`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Println("=== Item Enrichment ===")
+
+		region, _ := cmd.Flags().GetString("region")
+
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to database: %w", err)
+		}
+		defer db.Close()
+
+		client, err := blizzard.NewClient()
+		if err != nil {
+			return fmt.Errorf("failed to create blizzard client: %w", err)
+		}
+
+		if err := enrichItemsWithDescriptions(db, client, region); err != nil {
+			return fmt.Errorf("failed to enrich items: %w", err)
+		}
+
+		fmt.Printf("Item enrichment complete!\n")
+		return nil
+	},
+}
+
+func enrichItemsWithDescriptions(db *sql.DB, client *blizzard.Client, region string) error {
+	// get all item IDs that are missing spell_description (only trinkets type 12)
+	rows, err := db.Query(`
+		SELECT id FROM items
+		WHERE spell_description IS NULL
+		  AND type = 12
+		ORDER BY id
+	`)
+	if err != nil {
+		return fmt.Errorf("query items: %w", err)
+	}
+
+	var itemIDs []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return fmt.Errorf("scan item id: %w", err)
+		}
+		itemIDs = append(itemIDs, id)
+	}
+	rows.Close()
+
+	if len(itemIDs) == 0 {
+		fmt.Println("All items already have spell descriptions")
+		return nil
+	}
+
+	fmt.Printf("Found %d items missing spell descriptions\n", len(itemIDs))
+
+	// prepare update statement
+	updateStmt, err := db.Prepare(`UPDATE items SET spell_description = ? WHERE id = ?`)
+	if err != nil {
+		return fmt.Errorf("prepare update: %w", err)
+	}
+	defer updateStmt.Close()
+
+	fetched := 0
+	skipped := 0
+	notFound := 0
+	startTime := time.Now()
+
+	for i, itemID := range itemIDs {
+		// progress every 100 items
+		if (i+1)%100 == 0 {
+			elapsed := time.Since(startTime)
+			rate := float64(i+1) / elapsed.Seconds()
+			remaining := float64(len(itemIDs)-i-1) / rate
+			fmt.Printf("  Progress: %d/%d (%.1f/sec, ~%.0fs remaining)\n",
+				i+1, len(itemIDs), rate, remaining)
+		}
+
+		item, err := client.FetchItem(itemID, region)
+		if err != nil {
+			var apiErr *blizzard.APIError
+			if errors.As(err, &apiErr) && apiErr.Status == http.StatusNotFound {
+				notFound++
+				continue
+			}
+			fmt.Printf("  Warning: failed to fetch item %d: %v\n", itemID, err)
+			skipped++
+			continue
+		}
+
+		// extract spell descriptions
+		var descriptions []string
+		if item.PreviewItem != nil {
+			for _, spell := range item.PreviewItem.Spells {
+				if spell.Description != "" {
+					descriptions = append(descriptions, spell.Description)
+				}
+			}
+		}
+
+		if len(descriptions) == 0 {
+			continue
+		}
+
+		// debug: log first few items with descriptions
+		if fetched < 5 {
+			fmt.Printf("  DEBUG: Item %d (%s) has description: %.50s...\n", itemID, item.Name, descriptions[0])
+		}
+
+		// join multiple descriptions with newline
+		desc := strings.Join(descriptions, "\n")
+		result, err := updateStmt.Exec(desc, itemID)
+		if err != nil {
+			fmt.Printf("  Warning: failed to update item %d: %v\n", itemID, err)
+			skipped++
+			continue
+		}
+
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			fmt.Printf("  Warning: item %d update affected 0 rows\n", itemID)
+		}
+
+		fetched++
+	}
+
+	elapsed := time.Since(startTime)
+	fmt.Printf("[OK] Enriched %d items with spell descriptions (%.1fs)\n", fetched, elapsed.Seconds())
+	fmt.Printf("     %d not found in Blizzard API, %d skipped due to errors\n", notFound, skipped)
+	return nil
+}
+
 func init() {
 	rootCmd.AddCommand(populateCmd)
 	populateCmd.AddCommand(populateItemsCmd)
+	populateCmd.AddCommand(populateItemsEnrichCmd)
 
 	// add flag for wowsims database path
 	populateItemsCmd.Flags().String("wowsims-db", "", "Path to WoW Sims database JSON file")
+
+	// add flag for region
+	populateItemsEnrichCmd.Flags().String("region", "us", "Blizzard API region (us, eu, etc)")
 }

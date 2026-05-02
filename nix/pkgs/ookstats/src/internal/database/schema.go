@@ -241,7 +241,9 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			icon TEXT,
 			quality INTEGER,
 			type INTEGER,
-			stats TEXT
+			stats TEXT,
+			item_effect TEXT,
+			spell_description TEXT
 		)`,
 
 		// Season tables
@@ -289,6 +291,21 @@ func EnsureCompleteSchema(db *sql.DB) error {
 
 	// Migrate player_rankings to add PRIMARY KEY constraint
 	if err := migratePlayerRankingsPrimaryKey(db); err != nil {
+		return err
+	}
+
+	// Migrate equipment to single-row-per-slot model
+	if err := migrateEquipmentToUpsert(db); err != nil {
+		return err
+	}
+
+	// Add item_effect column to items table
+	if err := migrateItemsAddItemEffect(db); err != nil {
+		return err
+	}
+
+	// Add spell_description column to items table
+	if err := migrateItemsAddSpellDescription(db); err != nil {
 		return err
 	}
 

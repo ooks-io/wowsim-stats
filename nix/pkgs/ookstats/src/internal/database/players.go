@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"ookstats/internal/blizzard"
-	"sort"
 	"strings"
 )
 
@@ -167,11 +166,20 @@ func (ds *DatabaseService) insertPlayerDetailsTx(tx *sql.Tx, playerID int, summa
 		avatarURL,
 		timestamp,
 	)
+	if err != nil {
+		return err
+	}
 
+	// always refresh last_updated to prevent re-fetching unchanged profiles
+	_, err = tx.Exec(
+		`UPDATE player_details SET last_updated = ? WHERE player_id = ?`,
+		timestamp, playerID,
+	)
 	return err
 }
 
-// insertPlayerEquipmentTx inserts player equipment data within a transaction
+// insertPlayerEquipmentTx upserts player equipment data within a transaction
+// Only stores current gear - one row per (player_id, slot_type)
 func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equipment *blizzard.CharacterEquipmentResponse, timestamp int64) (int, error) {
 	if equipment == nil || len(equipment.EquippedItems) == 0 {
 		return 0, nil
@@ -180,102 +188,18 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 	equipmentCount := 0
 
 	for _, item := range equipment.EquippedItems {
-		// check latest snapshot for this slot; skip writing if unchanged
-		var prevID sql.NullInt64
-		var prevItemID sql.NullInt64
-		var prevUpgradeID sql.NullInt64
-		var prevQuality, prevName sql.NullString
-		if err := tx.QueryRow(
-			`SELECT id, item_id, upgrade_id, quality, item_name
-             FROM player_equipment
-             WHERE player_id = ? AND slot_type = ?
-             ORDER BY snapshot_timestamp DESC
-             LIMIT 1`,
-			playerID, item.Slot.Type,
-		).Scan(&prevID, &prevItemID, &prevUpgradeID, &prevQuality, &prevName); err != nil && err != sql.ErrNoRows {
-			return 0, fmt.Errorf("failed to query latest equipment: %w", err)
-		}
-
-		unchanged := false
-		if prevID.Valid {
-			prevUpg := 0
-			if prevUpgradeID.Valid {
-				prevUpg = int(prevUpgradeID.Int64)
-			}
-			curUpg := 0
-			if item.UpgradeID != nil {
-				curUpg = *item.UpgradeID
-			}
-			sameBasics := prevItemID.Valid && int(prevItemID.Int64) == item.Item.ID && prevQuality.Valid && prevQuality.String == item.Quality.Type && prevName.Valid && prevName.String == item.Name && prevUpg == curUpg
-
-			if sameBasics {
-				// compare enchantments as a canonical sorted signature
-				dbRows, qerr := tx.Query(
-					`SELECT
-                        COALESCE(enchantment_id, -1) as eid,
-                        COALESCE(source_item_id, -1) as sid,
-                        COALESCE(slot_id, -1) as slotId,
-                        COALESCE(slot_type, '') as slotType,
-                        COALESCE(spell_id, -1) as spellId,
-                        COALESCE(display_string, '') as disp
-                     FROM player_equipment_enchantments
-                     WHERE equipment_id = ?`, prevID.Int64)
-				if qerr != nil {
-					return 0, fmt.Errorf("failed to load existing enchantments: %w", qerr)
-				}
-				var dbSigs []string
-				for dbRows.Next() {
-					var eid, sid, slotId, spellId int
-					var slotType, disp string
-					if err := dbRows.Scan(&eid, &sid, &slotId, &slotType, &spellId, &disp); err != nil {
-						dbRows.Close()
-						return 0, fmt.Errorf("failed to scan enchantment: %w", err)
-					}
-					dbSigs = append(dbSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
-				}
-				dbRows.Close()
-				sort.Strings(dbSigs)
-
-				var curSigs []string
-				for _, ench := range item.Enchantments {
-					eid := -1
-					if ench.EnchantmentID != nil {
-						eid = *ench.EnchantmentID
-					}
-					sid := -1
-					if ench.SourceItem != nil {
-						sid = ench.SourceItem.ID
-					}
-					slotId := -1
-					var slotType string
-					if ench.EnchantmentSlot != nil {
-						slotId = ench.EnchantmentSlot.ID
-						slotType = ench.EnchantmentSlot.Type
-					}
-					spellId := -1
-					if ench.Spell != nil {
-						spellId = ench.Spell.Spell.ID
-					}
-					disp := ench.DisplayString
-					curSigs = append(curSigs, fmt.Sprintf("%d|%d|%d|%s|%d|%s", eid, sid, slotId, slotType, spellId, disp))
-				}
-				sort.Strings(curSigs)
-
-				if strings.Join(dbSigs, ";") == strings.Join(curSigs, ";") {
-					unchanged = true
-				}
-			}
-		}
-
-		if unchanged {
-			continue
-		}
-
+		// upsert equipment - replace if exists
 		result, err := tx.Exec(`
-            INSERT INTO player_equipment (
-                player_id, slot_type, item_id, upgrade_id, quality, item_name, snapshot_timestamp
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        `,
+			INSERT INTO player_equipment (
+				player_id, slot_type, item_id, upgrade_id, quality, item_name, snapshot_timestamp
+			) VALUES (?, ?, ?, ?, ?, ?, ?)
+			ON CONFLICT(player_id, slot_type) DO UPDATE SET
+				item_id = excluded.item_id,
+				upgrade_id = excluded.upgrade_id,
+				quality = excluded.quality,
+				item_name = excluded.item_name,
+				snapshot_timestamp = excluded.snapshot_timestamp
+		`,
 			playerID,
 			item.Slot.Type,
 			item.Item.ID,
@@ -284,18 +208,32 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 			item.Name,
 			timestamp,
 		)
-
 		if err != nil {
-			return 0, fmt.Errorf("failed to insert equipment item: %w", err)
+			return 0, fmt.Errorf("failed to upsert equipment item: %w", err)
 		}
 
-		equipmentID, err := result.LastInsertId()
+		// get the equipment ID (works for both insert and update)
+		var equipmentID int64
+		err = tx.QueryRow(
+			`SELECT id FROM player_equipment WHERE player_id = ? AND slot_type = ?`,
+			playerID, item.Slot.Type,
+		).Scan(&equipmentID)
 		if err != nil {
 			return 0, fmt.Errorf("failed to get equipment ID: %w", err)
 		}
 
-		equipmentCount++
+		// delete old enchantments for this equipment slot
+		_, err = tx.Exec(`DELETE FROM player_equipment_enchantments WHERE equipment_id = ?`, equipmentID)
+		if err != nil {
+			return 0, fmt.Errorf("failed to delete old enchantments: %w", err)
+		}
 
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected > 0 {
+			equipmentCount++
+		}
+
+		// insert new enchantments
 		for _, enchant := range item.Enchantments {
 			var sourceItemID *int
 			var sourceItemName *string
@@ -331,7 +269,6 @@ func (ds *DatabaseService) insertPlayerEquipmentTx(tx *sql.Tx, playerID int, equ
 				sourceItemName,
 				spellID,
 			)
-
 			if err != nil {
 				return 0, fmt.Errorf("failed to insert enchantment: %w", err)
 			}

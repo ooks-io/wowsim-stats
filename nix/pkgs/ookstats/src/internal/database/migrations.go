@@ -277,3 +277,156 @@ func migratePlayerRankingsPrimaryKey(db *sql.DB) error {
 	fmt.Printf("[OK] player_rankings table migrated - added PRIMARY KEY and removed duplicates\n")
 	return nil
 }
+
+// migrateEquipmentToUpsert adds UNIQUE constraint on (player_id, slot_type) and removes historical snapshots
+func migrateEquipmentToUpsert(db *sql.DB) error {
+	// Check if unique index already exists
+	var indexCount int
+	err := db.QueryRow(`
+		SELECT COUNT(*) FROM sqlite_master
+		WHERE type='index' AND name='idx_player_equipment_unique'
+	`).Scan(&indexCount)
+	if err != nil {
+		return fmt.Errorf("check index: %w", err)
+	}
+
+	if indexCount > 0 {
+		// Already migrated
+		return nil
+	}
+
+	fmt.Printf("Migrating player_equipment to single-row-per-slot model...\n")
+
+	// Count rows before
+	var beforeCount int
+	db.QueryRow(`SELECT COUNT(*) FROM player_equipment`).Scan(&beforeCount)
+
+	tx, err := db.Begin()
+	if err != nil {
+		return fmt.Errorf("begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Create new table with UNIQUE constraint
+	if _, err := tx.Exec(`
+		CREATE TABLE player_equipment_new (
+			id INTEGER PRIMARY KEY,
+			player_id INTEGER,
+			slot_type TEXT,
+			item_id INTEGER,
+			upgrade_id INTEGER,
+			quality TEXT,
+			item_name TEXT,
+			snapshot_timestamp INTEGER,
+			UNIQUE(player_id, slot_type)
+		)
+	`); err != nil {
+		return fmt.Errorf("create new table: %w", err)
+	}
+
+	// Copy only one row per (player_id, slot_type) - pick the one with highest ID
+	if _, err := tx.Exec(`
+		INSERT INTO player_equipment_new (id, player_id, slot_type, item_id, upgrade_id, quality, item_name, snapshot_timestamp)
+		SELECT pe.id, pe.player_id, pe.slot_type, pe.item_id, pe.upgrade_id, pe.quality, pe.item_name, pe.snapshot_timestamp
+		FROM player_equipment pe
+		INNER JOIN (
+			SELECT MAX(id) as max_id
+			FROM player_equipment
+			GROUP BY player_id, slot_type
+		) latest ON pe.id = latest.max_id
+	`); err != nil {
+		return fmt.Errorf("copy data: %w", err)
+	}
+
+	// Delete orphaned enchantments (those referencing equipment IDs not in the new table)
+	if _, err := tx.Exec(`
+		DELETE FROM player_equipment_enchantments
+		WHERE equipment_id NOT IN (SELECT id FROM player_equipment_new)
+	`); err != nil {
+		return fmt.Errorf("delete orphaned enchantments: %w", err)
+	}
+
+	// Drop old table and rename
+	if _, err := tx.Exec(`DROP TABLE player_equipment`); err != nil {
+		return fmt.Errorf("drop old table: %w", err)
+	}
+
+	if _, err := tx.Exec(`ALTER TABLE player_equipment_new RENAME TO player_equipment`); err != nil {
+		return fmt.Errorf("rename table: %w", err)
+	}
+
+	// Create the unique index for the ON CONFLICT clause
+	if _, err := tx.Exec(`CREATE UNIQUE INDEX idx_player_equipment_unique ON player_equipment(player_id, slot_type)`); err != nil {
+		return fmt.Errorf("create unique index: %w", err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("commit: %w", err)
+	}
+
+	// Count rows after
+	var afterCount int
+	db.QueryRow(`SELECT COUNT(*) FROM player_equipment`).Scan(&afterCount)
+
+	fmt.Printf("[OK] player_equipment migrated: %d → %d rows (removed %d historical snapshots)\n",
+		beforeCount, afterCount, beforeCount-afterCount)
+	return nil
+}
+
+// migrateItemsAddItemEffect adds item_effect column to items table if missing
+func migrateItemsAddItemEffect(db *sql.DB) error {
+	// Check if column already exists
+	rows, err := db.Query("PRAGMA table_info(items)")
+	if err != nil {
+		return nil // table doesn't exist yet
+	}
+	defer rows.Close()
+
+	hasItemEffect := false
+	for rows.Next() {
+		var cid int
+		var name, ctype string
+		var notnull, pk int
+		var dflt any
+		if err := rows.Scan(&cid, &name, &ctype, &notnull, &dflt, &pk); err != nil {
+			continue
+		}
+		if name == "item_effect" {
+			hasItemEffect = true
+			break
+		}
+	}
+
+	if hasItemEffect {
+		return nil
+	}
+
+	fmt.Printf("Adding item_effect column to items table...\n")
+	_, err = db.Exec(`ALTER TABLE items ADD COLUMN item_effect TEXT`)
+	if err != nil {
+		return fmt.Errorf("add item_effect column: %w", err)
+	}
+
+	fmt.Printf("[OK] Added item_effect column to items table\n")
+	return nil
+}
+
+// migrateItemsAddSpellDescription adds spell_description column to items table if missing
+func migrateItemsAddSpellDescription(db *sql.DB) error {
+	has, err := columnExists(db, "items", "spell_description")
+	if err != nil {
+		return nil // table doesn't exist yet
+	}
+	if has {
+		return nil
+	}
+
+	fmt.Printf("Adding spell_description column to items table...\n")
+	_, err = db.Exec(`ALTER TABLE items ADD COLUMN spell_description TEXT`)
+	if err != nil {
+		return fmt.Errorf("add spell_description column: %w", err)
+	}
+
+	fmt.Printf("[OK] Added spell_description column to items table\n")
+	return nil
+}

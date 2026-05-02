@@ -2,6 +2,7 @@ package generator
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"ookstats/internal/loader"
 	"ookstats/internal/utils"
@@ -135,7 +136,7 @@ func GeneratePlayers(db *sql.DB, out string, version string) error {
 }
 
 // GeneratePlayerJSONs generates JSON files for all players concurrently
-func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64]map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
+func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
 	startTime := time.Now()
 	const batchSize = 100
 	const numWorkers = 10
@@ -192,7 +193,7 @@ func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64
 }
 
 // generateSinglePlayerJSON generates a JSON file for a single player
-func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64]map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
+func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
 	// Build PlayerJSON with base info
 	pj := PlayerJSON{
 		ID:             player.ID,
@@ -319,66 +320,78 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 
 	// Build equipment
 	equipment := make(map[string]any)
-	for _, eqList := range equipmentMap[player.ID] {
-		for _, eq := range eqList {
-			eqData := map[string]any{
-				"id":                 eq.ID,
-				"slot_type":          eq.SlotType,
-				"item_id":            nil,
-				"upgrade_id":         nil,
-				"quality":            eq.Quality,
-				"item_name":          eq.ItemName,
-				"snapshot_timestamp": eq.SnapshotTs,
-				"item_icon_slug":     eq.ItemIcon.String,
-				"item_type":          eq.ItemType.String,
-				"enchantments":       []map[string]any{},
-			}
-
-			if eq.ItemID.Valid {
-				eqData["item_id"] = int(eq.ItemID.Int64)
-			}
-			if eq.UpgradeID.Valid {
-				eqData["upgrade_id"] = int(eq.UpgradeID.Int64)
-			}
-
-			// Add enchantments
-			for _, ench := range enchantmentsMap[eq.ID] {
-				enchData := map[string]any{
-					"enchantment_id":   nil,
-					"slot_id":          nil,
-					"slot_type":        ench.SlotType.String,
-					"display_string":   ench.DisplayString.String,
-					"source_item_id":   nil,
-					"source_item_name": ench.SourceItemName.String,
-					"spell_id":         nil,
-				}
-
-				if ench.EnchantmentID.Valid {
-					enchData["enchantment_id"] = int(ench.EnchantmentID.Int64)
-				}
-				if ench.SlotID.Valid {
-					enchData["slot_id"] = int(ench.SlotID.Int64)
-				}
-				if ench.SourceItemID.Valid {
-					enchData["source_item_id"] = int(ench.SourceItemID.Int64)
-				}
-				if ench.SpellID.Valid {
-					enchData["spell_id"] = int(ench.SpellID.Int64)
-				}
-				if ench.GemIconSlug.Valid {
-					enchData["gem_icon_slug"] = ench.GemIconSlug.String
-				}
-
-				if arr, ok := eqData["enchantments"].([]map[string]any); ok {
-					eqData["enchantments"] = append(arr, enchData)
-				} else {
-					eqData["enchantments"] = []map[string]any{enchData}
-				}
-			}
-
-			equipment[eq.SlotType] = eqData
+	for _, eq := range equipmentMap[player.ID] {
+		eqData := map[string]any{
+			"id":                 eq.ID,
+			"slot_type":          eq.SlotType,
+			"item_id":            nil,
+			"upgrade_id":         nil,
+			"quality":            eq.Quality,
+			"item_name":          eq.ItemName,
+			"snapshot_timestamp": eq.SnapshotTs,
+			"item_icon_slug":     eq.ItemIcon.String,
+			"item_type":          eq.ItemType.String,
+			"enchantments":       []map[string]any{},
 		}
-		break // Only process the latest timestamp
+
+		if eq.ItemID.Valid {
+			eqData["item_id"] = int(eq.ItemID.Int64)
+		}
+		if eq.UpgradeID.Valid {
+			eqData["upgrade_id"] = int(eq.UpgradeID.Int64)
+		}
+		if eq.ItemStats.Valid && eq.ItemStats.String != "" && eq.ItemStats.String != "{}" {
+			var scalingOpts any
+			if err := json.Unmarshal([]byte(eq.ItemStats.String), &scalingOpts); err == nil {
+				eqData["scaling_options"] = scalingOpts
+			}
+		}
+		if eq.ItemEffect.Valid && eq.ItemEffect.String != "" {
+			var itemEffect any
+			if err := json.Unmarshal([]byte(eq.ItemEffect.String), &itemEffect); err == nil {
+				eqData["item_effect"] = itemEffect
+			}
+		}
+		if eq.SpellDescription.Valid && eq.SpellDescription.String != "" {
+			eqData["spell_description"] = eq.SpellDescription.String
+		}
+
+		// Add enchantments
+		for _, ench := range enchantmentsMap[eq.ID] {
+			enchData := map[string]any{
+				"enchantment_id":   nil,
+				"slot_id":          nil,
+				"slot_type":        ench.SlotType.String,
+				"display_string":   ench.DisplayString.String,
+				"source_item_id":   nil,
+				"source_item_name": ench.SourceItemName.String,
+				"spell_id":         nil,
+			}
+
+			if ench.EnchantmentID.Valid {
+				enchData["enchantment_id"] = int(ench.EnchantmentID.Int64)
+			}
+			if ench.SlotID.Valid {
+				enchData["slot_id"] = int(ench.SlotID.Int64)
+			}
+			if ench.SourceItemID.Valid {
+				enchData["source_item_id"] = int(ench.SourceItemID.Int64)
+			}
+			if ench.SpellID.Valid {
+				enchData["spell_id"] = int(ench.SpellID.Int64)
+			}
+			if ench.GemIconSlug.Valid {
+				enchData["gem_icon_slug"] = ench.GemIconSlug.String
+			}
+
+			if arr, ok := eqData["enchantments"].([]map[string]any); ok {
+				eqData["enchantments"] = append(arr, enchData)
+			} else {
+				eqData["enchantments"] = []map[string]any{enchData}
+			}
+		}
+
+		equipment[eq.SlotType] = eqData
 	}
 
 	// Create final JSON
