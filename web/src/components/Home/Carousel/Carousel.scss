@@ -1,0 +1,95 @@
+@use "../../../styles/core/tokens" as *;
+
+.carousel {
+  position: relative;
+  --carousel-arrow-size: 40px;
+  --carousel-gap: #{$spacing-md};
+  // Resolved per-view (defaults to whatever the consumer set; the mobile
+  // breakpoint below swaps in --carousel-per-view-mobile).
+  --carousel-pv: var(--carousel-per-view);
+
+  &__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; // firefox
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__track {
+    display: flex;
+    gap: var(--carousel-gap);
+  }
+
+  // Each child claims (1 / per-view) of the viewport width minus the gaps
+  // between visible cards, so exactly N fit with no fractional bleed.
+  &__track > * {
+    flex: 0 0
+      calc(
+        (100% - (var(--carousel-pv) - 1) * var(--carousel-gap)) /
+        var(--carousel-pv)
+      );
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: var(--carousel-arrow-size);
+    height: var(--carousel-arrow-size);
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition:
+      background 0.15s ease,
+      border-color 0.15s ease,
+      opacity 0.15s ease;
+
+    &:hover {
+      background: var(--bg-primary);
+      border-color: var(--highlight-color);
+      color: var(--highlight-color);
+    }
+
+    &[hidden] {
+      // `hidden` attribute is the source of truth — toggled by Carousel.ts when
+      // we hit either edge — but we also keep it visually inert so that screen
+      // readers and tab-focus skip it.
+      display: none;
+    }
+
+    svg {
+      width: 60%;
+      height: 60%;
+    }
+
+    &--prev {
+      left: -12px;
+    }
+    &--next {
+      right: -12px;
+    }
+  }
+
+  // On narrow viewports the arrows would overlap card content; touch users can
+  // swipe natively so we just hide them entirely. We also swap the per-view to
+  // the mobile fallback so cards fill the viewport one at a time.
+  @media (max-width: 768px) {
+    --carousel-pv: var(--carousel-per-view-mobile);
+    &__arrow {
+      display: none !important;
+    }
+  }
+}

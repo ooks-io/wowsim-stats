@@ -1,0 +1,67 @@
+---
+import "./Carousel.scss";
+
+interface Props {
+  // Accessible label for the carousel viewport.
+  ariaLabel: string;
+  // Number of cards visible per "page" (desktop). Card width is computed to
+  // exactly fit this many in the viewport.
+  perView: number;
+  // Per-view at narrow widths (≤ 768px). Defaults to 1.
+  perViewMobile?: number;
+  // Extra class on the outer container.
+  class?: string;
+}
+
+const {
+  ariaLabel,
+  perView,
+  perViewMobile = 1,
+  class: extraClass,
+} = Astro.props;
+
+const styleVars = `--carousel-per-view: ${perView}; --carousel-per-view-mobile: ${perViewMobile};`;
+---
+
+<div class:list={["carousel", extraClass]} style={styleVars}>
+  <button
+    type="button"
+    class="carousel__arrow carousel__arrow--prev"
+    aria-label="Scroll left"
+    data-carousel-prev
+    hidden
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    </svg>
+  </button>
+
+  <div
+    class="carousel__viewport"
+    role="region"
+    aria-label={ariaLabel}
+    data-carousel-viewport
+  >
+    <div class="carousel__track">
+      <slot />
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="carousel__arrow carousel__arrow--next"
+    aria-label="Scroll right"
+    data-carousel-next
+    hidden
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    </svg>
+  </button>
+</div>
+
+<script>
+  import { initCarousels } from "./Carousel.ts";
+  initCarousels();
+  document.addEventListener("astro:page-load", () => initCarousels());
+</script>
