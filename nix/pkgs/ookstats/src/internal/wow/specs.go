@@ -32,7 +32,7 @@ var SpecByID = map[int]SpecInfo{
 	255: {ClassName: "Hunter", SpecName: "Survival"},
 	// DPS - Rogues
 	259: {ClassName: "Rogue", SpecName: "Assassination"},
-	260: {ClassName: "Rogue", SpecName: "Outlaw"},
+	260: {ClassName: "Rogue", SpecName: "Combat"},
 	261: {ClassName: "Rogue", SpecName: "Subtlety"},
 	// DPS - Priests
 	258: {ClassName: "Priest", SpecName: "Shadow"},
