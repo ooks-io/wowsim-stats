@@ -200,6 +200,12 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
+		// 9b) Generate stats page JSON
+		log.Info("generating stats page JSON")
+		if err := generator.GenerateStats(db, normalizedOut); err != nil {
+			return err
+		}
+
 		// 10) Generate status API via analyze
 		log.Info("generating status API", "method", "analyze")
 		statusDir := filepath.Join(normalizedOut, "api", "status")
