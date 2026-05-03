@@ -1,14 +1,39 @@
 ---
 import "./SpecDistributionChart.scss";
-import type { StatsSpecCountEntry } from "../../../lib/types";
+import type { StatsSpecCountBucket } from "../../../lib/types";
+import { DUNGEON_SLUG_TO_ID } from "../../../lib/dungeon-thresholds";
 
 interface Props {
-  buckets: Record<string, StatsSpecCountEntry[]>;
+  buckets: Record<string, StatsSpecCountBucket>;
   // unique scope id so multiple charts on a page can each find their own data island
   scope: string;
 }
 
 const { buckets, scope } = Astro.props;
+
+// Dungeon dropdown options. "all" is the default (overall data); each dungeon
+// id maps to a per-dungeon slice via bucket.by_dungeon[id].
+const DUNGEON_OPTIONS: Array<{ key: string; label: string }> = [
+  { key: "all", label: "All Dungeons" },
+  { key: "2", label: "Temple of the Jade Serpent" },
+  { key: "56", label: "Stormstout Brewery" },
+  { key: "57", label: "Gate of the Setting Sun" },
+  { key: "58", label: "Shado-Pan Monastery" },
+  { key: "59", label: "Siege of Niuzao Temple" },
+  { key: "60", label: "Mogu'shan Palace" },
+  { key: "76", label: "Scholomance" },
+  { key: "77", label: "Scarlet Halls" },
+  { key: "78", label: "Scarlet Monastery" },
+];
+
+// Light sanity check at build time — every option (besides "all") matches the
+// canonical slug→id map. Catches a typo in either side early.
+for (const o of DUNGEON_OPTIONS) {
+  if (o.key === "all") continue;
+  if (!Object.values(DUNGEON_SLUG_TO_ID).includes(parseInt(o.key, 10))) {
+    throw new Error(`Unknown dungeon id ${o.key} in SpecDistributionChart`);
+  }
+}
 
 const BUCKET_TABS: Array<{ key: string; label: string }> = [
   { key: "all_runs", label: "All Runs" },
@@ -23,6 +48,14 @@ const ROLE_TABS: Array<{ key: string; label: string }> = [
   { key: "tank", label: "Tank" },
   { key: "healer", label: "Healer" },
   { key: "dps", label: "DPS" },
+];
+
+// "Picks" counts every spec slot (includes spec stacking, can exceed run count).
+// "Runs" counts distinct runs containing the spec (capped at the bucket's
+// total_runs). Naming borrows the MOBA pick-rate convention so it's familiar.
+const METRIC_OPTIONS: Array<{ key: string; label: string }> = [
+  { key: "picks", label: "Picks" },
+  { key: "runs", label: "Runs" },
 ];
 
 // data-buckets carries all 5 buckets so client can switch without refetching
@@ -44,13 +77,31 @@ const dataJson = JSON.stringify(buckets);
         </button>
       ))}
     </nav>
-    <div class="filter-group spec-distribution-chart__role">
-      <label for={`spec-dist-role-${scope}`}>Role</label>
-      <select id={`spec-dist-role-${scope}`} data-role-select>
-        {ROLE_TABS.map((r) => (
-          <option value={r.key}>{r.label}</option>
-        ))}
-      </select>
+    <div class="spec-distribution-chart__selects">
+      <div class="filter-group">
+        <label for={`spec-dist-metric-${scope}`}>Metric</label>
+        <select id={`spec-dist-metric-${scope}`} data-metric-select>
+          {METRIC_OPTIONS.map((m) => (
+            <option value={m.key}>{m.label}</option>
+          ))}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for={`spec-dist-role-${scope}`}>Role</label>
+        <select id={`spec-dist-role-${scope}`} data-role-select>
+          {ROLE_TABS.map((r) => (
+            <option value={r.key}>{r.label}</option>
+          ))}
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for={`spec-dist-dungeon-${scope}`}>Dungeon</label>
+        <select id={`spec-dist-dungeon-${scope}`} data-dungeon-select>
+          {DUNGEON_OPTIONS.map((d) => (
+            <option value={d.key}>{d.label}</option>
+          ))}
+        </select>
+      </div>
     </div>
   </div>
   <div class="spec-distribution-chart__canvas">

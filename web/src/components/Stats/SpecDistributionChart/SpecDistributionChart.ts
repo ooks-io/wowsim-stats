@@ -7,8 +7,26 @@ interface SpecEntry {
   spec_id: number;
   class_name: string;
   spec_name: string;
+  // Total spec slot occurrences (a run with two of the spec contributes 2).
   count: number;
+  // Distinct runs containing this spec (a run with two of the spec contributes 1).
+  runs_with_spec: number;
 }
+
+interface DungeonSpecBucket {
+  total_runs: number;
+  entries: SpecEntry[];
+}
+
+interface SpecBucket {
+  total_runs: number;
+  entries: SpecEntry[];
+  by_dungeon: Record<string, DungeonSpecBucket>;
+}
+
+// "picks" = total spec slot occurrences (a stacked spec contributes once per slot).
+// "runs"  = distinct runs containing the spec.
+type Metric = "picks" | "runs";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const XLINK_NS = "http://www.w3.org/1999/xlink";
@@ -71,7 +89,7 @@ function classSlug(name: string): string {
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
-function parseBuckets(el: HTMLElement): Record<string, SpecEntry[]> {
+function parseBuckets(el: HTMLElement): Record<string, SpecBucket> {
   const raw = el.getAttribute("data-buckets");
   if (!raw) return {};
   try {
@@ -93,6 +111,22 @@ function activeRoleKey(container: HTMLElement): string {
   return select?.value ?? "all";
 }
 
+function activeMetric(container: HTMLElement): Metric {
+  const select = container.querySelector<HTMLSelectElement>("[data-metric-select]");
+  return select?.value === "runs" ? "runs" : "picks";
+}
+
+function activeDungeonKey(container: HTMLElement): string {
+  const select = container.querySelector<HTMLSelectElement>("[data-dungeon-select]");
+  return select?.value ?? "all";
+}
+
+// Pull the metric-relevant value out of an entry — bar height + tooltip both
+// route through this so swapping the metric is one place.
+function entryValue(e: SpecEntry, metric: Metric): number {
+  return metric === "runs" ? e.runs_with_spec : e.count;
+}
+
 function renderChart(container: HTMLElement) {
   const canvas = container.querySelector(".spec-distribution-chart__canvas") as HTMLElement | null;
   if (!canvas) return;
@@ -100,19 +134,36 @@ function renderChart(container: HTMLElement) {
   const buckets = parseBuckets(container);
   const bucketKey = activeBucketKey(container);
   const roleKey = activeRoleKey(container);
-  const entries = buckets[bucketKey] ?? [];
+  const metric = activeMetric(container);
+  const dungeonKey = activeDungeonKey(container);
+  const fullBucket = buckets[bucketKey] ?? {
+    total_runs: 0,
+    entries: [],
+    by_dungeon: {},
+  };
+  // When a dungeon is picked, slice to that dungeon's sub-bucket so total_runs,
+  // entries, and the share denominator all come from the same scope.
+  const bucket: { total_runs: number; entries: SpecEntry[] } =
+    dungeonKey === "all"
+      ? { total_runs: fullBucket.total_runs, entries: fullBucket.entries }
+      : (fullBucket.by_dungeon?.[dungeonKey] ?? { total_runs: 0, entries: [] });
+  const entries = bucket.entries;
 
-  // build lookup spec_id -> count for the active bucket
-  const countBySpec = new Map<number, number>();
+  // build lookup spec_id -> entry for the active bucket
+  const entryBySpec = new Map<number, SpecEntry>();
   for (const e of entries) {
-    countBySpec.set(e.spec_id, e.count);
+    entryBySpec.set(e.spec_id, e);
   }
+  const valueOf = (specId: number): number => {
+    const e = entryBySpec.get(specId);
+    return e ? entryValue(e, metric) : 0;
+  };
 
   // Apply both filters: role + zero-hide. Specs with no count in this bucket
   // disappear entirely (no empty slot left behind).
   const visible = SPECS.filter((s) => {
     if (roleKey !== "all" && s.role !== roleKey) return false;
-    return (countBySpec.get(s.specId) ?? 0) > 0;
+    return valueOf(s.specId) > 0;
   });
 
   // Recompute group breaks on the visible set (last spec of each class group).
@@ -166,8 +217,14 @@ function renderChart(container: HTMLElement) {
   const height = 280;
   const innerH = height - padding.top - padding.bottom;
 
-  const maxCount = Math.max(1, ...visibleWithGap.map((s) => countBySpec.get(s.specId) ?? 0));
-  const totalRuns = visibleWithGap.reduce((acc, s) => acc + (countBySpec.get(s.specId) ?? 0), 0);
+  const maxCount = Math.max(1, ...visibleWithGap.map((s) => valueOf(s.specId)));
+  // Denominator for the tooltip share %.
+  //   - picks mode: fraction of all spec slots in the visible filter
+  //   - runs mode:  fraction of distinct runs in the bucket containing the spec
+  const shareDenominator =
+    metric === "runs"
+      ? bucket.total_runs
+      : visibleWithGap.reduce((acc, s) => acc + valueOf(s.specId), 0);
 
   // Build SVG
   const svg = document.createElementNS(SVG_NS, "svg");
@@ -224,16 +281,16 @@ function renderChart(container: HTMLElement) {
   svg.appendChild(highlight);
 
   // Pre-compute per-bar metadata for the overlay's nearest-column lookup.
-  const cols: Array<{ spec: Spec; count: number; x: number; y: number; cx: number }> = [];
+  const cols: Array<{ spec: Spec; value: number; x: number; y: number; cx: number }> = [];
 
   // Bars + icons
   for (let i = 0; i < visibleWithGap.length; i++) {
     const s = visibleWithGap[i];
-    const count = countBySpec.get(s.specId) ?? 0;
-    const barH = (count / maxCount) * innerH;
+    const value = valueOf(s.specId);
+    const barH = (value / maxCount) * innerH;
     const x = slotX[i];
     const y = padding.top + innerH - barH;
-    cols.push({ spec: s, count, x, y, cx: x + barW / 2 });
+    cols.push({ spec: s, value, x, y, cx: x + barW / 2 });
 
     // Bar
     const rect = document.createElementNS(SVG_NS, "rect");
@@ -296,12 +353,18 @@ function renderChart(container: HTMLElement) {
     highlight.setAttribute("x", String(c.x));
     highlight.setAttribute("opacity", "1");
 
-    const sharePct = totalRuns > 0 ? (c.count / totalRuns) * 100 : 0;
+    const sharePct =
+      shareDenominator > 0 ? (c.value / shareDenominator) * 100 : 0;
+    const valueText = c.value.toLocaleString("en-US");
+    const mainLine =
+      metric === "runs"
+        ? `${valueText} of ${bucket.total_runs.toLocaleString("en-US")} runs`
+        : `${valueText} picks`;
     tooltip.innerHTML =
       `<div class="spec-distribution-chart__tooltip-title">` +
       `<span class="text-${classSlug(c.spec.className)}">${c.spec.specName} ${c.spec.className}</span>` +
       `</div>` +
-      `<div class="spec-distribution-chart__tooltip-value">${c.count.toLocaleString("en-US")} runs` +
+      `<div class="spec-distribution-chart__tooltip-value">${mainLine}` +
       ` <span class="spec-distribution-chart__tooltip-share">(${sharePct.toFixed(1)}%)</span></div>`;
     tooltip.style.opacity = "1";
 
@@ -351,6 +414,12 @@ function wireControls(container: HTMLElement) {
 
   const roleSelect = container.querySelector<HTMLSelectElement>("[data-role-select]");
   roleSelect?.addEventListener("change", () => renderChart(container));
+
+  const metricSelect = container.querySelector<HTMLSelectElement>("[data-metric-select]");
+  metricSelect?.addEventListener("change", () => renderChart(container));
+
+  const dungeonSelect = container.querySelector<HTMLSelectElement>("[data-dungeon-select]");
+  dungeonSelect?.addEventListener("change", () => renderChart(container));
 }
 
 export function initSpecDistributionCharts() {

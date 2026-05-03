@@ -29,9 +29,12 @@
     gap: $spacing-xs;
   }
 
-  &__role {
-    // shrink the standard `.filter-group` slightly so the dropdown sits flush
-    // with the bucket tabs without bloating the controls row.
+  // Group of dropdowns (metric + role) on the right of the controls row.
+  &__selects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+    // sits flush with the bucket tabs on the row's baseline.
     margin-bottom: $spacing-xs;
   }
 

@@ -227,8 +227,21 @@ export interface StatsScope {
     "9_of_9_platinum": StatsCompletionTier;
     "9_of_9_title": StatsCompletionTier;
   };
-  spec_counts: Record<string, StatsSpecCountEntry[]>; // keys: "all_runs" | "gold_runs" | "platinum_runs" | "title_runs" | "top_50_runs"
+  spec_counts: Record<string, StatsSpecCountBucket>; // keys: "all_runs" | "gold_runs" | "platinum_runs" | "title_runs" | "top_50_runs"
   weekly_activity: StatsWeeklyActivityEntry[];
+}
+
+export interface StatsSpecCountBucket {
+  // Distinct runs in this bucket (denominator for the "runs with spec" metric).
+  total_runs: number;
+  entries: StatsSpecCountEntry[];
+  // Per-dungeon breakdown — same shape, keyed by numeric dungeon_id.
+  by_dungeon: Record<string, StatsDungeonSpecBucket>;
+}
+
+export interface StatsDungeonSpecBucket {
+  total_runs: number;
+  entries: StatsSpecCountEntry[];
 }
 
 export interface StatsCompletionTier {
@@ -242,7 +255,10 @@ export interface StatsSpecCountEntry {
   spec_id: number;
   class_name: string;
   spec_name: string;
+  // Total spec slot occurrences (e.g. 2 Combat Rogues in one run = 2).
   count: number;
+  // Distinct runs containing this spec (e.g. 2 Combat Rogues in one run = 1).
+  runs_with_spec: number;
 }
 
 export interface StatsWeeklyActivityEntry {

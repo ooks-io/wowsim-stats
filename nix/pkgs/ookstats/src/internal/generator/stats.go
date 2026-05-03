@@ -21,12 +21,28 @@ type StatsJSON struct {
 
 // StatsScope holds aggregated stats for a single scope (all-time or one season).
 type StatsScope struct {
-	TotalRuns         int64                       `json:"total_runs"`
-	TotalPlayers      int64                       `json:"total_players"`
-	NineOfNinePlayers int64                       `json:"nine_of_nine_players"`
-	CompletionTiers   CompletionTiers             `json:"completion_tiers"`
-	SpecCounts        map[string][]SpecCountEntry `json:"spec_counts"`
-	WeeklyActivity    []WeeklyActivityEntry       `json:"weekly_activity"`
+	TotalRuns         int64                     `json:"total_runs"`
+	TotalPlayers      int64                     `json:"total_players"`
+	NineOfNinePlayers int64                     `json:"nine_of_nine_players"`
+	CompletionTiers   CompletionTiers           `json:"completion_tiers"`
+	SpecCounts        map[string]SpecCountBucket `json:"spec_counts"`
+	WeeklyActivity    []WeeklyActivityEntry     `json:"weekly_activity"`
+}
+
+// SpecCountBucket — entries plus the bucket's distinct-run denominator, so the
+// chart can switch between "total slot count" and "% of runs containing the
+// spec" without recomputing. `ByDungeon` is the same shape grouped per-dungeon,
+// for the spec chart's dungeon filter and the dungeon-distribution chart.
+type SpecCountBucket struct {
+	TotalRuns int64                       `json:"total_runs"`
+	Entries   []SpecCountEntry            `json:"entries"`
+	ByDungeon map[int]DungeonSpecBucket   `json:"by_dungeon"`
+}
+
+// DungeonSpecBucket — sub-bucket for one dungeon within a SpecCountBucket.
+type DungeonSpecBucket struct {
+	TotalRuns int64            `json:"total_runs"`
+	Entries   []SpecCountEntry `json:"entries"`
 }
 
 // CompletionTiers groups the 9-of-9 medal-tier counts.
@@ -48,11 +64,16 @@ type CompletionTier struct {
 }
 
 // SpecCountEntry — one row of the spec-distribution charts.
+// `count` is the total number of run_member spec slots (a run with two of the
+// same spec contributes 2). `runs_with_spec` is the count of distinct runs
+// containing the spec (the same run with two of the spec contributes 1 — capped
+// at the bucket's total_runs).
 type SpecCountEntry struct {
-	SpecID    int    `json:"spec_id"`
-	ClassName string `json:"class_name"`
-	SpecName  string `json:"spec_name"`
-	Count     int64  `json:"count"`
+	SpecID       int    `json:"spec_id"`
+	ClassName    string `json:"class_name"`
+	SpecName     string `json:"spec_name"`
+	Count        int64  `json:"count"`
+	RunsWithSpec int64  `json:"runs_with_spec"`
 }
 
 // WeeklyActivityEntry — one bucket on the activity timeline (Monday-start week).
@@ -386,8 +407,10 @@ func withPercentiles(t CompletionTier, totalPlayers, completedPlayers, allTimePl
 //   title_runs:    same for title
 //   top_50_runs:   run_members where the run was top-50 in scope (globally team-filtered for
 //                  region=="global", regionally team-filtered for a specific region)
-func computeSpecCounts(db *sql.DB, seasonNum int, region string) (map[string][]SpecCountEntry, error) {
-	out := map[string][]SpecCountEntry{}
+// Each bucket carries both `count` (slot occurrences, includes spec stacking)
+// and `runs_with_spec` (distinct run count, capped at the bucket's total_runs).
+func computeSpecCounts(db *sql.DB, seasonNum int, region string) (map[string]SpecCountBucket, error) {
+	out := map[string]SpecCountBucket{}
 
 	allRuns, err := querySpecCountsForRuns(db, seasonNum, region)
 	if err != nil {
@@ -420,36 +443,157 @@ func computeSpecCounts(db *sql.DB, seasonNum int, region string) (map[string][]S
 }
 
 // querySpecCountsForRuns counts run_member spec_ids across all runs in scope.
-func querySpecCountsForRuns(db *sql.DB, seasonNum int, region string) ([]SpecCountEntry, error) {
+// Returns slot count + distinct-run count per spec, plus the bucket's total
+// distinct run count, plus the same broken out per dungeon.
+func querySpecCountsForRuns(db *sql.DB, seasonNum int, region string) (SpecCountBucket, error) {
 	regionJoin := ""
 	if region != "" && region != "global" {
 		regionJoin = "JOIN realms r ON r.id = cr.realm_id"
 	}
+	sClause, sArgs := seasonClauseAndArg(seasonNum, "cr")
+	rClause, rArgs := regionClauseAndArg(region, "r")
+	args := append(sArgs, rArgs...)
+
+	// One query grouped by (dungeon, spec) — we derive both the per-dungeon
+	// breakdown and the overall totals from the same result set, since each
+	// challenge_run has a single dungeon_id (no double-counting across dungeons).
 	q := `
-		SELECT rm.spec_id, COUNT(*)
+		SELECT cr.dungeon_id, rm.spec_id,
+		       COUNT(*) AS slot_count,
+		       COUNT(DISTINCT rm.run_id) AS run_count
 		FROM run_members rm
 		JOIN challenge_runs cr ON rm.run_id = cr.id
 		%s
 		WHERE rm.spec_id IS NOT NULL %s %s
-		GROUP BY rm.spec_id
-		ORDER BY COUNT(*) DESC
+		GROUP BY cr.dungeon_id, rm.spec_id
 	`
+	rows, err := db.Query(fmt.Sprintf(q, regionJoin, sClause, rClause), args...)
+	if err != nil {
+		return SpecCountBucket{}, err
+	}
+	defer rows.Close()
+
+	// dungeonId -> specId -> {count, distinctRuns}
+	perDungeon := make(map[int]map[int]*specRunCount)
+	overall := make(map[int]*specRunCount)
+	for rows.Next() {
+		var dungeonID, specID int
+		var slot, runs int64
+		if err := rows.Scan(&dungeonID, &specID, &slot, &runs); err != nil {
+			return SpecCountBucket{}, err
+		}
+		dm, ok := perDungeon[dungeonID]
+		if !ok {
+			dm = make(map[int]*specRunCount)
+			perDungeon[dungeonID] = dm
+		}
+		dm[specID] = &specRunCount{count: slot, distinctRuns: runs}
+		o := overall[specID]
+		if o == nil {
+			o = &specRunCount{}
+			overall[specID] = o
+		}
+		o.count += slot
+		// Each run lives in one dungeon, so distinct runs sum cleanly across dungeons.
+		o.distinctRuns += runs
+	}
+	if err := rows.Err(); err != nil {
+		return SpecCountBucket{}, err
+	}
+
+	// Per-dungeon distinct run totals AND overall — one query, no scan loop tax.
+	perDungeonTotals, overallTotal, err := queryRunCountsForRuns(db, seasonNum, region)
+	if err != nil {
+		return SpecCountBucket{}, err
+	}
+
+	bucket := SpecCountBucket{
+		TotalRuns: overallTotal,
+		Entries:   entriesFromCounts(overall),
+		ByDungeon: make(map[int]DungeonSpecBucket, len(perDungeonTotals)),
+	}
+	for dungeonID, total := range perDungeonTotals {
+		bucket.ByDungeon[dungeonID] = DungeonSpecBucket{
+			TotalRuns: total,
+			Entries:   entriesFromCounts(perDungeon[dungeonID]),
+		}
+	}
+	return bucket, nil
+}
+
+// queryRunCountsForRuns returns distinct-run counts per dungeon (and the overall
+// sum) within scope, used as the denominator for the spec-distribution chart's
+// "Runs" metric and for the dungeon-distribution chart.
+func queryRunCountsForRuns(db *sql.DB, seasonNum int, region string) (map[int]int64, int64, error) {
+	regionJoin := ""
+	if region != "" && region != "global" {
+		regionJoin = "JOIN realms r ON r.id = cr.realm_id"
+	}
 	sClause, sArgs := seasonClauseAndArg(seasonNum, "cr")
 	rClause, rArgs := regionClauseAndArg(region, "r")
 	args := append(sArgs, rArgs...)
-	rows, err := db.Query(fmt.Sprintf(q, regionJoin, sClause, rClause), args...)
+	q := fmt.Sprintf(`
+		SELECT cr.dungeon_id, COUNT(DISTINCT cr.id)
+		FROM challenge_runs cr
+		%s
+		WHERE 1=1 %s %s
+		GROUP BY cr.dungeon_id
+	`, regionJoin, sClause, rClause)
+	rows, err := db.Query(q, args...)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
-	return scanSpecCounts(rows)
+	perDungeon := make(map[int]int64)
+	var total int64
+	for rows.Next() {
+		var dungeonID int
+		var count int64
+		if err := rows.Scan(&dungeonID, &count); err != nil {
+			return nil, 0, err
+		}
+		perDungeon[dungeonID] = count
+		total += count
+	}
+	return perDungeon, total, rows.Err()
+}
+
+// specRunCount aggregates slot count + distinct-run count for a single spec.
+type specRunCount struct {
+	count, distinctRuns int64
+}
+
+// entriesFromCounts converts a (specId -> {count, distinctRuns}) map into the
+// sorted SpecCountEntry slice used by the chart, attaching class/spec metadata.
+// Sorted descending by count for stable order; the chart re-orders by canonical
+// class+spec layout but tooltips/iteration work nicer on a deterministic input.
+func entriesFromCounts(m map[int]*specRunCount) []SpecCountEntry {
+	if m == nil {
+		return []SpecCountEntry{}
+	}
+	out := make([]SpecCountEntry, 0, len(m))
+	for specID, c := range m {
+		entry := SpecCountEntry{SpecID: specID, Count: c.count, RunsWithSpec: c.distinctRuns}
+		if cls, spec, ok := wow.GetClassAndSpec(specID); ok {
+			entry.ClassName = cls
+			entry.SpecName = spec
+		}
+		out = append(out, entry)
+	}
+	for i := 1; i < len(out); i++ {
+		for j := i; j > 0 && out[j].Count > out[j-1].Count; j-- {
+			out[j], out[j-1] = out[j-1], out[j]
+		}
+	}
+	return out
 }
 
 // querySpecCountsForTier counts run_member spec_ids across runs that beat a per-dungeon threshold.
 // We can't easily express the per-dungeon threshold in a single SQL query, so instead we load
 // (run_id, dungeon_id, duration) rows in scope, decide qualification in Go, then count specs by
-// the qualifying run_id set.
-func querySpecCountsForTier(db *sql.DB, seasonNum int, region string, thresholdF func(dungeonThresholds) int64) ([]SpecCountEntry, error) {
+// the qualifying run_id set. We track both slot occurrences and distinct-run-with-spec counts,
+// and a per-dungeon breakdown for the spec-distribution chart's dungeon filter.
+func querySpecCountsForTier(db *sql.DB, seasonNum int, region string, thresholdF func(dungeonThresholds) int64) (SpecCountBucket, error) {
 	regionJoin := ""
 	if region != "" && region != "global" {
 		regionJoin = "JOIN realms r ON r.id = cr.realm_id"
@@ -464,68 +608,113 @@ func querySpecCountsForTier(db *sql.DB, seasonNum int, region string, thresholdF
 		WHERE 1=1 %s %s
 	`, regionJoin, sClause, rClause), args...)
 	if err != nil {
-		return nil, err
+		return SpecCountBucket{}, err
 	}
-	qualifying := make(map[int64]struct{})
+	// runId -> dungeonId for runs that beat the threshold. Per-dungeon counts
+	// fall out of the same map.
+	qualifyingDungeon := make(map[int64]int)
+	dungeonRunCounts := make(map[int]int64)
 	for rows.Next() {
 		var id int64
 		var dungeonID int
 		var duration int64
 		if err := rows.Scan(&id, &dungeonID, &duration); err != nil {
 			rows.Close()
-			return nil, err
+			return SpecCountBucket{}, err
 		}
 		threshold, ok := dungeonTimerThresholds[dungeonID]
 		if !ok {
 			continue
 		}
 		if beatsTier(duration, thresholdF(threshold)) {
-			qualifying[id] = struct{}{}
+			qualifyingDungeon[id] = dungeonID
+			dungeonRunCounts[dungeonID]++
 		}
 	}
 	rows.Close()
-	if len(qualifying) == 0 {
-		return []SpecCountEntry{}, nil
+	if len(qualifyingDungeon) == 0 {
+		return SpecCountBucket{TotalRuns: 0, Entries: []SpecCountEntry{}, ByDungeon: map[int]DungeonSpecBucket{}}, nil
 	}
 
-	// Count spec_ids in run_members for qualifying runs
-	specCounts := make(map[int]int64)
+	// For qualifying runs, count slot occurrences AND distinct runs per spec,
+	// both overall and per-dungeon. Per-dungeon distinct-run counting reuses
+	// the qualifying map (one run -> one dungeon, no double-count).
+	overall := make(map[int]*specAgg)
+	perDungeon := make(map[int]map[int]*specAgg)
 	memberRows, err := db.Query(`
 		SELECT run_id, spec_id
 		FROM run_members
 		WHERE spec_id IS NOT NULL
 	`)
 	if err != nil {
-		return nil, err
+		return SpecCountBucket{}, err
 	}
 	defer memberRows.Close()
 	for memberRows.Next() {
 		var runID int64
 		var specID int
 		if err := memberRows.Scan(&runID, &specID); err != nil {
-			return nil, err
+			return SpecCountBucket{}, err
 		}
-		if _, ok := qualifying[runID]; !ok {
+		dungeonID, ok := qualifyingDungeon[runID]
+		if !ok {
 			continue
 		}
-		specCounts[specID]++
+		o := overall[specID]
+		if o == nil {
+			o = &specAgg{runs: make(map[int64]struct{})}
+			overall[specID] = o
+		}
+		o.count++
+		o.runs[runID] = struct{}{}
+
+		dm, ok := perDungeon[dungeonID]
+		if !ok {
+			dm = make(map[int]*specAgg)
+			perDungeon[dungeonID] = dm
+		}
+		da := dm[specID]
+		if da == nil {
+			da = &specAgg{runs: make(map[int64]struct{})}
+			dm[specID] = da
+		}
+		da.count++
+		da.runs[runID] = struct{}{}
 	}
-	return specCountsToSlice(specCounts), nil
+
+	bucket := SpecCountBucket{
+		TotalRuns: int64(len(qualifyingDungeon)),
+		Entries:   specAggsToSlice(overall),
+		ByDungeon: make(map[int]DungeonSpecBucket, len(perDungeon)),
+	}
+	for dungeonID, total := range dungeonRunCounts {
+		bucket.ByDungeon[dungeonID] = DungeonSpecBucket{
+			TotalRuns: total,
+			Entries:   specAggsToSlice(perDungeon[dungeonID]),
+		}
+	}
+	return bucket, nil
 }
 
 // querySpecCountsForTop50 counts spec_ids in top-50 runs.
 // region "global" → top 50 globally (filtered); region "us"/"eu"/etc → top 50 within that region.
-func querySpecCountsForTop50(db *sql.DB, seasonNum int, region string) ([]SpecCountEntry, error) {
+// Per-dungeon breakdown is also returned (each dungeon's top 50 contributes 50 runs to its bucket).
+func querySpecCountsForTop50(db *sql.DB, seasonNum int, region string) (SpecCountBucket, error) {
 	rankingType := "global"
 	rankingScope := "filtered"
 	if region != "" && region != "global" {
 		rankingType = "regional"
 		rankingScope = region + "_filtered"
 	}
+	// Group by (dungeon, spec) so we get both per-dungeon and overall totals
+	// from a single result set. cr.dungeon_id comes from joining challenge_runs.
 	q := `
-		SELECT rm.spec_id, COUNT(*)
+		SELECT cr.dungeon_id, rm.spec_id,
+		       COUNT(*) AS slot_count,
+		       COUNT(DISTINCT rm.run_id) AS run_count
 		FROM run_members rm
 		JOIN run_rankings rr ON rm.run_id = rr.run_id
+		JOIN challenge_runs cr ON cr.id = rm.run_id
 		WHERE rm.spec_id IS NOT NULL
 		  AND rr.ranking_type = ?
 		  AND rr.ranking_scope = ?
@@ -536,39 +725,100 @@ func querySpecCountsForTop50(db *sql.DB, seasonNum int, region string) ([]SpecCo
 		q += " AND rr.season_id = ?"
 		args = append(args, seasonNum)
 	}
-	q += " GROUP BY rm.spec_id ORDER BY COUNT(*) DESC"
+	q += " GROUP BY cr.dungeon_id, rm.spec_id"
 
 	rows, err := db.Query(q, args...)
 	if err != nil {
-		return nil, err
+		return SpecCountBucket{}, err
 	}
 	defer rows.Close()
-	return scanSpecCounts(rows)
-}
 
-func scanSpecCounts(rows *sql.Rows) ([]SpecCountEntry, error) {
-	var out []SpecCountEntry
+	perDungeon := make(map[int]map[int]*specRunCount)
+	overall := make(map[int]*specRunCount)
 	for rows.Next() {
-		var specID int
-		var count int64
-		if err := rows.Scan(&specID, &count); err != nil {
-			return nil, err
+		var dungeonID, specID int
+		var slot, runs int64
+		if err := rows.Scan(&dungeonID, &specID, &slot, &runs); err != nil {
+			return SpecCountBucket{}, err
 		}
-		entry := SpecCountEntry{SpecID: specID, Count: count}
-		if cls, spec, ok := wow.GetClassAndSpec(specID); ok {
-			entry.ClassName = cls
-			entry.SpecName = spec
+		dm, ok := perDungeon[dungeonID]
+		if !ok {
+			dm = make(map[int]*specRunCount)
+			perDungeon[dungeonID] = dm
 		}
-		out = append(out, entry)
+		dm[specID] = &specRunCount{count: slot, distinctRuns: runs}
+		o := overall[specID]
+		if o == nil {
+			o = &specRunCount{}
+			overall[specID] = o
+		}
+		o.count += slot
+		o.distinctRuns += runs
 	}
-	return out, rows.Err()
+	if err := rows.Err(); err != nil {
+		return SpecCountBucket{}, err
+	}
+
+	// Per-dungeon distinct top-50 run counts (and total).
+	totalsQ := `
+		SELECT cr.dungeon_id, COUNT(DISTINCT rr.run_id)
+		FROM run_rankings rr
+		JOIN challenge_runs cr ON cr.id = rr.run_id
+		WHERE rr.ranking_type = ?
+		  AND rr.ranking_scope = ?
+		  AND rr.ranking <= 50
+	`
+	totalsArgs := []any{rankingType, rankingScope}
+	if seasonNum != 0 {
+		totalsQ += " AND rr.season_id = ?"
+		totalsArgs = append(totalsArgs, seasonNum)
+	}
+	totalsQ += " GROUP BY cr.dungeon_id"
+	totalRows, err := db.Query(totalsQ, totalsArgs...)
+	if err != nil {
+		return SpecCountBucket{}, err
+	}
+	defer totalRows.Close()
+	dungeonTotals := make(map[int]int64)
+	var grandTotal int64
+	for totalRows.Next() {
+		var dungeonID int
+		var count int64
+		if err := totalRows.Scan(&dungeonID, &count); err != nil {
+			return SpecCountBucket{}, err
+		}
+		dungeonTotals[dungeonID] = count
+		grandTotal += count
+	}
+
+	bucket := SpecCountBucket{
+		TotalRuns: grandTotal,
+		Entries:   entriesFromCounts(overall),
+		ByDungeon: make(map[int]DungeonSpecBucket, len(dungeonTotals)),
+	}
+	for dungeonID, total := range dungeonTotals {
+		bucket.ByDungeon[dungeonID] = DungeonSpecBucket{
+			TotalRuns: total,
+			Entries:   entriesFromCounts(perDungeon[dungeonID]),
+		}
+	}
+	return bucket, nil
 }
 
-// specCountsToSlice converts a map to a sorted SpecCountEntry slice (desc by count).
-func specCountsToSlice(m map[int]int64) []SpecCountEntry {
-	out := make([]SpecCountEntry, 0, len(m))
-	for specID, count := range m {
-		entry := SpecCountEntry{SpecID: specID, Count: count}
+// specAgg holds in-memory aggregation state when we can't count via SQL —
+// see querySpecCountsForTier.
+type specAgg struct {
+	count int64
+	runs  map[int64]struct{}
+}
+
+// specAggsToSlice converts a Go-side aggregation (slot count + run-id set per
+// spec) into a sorted slice — used by querySpecCountsForTier where the
+// per-dungeon threshold makes a SQL-only aggregation awkward.
+func specAggsToSlice(aggs map[int]*specAgg) []SpecCountEntry {
+	out := make([]SpecCountEntry, 0, len(aggs))
+	for specID, a := range aggs {
+		entry := SpecCountEntry{SpecID: specID, Count: a.count, RunsWithSpec: int64(len(a.runs))}
 		if cls, spec, ok := wow.GetClassAndSpec(specID); ok {
 			entry.ClassName = cls
 			entry.SpecName = spec
