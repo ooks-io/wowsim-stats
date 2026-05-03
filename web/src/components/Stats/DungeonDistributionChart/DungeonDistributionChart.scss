@@ -1,0 +1,130 @@
+@use "../../../styles/core/tokens" as *;
+
+.dungeon-distribution-chart {
+  margin: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  &__controls {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: $spacing-xs;
+  }
+
+  &__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+  }
+
+  &__tab {
+    background: transparent;
+    border: none;
+    color: var(--text-tertiary);
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+
+    &.active {
+      color: var(--highlight-color);
+      border-bottom-color: var(--highlight-color);
+    }
+  }
+
+  &__canvas {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  &__svg {
+    display: block;
+    max-width: none;
+  }
+
+  &__empty {
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: $spacing-lg;
+  }
+
+  &__gridline {
+    stroke: var(--border-color);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+
+  &__axis-label {
+    fill: var(--text-tertiary);
+    font-size: 11px;
+    font-family: inherit;
+  }
+
+  &__bar {
+    fill: var(--highlight-color);
+    pointer-events: none;
+  }
+
+  &__highlight {
+    fill: var(--text-tertiary);
+    fill-opacity: 0.12;
+    pointer-events: none;
+    transition: opacity 0.08s ease;
+  }
+
+  &__icon {
+    pointer-events: none;
+  }
+
+  &__overlay {
+    cursor: crosshair;
+  }
+
+  &__tooltip {
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--highlight-color);
+    border-radius: $radius-sm;
+    padding: 6px 10px;
+    font-size: $font-size-xs;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+    white-space: nowrap;
+    z-index: 5;
+  }
+
+  &__tooltip-title {
+    color: var(--text-primary);
+    font-weight: $font-weight-bold;
+    margin-bottom: 2px;
+  }
+
+  &__tooltip-value {
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__tooltip-share {
+    color: var(--text-tertiary);
+  }
+}

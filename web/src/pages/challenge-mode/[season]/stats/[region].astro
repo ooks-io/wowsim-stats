@@ -6,6 +6,7 @@ import LeaderboardScopeFilter from "../../../../components/Leaderboard/Leaderboa
 import KpiCard from "../../../../components/Stats/KpiCard/KpiCard.astro";
 import CompletionTiers from "../../../../components/Stats/CompletionTiers/CompletionTiers.astro";
 import SpecDistributionChart from "../../../../components/Stats/SpecDistributionChart/SpecDistributionChart.astro";
+import DungeonDistributionChart from "../../../../components/Stats/DungeonDistributionChart/DungeonDistributionChart.astro";
 import ActivityChart from "../../../../components/Stats/ActivityChart/ActivityChart.astro";
 import type { StatsJSON, StatsScope } from "../../../../lib/types";
 
@@ -125,7 +126,7 @@ const panelId = `${region}_${seasonKey}`;
 
               <section class="stats-page__section">
                 <header class="stats-page__section-header">
-                  <h2>9-of-9 Completion Tiers</h2>
+                  <h2>Completion Percentiles</h2>
                 </header>
                 <CompletionTiers
                   gold={scope.completion_tiers["9_of_9_gold"]}
@@ -146,6 +147,13 @@ const panelId = `${region}_${seasonKey}`;
                   <h2>Spec Distribution</h2>
                 </header>
                 <SpecDistributionChart buckets={scope.spec_counts} scope={panelId} />
+              </section>
+
+              <section class="stats-page__section">
+                <header class="stats-page__section-header">
+                  <h2>Dungeon Distribution</h2>
+                </header>
+                <DungeonDistributionChart buckets={scope.spec_counts} scope={panelId} />
               </section>
             </section>
           ) : (
