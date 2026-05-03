@@ -1,5 +1,6 @@
 ---
-import "./ClassFilterSelect.scss";
+// Reuses the global `.filter-group` styling (see _utilities.scss) so this
+// dropdown matches the season/region selects in the same filter band.
 
 interface Props {
   currentClass?: string;
@@ -23,8 +24,8 @@ const classes = [
 ];
 ---
 
-<div class="class-filter">
-  <label for="class-filter">Class:</label>
+<div class="filter-group">
+  <label for="class-filter">Class</label>
   <select id="class-filter" name="class">
     {
       classes.map((cls) => (

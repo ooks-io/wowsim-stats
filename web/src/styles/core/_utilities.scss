@@ -668,3 +668,24 @@
 .time--gold     { color: var(--time-gold); }
 .time--platinum { color: var(--time-platinum); }
 .time--title    { color: var(--time-title); }
+
+// Shared filter band — used at the top of CM leaderboard / stats pages to
+// frame the season/region/etc. dropdowns under the type-nav. Extracted here so
+// the styling stays in one place across pages.
+.cm-filters {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  margin: $spacing-lg 0;
+  padding: $spacing-md;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+  }
+}

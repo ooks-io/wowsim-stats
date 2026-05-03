@@ -114,7 +114,7 @@ const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
       currentClass={classParam}
     />
 
-    <div class="filters">
+    <div class="cm-filters">
       <LeaderboardScopeFilter
         currentRegion={regionParam}
         currentRealm={realmParam}
@@ -158,27 +158,9 @@ const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
     margin: 8px 0 16px 0;
   }
 
-  .filters {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin: 16px 0;
-    padding: 12px;
-    background: var(--bg-secondary);
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
-    flex-wrap: wrap;
-  }
-
   @media (max-width: 768px) {
     .leaderboard-page {
       padding: 15px;
-    }
-
-    .filters {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
     }
 
     .page-title {
