@@ -1,0 +1,74 @@
+---
+import PageLayout from "../../layouts/PageLayout.astro";
+---
+
+<PageLayout
+  title="Proving Grounds — Coming Soon"
+  description="Mists of Pandaria Classic Proving Grounds endless-mode leaderboards. Coming once Proving Grounds launches."
+>
+  <main class="proving-grounds">
+    <div class="proving-grounds__inner">
+      <span class="proving-grounds__eyebrow">Coming Soon</span>
+      <h1 class="proving-grounds__title">Proving Grounds</h1>
+    </div>
+  </main>
+</PageLayout>
+
+<style lang="scss">
+  @use "../../styles/core/tokens" as *;
+
+  .proving-grounds {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .proving-grounds__inner {
+    max-width: 640px;
+    width: 100%;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-lg;
+    padding: $spacing-3xl $spacing-2xl;
+    text-align: center;
+  }
+
+  .proving-grounds__eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: var(--bg-primary);
+    background: var(--highlight-color);
+    padding: 4px 10px;
+    border-radius: $radius-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .proving-grounds__title {
+    margin: 0;
+    font-size: 2.4em;
+    color: var(--text-primary);
+    font-weight: $font-weight-bold;
+    line-height: 1.1;
+  }
+
+  @media (max-width: 768px) {
+    .proving-grounds {
+      padding: 15px;
+    }
+
+    .proving-grounds__inner {
+      padding: $spacing-2xl $spacing-lg;
+    }
+
+    .proving-grounds__title {
+      font-size: 1.8em;
+    }
+  }
+</style>
