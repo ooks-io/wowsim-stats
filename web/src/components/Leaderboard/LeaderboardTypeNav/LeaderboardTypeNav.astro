@@ -3,7 +3,7 @@ import "./LeaderboardTypeNav.scss";
 
 interface Props {
   currentType?: "dungeon" | "player";
-  currentTab?: "home" | "dungeon" | "player" | "status";
+  currentTab?: "home" | "dungeon" | "player" | "stats" | "status";
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
@@ -21,29 +21,38 @@ const {
   currentClass = "all",
 } = Astro.props;
 
-// build urls
-const seasonSlug = `season${currentSeason}`;
+// Dungeon/Player leaderboards always require a real season slug. Stats also
+// supports an "all-time" cross-season view (currentSeason === 0). When we're on
+// the all-time stats page, fall back to the latest known season for the other
+// tabs so the URLs still resolve.
+const FALLBACK_SEASON = 2;
+const navSeason = currentSeason > 0 ? currentSeason : FALLBACK_SEASON;
+const navSeasonSlug = `season${navSeason}`;
+const statsSeasonSlug = currentSeason > 0 ? `season${currentSeason}` : "all-time";
 const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
   ? "test-challenge-mode"
   : "challenge-mode";
 
 let dungeonUrl: string;
 if (currentRegion === "global") {
-  dungeonUrl = `/${basePath}/${seasonSlug}/global/${currentDungeon}`;
+  dungeonUrl = `/${basePath}/${navSeasonSlug}/global/${currentDungeon}`;
 } else if (currentRealm && currentRealm !== "all") {
-  dungeonUrl = `/${basePath}/${seasonSlug}/${currentRegion}/${currentRealm}/${currentDungeon}`;
+  dungeonUrl = `/${basePath}/${navSeasonSlug}/${currentRegion}/${currentRealm}/${currentDungeon}`;
 } else {
-  dungeonUrl = `/${basePath}/${seasonSlug}/${currentRegion}/all/${currentDungeon}`;
+  dungeonUrl = `/${basePath}/${navSeasonSlug}/${currentRegion}/all/${currentDungeon}`;
 }
 
 let playerUrl: string;
 if (currentRegion === "global") {
-  playerUrl = `/${basePath}/${seasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
 } else if (currentRealm && currentRealm !== "all") {
-  playerUrl = `/${basePath}/${seasonSlug}/players/${currentRegion}/${currentRealm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}/${currentRealm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
 } else {
-  playerUrl = `/${basePath}/${seasonSlug}/players/${currentRegion}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}${currentClass !== "all" ? `/${currentClass}` : ""}`;
 }
+
+// Stats is region-only (no realm); URL pattern is /(season{N}|all-time)/stats/{region}.
+const statsUrl = `/${basePath}/${statsSeasonSlug}/stats/${currentRegion}`;
 ---
 
 <nav class="leaderboard-type-nav">
@@ -64,6 +73,12 @@ if (currentRegion === "global") {
     class:list={["nav-tab", { active: currentTab === "player" }]}
   >
     Players
+  </a>
+  <a
+    href={statsUrl}
+    class:list={["nav-tab", { active: currentTab === "stats" }]}
+  >
+    Stats
   </a>
   <a
     href="/challenge-mode/status"

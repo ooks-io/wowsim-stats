@@ -208,6 +208,48 @@ export interface HomePlayerEntry {
   avatar_url?: string;
 }
 
+// Stats page types — mirror nix/pkgs/ookstats/src/internal/generator/stats.go.
+// Keep field names in sync.
+
+export interface StatsJSON {
+  generated_at: number;
+  // Outer key: region ("global" | "us" | "eu" | "kr" | "tw").
+  // Inner key: season key ("all_time" | "season_1" | "season_2").
+  scopes: Record<string, Record<string, StatsScope>>;
+}
+
+export interface StatsScope {
+  total_runs: number;
+  total_players: number;
+  nine_of_nine_players: number;
+  completion_tiers: {
+    "9_of_9_gold": StatsCompletionTier;
+    "9_of_9_platinum": StatsCompletionTier;
+    "9_of_9_title": StatsCompletionTier;
+  };
+  spec_counts: Record<string, StatsSpecCountEntry[]>; // keys: "all_runs" | "gold_runs" | "platinum_runs" | "title_runs" | "top_50_runs"
+  weekly_activity: StatsWeeklyActivityEntry[];
+}
+
+export interface StatsCompletionTier {
+  count: number;
+  percentile_of_all_players: number;
+  percentile_of_completed_players: number;
+  percentile_of_all_time_players: number;
+}
+
+export interface StatsSpecCountEntry {
+  spec_id: number;
+  class_name: string;
+  spec_name: string;
+  count: number;
+}
+
+export interface StatsWeeklyActivityEntry {
+  week_start: string; // ISO date or YYYY-MM-DD
+  run_count: number;
+}
+
 // frontend component props
 export interface LeaderboardTableProps {
   initialData?: LeaderboardData;

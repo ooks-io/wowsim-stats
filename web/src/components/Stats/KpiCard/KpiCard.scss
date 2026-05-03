@@ -1,0 +1,31 @@
+@use "../../../styles/core/tokens" as *;
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-lg $spacing-xl;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+
+  &__label {
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__value {
+    color: var(--text-primary);
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__sublabel {
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+  }
+}

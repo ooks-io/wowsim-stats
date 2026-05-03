@@ -1,0 +1,28 @@
+---
+import "./ActivityChart.scss";
+import type { StatsWeeklyActivityEntry } from "../../../lib/types";
+
+interface Props {
+  data: StatsWeeklyActivityEntry[];
+  // unique scope id so multiple charts on a page can each find their own data island
+  scope: string;
+}
+
+const { data, scope } = Astro.props;
+
+// Pre-encode data into the data attribute as JSON; ActivityChart.ts reads it on the client
+// and renders the SVG path + interactive hover layer. Server emits a placeholder.
+const dataJson = JSON.stringify(data);
+---
+
+<figure class="activity-chart" data-scope={scope} data-points={dataJson}>
+  <div class="activity-chart__canvas">
+    {/* Filled by ActivityChart.ts on mount; kept empty server-side to avoid duplicate work. */}
+  </div>
+</figure>
+
+<script>
+  import { initActivityCharts } from "./ActivityChart.ts";
+  initActivityCharts();
+  document.addEventListener("astro:page-load", () => initActivityCharts());
+</script>

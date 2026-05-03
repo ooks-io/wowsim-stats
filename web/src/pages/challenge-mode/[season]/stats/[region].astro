@@ -1,0 +1,245 @@
+---
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
+import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import LeaderboardScopeFilter from "../../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
+import KpiCard from "../../../../components/Stats/KpiCard/KpiCard.astro";
+import CompletionTiers from "../../../../components/Stats/CompletionTiers/CompletionTiers.astro";
+import SpecDistributionChart from "../../../../components/Stats/SpecDistributionChart/SpecDistributionChart.astro";
+import ActivityChart from "../../../../components/Stats/ActivityChart/ActivityChart.astro";
+import type { StatsJSON, StatsScope } from "../../../../lib/types";
+
+export const prerender = false;
+
+// Parse URL params: /challenge-mode/(season{N}|all-time)/stats/{region}
+const seasonParam = (Astro.params.season || "season2").toLowerCase();
+let seasonNumber: number;
+let seasonKey: string;
+if (seasonParam === "all-time") {
+  seasonNumber = 0;
+  seasonKey = "all_time";
+} else {
+  const seasonMatch = seasonParam.match(/^season(\d+)$/);
+  seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 2;
+  seasonKey = `season_${seasonNumber}`;
+}
+
+const VALID_REGIONS = ["global", "us", "eu", "kr", "tw"] as const;
+const rawRegion = (Astro.params.region || "global").toLowerCase();
+const region = (VALID_REGIONS as readonly string[]).includes(rawRegion)
+  ? rawRegion
+  : "global";
+
+let stats: StatsJSON | null = null;
+try {
+  const response = await fetch(`${Astro.url.origin}/api/stats.json`);
+  if (response.ok) {
+    stats = (await response.json()) as StatsJSON;
+  }
+} catch (error) {
+  console.error("[Stats] Failed to load stats.json:", error);
+}
+
+// Resolve the active scope. Falls back to all_time if the requested season key
+// isn't present in the data (e.g. user typed a future season number).
+const regionScopes = stats?.scopes[region] ?? null;
+const scope: StatsScope | null =
+  (regionScopes && (regionScopes[seasonKey] ?? regionScopes.all_time)) || null;
+
+const REGION_LABELS: Record<string, string> = {
+  global: "Global",
+  us: "US",
+  eu: "EU",
+  kr: "KR",
+  tw: "TW",
+};
+const SEASON_LABELS: Record<string, string> = {
+  all_time: "All Time",
+  season_1: "Season 1",
+  season_2: "Season 2",
+};
+
+const generatedAt = stats?.generated_at ? new Date(stats.generated_at) : null;
+const scopeLabel = `${REGION_LABELS[region] ?? region.toUpperCase()} - ${SEASON_LABELS[seasonKey] ?? seasonKey}`;
+// unique chart id so multiple charts on the page (or future panels) don't collide
+const panelId = `${region}_${seasonKey}`;
+---
+
+<PageLayout
+  title={`Challenge Mode Stats — ${scopeLabel}`}
+  description="Aggregate stats across WoW MoP Challenge Mode runs — completion tiers, spec popularity, weekly activity."
+>
+  <main class="stats-page">
+    {
+      !stats && (
+        <div class="stats-page__error">
+          <h2>Couldn't load stats data</h2>
+          <p>The stats.json file is missing or unreachable. Try regenerating it via <code>ookstats generate stats</code>.</p>
+        </div>
+      )
+    }
+
+    {
+      stats && (
+        <>
+          <header class="stats-page__hero">
+            <h1>Challenge Mode Stats</h1>
+            {generatedAt && (
+              <span class="stats-page__updated">
+                Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </header>
+
+          <PlayerSearch />
+
+          <LeaderboardTypeNav
+            currentTab="stats"
+            currentRegion={region}
+            currentSeason={seasonNumber}
+          />
+
+          <div class="cm-filters">
+            <LeaderboardScopeFilter
+              leaderboardType="stats"
+              currentRegion={region}
+              currentSeason={seasonNumber}
+            />
+          </div>
+
+          {scope ? (
+            <section class="stats-page__panel" data-region={region} data-scope-panel={seasonKey}>
+              <div class="stats-page__kpis">
+                <KpiCard label="Total runs" value={scope.total_runs} />
+                <KpiCard label="Characters in runs" value={scope.total_players} />
+                <KpiCard
+                  label="9/9 Characters"
+                  value={scope.nine_of_nine_players}
+                  sublabel={
+                    scope.total_players > 0
+                      ? `${((scope.nine_of_nine_players / scope.total_players) * 100).toFixed(2)}% of all characters`
+                      : ""
+                  }
+                />
+              </div>
+
+              <section class="stats-page__section">
+                <header class="stats-page__section-header">
+                  <h2>9-of-9 Completion Tiers</h2>
+                </header>
+                <CompletionTiers
+                  gold={scope.completion_tiers["9_of_9_gold"]}
+                  platinum={scope.completion_tiers["9_of_9_platinum"]}
+                  title={scope.completion_tiers["9_of_9_title"]}
+                />
+              </section>
+
+              <section class="stats-page__section">
+                <header class="stats-page__section-header">
+                  <h2>Activity Over Time</h2>
+                </header>
+                <ActivityChart data={scope.weekly_activity} scope={panelId} />
+              </section>
+
+              <section class="stats-page__section">
+                <header class="stats-page__section-header">
+                  <h2>Spec Distribution</h2>
+                </header>
+                <SpecDistributionChart buckets={scope.spec_counts} scope={panelId} />
+              </section>
+            </section>
+          ) : (
+            <div class="stats-page__error">
+              <h2>No data for {scopeLabel}</h2>
+              <p>Try another season or region.</p>
+            </div>
+          )}
+        </>
+      )
+    }
+  </main>
+</PageLayout>
+
+<style lang="scss">
+  @use "../../../../styles/core/tokens" as *;
+
+  // Match CM page wrapper (.leaderboard-page on /challenge-mode/* pages).
+  .stats-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .stats-page__error {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-lg;
+    padding: $spacing-2xl;
+    text-align: center;
+    color: var(--text-secondary);
+    code {
+      background: var(--bg-primary);
+      padding: 2px 6px;
+      border-radius: $radius-sm;
+      color: var(--highlight-color);
+    }
+  }
+
+  .stats-page__hero {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+    margin: 8px 0 16px 0;
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      color: var(--text-primary);
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  .stats-page__updated {
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+  }
+
+  .stats-page__panel {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-2xl;
+  }
+
+  .stats-page__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: $spacing-md;
+  }
+
+  .stats-page__section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .stats-page__section-header h2 {
+    margin: 0;
+    font-size: $font-size-2xl;
+    color: var(--text-primary);
+    font-weight: $font-weight-semibold;
+  }
+
+  // Mobile overrides — placed at the end of the stylesheet so they win the cascade
+  // over the desktop rules above (same selector specificity).
+  @media (max-width: 768px) {
+    .stats-page {
+      padding: 15px;
+    }
+
+    .stats-page__hero h1 {
+      font-size: 1.5em;
+    }
+  }
+</style>

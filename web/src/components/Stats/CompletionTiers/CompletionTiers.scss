@@ -1,0 +1,86 @@
+@use "../../../styles/core/tokens" as *;
+
+.completion-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: $spacing-md;
+
+  &__tier {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-md;
+    padding: $spacing-md $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  // Mobile: cards stack vertically one per row (the grid `auto-fit` already
+  // collapses to a single column at this width). Inside each card, the
+  // 3-column percentile row gets cramped — the uppercase labels wrap awkwardly
+  // — so we flip it to a stacked key-value layout (label left, value right).
+  @media (max-width: 768px) {
+    .completion-tiers__pcts {
+      flex-direction: column;
+      gap: $spacing-xs;
+
+      div {
+        flex-direction: row;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: $spacing-md;
+      }
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-sm;
+  }
+
+  &__label {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-md;
+
+    // Tier-tinted label using the shared time-tier tokens.
+    &--gold     { color: var(--time-gold); }
+    &--platinum { color: var(--time-platinum); }
+    &--title    { color: var(--time-title); }
+  }
+
+  &__count {
+    color: var(--text-primary);
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__pcts {
+    display: flex;
+    gap: $spacing-lg;
+    margin: 0;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    dt {
+      color: var(--text-tertiary);
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    dd {
+      color: var(--text-secondary);
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

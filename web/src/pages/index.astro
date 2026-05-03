@@ -71,7 +71,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
           {currentSeason && (
             <section class="home__section">
               <header class="home__section-header">
-                <h2>Top Players — {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
+                <h2>Top Players - {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
               </header>
               <div class="home__players-grid">
                 <TopPlayersList
@@ -111,7 +111,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
           {currentSeason && (
             <section class="home__section">
               <header class="home__section-header">
-                <h2>Dungeon Records — {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
+                <h2>Dungeon Records - {currentSeason.season_name || `Season ${currentSeasonKey}`}</h2>
               </header>
               <div class="home__dungeon-grid">
                 {dungeonEntries.map(([slug, runs]) => (

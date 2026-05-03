@@ -1,0 +1,94 @@
+@use "../../../styles/core/tokens" as *;
+
+.activity-chart {
+  margin: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  &__canvas {
+    position: relative;
+    width: 100%;
+    min-height: 220px;
+  }
+
+  &__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  &__empty {
+    color: var(--text-tertiary);
+    text-align: center;
+    padding: $spacing-lg;
+  }
+
+  // SVG element styling — applied via class attribute on createElementNS()
+  &__gridline {
+    stroke: var(--border-color);
+    stroke-width: 1;
+    stroke-dasharray: 2 4;
+  }
+
+  &__axis-label {
+    fill: var(--text-tertiary);
+    font-size: 11px;
+    font-family: inherit;
+  }
+
+  &__area {
+    fill: var(--highlight-color);
+    fill-opacity: 0.18;
+  }
+
+  &__line {
+    stroke: var(--highlight-color);
+    stroke-width: 2;
+    fill: none;
+  }
+
+  &__crosshair {
+    stroke: var(--text-secondary);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+
+  &__dot {
+    fill: var(--highlight-color);
+    stroke: var(--bg-secondary);
+    stroke-width: 2;
+  }
+
+  &__overlay {
+    cursor: crosshair;
+  }
+
+  &__tooltip {
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--highlight-color);
+    border-radius: $radius-sm;
+    padding: 6px 10px;
+    font-size: $font-size-xs;
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+    white-space: nowrap;
+    z-index: 5;
+  }
+
+  &__tooltip-date {
+    color: var(--text-tertiary);
+    margin-bottom: 2px;
+  }
+
+  &__tooltip-value {
+    color: var(--text-primary);
+    font-weight: $font-weight-bold;
+    font-variant-numeric: tabular-nums;
+  }
+}

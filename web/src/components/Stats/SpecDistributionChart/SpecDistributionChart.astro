@@ -1,0 +1,65 @@
+---
+import "./SpecDistributionChart.scss";
+import type { StatsSpecCountEntry } from "../../../lib/types";
+
+interface Props {
+  buckets: Record<string, StatsSpecCountEntry[]>;
+  // unique scope id so multiple charts on a page can each find their own data island
+  scope: string;
+}
+
+const { buckets, scope } = Astro.props;
+
+const BUCKET_TABS: Array<{ key: string; label: string }> = [
+  { key: "all_runs", label: "All Runs" },
+  { key: "gold_runs", label: "Gold" },
+  { key: "platinum_runs", label: "Platinum" },
+  { key: "title_runs", label: "Title" },
+  { key: "top_50_runs", label: "Top 50" },
+];
+
+const ROLE_TABS: Array<{ key: string; label: string }> = [
+  { key: "all", label: "All Roles" },
+  { key: "tank", label: "Tank" },
+  { key: "healer", label: "Healer" },
+  { key: "dps", label: "DPS" },
+];
+
+// data-buckets carries all 5 buckets so client can switch without refetching
+const dataJson = JSON.stringify(buckets);
+---
+
+<figure class="spec-distribution-chart" data-scope={scope} data-buckets={dataJson}>
+  <div class="spec-distribution-chart__controls">
+    <nav class="spec-distribution-chart__tabs" role="tablist" aria-label="Run filter">
+      {BUCKET_TABS.map((b, i) => (
+        <button
+          type="button"
+          class:list={["spec-distribution-chart__tab", { active: i === 0 }]}
+          role="tab"
+          aria-selected={i === 0 ? "true" : "false"}
+          data-bucket-key={b.key}
+        >
+          {b.label}
+        </button>
+      ))}
+    </nav>
+    <div class="filter-group spec-distribution-chart__role">
+      <label for={`spec-dist-role-${scope}`}>Role</label>
+      <select id={`spec-dist-role-${scope}`} data-role-select>
+        {ROLE_TABS.map((r) => (
+          <option value={r.key}>{r.label}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+  <div class="spec-distribution-chart__canvas">
+    {/* Filled by SpecDistributionChart.ts on mount; kept empty server-side. */}
+  </div>
+</figure>
+
+<script>
+  import { initSpecDistributionCharts } from "./SpecDistributionChart.ts";
+  initSpecDistributionCharts();
+  document.addEventListener("astro:page-load", () => initSpecDistributionCharts());
+</script>

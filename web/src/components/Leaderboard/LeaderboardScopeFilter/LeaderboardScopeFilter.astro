@@ -7,7 +7,7 @@ interface Props {
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
-  leaderboardType?: "dungeon" | "player";
+  leaderboardType?: "dungeon" | "player" | "stats";
   currentDungeon?: string;
   currentClass?: string;
 }
@@ -21,8 +21,14 @@ const {
   currentClass = "all",
 } = Astro.props;
 
-// Fetch available seasons from API
-let seasonOptions: { id: number; name: string }[] = [];
+// Stats only ships per-region data, not per-realm — hide the realm dropdown
+// and force the realm arg to "" when building stats URLs.
+const supportsRealm = leaderboardType !== "stats";
+
+// Fetch available seasons from API. Each option carries its URL slug because
+// the slug isn't always `season${id}` — stats also offers an "All Time" option
+// rendered as `all-time` in the URL.
+let seasonOptions: { id: number; name: string; slug: string }[] = [];
 try {
   const response = await fetch(
     `${Astro.url.origin}/api/leaderboard/season/index.json`,
@@ -32,12 +38,23 @@ try {
     seasonOptions = data.data.map((season: any) => ({
       id: season.id,
       name: season.name || `Season ${season.id}`,
+      slug: `season${season.id}`,
     }));
   }
 } catch (error) {
   console.error("Failed to fetch seasons:", error);
   // Fallback to current season if API fails
-  seasonOptions = [{ id: currentSeason, name: `Season ${currentSeason}` }];
+  seasonOptions = [
+    { id: currentSeason, name: `Season ${currentSeason}`, slug: `season${currentSeason}` },
+  ];
+}
+
+// Stats page also offers a cross-season "All Time" view (id=0, slug=all-time).
+if (leaderboardType === "stats") {
+  seasonOptions = [
+    ...seasonOptions,
+    { id: 0, name: "All Time", slug: "all-time" },
+  ];
 }
 
 // Scope options: Global + individual regions
@@ -75,23 +92,28 @@ const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
   : "challenge-mode";
 const seasonSlug = `season${currentSeason}`;
 
-function buildUrl(region: string, realm: string = ""): string {
+function buildUrl(region: string, realm: string = "", seasonSlugOverride?: string): string {
+  const slug = seasonSlugOverride ?? seasonSlug;
+  if (leaderboardType === "stats") {
+    // Stats URL — region only, no realm.
+    return `/${basePath}/${slug}/stats/${region}`;
+  }
   if (leaderboardType === "player") {
     // Player leaderboard URL
     if (region === "global") {
-      return `/${basePath}/${seasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
     } else if (realm && realm !== "all") {
-      return `/${basePath}/${seasonSlug}/players/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/players/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
     } else {
-      return `/${basePath}/${seasonSlug}/players/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/players/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
     }
   } else {
     // Dungeon leaderboard URL
     if (region === "global") {
-      return `/${basePath}/${seasonSlug}/global/${currentDungeon}`;
+      return `/${basePath}/${slug}/global/${currentDungeon}`;
     } else {
       const realmSlug = realm && realm !== "all" ? realm : "all";
-      return `/${basePath}/${seasonSlug}/${region}/${realmSlug}/${currentDungeon}`;
+      return `/${basePath}/${slug}/${region}/${realmSlug}/${currentDungeon}`;
     }
   }
 }
@@ -106,10 +128,7 @@ function buildUrl(region: string, realm: string = ""): string {
           <option
             value={season.id}
             selected={season.id === currentSeason}
-            data-url={buildUrl(currentRegion, currentRealm).replace(
-              `season${currentSeason}`,
-              `season${season.id}`,
-            )}
+            data-url={buildUrl(currentRegion, currentRealm, season.slug)}
           >
             {season.name}
           </option>
@@ -139,7 +158,7 @@ function buildUrl(region: string, realm: string = ""): string {
   </div>
 
   {
-    currentRegion !== "global" && realmOptions.length > 0 && (
+    supportsRealm && currentRegion !== "global" && realmOptions.length > 0 && (
       <div class="filter-group">
         <label for="realm-filter">Realm</label>
         <select id="realm-filter" data-param="realm">

@@ -1,0 +1,47 @@
+---
+import "./CompletionTiers.scss";
+import type { StatsCompletionTier } from "../../../lib/types";
+
+interface Props {
+  gold: StatsCompletionTier;
+  platinum: StatsCompletionTier;
+  title: StatsCompletionTier;
+}
+
+const { gold, platinum, title } = Astro.props;
+
+// Tier labels use the time-tier color tokens (matches the in-game/addon palette
+// for gold / platinum / title-aka-remarkable times).
+const tiers = [
+  { key: "gold", label: "9/9 Gold", data: gold },
+  { key: "platinum", label: "9/9 Platinum", data: platinum },
+  { key: "title", label: "9/9 Title", data: title },
+];
+---
+
+<div class="completion-tiers">
+  {
+    tiers.map(({ key, label, data }) => (
+      <article class={`completion-tiers__tier completion-tiers__tier--${key}`}>
+        <header class="completion-tiers__header">
+          <span class={`completion-tiers__label completion-tiers__label--${key}`}>{label}</span>
+          <span class="completion-tiers__count">{data.count.toLocaleString("en-US")}</span>
+        </header>
+        <dl class="completion-tiers__pcts">
+          <div>
+            <dt>of season characters</dt>
+            <dd>{data.percentile_of_all_players.toFixed(2)}%</dd>
+          </div>
+          <div>
+            <dt>of 9/9 characters</dt>
+            <dd>{data.percentile_of_completed_players.toFixed(2)}%</dd>
+          </div>
+          <div>
+            <dt>of all-time characters</dt>
+            <dd>{data.percentile_of_all_time_players.toFixed(2)}%</dd>
+          </div>
+        </dl>
+      </article>
+    ))
+  }
+</div>

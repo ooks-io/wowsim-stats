@@ -1,0 +1,19 @@
+---
+import "./KpiCard.scss";
+
+interface Props {
+  label: string;
+  value: string | number;
+  sublabel?: string;
+}
+
+const { label, value, sublabel } = Astro.props;
+
+const displayValue = typeof value === "number" ? value.toLocaleString("en-US") : value;
+---
+
+<article class="kpi-card">
+  <span class="kpi-card__label">{label}</span>
+  <span class="kpi-card__value">{displayValue}</span>
+  {sublabel && <span class="kpi-card__sublabel">{sublabel}</span>}
+</article>
