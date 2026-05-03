@@ -77,10 +77,11 @@
     }
   }
 
+  // Color comes from the global `.time / .time--*` classes applied by DungeonTime —
+  // we deliberately don't set `color` here so tier coloring wins.
   &__duration {
     flex: 0 0 auto;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    color: var(--text-primary);
     font-weight: $font-weight-semibold;
     font-size: $font-size-base;
   }

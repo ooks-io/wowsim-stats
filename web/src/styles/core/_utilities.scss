@@ -656,3 +656,15 @@
     transform: rotate(360deg);
   }
 }
+
+// CM run-time tier classes — applied globally so server-rendered (.astro) and
+// client-rendered (TS) widgets can share the same colorization. Tints the time
+// text only; layout is unchanged. Pair with `.time` (no-op marker) so consumers
+// can grep "class=\"time" to find all colorized timers.
+.time {
+  font-variant-numeric: tabular-nums;
+}
+
+.time--gold     { color: var(--time-gold); }
+.time--platinum { color: var(--time-platinum); }
+.time--title    { color: var(--time-title); }

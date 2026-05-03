@@ -1,8 +1,9 @@
 ---
 import "./ChallengeRun.scss";
-import { formatDurationMMSS, formatShortDate } from "../../../lib/utils";
+import { formatShortDate } from "../../../lib/utils";
 import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
 import TeamComposition from "../../Leaderboard/TeamComposition/TeamComposition.astro";
+import DungeonTime from "../../DungeonTime/DungeonTime.astro";
 import type { TeamMember } from "../../../lib/types";
 
 interface Props {
@@ -62,7 +63,11 @@ const bracketClass = bracket ? `bracket-${bracket}` : "";
     <TeamComposition members={teamMembers} />
   </div>
 
-  <span class="challenge-run__duration">{formatDurationMMSS(durationMs)}</span>
+  <DungeonTime
+    class="challenge-run__duration"
+    dungeonSlug={dungeonSlug}
+    durationMs={durationMs}
+  />
 
   <time
     class="challenge-run__date"

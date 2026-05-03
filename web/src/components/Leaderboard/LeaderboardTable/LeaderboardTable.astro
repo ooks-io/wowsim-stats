@@ -6,6 +6,7 @@ import TableCell from "../../Table/TableCell.astro";
 import TeamComposition from "../TeamComposition/TeamComposition.astro";
 import PlayerLink from "../PlayerLink/PlayerLink.astro";
 import { formatDurationMMSS } from "../../../lib/utils";
+import DungeonTime from "../../DungeonTime/DungeonTime.astro";
 import "./LeaderboardTable.scss";
 
 type LeaderboardType = "dungeon" | "player";
@@ -73,7 +74,6 @@ const formatTime = (ms: number) => {
           {runs.length > 0 ? (
             runs.map((run, index) => {
               const rank = (currentPage - 1) * pageSize + index + 1;
-              const duration = formatTime(run.duration);
               const date = formatDate(run.completed_timestamp);
               const bracketClass = run.ranking_percentile
                 ? `bracket-${run.ranking_percentile.toLowerCase()}`
@@ -86,7 +86,13 @@ const formatTime = (ms: number) => {
                       {rank}
                     </span>
                   </TableCell>
-                  <TableCell label="Time">{duration}</TableCell>
+                  <TableCell label="Time">
+                    <DungeonTime
+                      dungeonId={Number(dungeon) || null}
+                      dungeonSlug={dungeon}
+                      durationMs={run.duration}
+                    />
+                  </TableCell>
                   <TableCell label="Team">
                     <TeamComposition
                       members={run.members}

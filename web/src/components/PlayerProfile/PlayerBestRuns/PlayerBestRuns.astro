@@ -4,7 +4,8 @@ import Table from "../../Table/Table.astro";
 import TableRow from "../../Table/TableRow.astro";
 import TableCell from "../../Table/TableCell.astro";
 import TeamComposition from "../../Leaderboard/TeamComposition/TeamComposition.astro";
-import { formatDurationMMSS, buildLeaderboardURL } from "../../../lib/utils";
+import { buildLeaderboardURL } from "../../../lib/utils";
+import DungeonTime from "../../DungeonTime/DungeonTime.astro";
 import { formatRankingWithBracket } from "../../../lib/ranking-utils";
 import { getDungeonIconUrl } from "../../../lib/dungeonIcons";
 import { getEffectiveRealmSlug } from "../../../lib/realms";
@@ -80,7 +81,6 @@ const selectedSeasonId =
 
 const shouldShowSeasonSelector = seasonEntries.length > 1;
 
-const formatTime = (ms: number) => formatDurationMMSS(ms);
 ---
 
 {
@@ -145,7 +145,6 @@ const formatTime = (ms: number) => formatDurationMMSS(ms);
                   </div>
 
                   {entry.runs.map((run) => {
-                    const duration = formatTime(run.duration);
                     const dungeonSlug = (run as any).dungeon_slug || "";
                     const iconUrl = getDungeonIconUrl(
                       dungeonSlug,
@@ -228,7 +227,12 @@ const formatTime = (ms: number) => formatDurationMMSS(ms);
                             <span class="dungeon-name">{run.dungeon_name}</span>
                           </div>
                         </TableCell>
-                        <TableCell label="Time">{duration}</TableCell>
+                        <TableCell label="Time">
+                          <DungeonTime
+                            dungeonId={run.dungeon_id}
+                            durationMs={run.duration}
+                          />
+                        </TableCell>
                         <TableCell label="Team">
                           <TeamComposition
                             members={members}
@@ -352,7 +356,6 @@ const formatTime = (ms: number) => formatDurationMMSS(ms);
                 </div>
 
                 {entry.runs.map((run) => {
-                  const duration = formatTime(run.duration);
                   const dungeonSlug = (run as any).dungeon_slug || "";
                   const iconUrl = getDungeonIconUrl(
                     dungeonSlug,

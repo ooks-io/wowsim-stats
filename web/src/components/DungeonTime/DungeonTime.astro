@@ -1,0 +1,36 @@
+---
+import { formatDurationMMSS } from "../../lib/utils";
+import {
+  getTimeClass,
+  getTierTooltip,
+  dungeonIdFromSlug,
+} from "../../lib/dungeon-thresholds";
+
+interface Props {
+  // Pass whichever the caller has — id wins if both are supplied.
+  dungeonId?: number | null;
+  dungeonSlug?: string | null;
+  durationMs: number;
+  // Override the displayed text (default: "M:SS").
+  display?: string;
+  // Extra classes appended after the tier class.
+  class?: string;
+}
+
+const {
+  dungeonId,
+  dungeonSlug,
+  durationMs,
+  display,
+  class: extraClass,
+} = Astro.props;
+
+const resolvedId = dungeonId ?? dungeonIdFromSlug(dungeonSlug);
+const tierClass = resolvedId != null ? getTimeClass(resolvedId, durationMs) : null;
+const tooltip = resolvedId != null ? getTierTooltip(resolvedId, durationMs) : null;
+const text = display ?? formatDurationMMSS(durationMs);
+---
+
+<span class:list={["time", tierClass, extraClass]} title={tooltip}>
+  {text}
+</span>

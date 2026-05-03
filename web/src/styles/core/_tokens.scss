@@ -88,4 +88,11 @@ $font-weight-bold: 700;
   --bracket-rare: var(--quality-rare);
   --bracket-uncommon: var(--quality-uncommon);
   --bracket-common: var(--quality-poor);
+
+  /* CM run-time tier colors — applied to the displayed time value to indicate
+     which threshold a run beat. Palette matches the ChallengeModeTimer addon
+     (Title is also called "Remarkable" in-game). */
+  --time-gold: #ffd100;
+  --time-platinum: #e6e6ff;
+  --time-title: #4dccff;
 }
