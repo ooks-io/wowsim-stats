@@ -1,0 +1,298 @@
+---
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
+import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import GearSpecPicker from "../../../../components/Gear/GearSpecPicker/GearSpecPicker.astro";
+import GearSlotCard from "../../../../components/Gear/GearSlotCard/GearSlotCard.astro";
+import Callout from "../../../../components/Callout/Callout.astro";
+import { specBySlug, SPECS } from "../../../../lib/specs";
+import type { GearJSON, GearSpecBucket } from "../../../../lib/types";
+
+export const prerender = false;
+
+const seasonParam = (Astro.params.season || "season2").toLowerCase();
+const seasonMatch = seasonParam.match(/^season(\d+)$/);
+const seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 2;
+const seasonKey = `season_${seasonNumber}`;
+
+const specSlug = (Astro.params.spec || "monk-mistweaver").toLowerCase();
+const spec = specBySlug(specSlug) ?? SPECS[0];
+
+let gear: GearJSON | null = null;
+try {
+  const response = await fetch(`${Astro.url.origin}/api/gear.json`);
+  if (response.ok) {
+    gear = (await response.json()) as GearJSON;
+  }
+} catch (error) {
+  console.error("[Gear] Failed to load gear.json:", error);
+}
+
+const seasonScope = gear?.scopes[seasonKey] ?? null;
+const bucket: GearSpecBucket | null =
+  (seasonScope && seasonScope[String(spec.id)]) || null;
+
+// Slot ordering for the per-slot grid — left column is armor (head→feet),
+// right column is jewelry + weapons. Mirrors the WoW paper-doll convention
+// and reads top-to-bottom in each column.
+const SLOT_ORDER_LEFT = [
+  "HEAD",
+  "NECK",
+  "SHOULDER",
+  "BACK",
+  "CHEST",
+  "WRIST",
+];
+const SLOT_ORDER_RIGHT = [
+  "HANDS",
+  "WAIST",
+  "LEGS",
+  "FEET",
+  "FINGER",
+  "TRINKET",
+];
+const SLOT_ORDER_BOTTOM = ["MAIN_HAND", "OFF_HAND"];
+
+const SLOT_LABELS: Record<string, string> = {
+  HEAD: "Head",
+  NECK: "Neck",
+  SHOULDER: "Shoulder",
+  BACK: "Back",
+  CHEST: "Chest",
+  WRIST: "Wrist",
+  HANDS: "Hands",
+  WAIST: "Waist",
+  LEGS: "Legs",
+  FEET: "Feet",
+  FINGER: "Finger",
+  TRINKET: "Trinket",
+  MAIN_HAND: "Main Hand",
+  OFF_HAND: "Off Hand",
+};
+
+const generatedAt = gear?.generated_at ? new Date(gear.generated_at) : null;
+---
+
+<PageLayout
+  title={`${spec.specName} ${spec.className} Gear — Season ${seasonNumber}`}
+  description={`Most popular gear among the top ${spec.specName} ${spec.className} players in MoP Classic Challenge Mode Season ${seasonNumber}.`}
+>
+  <main class="gear-page">
+    {!gear && (
+      <div class="gear-page__error">
+        <h2>Couldn't load gear data</h2>
+        <p>The gear.json file is missing or unreachable. Try regenerating it via <code>ookstats generate gear</code>.</p>
+      </div>
+    )}
+
+    {gear && (
+      <>
+        <header class="gear-page__hero">
+          <h1>Challenge Mode Gear</h1>
+          {generatedAt && (
+            <span class="gear-page__updated">
+              Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+            </span>
+          )}
+        </header>
+
+        <PlayerSearch />
+
+        <LeaderboardTypeNav
+          currentTab="gear"
+          currentSeason={seasonNumber}
+          currentSpec={spec.slug}
+        />
+
+        <Callout type="caution" title="Not a BiS list">
+          <p>
+            This page reflects what the top sampled players happen to be wearing. For an actual best-in-slot
+            recommendation, use the
+            <a
+              href="https://docs.google.com/spreadsheets/d/1dh3rD1FRV8fp8xCGWcQk-enzhwLhPntfDPtQIeNrpLc/edit?pli=1&gid=2016422391"
+              target="_blank"
+              rel="noopener noreferrer"
+            >community-maintained BiS sheet</a>
+            or ask in the
+            <a
+              href="https://discord.gg/etxRSDNxFr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >Challenge Mode Discord</a>.
+          </p>
+        </Callout>
+
+        <GearSpecPicker activeSpec={spec.slug} season={seasonNumber} />
+
+        <header class="gear-page__spec-header">
+          <h2 class:list={["gear-page__spec-name", `text-${spec.className.toLowerCase().replace(/\s+/g, "-")}`]}>
+            {spec.specName} {spec.className}
+          </h2>
+          <span class="gear-page__pool">
+            {bucket
+              ? `Top ${bucket.total_players} of 100 sampled — Season ${seasonNumber}`
+              : `No qualifying gear data for Season ${seasonNumber}`}
+          </span>
+        </header>
+
+        {bucket && bucket.total_players > 0 ? (
+          <div class="gear-page__grid">
+            <div class="gear-page__column">
+              {SLOT_ORDER_LEFT.map((slot) => (
+                <GearSlotCard
+                  slot={slot}
+                  label={SLOT_LABELS[slot] ?? slot}
+                  bucket={bucket.slots[slot]}
+                  poolTotal={bucket.total_players}
+                />
+              ))}
+            </div>
+            <div class="gear-page__column">
+              {SLOT_ORDER_RIGHT.map((slot) => (
+                <GearSlotCard
+                  slot={slot}
+                  label={SLOT_LABELS[slot] ?? slot}
+                  bucket={bucket.slots[slot]}
+                  poolTotal={bucket.total_players}
+                />
+              ))}
+            </div>
+            <div class="gear-page__weapons">
+              {SLOT_ORDER_BOTTOM.map((slot) => (
+                <GearSlotCard
+                  slot={slot}
+                  label={SLOT_LABELS[slot] ?? slot}
+                  bucket={bucket.slots[slot]}
+                  poolTotal={bucket.total_players}
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div class="gear-page__empty">
+            <p>
+              No gear data available for {spec.specName} {spec.className} in Season {seasonNumber} —
+              the spec may have too few sampled players, or none survived spec-stat validation.
+            </p>
+          </div>
+        )}
+      </>
+    )}
+  </main>
+</PageLayout>
+
+<style lang="scss">
+  @use "../../../../styles/core/tokens" as *;
+
+  .gear-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .gear-page__error,
+  .gear-page__empty {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-lg;
+    padding: $spacing-2xl;
+    text-align: center;
+    color: var(--text-secondary);
+
+    code {
+      background: var(--bg-primary);
+      padding: 2px 6px;
+      border-radius: $radius-sm;
+      color: var(--highlight-color);
+    }
+  }
+
+  .gear-page__hero {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+    margin: 8px 0 16px 0;
+
+    h1 {
+      margin: 0;
+      font-size: 2em;
+      color: var(--text-primary);
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  .gear-page__updated {
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+  }
+
+  .gear-page__spec-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+    margin: $spacing-lg 0 $spacing-md;
+  }
+
+  .gear-page__spec-name {
+    margin: 0;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+  }
+
+  .gear-page__pool {
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+  }
+
+  .gear-page__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: $spacing-md;
+    grid-template-areas:
+      "left right"
+      "weapons weapons";
+  }
+
+  .gear-page__column {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    &:nth-of-type(1) { grid-area: left; }
+    &:nth-of-type(2) { grid-area: right; }
+  }
+
+  .gear-page__weapons {
+    grid-area: weapons;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-md;
+  }
+
+  @media (max-width: 768px) {
+    .gear-page {
+      padding: 15px;
+    }
+
+    .gear-page__hero h1 {
+      font-size: 1.5em;
+    }
+
+    .gear-page__grid {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "left"
+        "right"
+        "weapons";
+    }
+
+    .gear-page__weapons {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

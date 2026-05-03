@@ -261,6 +261,35 @@ export interface StatsSpecCountEntry {
   runs_with_spec: number;
 }
 
+// Gear popularity (gear.json) — top items per slot for the top players in
+// each (season, spec) combo. See nix/.../generator/gear.go for details.
+export interface GearJSON {
+  generated_at: number;
+  // Outer key: season key ("season_1" | "season_2"). Inner key: spec_id (string).
+  scopes: Record<string, Record<string, GearSpecBucket>>;
+}
+
+export interface GearSpecBucket {
+  // Number of qualifying players whose gear contributed to this bucket.
+  total_players: number;
+  // Keyed by canonical slot name (HEAD, CHEST, FINGER, TRINKET, ...).
+  slots: Record<string, GearSlotBucket>;
+}
+
+export interface GearSlotBucket {
+  // Number of qualifying players who had any item in this slot.
+  players_with_slot: number;
+  items: GearItemEntry[];
+}
+
+export interface GearItemEntry {
+  item_id: number;
+  name: string;
+  icon?: string;
+  quality: number;
+  count: number;
+}
+
 export interface StatsWeeklyActivityEntry {
   week_start: string; // ISO date or YYYY-MM-DD
   run_count: number;

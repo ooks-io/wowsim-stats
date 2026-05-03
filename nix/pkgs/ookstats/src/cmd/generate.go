@@ -142,6 +142,32 @@ var generateStatsCmd = &cobra.Command{
 	},
 }
 
+var generateGearCmd = &cobra.Command{
+	Use:   "gear",
+	Short: "Generate gear popularity JSON (per-spec top items per slot, validated by spec primary stat)",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outDir, _ := cmd.Flags().GetString("out")
+		if strings.TrimSpace(outDir) == "" {
+			return errors.New("--out is required")
+		}
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to db: %w", err)
+		}
+		defer db.Close()
+
+		if err := os.MkdirAll(filepath.Join(outDir, "api"), 0o755); err != nil {
+			return fmt.Errorf("mkdir base: %w", err)
+		}
+
+		if err := generator.GenerateGear(db, outDir); err != nil {
+			return err
+		}
+		fmt.Printf("\nGear JSON generated at %s/api/gear.json\n", outDir)
+		return nil
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.AddCommand(generateAPICmd)
@@ -160,4 +186,7 @@ func init() {
 
 	generateCmd.AddCommand(generateStatsCmd)
 	generateStatsCmd.Flags().String("out", "web/public", "Output directory (api/stats.json will be written under it)")
+
+	generateCmd.AddCommand(generateGearCmd)
+	generateGearCmd.Flags().String("out", "web/public", "Output directory (api/gear.json will be written under it)")
 }

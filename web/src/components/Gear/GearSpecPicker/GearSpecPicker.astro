@@ -1,0 +1,61 @@
+---
+import "./GearSpecPicker.scss";
+import { SPECS } from "../../../lib/specs";
+import { getSpecIcon } from "../../../lib/wow-constants";
+
+interface Props {
+  activeSpec: string; // slug
+  season: number;
+}
+
+const { activeSpec, season } = Astro.props;
+
+// Group by class so the picker reads like a class-spec ladder.
+type Group = { className: string; specs: typeof SPECS };
+const groups: Group[] = [];
+for (const s of SPECS) {
+  let group = groups.find((g) => g.className === s.className);
+  if (!group) {
+    group = { className: s.className, specs: [] };
+    groups.push(group);
+  }
+  group.specs.push(s);
+}
+
+function classSlug(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
+---
+
+<nav class="gear-spec-picker" aria-label="Spec picker">
+  {groups.map((group) => (
+    <div class="gear-spec-picker__class">
+      <span class:list={["gear-spec-picker__class-name", `text-${classSlug(group.className)}`]}>
+        {group.className}
+      </span>
+      <div class="gear-spec-picker__specs">
+        {group.specs.map((s) => {
+          const icon = getSpecIcon(s.className, s.specName);
+          const active = s.slug === activeSpec;
+          return (
+            <a
+              class:list={["gear-spec-picker__spec", { active }]}
+              href={`/challenge-mode/season${season}/gear/${s.slug}`}
+              title={`${s.specName} ${s.className}`}
+              aria-current={active ? "page" : undefined}
+            >
+              {icon && (
+                <img
+                  class="gear-spec-picker__icon"
+                  src={icon}
+                  alt={`${s.specName} ${s.className}`}
+                  loading="lazy"
+                />
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</nav>

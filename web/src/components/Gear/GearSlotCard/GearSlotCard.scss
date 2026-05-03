@@ -1,0 +1,123 @@
+@use "../../../styles/core/tokens" as *;
+
+.gear-slot-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $spacing-sm;
+  }
+
+  &__slot {
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: $font-weight-semibold;
+  }
+
+  &__pool {
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+  }
+
+  &__bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: $spacing-sm;
+    min-height: 28px;
+  }
+
+  &__icon-link {
+    display: block;
+    width: 28px;
+    height: 28px;
+    border-radius: $radius-sm;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition:
+      border-color 0.12s ease,
+      transform 0.12s ease;
+
+    &:hover {
+      border-color: currentColor;
+      transform: translateY(-1px);
+    }
+  }
+
+  &__icon,
+  &__icon-fallback {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: var(--bg-primary);
+  }
+
+  &__bar-track {
+    position: relative;
+    height: 18px;
+    background: var(--bg-primary);
+    border-radius: $radius-sm;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: var(--highlight-color);
+    opacity: 0.6;
+    transition: opacity 0.12s ease;
+    border-radius: $radius-sm;
+  }
+
+  &__row:hover &__bar-fill {
+    opacity: 0.85;
+  }
+
+  &__bar-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    color: var(--text-primary);
+    font-size: $font-size-xs;
+    font-variant-numeric: tabular-nums;
+    font-weight: $font-weight-semibold;
+    pointer-events: none;
+  }
+
+  &__empty {
+    margin: 0;
+    color: var(--text-tertiary);
+    font-size: $font-size-sm;
+    font-style: italic;
+  }
+
+  // Item quality border colors on icon hover.
+  .quality-poor      { color: var(--quality-poor); }
+  .quality-common    { color: var(--quality-common); }
+  .quality-uncommon  { color: var(--quality-uncommon); }
+  .quality-rare      { color: var(--quality-rare); }
+  .quality-epic      { color: var(--quality-epic); }
+  .quality-legendary { color: var(--quality-legendary); }
+  .quality-heirloom  { color: var(--quality-heirloom); }
+}

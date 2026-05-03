@@ -4,7 +4,6 @@ import {
   processEquipmentEnchantments,
   getQualityColorClass,
   getZamimgIconUrl,
-  getWowheadUrl,
 } from "../../../lib/equipment-utils";
 import ItemTooltip from "../../ItemTooltip/ItemTooltip.astro";
 import "./PlayerEquipment.scss";
@@ -55,23 +54,16 @@ if (equipment && Object.keys(equipment).length > 0) {
                 item.quality || "COMMON",
               );
               const itemId = item.item_id || item.id;
-              const href = itemId ? getWowheadUrl(itemId) : undefined;
               const title = item.item_name || item.name || "Item";
               const gems = (item.enchantments || []).filter(
                 (e: any) => e.gem_icon_slug,
               );
               return (
-                <a
-                  href={href}
+                <ItemTooltip
+                  itemId={itemId}
+                  enchants={item.enchantments || []}
                   class={`equip-icon-wrap ${qualityClass}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-item-id={itemId}
-                  data-item-name={title}
-                  data-quality={item.quality || "COMMON"}
-                  data-enchants={JSON.stringify(item.enchantments || [])}
-                  data-scaling={JSON.stringify(item.scaling_options || {})}
-                  data-spell-description={item.spell_description || undefined}
+                  ariaLabel={title}
                 >
                   <div class="equip-icon-inner">
                     {iconUrl ? (
@@ -103,7 +95,7 @@ if (equipment && Object.keys(equipment).length > 0) {
                       </div>
                     )}
                   </div>
-                </a>
+                </ItemTooltip>
               );
             })}
           </div>
@@ -111,5 +103,4 @@ if (equipment && Object.keys(equipment).length > 0) {
       )
     }
   </div>
-  <ItemTooltip />
 </div>

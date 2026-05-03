@@ -3,12 +3,16 @@ import "./LeaderboardTypeNav.scss";
 
 interface Props {
   currentType?: "dungeon" | "player";
-  currentTab?: "home" | "dungeon" | "player" | "stats" | "status";
+  currentTab?: "home" | "dungeon" | "player" | "stats" | "gear" | "status";
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
   currentDungeon?: string;
   currentClass?: string;
+  // Active spec slug, used when the Gear tab needs to preserve the current
+  // spec selection across other-tab clicks (and also seeds the default Gear
+  // landing when navigating from elsewhere).
+  currentSpec?: string;
 }
 
 const {
@@ -19,6 +23,7 @@ const {
   currentSeason = 1,
   currentDungeon = "temple-of-the-jade-serpent",
   currentClass = "all",
+  currentSpec = "monk-mistweaver",
 } = Astro.props;
 
 // Dungeon/Player leaderboards always require a real season slug. Stats also
@@ -53,6 +58,10 @@ if (currentRegion === "global") {
 
 // Stats is region-only (no realm); URL pattern is /(season{N}|all-time)/stats/{region}.
 const statsUrl = `/${basePath}/${statsSeasonSlug}/stats/${currentRegion}`;
+
+// Gear is global-only (no region); URL pattern is /season{N}/gear/{spec-slug}.
+// Falls back to navSeason since gear isn't available cross-season ("all-time").
+const gearUrl = `/${basePath}/${navSeasonSlug}/gear/${currentSpec}`;
 ---
 
 <nav class="leaderboard-type-nav">
@@ -79,6 +88,12 @@ const statsUrl = `/${basePath}/${statsSeasonSlug}/stats/${currentRegion}`;
     class:list={["nav-tab", { active: currentTab === "stats" }]}
   >
     Stats
+  </a>
+  <a
+    href={gearUrl}
+    class:list={["nav-tab", { active: currentTab === "gear" }]}
+  >
+    Gear
   </a>
   <a
     href="/challenge-mode/status"

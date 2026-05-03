@@ -140,3 +140,46 @@ func GetClassIDForSpec(specID int) (int, bool) {
 	classID, ok := specClassIDs[specID]
 	return classID, ok
 }
+
+// PrimaryStat — the primary stat each spec gears for in MoP. Used by the gear
+// generator to (a) drop players whose equipped set's primary stat doesn't
+// match the spec they're tagged as, and (b) drop individual items whose
+// primary stat doesn't match.
+type PrimaryStat string
+
+const (
+	PrimaryStatStr PrimaryStat = "str"
+	PrimaryStatAgi PrimaryStat = "agi"
+	PrimaryStatInt PrimaryStat = "int"
+)
+
+var specPrimaryStat = map[int]PrimaryStat{
+	// Death Knight — all str (Blood tank, Frost/Unholy dps)
+	250: PrimaryStatStr, 251: PrimaryStatStr, 252: PrimaryStatStr,
+	// Druid — Balance/Resto int, Feral/Guardian agi
+	102: PrimaryStatInt, 103: PrimaryStatAgi, 104: PrimaryStatAgi, 105: PrimaryStatInt,
+	// Hunter — all agi
+	253: PrimaryStatAgi, 254: PrimaryStatAgi, 255: PrimaryStatAgi,
+	// Mage — all int
+	62: PrimaryStatInt, 63: PrimaryStatInt, 64: PrimaryStatInt,
+	// Monk — Brewmaster/Windwalker agi, Mistweaver int
+	268: PrimaryStatAgi, 269: PrimaryStatAgi, 270: PrimaryStatInt,
+	// Paladin — Holy int, Prot/Ret str
+	65: PrimaryStatInt, 66: PrimaryStatStr, 70: PrimaryStatStr,
+	// Priest — all int
+	256: PrimaryStatInt, 257: PrimaryStatInt, 258: PrimaryStatInt,
+	// Rogue — all agi
+	259: PrimaryStatAgi, 260: PrimaryStatAgi, 261: PrimaryStatAgi,
+	// Shaman — Resto/Ele int, Enh agi
+	262: PrimaryStatInt, 263: PrimaryStatAgi, 264: PrimaryStatInt,
+	// Warlock — all int
+	265: PrimaryStatInt, 266: PrimaryStatInt, 267: PrimaryStatInt,
+	// Warrior — all str
+	71: PrimaryStatStr, 72: PrimaryStatStr, 73: PrimaryStatStr,
+}
+
+// GetPrimaryStat returns the primary stat the given spec gears for.
+func GetPrimaryStat(specID int) (PrimaryStat, bool) {
+	s, ok := specPrimaryStat[specID]
+	return s, ok
+}

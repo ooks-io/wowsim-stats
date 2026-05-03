@@ -206,6 +206,12 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
+		// 9c) Generate gear popularity JSON
+		log.Info("generating gear page JSON")
+		if err := generator.GenerateGear(db, normalizedOut); err != nil {
+			return err
+		}
+
 		// 10) Generate status API via analyze
 		log.Info("generating status API", "method", "analyze")
 		statusDir := filepath.Join(normalizedOut, "api", "status")
