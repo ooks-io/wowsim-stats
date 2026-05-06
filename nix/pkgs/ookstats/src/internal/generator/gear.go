@@ -11,37 +11,28 @@ import (
 	"ookstats/internal/writer"
 )
 
-// GearJSON is the top-level shape of gear.json.
 type GearJSON struct {
-	GeneratedAt int64                          `json:"generated_at"`
-	// Outer key: season key ("season_1" | "season_2"). Inner key: spec_id (string).
+	GeneratedAt int64 `json:"generated_at"`
+	// outer key: season ("season_1" | "season_2"); inner key: spec_id as string
 	Scopes map[string]map[string]GearSpecBucket `json:"scopes"`
 }
 
-// GearSpecBucket — gear popularity for a single (season, spec) pool.
-// `total_players` is the count of qualifying players (after spec-stat
-// validation) whose gear was tallied. `slots` is keyed by canonical slot name
-// (HEAD, NECK, FINGER, TRINKET, etc.).
 type GearSpecBucket struct {
-	TotalPlayers int                          `json:"total_players"`
-	Slots        map[string]GearSlotBucket    `json:"slots"`
+	TotalPlayers int                       `json:"total_players"`
+	Slots        map[string]GearSlotBucket `json:"slots"`
 }
 
-// GearSlotBucket — items equipped in a slot, sorted by frequency.
 type GearSlotBucket struct {
-	// PlayersWithSlot is the number of qualifying players who had any item
-	// equipped in this slot (denominator for share %). For paired slots
-	// (FINGER, TRINKET) a player can contribute up to 2 to the slot tally so
-	// PlayersWithSlot * 2 is the entry-count ceiling.
+	// denominator for share %; paired slots can contribute up to 2 per player
+	// so the entry-count ceiling is PlayersWithSlot * 2
 	PlayersWithSlot int             `json:"players_with_slot"`
 	Items           []GearItemEntry `json:"items"`
 }
 
-// GearItemEntry — one item's tally within a (spec, slot) bucket.
-// Aggregation key is `name`, not `item_id`: gear has multiple item ids for the
-// same piece at different ilvls (LFR / normal / heroic / upgraded) and CM
-// players treat them as the same gear. `item_id` is the most-equipped variant,
-// used for the wowhead link and the icon.
+// aggregation key is `name`, not `item_id`: gear has multiple item ids for the
+// same piece at different ilvls (LFR/normal/heroic/upgraded) and CM players
+// treat them as the same gear; ItemID is the most-equipped variant for the
+// wowhead link and icon
 type GearItemEntry struct {
 	ItemID  int    `json:"item_id"`
 	Name    string `json:"name"`
@@ -50,12 +41,10 @@ type GearItemEntry struct {
 	Count   int    `json:"count"`
 }
 
-// Pool size — how many top players per spec to consider.
 const gearTopPlayers = 100
 
-// Slots we tally. Cosmetic slots (SHIRT, TABARD) excluded. Paired slots
-// (FINGER_1+FINGER_2, TRINKET_1+TRINKET_2) get merged in the output to a
-// single "FINGER" / "TRINKET" bucket since the suffix has no meaning.
+// cosmetic slots (SHIRT, TABARD) excluded; FINGER_1/_2 and TRINKET_1/_2 get
+// merged in the output to a single "FINGER"/"TRINKET" bucket
 var gearSlots = []string{
 	"HEAD", "NECK", "SHOULDER", "BACK", "CHEST", "WRIST",
 	"HANDS", "WAIST", "LEGS", "FEET",
@@ -64,7 +53,6 @@ var gearSlots = []string{
 	"MAIN_HAND", "OFF_HAND",
 }
 
-// gearSlotOutputName collapses paired slots to their merged output name.
 func gearSlotOutputName(rawSlot string) string {
 	switch rawSlot {
 	case "FINGER_1", "FINGER_2":
@@ -75,15 +63,14 @@ func gearSlotOutputName(rawSlot string) string {
 	return rawSlot
 }
 
-// Stat IDs in items.stats JSON — derived from inspecting known items.
+// stat IDs in items.stats JSON, derived from inspecting known items
 const (
 	statKeyStr = "0"
 	statKeyAgi = "1"
 	statKeyInt = "3"
 )
 
-// itemStatProfile holds the primary stat we extracted from an item's stats JSON.
-// `primary` is "str"/"agi"/"int"/"" (none — typically secondary-stat-only items).
+// `primary` is "str"/"agi"/"int"/"" (empty for secondary-stat-only items)
 type itemStatProfile struct {
 	primary wow.PrimaryStat
 	name    string
@@ -98,9 +85,8 @@ func GenerateGear(db *sql.DB, outDir string) error {
 		Scopes:      make(map[string]map[string]GearSpecBucket),
 	}
 
-	// Load every item's stats once into memory — there are ~12k items in the
-	// DB and we'll touch every one of them across the spec loop, so a single
-	// scan beats per-spec joins.
+	// load all item stats once: ~12k items touched across the spec loop, so
+	// a single scan beats per-spec joins
 	itemProfiles, err := loadItemProfiles(db)
 	if err != nil {
 		return fmt.Errorf("load item profiles: %w", err)
@@ -156,8 +142,7 @@ func gatherSpecIDs() map[int]struct{} {
 	return out
 }
 
-// loadItemProfiles preloads a (item_id -> profile) map. We pull every item
-// rather than per-spec since the same item may appear across many specs.
+// every item, not per-spec: same item often appears across many specs
 func loadItemProfiles(db *sql.DB) (map[int]itemStatProfile, error) {
 	rows, err := db.Query(`SELECT id, name, icon, quality, stats FROM items`)
 	if err != nil {
@@ -184,14 +169,9 @@ func loadItemProfiles(db *sql.DB) (map[int]itemStatProfile, error) {
 	return out, rows.Err()
 }
 
-// deriveItemPrimaryStat parses an item's stats JSON and returns its primary
-// stat, or "" if the item carries none (e.g. a tabard, blank cosmetic, or a
-// piece with only secondary stats).
-//
-// Stats JSON shape: {"<ilvl_offset>": {"stats": {"<stat_id>": <value>, ...}, ...}, ...}
-// We only need to look at one ilvl entry — primary stat IDs don't change per
-// upgrade tier. Picking the highest ilvl entry is the safest (lowest entries
-// can be sparse for some items).
+// returns "" for items with no primary (tabards, cosmetics, secondary-only).
+// JSON shape: {"<ilvl_offset>": {"stats": {"<stat_id>": <value>}}}.
+// any one ilvl entry is fine - primary stat IDs don't change per upgrade tier
 func deriveItemPrimaryStat(statsJSON string) wow.PrimaryStat {
 	if statsJSON == "" {
 		return ""
@@ -202,8 +182,7 @@ func deriveItemPrimaryStat(statsJSON string) wow.PrimaryStat {
 	if err := json.Unmarshal([]byte(statsJSON), &byIlvl); err != nil {
 		return ""
 	}
-	// Walk all entries and check for known primary stat keys. Multiple entries
-	// will have the same primary stat — first hit wins.
+	// first hit wins - all entries share the same primary
 	for _, entry := range byIlvl {
 		if _, ok := entry.Stats[statKeyStr]; ok {
 			return wow.PrimaryStatStr
@@ -218,9 +197,8 @@ func deriveItemPrimaryStat(statsJSON string) wow.PrimaryStat {
 	return ""
 }
 
-// buildSpecGear walks the top-N players for a (season, spec) pair, validates
-// each one's set against the spec's expected primary stat, and tallies surviving
-// items per slot.
+// validates each top-N set against the spec's expected primary stat, then
+// tallies surviving items per slot
 func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, itemProfiles map[int]itemStatProfile) (GearSpecBucket, error) {
 	playerIDs, err := topPlayersForSpec(db, season, specID, gearTopPlayers)
 	if err != nil {
@@ -230,24 +208,21 @@ func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, ite
 		return GearSpecBucket{}, nil
 	}
 
-	// Equipment for the candidate pool, indexed by player.
 	playerEquipment, err := loadPlayerEquipment(db, playerIDs)
 	if err != nil {
 		return GearSpecBucket{}, fmt.Errorf("equipment: %w", err)
 	}
 
-	// (slot -> name -> aggregate). Aggregating by item NAME so that variants
-	// of the same piece at different ilvls collapse into a single bar.
+	// aggregating by item name so ilvl variants of the same piece collapse
+	// into one bar; byID tracks counts per variant so we can pick the
+	// most-equipped one for the wowhead link
 	type nameAgg struct {
 		count   int
 		quality int
 		icon    string
-		// variant id -> count, used to pick the most-equipped variant id as
-		// the representative for the wowhead link.
-		byID map[int]int
+		byID    map[int]int
 	}
 	slotItemCounts := make(map[string]map[string]*nameAgg)
-	// (slot -> count of qualifying players who had any item in that slot).
 	slotPlayerCounts := make(map[string]int)
 	totalPlayers := 0
 
@@ -261,8 +236,8 @@ func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, ite
 		}
 		totalPlayers++
 
-		// Track which output-slots this player contributed to (so we don't
-		// double-count e.g. FINGER if both FINGER_1 and FINGER_2 are equipped).
+		// avoid double-counting FINGER when both FINGER_1 and FINGER_2 land
+		// in the same output slot
 		seenSlot := make(map[string]bool)
 
 		for _, item := range eq {
@@ -271,13 +246,10 @@ func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, ite
 				continue
 			}
 			profile, hasProfile := itemProfiles[item.ItemID]
-			// Drop items whose primary stat clearly doesn't match the spec.
-			// Items with no primary stat (necks, some trinkets) pass through.
+			// items with no primary (necks, some trinkets) pass through
 			if hasProfile && profile.primary != "" && profile.primary != expected {
 				continue
 			}
-			// Skip unknown items (no profile) — name-based aggregation needs a
-			// name, and a missing profile means we have no name either.
 			if !hasProfile || profile.name == "" {
 				continue
 			}
@@ -311,7 +283,7 @@ func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, ite
 	for slot, byName := range slotItemCounts {
 		entries := make([]GearItemEntry, 0, len(byName))
 		for name, agg := range byName {
-			// Pick the most-equipped variant id as the representative.
+			// most-equipped variant id is the representative
 			var repID, bestCount int
 			for id, c := range agg.byID {
 				if c > bestCount {
@@ -327,7 +299,7 @@ func buildSpecGear(db *sql.DB, season, specID int, expected wow.PrimaryStat, ite
 				Count:   agg.count,
 			})
 		}
-		// Sort desc by count (insertion sort — slot has at most ~50 distinct items).
+		// insertion sort desc - slots top out at ~50 distinct items
 		for i := 1; i < len(entries); i++ {
 			for j := i; j > 0 && entries[j].Count > entries[j-1].Count; j-- {
 				entries[j], entries[j-1] = entries[j-1], entries[j]
@@ -350,15 +322,12 @@ func isTrackedSlot(rawSlot string) bool {
 	return false
 }
 
-// equipmentRow mirrors the player_equipment columns we care about.
 type equipmentRow struct {
 	PlayerID int64
 	SlotType string
 	ItemID   int
 }
 
-// topPlayersForSpec returns the player_ids of the top-N best-coverage players
-// in the given (season, spec) pair, ordered by combined_best_time ascending.
 func topPlayersForSpec(db *sql.DB, season, specID, limit int) ([]int64, error) {
 	rows, err := db.Query(`
 		SELECT player_id
@@ -385,13 +354,10 @@ func topPlayersForSpec(db *sql.DB, season, specID, limit int) ([]int64, error) {
 	return out, rows.Err()
 }
 
-// loadPlayerEquipment fetches every tracked-slot item for the given player ids
-// in a single query. Result is keyed by player_id.
 func loadPlayerEquipment(db *sql.DB, playerIDs []int64) (map[int64][]equipmentRow, error) {
 	if len(playerIDs) == 0 {
 		return map[int64][]equipmentRow{}, nil
 	}
-	// Build IN clause with placeholders.
 	placeholders := ""
 	args := make([]any, 0, len(playerIDs))
 	for i, id := range playerIDs {
@@ -423,9 +389,8 @@ func loadPlayerEquipment(db *sql.DB, playerIDs []int64) (map[int64][]equipmentRo
 	return out, rows.Err()
 }
 
-// playerSetMatchesSpec checks if the player's gear majority-aligns with the
-// spec's expected primary stat. Used to drop "logged out in their offspec set"
-// entries before tallying their items.
+// drops players who logged out in their offspec set: their gear majority
+// has to match the spec's expected primary
 func playerSetMatchesSpec(eq []equipmentRow, expected wow.PrimaryStat, itemProfiles map[int]itemStatProfile) bool {
 	counts := map[wow.PrimaryStat]int{
 		wow.PrimaryStatStr: 0,
@@ -439,13 +404,11 @@ func playerSetMatchesSpec(eq []equipmentRow, expected wow.PrimaryStat, itemProfi
 		}
 		counts[profile.primary]++
 	}
-	// If we found no primary-stat items at all, fall through and keep — not
-	// enough signal to exclude.
+	// no primary-stat items at all: not enough signal, keep them
 	total := counts[wow.PrimaryStatStr] + counts[wow.PrimaryStatAgi] + counts[wow.PrimaryStatInt]
 	if total == 0 {
 		return true
 	}
-	// Find the modal stat.
 	var modal wow.PrimaryStat
 	var modalCount int
 	for stat, c := range counts {

@@ -390,16 +390,16 @@ func queryTopPlayers(db *sql.DB, q string, args ...any) ([]HomePlayerEntry, erro
 	var out []HomePlayerEntry
 	for rows.Next() {
 		var (
-			e              HomePlayerEntry
-			className      sql.NullString
-			mainSpecID     sql.NullInt64
-			globalRank     sql.NullInt64
-			globalBracket  sql.NullString
-			regionalRank   sql.NullInt64
+			e               HomePlayerEntry
+			className       sql.NullString
+			mainSpecID      sql.NullInt64
+			globalRank      sql.NullInt64
+			globalBracket   sql.NullString
+			regionalRank    sql.NullInt64
 			regionalBracket sql.NullString
-			combinedBest   sql.NullInt64
-			realmName      sql.NullString
-			avatarURL      sql.NullString
+			combinedBest    sql.NullInt64
+			realmName       sql.NullString
+			avatarURL       sql.NullString
 		)
 		if err := rows.Scan(
 			&e.PlayerID, &e.Name, &className, &mainSpecID,
@@ -457,9 +457,7 @@ func queryTopPlayers(db *sql.DB, q string, args ...any) ([]HomePlayerEntry, erro
 	return out, rows.Err()
 }
 
-// isRegionalQuery is a tiny heuristic on the SELECT/ORDER text so queryTopPlayers can
-// decide which rank value to surface as `rank`. Cheap and safe — keeps queryTopPlayers
-// reusable for both global and regional list queries.
+// heuristic on ORDER text so queryTopPlayers can pick global vs regional rank
 func isRegionalQuery(q string) bool {
 	return strings.Contains(q, "ORDER BY pp.regional_ranking")
 }

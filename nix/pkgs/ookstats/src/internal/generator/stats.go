@@ -13,7 +13,7 @@ import (
 // StatsJSON is the top-level shape for web/public/api/stats.json.
 // Three scopes are emitted: cross-season "all_time" plus one entry per season number.
 type StatsJSON struct {
-	GeneratedAt int64                            `json:"generated_at"`
+	GeneratedAt int64 `json:"generated_at"`
 	// Scopes is keyed by region (global/us/eu/kr/tw), then by season key
 	// (all_time/season_1/season_2). Region "global" includes all regions.
 	Scopes map[string]map[string]StatsScope `json:"scopes"`
@@ -21,41 +21,37 @@ type StatsJSON struct {
 
 // StatsScope holds aggregated stats for a single scope (all-time or one season).
 type StatsScope struct {
-	TotalRuns         int64                     `json:"total_runs"`
-	TotalPlayers      int64                     `json:"total_players"`
-	NineOfNinePlayers int64                     `json:"nine_of_nine_players"`
-	CompletionTiers   CompletionTiers           `json:"completion_tiers"`
+	TotalRuns         int64                      `json:"total_runs"`
+	TotalPlayers      int64                      `json:"total_players"`
+	NineOfNinePlayers int64                      `json:"nine_of_nine_players"`
+	CompletionTiers   CompletionTiers            `json:"completion_tiers"`
 	SpecCounts        map[string]SpecCountBucket `json:"spec_counts"`
-	WeeklyActivity    []WeeklyActivityEntry     `json:"weekly_activity"`
+	WeeklyActivity    []WeeklyActivityEntry      `json:"weekly_activity"`
 }
 
-// SpecCountBucket — entries plus the bucket's distinct-run denominator, so the
-// chart can switch between "total slot count" and "% of runs containing the
-// spec" without recomputing. `ByDungeon` is the same shape grouped per-dungeon,
-// for the spec chart's dungeon filter and the dungeon-distribution chart.
+// TotalRuns is the distinct-run denominator so the chart can switch between
+// "total slot count" and "% of runs containing the spec" without recomputing
 type SpecCountBucket struct {
-	TotalRuns int64                       `json:"total_runs"`
-	Entries   []SpecCountEntry            `json:"entries"`
-	ByDungeon map[int]DungeonSpecBucket   `json:"by_dungeon"`
+	TotalRuns int64                     `json:"total_runs"`
+	Entries   []SpecCountEntry          `json:"entries"`
+	ByDungeon map[int]DungeonSpecBucket `json:"by_dungeon"`
 }
 
-// DungeonSpecBucket — sub-bucket for one dungeon within a SpecCountBucket.
 type DungeonSpecBucket struct {
 	TotalRuns int64            `json:"total_runs"`
 	Entries   []SpecCountEntry `json:"entries"`
 }
 
-// CompletionTiers groups the 9-of-9 medal-tier counts.
 type CompletionTiers struct {
 	NineOfNineGold     CompletionTier `json:"9_of_9_gold"`
 	NineOfNinePlatinum CompletionTier `json:"9_of_9_platinum"`
 	NineOfNineTitle    CompletionTier `json:"9_of_9_title"`
 }
 
-// CompletionTier — count plus three percentile denominators.
-// `percentile_of_all_players` = count / scope.total_players (rarity vs scoped pool)
-// `percentile_of_completed_players` = count / players_with_9_dungeon_bests (rarity among finishers)
-// `percentile_of_all_time_players` = count / all_time.total_players (stable cross-scope denominator)
+// percentile denominators:
+// of_all_players       = scoped pool
+// of_completed_players = finishers (players_with_9_dungeon_bests)
+// of_all_time_players  = stable cross-scope denominator
 type CompletionTier struct {
 	Count                        int64   `json:"count"`
 	PercentileOfAllPlayers       float64 `json:"percentile_of_all_players"`
@@ -63,11 +59,9 @@ type CompletionTier struct {
 	PercentileOfAllTimePlayers   float64 `json:"percentile_of_all_time_players"`
 }
 
-// SpecCountEntry — one row of the spec-distribution charts.
-// `count` is the total number of run_member spec slots (a run with two of the
-// same spec contributes 2). `runs_with_spec` is the count of distinct runs
-// containing the spec (the same run with two of the spec contributes 1 — capped
-// at the bucket's total_runs).
+// `count` is total run_member spec slots (a run with two of the same spec
+// contributes 2); `runs_with_spec` is distinct runs containing the spec
+// (same run with two of the spec contributes 1, capped at total_runs)
 type SpecCountEntry struct {
 	SpecID       int    `json:"spec_id"`
 	ClassName    string `json:"class_name"`
@@ -76,15 +70,13 @@ type SpecCountEntry struct {
 	RunsWithSpec int64  `json:"runs_with_spec"`
 }
 
-// WeeklyActivityEntry — one bucket on the activity timeline (Monday-start week).
 type WeeklyActivityEntry struct {
 	WeekStart string `json:"week_start"` // YYYY-MM-DD
 	RunCount  int64  `json:"run_count"`
 }
 
-// dungeonThresholds — gold / platinum / title timer thresholds in milliseconds.
-// Gold = the achievement par-time (the "beat the timer" goal).
-// Platinum / title are tighter community-defined cutoffs (see /docs or original source).
+// gold/platinum/title timer thresholds in ms; gold is the achievement par
+// time, platinum and title are tighter community-defined cutoffs
 type dungeonThresholds struct {
 	GoldMs     int64
 	PlatinumMs int64
@@ -92,32 +84,30 @@ type dungeonThresholds struct {
 }
 
 var dungeonTimerThresholds = map[int]dungeonThresholds{
-	2:  {GoldMs: 900000, PlatinumMs: 615000, TitleMs: 510000},   // Temple of the Jade Serpent (15:00 / 10:15 / 8:30)
-	56: {GoldMs: 720000, PlatinumMs: 495000, TitleMs: 390000},   // Stormstout Brewery        (12:00 / 8:15 / 6:30)
-	57: {GoldMs: 780000, PlatinumMs: 480000, TitleMs: 330000},   // Gate of the Setting Sun   (13:00 / 8:00 / 5:30)
-	58: {GoldMs: 1260000, PlatinumMs: 840000, TitleMs: 630000},  // Shado-Pan Monastery       (21:00 / 14:00 / 10:30)
-	59: {GoldMs: 1050000, PlatinumMs: 735000, TitleMs: 615000},  // Siege of Niuzao Temple    (17:30 / 12:15 / 10:15)
-	60: {GoldMs: 720000, PlatinumMs: 495000, TitleMs: 405000},   // Mogu'shan Palace          (12:00 / 8:15 / 6:45)
-	76: {GoldMs: 1140000, PlatinumMs: 615000, TitleMs: 435000},  // Scholomance               (19:00 / 10:15 / 7:15)
-	77: {GoldMs: 780000, PlatinumMs: 480000, TitleMs: 255000},   // Scarlet Halls             (13:00 / 8:00 / 4:15)
-	78: {GoldMs: 780000, PlatinumMs: 540000, TitleMs: 330000},   // Scarlet Monastery         (13:00 / 9:00 / 5:30)
+	2:  {GoldMs: 900000, PlatinumMs: 615000, TitleMs: 510000},  // Temple of the Jade Serpent (15:00 / 10:15 / 8:30)
+	56: {GoldMs: 720000, PlatinumMs: 495000, TitleMs: 390000},  // Stormstout Brewery        (12:00 / 8:15 / 6:30)
+	57: {GoldMs: 780000, PlatinumMs: 480000, TitleMs: 330000},  // Gate of the Setting Sun   (13:00 / 8:00 / 5:30)
+	58: {GoldMs: 1260000, PlatinumMs: 840000, TitleMs: 630000}, // Shado-Pan Monastery       (21:00 / 14:00 / 10:30)
+	59: {GoldMs: 1050000, PlatinumMs: 735000, TitleMs: 615000}, // Siege of Niuzao Temple    (17:30 / 12:15 / 10:15)
+	60: {GoldMs: 720000, PlatinumMs: 495000, TitleMs: 405000},  // Mogu'shan Palace          (12:00 / 8:15 / 6:45)
+	76: {GoldMs: 1140000, PlatinumMs: 615000, TitleMs: 435000}, // Scholomance               (19:00 / 10:15 / 7:15)
+	77: {GoldMs: 780000, PlatinumMs: 480000, TitleMs: 255000},  // Scarlet Halls             (13:00 / 8:00 / 4:15)
+	78: {GoldMs: 780000, PlatinumMs: 540000, TitleMs: 330000},  // Scarlet Monastery         (13:00 / 9:00 / 5:30)
 }
 
-// totalDungeons in the season — a player must clear all of them to qualify for 9/9.
+// must clear all of them to qualify for 9/9
 var totalDungeons = len(dungeonTimerThresholds)
 
-// In-game cutoffs are lenient: the displayed cutoff is the first second that
-// still earns the medal. e.g. a 5:30.800 run beats a "5:30" title cutoff,
-// because the timer reads "5:30" until it ticks over to 5:31. So the actual
-// pass condition is `duration < threshold + leniencyMs`.
+// in-game cutoffs are lenient: a 5:30.800 run beats a "5:30" title cutoff
+// because the timer reads "5:30" until it ticks to 5:31, so pass condition
+// is `duration < threshold + leniencyMs`
 const leniencyMs int64 = 1000
 
-// beatsTier reports whether duration earns at least the given threshold.
 func beatsTier(duration, thresholdMs int64) bool {
 	return duration < thresholdMs+leniencyMs
 }
 
-// Scopes emitted in the output. Order matters for JSON readability.
+// order matters for JSON readability
 type statsScopeDef struct {
 	Key       string
 	SeasonNum int // 0 = all-time
@@ -277,13 +267,10 @@ func countTotalPlayers(db *sql.DB, seasonNum int, region string) (int64, error) 
 	return n, nil
 }
 
-// computeCompletionTiers loads each player's best time per (season, dungeon) and
-// classifies them against the gold / platinum / title thresholds.
-// Tiers are achievements earned *within a single season*, so for the all-time scope
-// we take the union of per-season qualifiers — a player counts if they hit 9/9 of a
-// tier in any single season, not by combining best times across seasons.
-// Returns the tier counts and the count of players who completed all 9 dungeons in
-// at least one season (the "completed" denominator).
+// tiers are achievements earned within a single season; for all-time scope
+// we take the union of per-season qualifiers (hit 9/9 of a tier in any one
+// season counts), not combine best times across seasons. returns tier
+// counts plus the "completed" denominator (any-season 9-dungeon finishers).
 func computeCompletionTiers(db *sql.DB, seasonNum int, region string) (CompletionTiers, int64, error) {
 	q := `
 		SELECT rm.player_id, cr.season_id, cr.dungeon_id, MIN(cr.duration) AS best_duration
@@ -322,7 +309,7 @@ func computeCompletionTiers(db *sql.DB, seasonNum int, region string) (Completio
 		}
 		threshold, ok := dungeonTimerThresholds[dungeonID]
 		if !ok {
-			continue // unknown dungeon — skip silently
+			continue // unknown dungeon - skip silently
 		}
 		k := key{playerID, seasonID}
 		c := per[k]
@@ -401,12 +388,14 @@ func withPercentiles(t CompletionTier, totalPlayers, completedPlayers, allTimePl
 }
 
 // computeSpecCounts returns the spec-distribution charts:
-//   all_runs:      every run_member row in scope
-//   gold_runs:     run_members where the run beat the gold threshold for its dungeon
-//   platinum_runs: same for platinum
-//   title_runs:    same for title
-//   top_50_runs:   run_members where the run was top-50 in scope (globally team-filtered for
-//                  region=="global", regionally team-filtered for a specific region)
+//
+//	all_runs:      every run_member row in scope
+//	gold_runs:     run_members where the run beat the gold threshold for its dungeon
+//	platinum_runs: same for platinum
+//	title_runs:    same for title
+//	top_50_runs:   run_members where the run was top-50 in scope (globally team-filtered for
+//	               region=="global", regionally team-filtered for a specific region)
+//
 // Each bucket carries both `count` (slot occurrences, includes spec stacking)
 // and `runs_with_spec` (distinct run count, capped at the bucket's total_runs).
 func computeSpecCounts(db *sql.DB, seasonNum int, region string) (map[string]SpecCountBucket, error) {
@@ -454,9 +443,8 @@ func querySpecCountsForRuns(db *sql.DB, seasonNum int, region string) (SpecCount
 	rClause, rArgs := regionClauseAndArg(region, "r")
 	args := append(sArgs, rArgs...)
 
-	// One query grouped by (dungeon, spec) — we derive both the per-dungeon
-	// breakdown and the overall totals from the same result set, since each
-	// challenge_run has a single dungeon_id (no double-counting across dungeons).
+	// each challenge_run has a single dungeon_id, so one (dungeon, spec)
+	// grouped query gives us both the per-dungeon and overall totals
 	q := `
 		SELECT cr.dungeon_id, rm.spec_id,
 		       COUNT(*) AS slot_count,
@@ -501,7 +489,7 @@ func querySpecCountsForRuns(db *sql.DB, seasonNum int, region string) (SpecCount
 		return SpecCountBucket{}, err
 	}
 
-	// Per-dungeon distinct run totals AND overall — one query, no scan loop tax.
+	// per-dungeon and overall in one query
 	perDungeonTotals, overallTotal, err := queryRunCountsForRuns(db, seasonNum, region)
 	if err != nil {
 		return SpecCountBucket{}, err
@@ -805,16 +793,12 @@ func querySpecCountsForTop50(db *sql.DB, seasonNum int, region string) (SpecCoun
 	return bucket, nil
 }
 
-// specAgg holds in-memory aggregation state when we can't count via SQL —
-// see querySpecCountsForTier.
+// in-memory aggregation when SQL counting is awkward (see querySpecCountsForTier)
 type specAgg struct {
 	count int64
 	runs  map[int64]struct{}
 }
 
-// specAggsToSlice converts a Go-side aggregation (slot count + run-id set per
-// spec) into a sorted slice — used by querySpecCountsForTier where the
-// per-dungeon threshold makes a SQL-only aggregation awkward.
 func specAggsToSlice(aggs map[int]*specAgg) []SpecCountEntry {
 	out := make([]SpecCountEntry, 0, len(aggs))
 	for specID, a := range aggs {
