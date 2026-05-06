@@ -1,18 +1,6 @@
 @use "./tokens" as *;
 
-// Restyle Wowhead's official item tooltip (loaded via tooltips.js) so the
-// frame matches the site's dark theme. Only override the *chrome* (background,
-// border, font, padding) — leave Wowhead's text colours alone so stat lines,
-// quality colours and proc text read with their familiar in-game colours.
-//
-// Class reference (gathered from a live tooltip):
-//   .wowhead-tooltip            — outer container
-//   .whtt-tooltip-icon          — icon block (floats right)
-//   .iconmedium                 — icon size class
-//   .q, .q0..q5                 — item-quality / stat colours (from Wowhead)
-//   .whtt-sellprice             — sell-price footer
-//   .moneygold/silver/copper    — money values
-//   .wowhead-tooltip-powered    — "Powered by Wowhead" credit
+// override only the chrome so Wowhead's quality/stat colours stay intact
 
 .wowhead-tooltip {
   background: var(--bg-secondary) !important;
@@ -24,9 +12,7 @@
   line-height: 1.45 !important;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45) !important;
 
-  // Force the site's font stack on every inner element — Wowhead's bundled CSS
-  // sets Verdana on td/b/span at high specificity. We don't override colour
-  // here, so quality classes and stat colours stay Wowhead-default.
+  // Wowhead's CSS sets Verdana on td/b/span at high specificity, override it
   *,
   td,
   th,
@@ -36,9 +22,7 @@
     font-family: inherit !important;
   }
 
-  // Tighten the nested-table padding (default browser td padding feels
-  // cramped) and strip Wowhead's parchment frame texture (`tooltip.png`)
-  // they paint on a generic inner <td>.
+  // tighten td padding and strip Wowhead's parchment frame texture
   table {
     border-collapse: collapse !important;
     background: transparent !important;
@@ -52,15 +36,13 @@
     background-color: transparent !important;
   }
 
-  // Hide the sell price line (the trailing "Sell Price: …" footer).
-  // We deliberately do NOT hide its parent table — that table also holds
-  // "Requires Level X" AND any "Equip:" / "Use:" trinket proc text, which
-  // we want to keep visible.
+  // can't hide the parent table - it also holds Requires Level and trinket
+  // Equip/Use procs that need to stay visible
   .whtt-sellprice {
     display: none !important;
   }
 
-  // Item icon block — keep Wowhead's float layout but match site icon styling.
+  // keep Wowhead's float layout, just restyle the icon chrome
   .whtt-tooltip-icon {
     .iconmedium,
     .iconlarge,
@@ -71,8 +53,7 @@
     }
   }
 
-  // "Powered by Wowhead" credit — small + muted so it doesn't compete with
-  // the actual item info.
+  // muted so it doesn't compete with item info
   .wowhead-tooltip-powered {
     color: var(--text-tertiary) !important;
     font-size: $font-size-xs !important;

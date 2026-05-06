@@ -1,7 +1,5 @@
 ---
-// /challenge-mode/stats is the legacy entry point — redirect to the default
-// region+season scope so the new URL structure (/challenge-mode/season{N}/stats/{region})
-// owns all rendering. Keeping this file means existing bookmarks still work.
+// legacy entry point: redirect to the canonical /season{N}/stats/{region}
 export const prerender = false;
 
 return Astro.redirect("/challenge-mode/season2/stats/global", 301);

@@ -12,10 +12,11 @@ interface Props {
 
 const { title, players, scope, viewAllHref } = Astro.props;
 
-// Pick the bracket that matches the scope of this list.
-// Global list shows global rank; regional list shows regional rank — color the badge accordingly.
+// match badge color to the list's scope
 function bracketFor(p: HomePlayerEntry): string | undefined {
-  return scope === "global" ? p.global_ranking_bracket : p.regional_ranking_bracket;
+  return scope === "global"
+    ? p.global_ranking_bracket
+    : p.regional_ranking_bracket;
 }
 ---
 
@@ -33,7 +34,9 @@ function bracketFor(p: HomePlayerEntry): string | undefined {
 
   {
     players.length === 0 ? (
-      <p class="top-players-list__empty">No ranked players in this scope yet.</p>
+      <p class="top-players-list__empty">
+        No ranked players in this scope yet.
+      </p>
     ) : (
       <div class="top-players-list__rows">
         {players.map((p) => (

@@ -22,15 +22,24 @@ function parseData(el: HTMLElement): Point[] {
 
 function formatDateLabel(iso: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 function renderChart(container: HTMLElement, points: Point[]) {
-  const canvas = container.querySelector(".activity-chart__canvas") as HTMLElement | null;
+  const canvas = container.querySelector(
+    ".activity-chart__canvas",
+  ) as HTMLElement | null;
   if (!canvas) return;
 
-  // Render width — measure container, fall back to a reasonable default
-  const width = Math.max(canvas.clientWidth || container.clientWidth || 600, 320);
+  // measure container, fall back to 600 with a 320 floor
+  const width = Math.max(
+    canvas.clientWidth || container.clientWidth || 600,
+    320,
+  );
   const height = 220;
   const padding = { top: 16, right: 16, bottom: 32, left: 56 };
   const innerW = width - padding.left - padding.right;
@@ -65,7 +74,7 @@ function renderChart(container: HTMLElement, points: Point[]) {
     value: Math.round(maxCount * frac),
   }));
 
-  // X-axis labels — first, middle, last (more would clutter)
+  // first/middle/last only - more would clutter
   const xTickIdxs =
     points.length <= 2
       ? points.map((_, i) => i)
@@ -104,10 +113,13 @@ function renderChart(container: HTMLElement, points: Point[]) {
     label.setAttribute("y", String(padding.top + innerH + 20));
     label.setAttribute("text-anchor", "middle");
     label.setAttribute("class", "activity-chart__axis-label");
-    label.textContent = new Date(points[i].week_start).toLocaleDateString("en-US", {
-      month: "short",
-      year: "2-digit",
-    });
+    label.textContent = new Date(points[i].week_start).toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        year: "2-digit",
+      },
+    );
     svg.appendChild(label);
   }
 
@@ -216,9 +228,11 @@ export function initActivityCharts() {
     () => {
       if (resizeTimer) window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
-        document.querySelectorAll<HTMLElement>(".activity-chart").forEach((c) => {
-          renderChart(c, parseData(c));
-        });
+        document
+          .querySelectorAll<HTMLElement>(".activity-chart")
+          .forEach((c) => {
+            renderChart(c, parseData(c));
+          });
       }, 150);
     },
     { passive: true },

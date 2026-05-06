@@ -1,32 +1,21 @@
 ---
 import type { Enchantment } from "../../lib/types";
 
-// Reusable wrapper that produces the right `<a data-wowhead="…">` for an item.
-// The actual tooltip rendering is handled by Wowhead's tooltips.js (loaded in
-// PageLayout) — this component just centralizes how we build the data-wowhead
-// URL params so callers don't repeat the gem/enchant/ilvl wiring.
+// builds the `<a data-wowhead="…">` for an item. tooltip rendering itself
+// is done by Wowhead's tooltips.js loaded in PageLayout
 
 interface Props {
   itemId: number | undefined | null;
-  // Optional ilvl override — pass 463 to scale tooltip stats to Challenge Mode
-  // ilvl. Leave unset to show the item at its natural ilvl.
+  // pass 463 to scale tooltip stats to Challenge Mode ilvl
   ilvl?: number;
-  // Player's actual enchants/gems on the equipped item, if known. Permanent
-  // enchant becomes `ench=N`; gems (slot_id 2-5 with no slot_type) become
-  // `gems=A:B:C` so Wowhead reflects the actual socket loadout.
+  // permanent enchant becomes `ench=N`; gems (slot_id 2-5 with no
+  // slot_type) become `gems=A:B:C`
   enchants?: Enchantment[];
-  // Wowhead game-version domain. Defaults to MoP Classic since that's the only
-  // dataset this site targets.
   domain?: string;
-  // Extra class on the wrapping anchor.
   class?: string;
-  // Anchor target — defaults to a new tab so the in-page tooltip remains the
-  // primary surface and a click only opens wowhead intentionally.
+  // default _blank so in-page tooltip stays the primary surface
   target?: string;
-  // Override the wowhead href (rare — useful when the link should point to
-  // a non-item page).
   href?: string;
-  // Accessible label, since the slot content is usually just an icon.
   ariaLabel?: string;
 }
 
@@ -41,22 +30,19 @@ const {
   ariaLabel,
 } = Astro.props;
 
-// Build wowhead URL params. Order is presentation only — wowhead treats them
-// as a flat query string.
 const params: string[] = [];
 if (itemId) {
   params.push(`item=${itemId}`);
   params.push(`domain=${domain}`);
   if (ilvl) params.push(`ilvl=${ilvl}`);
 
-  // Permanent enchant on the item — there's at most one per piece.
   const permanent = enchants.find((e) => e.slot_type === "PERMANENT");
   if (permanent?.enchantment_id) {
     params.push(`ench=${permanent.enchantment_id}`);
   }
 
-  // Gem sockets — Blizzard's API tags gem rows with slot_id 2..5 and no
-  // slot_type. Wowhead's `gems` param wants colon-separated gem item ids.
+  // Blizzard tags gem rows with slot_id 2..5 and no slot_type;
+  // Wowhead wants colon-separated gem item ids
   const gems = enchants
     .filter((e) => !e.slot_type && e.slot_id >= 2 && e.slot_id <= 5)
     .map((g) => g.source_item_id)

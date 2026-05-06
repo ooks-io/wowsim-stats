@@ -17,11 +17,9 @@ function initCarousel(root: HTMLElement) {
   function updateArrows() {
     const max = viewport!.scrollWidth - viewport!.clientWidth;
     const x = viewport!.scrollLeft;
-    // Tolerance for sub-pixel rounding — at exact edges browsers may report
-    // 0.5px off.
+    // 1px tolerance for sub-pixel rounding at exact edges
     const atStart = x <= 1;
     const atEnd = x >= max - 1;
-    // Hide both arrows when the track fits in one viewport (nothing to scroll).
     const overflows = max > 1;
     prev!.hidden = !overflows || atStart;
     next!.hidden = !overflows || atEnd;
@@ -36,13 +34,12 @@ function initCarousel(root: HTMLElement) {
 
   viewport.addEventListener("scroll", updateArrows, { passive: true });
 
-  // ResizeObserver picks up width changes (window resize, font load, etc.) so
-  // we re-evaluate whether arrows are needed.
   const ro = new ResizeObserver(updateArrows);
   ro.observe(viewport);
-  // Also recheck after images load — late-arriving images can change scrollWidth.
+  // late-arriving images change scrollWidth, so recheck on load
   viewport.querySelectorAll("img").forEach((img) => {
-    if (!img.complete) img.addEventListener("load", updateArrows, { once: true });
+    if (!img.complete)
+      img.addEventListener("load", updateArrows, { once: true });
   });
 
   updateArrows();

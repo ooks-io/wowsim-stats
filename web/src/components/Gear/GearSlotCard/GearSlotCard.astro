@@ -7,19 +7,23 @@ interface Props {
   slot: string;
   label: string;
   bucket: GearSlotBucket | undefined;
-  // Cap of items per slot — keeps long-tail noise out of the chart.
+  // cap items per slot to keep long-tail noise out
   limit?: number;
-  // Hide items below this share % (relative to players_with_slot).
+  // hide items below this share % of players_with_slot
   minSharePct?: number;
-  // Item level to render tooltips at — defaults to MoP CM scaling cap (463).
-  // Players' actual gear is often heroic-upgraded (525+), but inside Challenge
-  // Modes Blizzard down-scales every piece to ilvl 463, so showing the same
-  // ilvl in the tooltip is the most accurate reflection of what those items
-  // do during a CM run.
+  // Blizzard down-scales every CM piece to ilvl 463, so the tooltip should
+  // show that level (not the player's actual upgraded ilvl)
   tooltipIlvl?: number;
 }
 
-const { slot, label, bucket, limit = 8, minSharePct = 0, tooltipIlvl = 463 } = Astro.props;
+const {
+  slot,
+  label,
+  bucket,
+  limit = 8,
+  minSharePct = 0,
+  tooltipIlvl = 463,
+} = Astro.props;
 
 const playersWithSlot = bucket?.players_with_slot ?? 0;
 const allItems = bucket?.items ?? [];
@@ -42,12 +46,18 @@ function iconUrl(icon: string | undefined): string | null {
 
 function qualityClass(q: number): string {
   switch (q) {
-    case 5: return "quality-legendary";
-    case 4: return "quality-epic";
-    case 3: return "quality-rare";
-    case 2: return "quality-uncommon";
-    case 7: return "quality-heirloom";
-    default: return "quality-common";
+    case 5:
+      return "quality-legendary";
+    case 4:
+      return "quality-epic";
+    case 3:
+      return "quality-rare";
+    case 2:
+      return "quality-uncommon";
+    case 7:
+      return "quality-heirloom";
+    default:
+      return "quality-common";
   }
 }
 ---
@@ -55,43 +65,48 @@ function qualityClass(q: number): string {
 <article class="gear-slot-card">
   <header class="gear-slot-card__header">
     <span class="gear-slot-card__slot">{label}</span>
-    {bucket && (
-      <span class="gear-slot-card__pool">{playersWithSlot} runs</span>
-    )}
+    {bucket && <span class="gear-slot-card__pool">{playersWithSlot} runs</span>}
   </header>
 
-  {items.length > 0 ? (
-    <ul class="gear-slot-card__bars">
-      {items.map((item) => {
-        const sharePct = pct(item.count);
-        return (
-          <li class="gear-slot-card__row">
-            <ItemTooltip
-              itemId={item.item_id}
-              ilvl={tooltipIlvl}
-              class={`gear-slot-card__icon-link ${qualityClass(item.quality)}`}
-              ariaLabel={item.name}
-            >
-              {iconUrl(item.icon) ? (
-                <img
-                  class="gear-slot-card__icon"
-                  src={iconUrl(item.icon)}
-                  alt={item.name}
-                  loading="lazy"
+  {
+    items.length > 0 ? (
+      <ul class="gear-slot-card__bars">
+        {items.map((item) => {
+          const sharePct = pct(item.count);
+          return (
+            <li class="gear-slot-card__row">
+              <ItemTooltip
+                itemId={item.item_id}
+                ilvl={tooltipIlvl}
+                class={`gear-slot-card__icon-link ${qualityClass(item.quality)}`}
+                ariaLabel={item.name}
+              >
+                {iconUrl(item.icon) ? (
+                  <img
+                    class="gear-slot-card__icon"
+                    src={iconUrl(item.icon)}
+                    alt={item.name}
+                    loading="lazy"
+                  />
+                ) : (
+                  <span class="gear-slot-card__icon-fallback" />
+                )}
+              </ItemTooltip>
+              <div class="gear-slot-card__bar-track" aria-hidden="true">
+                <div
+                  class="gear-slot-card__bar-fill"
+                  style={`width: ${sharePct.toFixed(1)}%`}
                 />
-              ) : (
-                <span class="gear-slot-card__icon-fallback" />
-              )}
-            </ItemTooltip>
-            <div class="gear-slot-card__bar-track" aria-hidden="true">
-              <div class="gear-slot-card__bar-fill" style={`width: ${sharePct.toFixed(1)}%`} />
-              <span class="gear-slot-card__bar-label">{sharePct.toFixed(0)}%</span>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
-  ) : (
-    <p class="gear-slot-card__empty">No data</p>
-  )}
+                <span class="gear-slot-card__bar-label">
+                  {sharePct.toFixed(0)}%
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <p class="gear-slot-card__empty">No data</p>
+    )
+  }
 </article>

@@ -2,6 +2,7 @@
 import "./SpecDistributionChart.scss";
 import type { StatsSpecCountBucket } from "../../../lib/types";
 import { DUNGEON_SLUG_TO_ID } from "../../../lib/dungeon-thresholds";
+import HelpHint from "../../HelpHint/HelpHint.astro";
 
 interface Props {
   buckets: Record<string, StatsSpecCountBucket>;
@@ -26,8 +27,7 @@ const DUNGEON_OPTIONS: Array<{ key: string; label: string }> = [
   { key: "78", label: "Scarlet Monastery" },
 ];
 
-// Light sanity check at build time — every option (besides "all") matches the
-// canonical slug→id map. Catches a typo in either side early.
+// build-time sanity check against the canonical slug→id map
 for (const o of DUNGEON_OPTIONS) {
   if (o.key === "all") continue;
   if (!Object.values(DUNGEON_SLUG_TO_ID).includes(parseInt(o.key, 10))) {
@@ -62,44 +62,60 @@ const METRIC_OPTIONS: Array<{ key: string; label: string }> = [
 const dataJson = JSON.stringify(buckets);
 ---
 
-<figure class="spec-distribution-chart" data-scope={scope} data-buckets={dataJson}>
+<figure
+  class="spec-distribution-chart"
+  data-scope={scope}
+  data-buckets={dataJson}
+>
   <div class="spec-distribution-chart__controls">
-    <nav class="spec-distribution-chart__tabs" role="tablist" aria-label="Run filter">
-      {BUCKET_TABS.map((b, i) => (
-        <button
-          type="button"
-          class:list={["spec-distribution-chart__tab", { active: i === 0 }]}
-          role="tab"
-          aria-selected={i === 0 ? "true" : "false"}
-          data-bucket-key={b.key}
-        >
-          {b.label}
-        </button>
-      ))}
+    <nav
+      class="spec-distribution-chart__tabs"
+      role="tablist"
+      aria-label="Run filter"
+    >
+      {
+        BUCKET_TABS.map((b, i) => (
+          <button
+            type="button"
+            class:list={["spec-distribution-chart__tab", { active: i === 0 }]}
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+            data-bucket-key={b.key}
+          >
+            {b.label}
+          </button>
+        ))
+      }
     </nav>
     <div class="spec-distribution-chart__selects">
       <div class="filter-group">
-        <label for={`spec-dist-metric-${scope}`}>Metric</label>
+        <label for={`spec-dist-metric-${scope}`}>
+          Metric
+          <HelpHint title="Picks vs Runs">
+            <p>
+              <strong>Picks</strong> counts every spec slot. A run with two of the
+              same spec contributes <strong>2 picks</strong>.
+            </p>
+            <p>
+              <strong>Runs</strong> counts distinct runs containing the spec. A run
+              with two of the same spec still counts as <strong>1 run</strong>
+            </p>
+          </HelpHint>
+        </label>
         <select id={`spec-dist-metric-${scope}`} data-metric-select>
-          {METRIC_OPTIONS.map((m) => (
-            <option value={m.key}>{m.label}</option>
-          ))}
+          {METRIC_OPTIONS.map((m) => <option value={m.key}>{m.label}</option>)}
         </select>
       </div>
       <div class="filter-group">
         <label for={`spec-dist-role-${scope}`}>Role</label>
         <select id={`spec-dist-role-${scope}`} data-role-select>
-          {ROLE_TABS.map((r) => (
-            <option value={r.key}>{r.label}</option>
-          ))}
+          {ROLE_TABS.map((r) => <option value={r.key}>{r.label}</option>)}
         </select>
       </div>
       <div class="filter-group">
         <label for={`spec-dist-dungeon-${scope}`}>Dungeon</label>
         <select id={`spec-dist-dungeon-${scope}`} data-dungeon-select>
-          {DUNGEON_OPTIONS.map((d) => (
-            <option value={d.key}>{d.label}</option>
-          ))}
+          {DUNGEON_OPTIONS.map((d) => <option value={d.key}>{d.label}</option>)}
         </select>
       </div>
     </div>
@@ -112,5 +128,7 @@ const dataJson = JSON.stringify(buckets);
 <script>
   import { initSpecDistributionCharts } from "./SpecDistributionChart.ts";
   initSpecDistributionCharts();
-  document.addEventListener("astro:page-load", () => initSpecDistributionCharts());
+  document.addEventListener("astro:page-load", () =>
+    initSpecDistributionCharts(),
+  );
 </script>

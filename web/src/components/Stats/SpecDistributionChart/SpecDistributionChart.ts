@@ -107,28 +107,34 @@ function activeBucketKey(container: HTMLElement): string {
 }
 
 function activeRoleKey(container: HTMLElement): string {
-  const select = container.querySelector<HTMLSelectElement>("[data-role-select]");
+  const select =
+    container.querySelector<HTMLSelectElement>("[data-role-select]");
   return select?.value ?? "all";
 }
 
 function activeMetric(container: HTMLElement): Metric {
-  const select = container.querySelector<HTMLSelectElement>("[data-metric-select]");
+  const select = container.querySelector<HTMLSelectElement>(
+    "[data-metric-select]",
+  );
   return select?.value === "runs" ? "runs" : "picks";
 }
 
 function activeDungeonKey(container: HTMLElement): string {
-  const select = container.querySelector<HTMLSelectElement>("[data-dungeon-select]");
+  const select = container.querySelector<HTMLSelectElement>(
+    "[data-dungeon-select]",
+  );
   return select?.value ?? "all";
 }
 
-// Pull the metric-relevant value out of an entry — bar height + tooltip both
-// route through this so swapping the metric is one place.
+// single accessor for the metric value so bar height + tooltip stay in sync
 function entryValue(e: SpecEntry, metric: Metric): number {
   return metric === "runs" ? e.runs_with_spec : e.count;
 }
 
 function renderChart(container: HTMLElement) {
-  const canvas = container.querySelector(".spec-distribution-chart__canvas") as HTMLElement | null;
+  const canvas = container.querySelector(
+    ".spec-distribution-chart__canvas",
+  ) as HTMLElement | null;
   if (!canvas) return;
 
   const buckets = parseBuckets(container);
@@ -141,8 +147,7 @@ function renderChart(container: HTMLElement) {
     entries: [],
     by_dungeon: {},
   };
-  // When a dungeon is picked, slice to that dungeon's sub-bucket so total_runs,
-  // entries, and the share denominator all come from the same scope.
+  // dungeon picked: slice to its sub-bucket so total_runs and entries share scope
   const bucket: { total_runs: number; entries: SpecEntry[] } =
     dungeonKey === "all"
       ? { total_runs: fullBucket.total_runs, entries: fullBucket.entries }
@@ -159,27 +164,29 @@ function renderChart(container: HTMLElement) {
     return e ? entryValue(e, metric) : 0;
   };
 
-  // Apply both filters: role + zero-hide. Specs with no count in this bucket
-  // disappear entirely (no empty slot left behind).
+  // role filter + zero-hide (specs with 0 count drop out entirely)
   const visible = SPECS.filter((s) => {
     if (roleKey !== "all" && s.role !== roleKey) return false;
     return valueOf(s.specId) > 0;
   });
 
-  // Recompute group breaks on the visible set (last spec of each class group).
-  const visibleWithGap: Array<Spec & { gapAfter: boolean }> = visible.map((s, i) => ({
-    ...s,
-    gapAfter: i < visible.length - 1 && visible[i + 1].className !== s.className,
-  }));
+  // recompute class-group breaks on the visible set
+  const visibleWithGap: Array<Spec & { gapAfter: boolean }> = visible.map(
+    (s, i) => ({
+      ...s,
+      gapAfter:
+        i < visible.length - 1 && visible[i + 1].className !== s.className,
+    }),
+  );
 
-  // Empty state — nothing to render.
   if (visibleWithGap.length === 0) {
-    canvas.innerHTML = '<p class="spec-distribution-chart__empty">No data for this filter.</p>';
+    canvas.innerHTML =
+      '<p class="spec-distribution-chart__empty">No data for this filter.</p>';
     return;
   }
 
-  // Sizing — fit the chart width to the container, but keep bars at a readable
-  // minimum. If the natural layout exceeds container width, the canvas just scrolls.
+  // fit container width but keep bars at a readable minimum;
+  // overflow scrolls horizontally
   const containerW = canvas.clientWidth || container.clientWidth || 800;
   const minBarW = 14;
   const intraGap = 2;
@@ -198,7 +205,10 @@ function renderChart(container: HTMLElement) {
 
   const padding = { top: 16, right: 12, bottom: 56, left: 48 };
   // expand barW if container has slack
-  const innerWAvail = Math.max(containerW - padding.left - padding.right, naturalW);
+  const innerWAvail = Math.max(
+    containerW - padding.left - padding.right,
+    naturalW,
+  );
   const slackPerBar = (innerWAvail - naturalW) / visibleWithGap.length;
   const barW = Math.max(minBarW, minBarW + slackPerBar);
 
@@ -218,9 +228,9 @@ function renderChart(container: HTMLElement) {
   const innerH = height - padding.top - padding.bottom;
 
   const maxCount = Math.max(1, ...visibleWithGap.map((s) => valueOf(s.specId)));
-  // Denominator for the tooltip share %.
-  //   - picks mode: fraction of all spec slots in the visible filter
-  //   - runs mode:  fraction of distinct runs in the bucket containing the spec
+  // tooltip share %:
+  //   picks: fraction of all spec slots in the visible filter
+  //   runs:  fraction of distinct runs in the bucket containing the spec
   const shareDenominator =
     metric === "runs"
       ? bucket.total_runs
@@ -256,10 +266,8 @@ function renderChart(container: HTMLElement) {
     svg.appendChild(label);
   }
 
-  // Tooltip lives in the canvas DOM (positioned absolutely). Initialize top/left
-  // so the hidden empty tooltip doesn't sit at the canvas's natural flow bottom
-  // and inflate scrollHeight (which would otherwise trigger a phantom vertical
-  // scrollbar when overflow-y is `auto`).
+  // initialize top/left so the hidden tooltip doesn't inflate scrollHeight
+  // (otherwise overflow-y:auto would show a phantom vertical scrollbar)
   const tooltip = document.createElement("div");
   tooltip.className = "spec-distribution-chart__tooltip";
   tooltip.style.opacity = "0";
@@ -270,8 +278,7 @@ function renderChart(container: HTMLElement) {
   const iconSize = Math.min(barW + 4, 24);
   const iconY = padding.top + innerH + 8;
 
-  // Highlight rect — drawn behind bars to mark the column the cursor is nearest to.
-  // Goes into the SVG before bars so it paints underneath them.
+  // appended before bars so it paints underneath them
   const highlight = document.createElementNS(SVG_NS, "rect");
   highlight.setAttribute("y", String(padding.top));
   highlight.setAttribute("height", String(innerH));
@@ -281,7 +288,13 @@ function renderChart(container: HTMLElement) {
   svg.appendChild(highlight);
 
   // Pre-compute per-bar metadata for the overlay's nearest-column lookup.
-  const cols: Array<{ spec: Spec; value: number; x: number; y: number; cx: number }> = [];
+  const cols: Array<{
+    spec: Spec;
+    value: number;
+    x: number;
+    y: number;
+    cx: number;
+  }> = [];
 
   // Bars + icons
   for (let i = 0; i < visibleWithGap.length; i++) {
@@ -323,9 +336,8 @@ function renderChart(container: HTMLElement) {
     }
   }
 
-  // Single overlay across the chart area captures pointer events. We pick the
-  // column whose center is closest to the cursor — so tiny bars are easy to
-  // hover by pointing near them.
+  // overlay captures pointer events; we pick the nearest column center so
+  // tiny bars are easy to hover
   const overlay = document.createElementNS(SVG_NS, "rect");
   overlay.setAttribute("x", String(padding.left));
   overlay.setAttribute("y", String(padding.top));
@@ -400,7 +412,9 @@ function renderChart(container: HTMLElement) {
 
 function wireControls(container: HTMLElement) {
   // Bucket = tab buttons. Role = standard select dropdown.
-  const tabs = container.querySelectorAll<HTMLButtonElement>(".spec-distribution-chart__tab");
+  const tabs = container.querySelectorAll<HTMLButtonElement>(
+    ".spec-distribution-chart__tab",
+  );
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => {
@@ -412,18 +426,25 @@ function wireControls(container: HTMLElement) {
     });
   });
 
-  const roleSelect = container.querySelector<HTMLSelectElement>("[data-role-select]");
+  const roleSelect =
+    container.querySelector<HTMLSelectElement>("[data-role-select]");
   roleSelect?.addEventListener("change", () => renderChart(container));
 
-  const metricSelect = container.querySelector<HTMLSelectElement>("[data-metric-select]");
+  const metricSelect = container.querySelector<HTMLSelectElement>(
+    "[data-metric-select]",
+  );
   metricSelect?.addEventListener("change", () => renderChart(container));
 
-  const dungeonSelect = container.querySelector<HTMLSelectElement>("[data-dungeon-select]");
+  const dungeonSelect = container.querySelector<HTMLSelectElement>(
+    "[data-dungeon-select]",
+  );
   dungeonSelect?.addEventListener("change", () => renderChart(container));
 }
 
 export function initSpecDistributionCharts() {
-  const charts = document.querySelectorAll<HTMLElement>(".spec-distribution-chart");
+  const charts = document.querySelectorAll<HTMLElement>(
+    ".spec-distribution-chart",
+  );
   charts.forEach((c) => {
     wireControls(c);
     renderChart(c);

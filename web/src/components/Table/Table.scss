@@ -67,6 +67,7 @@
 .table-container[data-mode="players"] {
   .table-header,
   .table-row {
+    // rank | player | realm | metric (Combined Time or Total Runs)
     grid-template-columns: 80px 2fr 1.5fr 140px;
   }
 }
@@ -204,7 +205,7 @@
       display: none; // No labels needed in custom layout
     }
 
-    // First row: Rank | Player | Combined Time
+    // First row: Rank | Player | Metric (Combined Time or Total Runs)
     .table-cell:nth-child(1) {
       // Rank
       grid-column: 1;
@@ -222,7 +223,7 @@
     }
 
     .table-cell:nth-child(4) {
-      // Combined Time
+      // Metric column (Combined Time on overall-time, Total Runs on total-runs)
       grid-column: 3;
       grid-row: 1;
       font-weight: 600;

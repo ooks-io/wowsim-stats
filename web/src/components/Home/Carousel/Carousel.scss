@@ -30,7 +30,7 @@
     flex: 0 0
       calc(
         (100% - (var(--carousel-pv) - 1) * var(--carousel-gap)) /
-        var(--carousel-pv)
+          var(--carousel-pv)
       );
     scroll-snap-align: start;
     min-width: 0;
@@ -64,9 +64,6 @@
     }
 
     &[hidden] {
-      // `hidden` attribute is the source of truth — toggled by Carousel.ts when
-      // we hit either edge — but we also keep it visually inert so that screen
-      // readers and tab-focus skip it.
       display: none;
     }
 

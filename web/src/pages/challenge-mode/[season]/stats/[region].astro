@@ -67,15 +67,18 @@ const panelId = `${region}_${seasonKey}`;
 ---
 
 <PageLayout
-  title={`Challenge Mode Stats — ${scopeLabel}`}
-  description="Aggregate stats across WoW MoP Challenge Mode runs — completion tiers, spec popularity, weekly activity."
+  title={`Challenge Mode Stats - ${scopeLabel}`}
+  description="Aggregate stats across WoW MoP Challenge Mode runs - completion tiers, spec popularity, weekly activity."
 >
   <main class="stats-page">
     {
       !stats && (
         <div class="stats-page__error">
           <h2>Couldn't load stats data</h2>
-          <p>The stats.json file is missing or unreachable. Try regenerating it via <code>ookstats generate stats</code>.</p>
+          <p>
+            The stats.json file is missing or unreachable. Try regenerating it
+            via <code>ookstats generate stats</code>.
+          </p>
         </div>
       )
     }
@@ -87,7 +90,13 @@ const panelId = `${region}_${seasonKey}`;
             <h1>Challenge Mode Stats</h1>
             {generatedAt && (
               <span class="stats-page__updated">
-                Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                Data updated{" "}
+                {generatedAt.toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             )}
           </header>
@@ -109,10 +118,17 @@ const panelId = `${region}_${seasonKey}`;
           </div>
 
           {scope ? (
-            <section class="stats-page__panel" data-region={region} data-scope-panel={seasonKey}>
+            <section
+              class="stats-page__panel"
+              data-region={region}
+              data-scope-panel={seasonKey}
+            >
               <div class="stats-page__kpis">
                 <KpiCard label="Total runs" value={scope.total_runs} />
-                <KpiCard label="Characters in runs" value={scope.total_players} />
+                <KpiCard
+                  label="Characters in runs"
+                  value={scope.total_players}
+                />
                 <KpiCard
                   label="9/9 Characters"
                   value={scope.nine_of_nine_players}
@@ -146,14 +162,20 @@ const panelId = `${region}_${seasonKey}`;
                 <header class="stats-page__section-header">
                   <h2>Spec Distribution</h2>
                 </header>
-                <SpecDistributionChart buckets={scope.spec_counts} scope={panelId} />
+                <SpecDistributionChart
+                  buckets={scope.spec_counts}
+                  scope={panelId}
+                />
               </section>
 
               <section class="stats-page__section">
                 <header class="stats-page__section-header">
                   <h2>Dungeon Distribution</h2>
                 </header>
-                <DungeonDistributionChart buckets={scope.spec_counts} scope={panelId} />
+                <DungeonDistributionChart
+                  buckets={scope.spec_counts}
+                  scope={panelId}
+                />
               </section>
             </section>
           ) : (
@@ -239,8 +261,7 @@ const panelId = `${region}_${seasonKey}`;
     font-weight: $font-weight-semibold;
   }
 
-  // Mobile overrides — placed at the end of the stylesheet so they win the cascade
-  // over the desktop rules above (same selector specificity).
+  // mobile overrides at end of stylesheet to win the cascade
   @media (max-width: 768px) {
     .stats-page {
       padding: 15px;

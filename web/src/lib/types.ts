@@ -172,8 +172,7 @@ export interface APIResponse<T> {
   error?: string;
 }
 
-// Home page types — mirror nix/pkgs/ookstats/src/internal/generator/home.go
-// (HomeRunEntry / HomePlayerEntry). Keep field names in sync with that file.
+// mirror nix/pkgs/ookstats/src/internal/generator/home.go - keep in sync
 
 export interface HomeRunEntry {
   rank?: number;
@@ -208,8 +207,7 @@ export interface HomePlayerEntry {
   avatar_url?: string;
 }
 
-// Stats page types — mirror nix/pkgs/ookstats/src/internal/generator/stats.go.
-// Keep field names in sync.
+// mirror nix/pkgs/ookstats/src/internal/generator/stats.go - keep in sync
 
 export interface StatsJSON {
   generated_at: number;
@@ -235,7 +233,7 @@ export interface StatsSpecCountBucket {
   // Distinct runs in this bucket (denominator for the "runs with spec" metric).
   total_runs: number;
   entries: StatsSpecCountEntry[];
-  // Per-dungeon breakdown — same shape, keyed by numeric dungeon_id.
+  // per-dungeon breakdown, keyed by numeric dungeon_id
   by_dungeon: Record<string, StatsDungeonSpecBucket>;
 }
 
@@ -261,8 +259,7 @@ export interface StatsSpecCountEntry {
   runs_with_spec: number;
 }
 
-// Gear popularity (gear.json) — top items per slot for the top players in
-// each (season, spec) combo. See nix/.../generator/gear.go for details.
+// gear.json - mirror nix/.../generator/gear.go, keep in sync
 export interface GearJSON {
   generated_at: number;
   // Outer key: season key ("season_1" | "season_2"). Inner key: spec_id (string).

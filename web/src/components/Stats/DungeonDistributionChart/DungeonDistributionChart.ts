@@ -26,10 +26,13 @@ interface SpecBucket {
 const SVG_NS = "http://www.w3.org/2000/svg";
 const XLINK_NS = "http://www.w3.org/1999/xlink";
 
-// Dungeon ordering — matches dungeon-thresholds.ts ordering / canonical id order.
-// Each entry's icon is resolved via the shared dungeonIcons helper.
+// matches dungeon-thresholds.ts canonical id order
 const DUNGEONS: Array<{ id: number; name: string; slug: string }> = [
-  { id: 2, name: "Temple of the Jade Serpent", slug: "temple-of-the-jade-serpent" },
+  {
+    id: 2,
+    name: "Temple of the Jade Serpent",
+    slug: "temple-of-the-jade-serpent",
+  },
   { id: 56, name: "Stormstout Brewery", slug: "stormstout-brewery" },
   { id: 57, name: "Gate of the Setting Sun", slug: "gate-of-the-setting-sun" },
   { id: 58, name: "Shado-Pan Monastery", slug: "shado-pan-monastery" },
@@ -58,7 +61,9 @@ function activeBucketKey(container: HTMLElement): string {
 }
 
 function renderChart(container: HTMLElement) {
-  const canvas = container.querySelector(".dungeon-distribution-chart__canvas") as HTMLElement | null;
+  const canvas = container.querySelector(
+    ".dungeon-distribution-chart__canvas",
+  ) as HTMLElement | null;
   if (!canvas) return;
 
   const buckets = parseBuckets(container);
@@ -69,26 +74,29 @@ function renderChart(container: HTMLElement) {
     by_dungeon: {},
   };
 
-  // Pull per-dungeon run counts. Skip dungeons with 0 runs in this bucket.
+  // skip dungeons with 0 runs in this bucket
   const visible = DUNGEONS.map((d) => {
     const sub = fullBucket.by_dungeon?.[String(d.id)];
     return { ...d, count: sub?.total_runs ?? 0 };
   }).filter((d) => d.count > 0);
 
   if (visible.length === 0) {
-    canvas.innerHTML = '<p class="dungeon-distribution-chart__empty">No data for this filter.</p>';
+    canvas.innerHTML =
+      '<p class="dungeon-distribution-chart__empty">No data for this filter.</p>';
     return;
   }
 
-  // Sizing — same playbook as the spec chart, smaller bar minimum since there
-  // are only ~9 bars (vs ~33 specs) so they get plenty of room.
+  // smaller bar minimum than the spec chart - only ~9 bars so they fit fine
   const containerW = canvas.clientWidth || container.clientWidth || 800;
   const minBarW = 32;
   const gap = 18;
   const padding = { top: 16, right: 12, bottom: 56, left: 56 };
 
   const naturalW = visible.length * minBarW + (visible.length - 1) * gap;
-  const innerWAvail = Math.max(containerW - padding.left - padding.right, naturalW);
+  const innerWAvail = Math.max(
+    containerW - padding.left - padding.right,
+    naturalW,
+  );
   const slackPerBar = (innerWAvail - naturalW) / visible.length;
   const barW = Math.max(minBarW, minBarW + slackPerBar);
 
@@ -264,7 +272,9 @@ function renderChart(container: HTMLElement) {
 }
 
 function wireControls(container: HTMLElement) {
-  const tabs = container.querySelectorAll<HTMLButtonElement>(".dungeon-distribution-chart__tab");
+  const tabs = container.querySelectorAll<HTMLButtonElement>(
+    ".dungeon-distribution-chart__tab",
+  );
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => {
@@ -278,7 +288,9 @@ function wireControls(container: HTMLElement) {
 }
 
 export function initDungeonDistributionCharts() {
-  const charts = document.querySelectorAll<HTMLElement>(".dungeon-distribution-chart");
+  const charts = document.querySelectorAll<HTMLElement>(
+    ".dungeon-distribution-chart",
+  );
   charts.forEach((c) => {
     wireControls(c);
     renderChart(c);

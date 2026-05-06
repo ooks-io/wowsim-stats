@@ -1,7 +1,6 @@
 @use "../../../styles/core/tokens" as *;
 
-// No outer border / background — the page bg shows through. Matches the visual
-// pattern used by TopPlayersList and RecentRuns (header + rows; no card chrome).
+// no card chrome (matches TopPlayersList / RecentRuns pattern)
 .dungeon-record-card {
   display: flex;
   flex-direction: column;

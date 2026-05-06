@@ -59,11 +59,8 @@
     .team-composition {
       gap: 4px $spacing-sm;
 
-      // TeamComposition's stock mobile rule (≤720px) makes each .team-member
-      // full-width with a dark bubble background — designed for leaderboard
-      // table rows, not our flex-row ChallengeRun. The full-width bubbles
-      // collide with the rank/time/date positioned next to the team. Override
-      // back to inline rendering for the home page context.
+      // override TeamComposition's mobile full-width bubbles (designed for
+      // leaderboard rows) so they don't collide with rank/time/date here
       @media (max-width: 720px) {
         flex-direction: row;
 
@@ -77,8 +74,7 @@
     }
   }
 
-  // Color comes from the global `.time / .time--*` classes applied by DungeonTime —
-  // we deliberately don't set `color` here so tier coloring wins.
+  // no `color` here so the global `.time--*` tier classes win
   &__duration {
     flex: 0 0 auto;
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;

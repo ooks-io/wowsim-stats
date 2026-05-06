@@ -25,17 +25,20 @@ const seasonKeys = home
   : [];
 const defaultSeasonKey = seasonKeys[0];
 
-// Pre-compute each season's panel data so we can render all of them and toggle
-// visibility client-side — keeps the season switch instant and avoids a refetch.
+// render every season server-side; client toggles visibility for instant switch
 const seasons = seasonKeys.map((key) => {
   const s = home.seasons[key];
   return {
     key,
     label: s.season_name || `Season ${key}`,
     data: s,
-    dungeonEntries: Object.entries(s.top_runs_per_dungeon as Record<string, any[]>)
+    dungeonEntries: Object.entries(
+      s.top_runs_per_dungeon as Record<string, any[]>,
+    )
       .filter(([, runs]) => runs && runs.length > 0)
-      .sort(([, a], [, b]) => (a[0]?.dungeon_id ?? 0) - (b[0]?.dungeon_id ?? 0)),
+      .sort(
+        ([, a], [, b]) => (a[0]?.dungeon_id ?? 0) - (b[0]?.dungeon_id ?? 0),
+      ),
   };
 });
 
@@ -52,7 +55,10 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
       !home && (
         <div class="home__error">
           <h2>Couldn't load home data</h2>
-          <p>The home.json file is missing or unreachable. Try regenerating it via <code>ookstats generate home</code>.</p>
+          <p>
+            The home.json file is missing or unreachable. Try regenerating it
+            via <code>ookstats generate home</code>.
+          </p>
         </div>
       )
     }
@@ -64,7 +70,13 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
             <h1>Challenge Mode Leaderboards</h1>
             {generatedAt && (
               <span class="home__updated">
-                Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                Data updated{" "}
+                {generatedAt.toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             )}
           </header>
@@ -81,7 +93,10 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
               {seasons.map((s) => (
                 <button
                   type="button"
-                  class:list={["home__season-tab", { active: s.key === defaultSeasonKey }]}
+                  class:list={[
+                    "home__season-tab",
+                    { active: s.key === defaultSeasonKey },
+                  ]}
                   role="tab"
                   aria-selected={s.key === defaultSeasonKey ? "true" : "false"}
                   data-season-key={s.key}
@@ -94,7 +109,10 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
 
           {seasons.map((s) => (
             <div
-              class:list={["home__season-panel", { hidden: s.key !== defaultSeasonKey }]}
+              class:list={[
+                "home__season-panel",
+                { hidden: s.key !== defaultSeasonKey },
+              ]}
               data-season-panel={s.key}
               aria-hidden={s.key !== defaultSeasonKey ? "true" : "false"}
             >
@@ -103,7 +121,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
                   <h2>Top Players - {s.label}</h2>
                 </header>
                 <Carousel
-                  ariaLabel={`Top players by region — ${s.label}`}
+                  ariaLabel={`Top players by region - ${s.label}`}
                   class="home__players-carousel"
                   perView={3}
                   perViewMobile={1}
@@ -146,7 +164,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
                   <h2>Dungeon Records - {s.label}</h2>
                 </header>
                 <Carousel
-                  ariaLabel={`Dungeon records — ${s.label}`}
+                  ariaLabel={`Dungeon records - ${s.label}`}
                   class="home__dungeons-carousel"
                   perView={2}
                   perViewMobile={1}
@@ -174,11 +192,13 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
 </PageLayout>
 
 <script>
-  // Season tabs toggle which season-panel is visible. Both panels are
-  // server-rendered so the switch is instant — no fetch, no re-render.
+  // toggle which server-rendered season-panel is visible
   function wireSeasonTabs() {
-    const tabs = document.querySelectorAll<HTMLButtonElement>(".home__season-tab");
-    const panels = document.querySelectorAll<HTMLElement>(".home__season-panel");
+    const tabs =
+      document.querySelectorAll<HTMLButtonElement>(".home__season-tab");
+    const panels = document.querySelectorAll<HTMLElement>(
+      ".home__season-panel",
+    );
     if (tabs.length === 0) return;
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
@@ -194,8 +214,8 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
           p.classList.toggle("hidden", !isActive);
           p.setAttribute("aria-hidden", isActive ? "false" : "true");
         });
-        // Carousel arrows depend on viewport scrollWidth, which is 0 while the
-        // panel is hidden — dispatch resize so they re-evaluate after reveal.
+        // carousel arrows read scrollWidth, which is 0 while hidden;
+        // resize event makes them re-evaluate after reveal
         window.dispatchEvent(new Event("resize"));
       });
     });
@@ -207,10 +227,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
 <style lang="scss">
   @use "../styles/core/tokens" as *;
 
-  // Match CM page wrapper (.leaderboard-page on /challenge-mode/* pages)
-  // so navigating between sections feels cohesive. No flex-gap on the wrapper —
-  // each child component (LeaderboardHeader-style hero, PlayerSearch, nav) carries
-  // its own bottom margin to match the CM page rhythm.
+  // matches .leaderboard-page wrapper on /challenge-mode/* for visual cohesion
   .home {
     max-width: 1200px;
     margin: 0 auto;
@@ -232,8 +249,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
     }
   }
 
-  // Mirror LeaderboardHeader's spacing/typography exactly so home title flows
-  // visually like every other CM-section page header.
+  // mirrors LeaderboardHeader spacing/typography
   .home__hero {
     display: flex;
     align-items: baseline;
@@ -255,8 +271,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
     font-size: $font-size-sm;
   }
 
-  // Season toggle — pill-style tabs matching the stats page region tabs so the
-  // page-level filter feels consistent across the site.
+  // pill-style tabs matching the stats page region tabs
   .home__season-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -326,8 +341,7 @@ const generatedAt = home?.generated_at ? new Date(home.generated_at) : null;
   // Carousel handles per-card sizing via its `perView` prop (see Carousel.scss).
   // No per-card overrides needed here.
 
-  // Mobile overrides — placed at the end of the stylesheet so they win the
-  // cascade over the desktop rules above (same selector specificity).
+  // mobile overrides at end of stylesheet to win the cascade
   @media (max-width: 768px) {
     .home {
       padding: 15px;

@@ -1,6 +1,5 @@
-// Spec catalog — single source of truth for the 33 MoP specs in the order they
-// appear across the site (canonical class+spec ordering, role-grouped within
-// class). Used by the gear page's spec selector and slug routing.
+// canonical 33 MoP specs in role-grouped class order; drives the gear page
+// spec selector and slug routing
 
 export interface SpecEntry {
   id: number;
@@ -20,7 +19,12 @@ function slugify(s: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function entry(id: number, className: string, specName: string, role: SpecEntry["role"]): SpecEntry {
+function entry(
+  id: number,
+  className: string,
+  specName: string,
+  role: SpecEntry["role"],
+): SpecEntry {
   return {
     id,
     className,
@@ -86,7 +90,9 @@ export function specBySlug(slug: string | undefined | null): SpecEntry | null {
   return BY_SLUG.get(slug.toLowerCase()) ?? null;
 }
 
-export function specById(id: number | string | undefined | null): SpecEntry | null {
+export function specById(
+  id: number | string | undefined | null,
+): SpecEntry | null {
   if (id === undefined || id === null) return null;
   const n = typeof id === "number" ? id : parseInt(id, 10);
   if (Number.isNaN(n)) return null;

@@ -19,7 +19,7 @@ const BRACKET_PERCENTILES: Record<string, string> = {
   epic: "Top 20%",
   rare: "Top 40%",
   uncommon: "Top 60%",
-  common: "—",
+  common: "-",
 };
 
 // creates a player profile embed
@@ -76,11 +76,11 @@ export function createPlayerProfileEmbed(
   // rankings field
   if (seasonData) {
     let rankingsText = "";
-    const globalPercentile = BRACKET_PERCENTILES[bracket] || "—";
+    const globalPercentile = BRACKET_PERCENTILES[bracket] || "-";
     const regionalBracket = seasonData.regional_ranking_bracket || "";
-    const regionalPercentile = BRACKET_PERCENTILES[regionalBracket] || "—";
+    const regionalPercentile = BRACKET_PERCENTILES[regionalBracket] || "-";
     const realmBracket = seasonData.realm_ranking_bracket || "";
-    const realmPercentile = BRACKET_PERCENTILES[realmBracket] || "—";
+    const realmPercentile = BRACKET_PERCENTILES[realmBracket] || "-";
 
     if (seasonData.global_ranking) {
       // only show percentile if not rank 1 (would be redundant)

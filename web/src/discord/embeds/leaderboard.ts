@@ -126,7 +126,7 @@ export function createPlayerLeaderboardEmbed(
   const playerLines = players.slice(0, limit).map((player) => {
     const timeStr = player.best_avg_time
       ? `\`${formatDurationFromMs(player.best_avg_time)}\``
-      : "—";
+      : "-";
 
     // get spec emoji if available (use class|spec format like frontend)
     const specKey = `${player.class_name}|${player.active_spec_name || ""}`;
@@ -167,7 +167,14 @@ export function createDungeonLeaderboardRefreshButton(
   limit?: number,
   season?: string,
 ): MessageComponent[] {
-  const params = [dungeon, scope, region || "", realm || "", limit || "10", season || "1"];
+  const params = [
+    dungeon,
+    scope,
+    region || "",
+    realm || "",
+    limit || "10",
+    season || "1",
+  ];
   return [
     {
       type: ComponentType.ACTION_ROW,
@@ -192,7 +199,14 @@ export function createPlayerLeaderboardRefreshButton(
   limit?: number,
   season?: string,
 ): MessageComponent[] {
-  const params = [scope, region || "", realm || "", className || "", limit || "25", season || "1"];
+  const params = [
+    scope,
+    region || "",
+    realm || "",
+    className || "",
+    limit || "25",
+    season || "1",
+  ];
   return [
     {
       type: ComponentType.ACTION_ROW,

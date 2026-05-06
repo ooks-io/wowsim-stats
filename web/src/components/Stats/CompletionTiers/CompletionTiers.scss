@@ -15,10 +15,8 @@
     gap: $spacing-sm;
   }
 
-  // Mobile: cards stack vertically one per row (the grid `auto-fit` already
-  // collapses to a single column at this width). Inside each card, the
-  // 3-column percentile row gets cramped — the uppercase labels wrap awkwardly
-  // — so we flip it to a stacked key-value layout (label left, value right).
+  // mobile: 3-column percentile row wraps awkwardly, flip to stacked
+  // key-value (label left, value right)
   @media (max-width: 768px) {
     .completion-tiers__pcts {
       flex-direction: column;
@@ -45,9 +43,15 @@
     font-size: $font-size-md;
 
     // Tier-tinted label using the shared time-tier tokens.
-    &--gold     { color: var(--time-gold); }
-    &--platinum { color: var(--time-platinum); }
-    &--title    { color: var(--time-title); }
+    &--gold {
+      color: var(--time-gold);
+    }
+    &--platinum {
+      color: var(--time-platinum);
+    }
+    &--title {
+      color: var(--time-title);
+    }
   }
 
   &__count {

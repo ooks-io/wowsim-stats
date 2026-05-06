@@ -10,9 +10,8 @@ interface Props {
 
 const { buckets, scope } = Astro.props;
 
-// Mirrors the spec chart's bucket selector. Top 50 is intentionally omitted —
-// every dungeon has its own top-50 list so the bars would all be identical
-// and unhelpful for the "which dungeon is hardest" question.
+// mirrors the spec chart bucket selector; Top 50 is omitted because each
+// dungeon has its own top-50 list so the bars would all be identical
 const BUCKET_TABS: Array<{ key: string; label: string }> = [
   { key: "all_runs", label: "All Runs" },
   { key: "gold_runs", label: "Gold" },
@@ -23,29 +22,46 @@ const BUCKET_TABS: Array<{ key: string; label: string }> = [
 const dataJson = JSON.stringify(buckets);
 ---
 
-<figure class="dungeon-distribution-chart" data-scope={scope} data-buckets={dataJson}>
+<figure
+  class="dungeon-distribution-chart"
+  data-scope={scope}
+  data-buckets={dataJson}
+>
   <div class="dungeon-distribution-chart__controls">
-    <nav class="dungeon-distribution-chart__tabs" role="tablist" aria-label="Run filter">
-      {BUCKET_TABS.map((b, i) => (
-        <button
-          type="button"
-          class:list={["dungeon-distribution-chart__tab", { active: i === 0 }]}
-          role="tab"
-          aria-selected={i === 0 ? "true" : "false"}
-          data-bucket-key={b.key}
-        >
-          {b.label}
-        </button>
-      ))}
+    <nav
+      class="dungeon-distribution-chart__tabs"
+      role="tablist"
+      aria-label="Run filter"
+    >
+      {
+        BUCKET_TABS.map((b, i) => (
+          <button
+            type="button"
+            class:list={[
+              "dungeon-distribution-chart__tab",
+              { active: i === 0 },
+            ]}
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+            data-bucket-key={b.key}
+          >
+            {b.label}
+          </button>
+        ))
+      }
     </nav>
   </div>
   <div class="dungeon-distribution-chart__canvas">
-    {/* Filled by DungeonDistributionChart.ts on mount; kept empty server-side. */}
+    {
+      /* Filled by DungeonDistributionChart.ts on mount; kept empty server-side. */
+    }
   </div>
 </figure>
 
 <script>
   import { initDungeonDistributionCharts } from "./DungeonDistributionChart.ts";
   initDungeonDistributionCharts();
-  document.addEventListener("astro:page-load", () => initDungeonDistributionCharts());
+  document.addEventListener("astro:page-load", () =>
+    initDungeonDistributionCharts(),
+  );
 </script>

@@ -5,6 +5,7 @@ import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTy
 import GearSpecPicker from "../../../../components/Gear/GearSpecPicker/GearSpecPicker.astro";
 import GearSlotCard from "../../../../components/Gear/GearSlotCard/GearSlotCard.astro";
 import Callout from "../../../../components/Callout/Callout.astro";
+import HelpHint from "../../../../components/HelpHint/HelpHint.astro";
 import { specBySlug, SPECS } from "../../../../lib/specs";
 import type { GearJSON, GearSpecBucket } from "../../../../lib/types";
 
@@ -32,17 +33,8 @@ const seasonScope = gear?.scopes[seasonKey] ?? null;
 const bucket: GearSpecBucket | null =
   (seasonScope && seasonScope[String(spec.id)]) || null;
 
-// Slot ordering for the per-slot grid — left column is armor (head→feet),
-// right column is jewelry + weapons. Mirrors the WoW paper-doll convention
-// and reads top-to-bottom in each column.
-const SLOT_ORDER_LEFT = [
-  "HEAD",
-  "NECK",
-  "SHOULDER",
-  "BACK",
-  "CHEST",
-  "WRIST",
-];
+// WoW paper-doll layout: armor left (head to feet), jewelry/weapons right
+const SLOT_ORDER_LEFT = ["HEAD", "NECK", "SHOULDER", "BACK", "CHEST", "WRIST"];
 const SLOT_ORDER_RIGHT = [
   "HANDS",
   "WAIST",
@@ -74,110 +66,154 @@ const generatedAt = gear?.generated_at ? new Date(gear.generated_at) : null;
 ---
 
 <PageLayout
-  title={`${spec.specName} ${spec.className} Gear — Season ${seasonNumber}`}
+  title={`${spec.specName} ${spec.className} Gear - Season ${seasonNumber}`}
   description={`Most popular gear among the top ${spec.specName} ${spec.className} players in MoP Classic Challenge Mode Season ${seasonNumber}.`}
 >
   <main class="gear-page">
-    {!gear && (
-      <div class="gear-page__error">
-        <h2>Couldn't load gear data</h2>
-        <p>The gear.json file is missing or unreachable. Try regenerating it via <code>ookstats generate gear</code>.</p>
-      </div>
-    )}
-
-    {gear && (
-      <>
-        <header class="gear-page__hero">
-          <h1>Challenge Mode Gear</h1>
-          {generatedAt && (
-            <span class="gear-page__updated">
-              Data updated {generatedAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-            </span>
-          )}
-        </header>
-
-        <PlayerSearch />
-
-        <LeaderboardTypeNav
-          currentTab="gear"
-          currentSeason={seasonNumber}
-          currentSpec={spec.slug}
-        />
-
-        <Callout type="caution" title="Not a BiS list">
+    {
+      !gear && (
+        <div class="gear-page__error">
+          <h2>Couldn't load gear data</h2>
           <p>
-            This page reflects what the top sampled players happen to be wearing. For an actual best-in-slot
-            recommendation, use the
-            <a
-              href="https://docs.google.com/spreadsheets/d/1dh3rD1FRV8fp8xCGWcQk-enzhwLhPntfDPtQIeNrpLc/edit?pli=1&gid=2016422391"
-              target="_blank"
-              rel="noopener noreferrer"
-            >community-maintained BiS sheet</a>
-            or ask in the
-            <a
-              href="https://discord.gg/etxRSDNxFr"
-              target="_blank"
-              rel="noopener noreferrer"
-            >Challenge Mode Discord</a>.
+            The gear.json file is missing or unreachable. Try regenerating it
+            via <code>ookstats generate gear</code>.
           </p>
-        </Callout>
+        </div>
+      )
+    }
 
-        <GearSpecPicker activeSpec={spec.slug} season={seasonNumber} />
+    {
+      gear && (
+        <>
+          <header class="gear-page__hero">
+            <h1>Challenge Mode Gear</h1>
+            {generatedAt && (
+              <span class="gear-page__updated">
+                Data updated{" "}
+                {generatedAt.toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            )}
+          </header>
 
-        <header class="gear-page__spec-header">
-          <h2 class:list={["gear-page__spec-name", `text-${spec.className.toLowerCase().replace(/\s+/g, "-")}`]}>
-            {spec.specName} {spec.className}
-          </h2>
-          <span class="gear-page__pool">
-            {bucket
-              ? `Top ${bucket.total_players} of 100 sampled — Season ${seasonNumber}`
-              : `No qualifying gear data for Season ${seasonNumber}`}
-          </span>
-        </header>
+          <PlayerSearch />
 
-        {bucket && bucket.total_players > 0 ? (
-          <div class="gear-page__grid">
-            <div class="gear-page__column">
-              {SLOT_ORDER_LEFT.map((slot) => (
-                <GearSlotCard
-                  slot={slot}
-                  label={SLOT_LABELS[slot] ?? slot}
-                  bucket={bucket.slots[slot]}
-                  poolTotal={bucket.total_players}
-                />
-              ))}
-            </div>
-            <div class="gear-page__column">
-              {SLOT_ORDER_RIGHT.map((slot) => (
-                <GearSlotCard
-                  slot={slot}
-                  label={SLOT_LABELS[slot] ?? slot}
-                  bucket={bucket.slots[slot]}
-                  poolTotal={bucket.total_players}
-                />
-              ))}
-            </div>
-            <div class="gear-page__weapons">
-              {SLOT_ORDER_BOTTOM.map((slot) => (
-                <GearSlotCard
-                  slot={slot}
-                  label={SLOT_LABELS[slot] ?? slot}
-                  bucket={bucket.slots[slot]}
-                  poolTotal={bucket.total_players}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div class="gear-page__empty">
+          <LeaderboardTypeNav
+            currentTab="gear"
+            currentSeason={seasonNumber}
+            currentSpec={spec.slug}
+          />
+
+          <Callout type="caution" title="Not a BiS list">
             <p>
-              No gear data available for {spec.specName} {spec.className} in Season {seasonNumber} —
-              the spec may have too few sampled players, or none survived spec-stat validation.
+              This page reflects what the top sampled players happen to be
+              wearing. For an actual best-in-slot recommendation, use the
+              <a
+                href="https://docs.google.com/spreadsheets/d/1dh3rD1FRV8fp8xCGWcQk-enzhwLhPntfDPtQIeNrpLc/edit?pli=1&gid=2016422391"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                community-maintained BiS sheet
+              </a>
+              or ask in the
+              <a
+                href="https://discord.gg/etxRSDNxFr"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Challenge Mode Discord
+              </a>
+              .
             </p>
-          </div>
-        )}
-      </>
-    )}
+          </Callout>
+
+          <GearSpecPicker activeSpec={spec.slug} season={seasonNumber} />
+
+          <header class="gear-page__spec-header">
+            <h2
+              class:list={[
+                "gear-page__spec-name",
+                `text-${spec.className.toLowerCase().replace(/\s+/g, "-")}`,
+              ]}
+            >
+              {spec.specName} {spec.className}
+            </h2>
+            <span class="gear-page__pool">
+              {bucket ? (
+                <>
+                  {bucket.total_players} players sampled - Season {seasonNumber}
+                  <HelpHint title="How the pool is built" align="left">
+                    <p>
+                      We start with the{" "}
+                      <strong>
+                        top 100 {spec.specName} {spec.className}s
+                      </strong>
+                      .
+                    </p>
+                    <p>
+                      We then drop anyone whose equipped set's primary stat
+                      doesn't match this spec, usually they logged out in their
+                      offspec gear. The remaining{" "}
+                      <strong>{bucket.total_players}</strong> players are
+                      tallied below.
+                    </p>
+                  </HelpHint>
+                </>
+              ) : (
+                `No qualifying gear data for Season ${seasonNumber}`
+              )}
+            </span>
+          </header>
+
+          {bucket && bucket.total_players > 0 ? (
+            <div class="gear-page__grid">
+              <div class="gear-page__column">
+                {SLOT_ORDER_LEFT.map((slot) => (
+                  <GearSlotCard
+                    slot={slot}
+                    label={SLOT_LABELS[slot] ?? slot}
+                    bucket={bucket.slots[slot]}
+                    poolTotal={bucket.total_players}
+                  />
+                ))}
+              </div>
+              <div class="gear-page__column">
+                {SLOT_ORDER_RIGHT.map((slot) => (
+                  <GearSlotCard
+                    slot={slot}
+                    label={SLOT_LABELS[slot] ?? slot}
+                    bucket={bucket.slots[slot]}
+                    poolTotal={bucket.total_players}
+                  />
+                ))}
+              </div>
+              <div class="gear-page__weapons">
+                {SLOT_ORDER_BOTTOM.map((slot) => (
+                  <GearSlotCard
+                    slot={slot}
+                    label={SLOT_LABELS[slot] ?? slot}
+                    bucket={bucket.slots[slot]}
+                    poolTotal={bucket.total_players}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div class="gear-page__empty">
+              <p>
+                No gear data available for {spec.specName} {spec.className} in
+                Season {seasonNumber} - the spec may have too few sampled
+                players, or none survived spec-stat validation.
+              </p>
+            </div>
+          )}
+        </>
+      )
+    }
   </main>
 </PageLayout>
 
@@ -263,8 +299,12 @@ const generatedAt = gear?.generated_at ? new Date(gear.generated_at) : null;
     flex-direction: column;
     gap: $spacing-md;
 
-    &:nth-of-type(1) { grid-area: left; }
-    &:nth-of-type(2) { grid-area: right; }
+    &:nth-of-type(1) {
+      grid-area: left;
+    }
+    &:nth-of-type(2) {
+      grid-area: right;
+    }
   }
 
   .gear-page__weapons {
