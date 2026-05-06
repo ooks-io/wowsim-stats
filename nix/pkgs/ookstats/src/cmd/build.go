@@ -373,6 +373,9 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize, workers i
 	if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 		return err
 	}
+	if err := generator.GenerateTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
 
 	// search index
 	if err := generator.GenerateSearchIndex(db, filepath.Join(base, "search"), shardSize); err != nil {
