@@ -5,7 +5,6 @@
   coreutils,
   jq,
   nodejs,
-  nodePackages,
   sqlite,
   gum,
 }:
@@ -18,7 +17,6 @@ writeShellApplication {
     coreutils
     jq
     nodejs
-    nodePackages.vercel
     sqlite
     gum
   ];
@@ -351,7 +349,10 @@ writeShellApplication {
         fi
       }
 
-      # VERCEL DEPLOYMENT
+      # Pinned because Vercel's deploy endpoint enforces a minimum CLI
+      # version and silently breaks CI when that floor moves. Bump deliberately.
+      VERCEL_CLI="vercel@53.1.1"
+
       vercelDeploy() {
         log info "Vercel" "Deploying to Vercel ($ENVIRONMENT)"
 
@@ -362,20 +363,20 @@ writeShellApplication {
           npm ci
 
           log info "Vercel" "Pulling configuration..."
-          vercel pull --yes --environment="$ENVIRONMENT" --token="$VERCEL_TOKEN"
+          npx --yes "$VERCEL_CLI" pull --yes --environment="$ENVIRONMENT" --token="$VERCEL_TOKEN"
 
           if [ "$ENVIRONMENT" = "production" ]; then
             log info "Vercel" "Building for production..."
-            vercel build --prod --token="$VERCEL_TOKEN"
+            npx --yes "$VERCEL_CLI" build --prod --token="$VERCEL_TOKEN"
 
             log info "Vercel" "Deploying to production..."
-            deployment_url=$(vercel deploy --prebuilt --prod --archive=tgz --token="$VERCEL_TOKEN")
+            deployment_url=$(npx --yes "$VERCEL_CLI" deploy --prebuilt --prod --archive=tgz --token="$VERCEL_TOKEN")
           else
             log info "Vercel" "Building for preview..."
-            vercel build --token="$VERCEL_TOKEN"
+            npx --yes "$VERCEL_CLI" build --token="$VERCEL_TOKEN"
 
             log info "Vercel" "Deploying to preview..."
-            deployment_url=$(vercel deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN")
+            deployment_url=$(npx --yes "$VERCEL_CLI" deploy --prebuilt --archive=tgz --token="$VERCEL_TOKEN")
           fi
 
           log info "Vercel" "Deployment complete: $deployment_url"
