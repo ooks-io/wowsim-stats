@@ -28,6 +28,7 @@ type PlayerJSON struct {
 	RaceName          string                      `json:"race_name,omitempty"`
 	AverageItemLevel  *int                        `json:"average_item_level,omitempty"`
 	EquippedItemLevel *int                        `json:"equipped_item_level,omitempty"`
+	AllTimeTotalRuns  int                         `json:"all_time_total_runs"`
 	Seasons           map[string]PlayerSeasonJSON `json:"seasons"`
 }
 
@@ -218,8 +219,8 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 		pj.EquippedItemLevel = &v
 	}
 
-	// Build seasons data
 	for _, seasonData := range playerSeasonsMap[player.ID] {
+		pj.AllTimeTotalRuns += seasonData.TotalRuns
 		seasonJSON := PlayerSeasonJSON{
 			DungeonsCompleted: seasonData.DungeonsCompleted,
 			TotalRuns:         seasonData.TotalRuns,

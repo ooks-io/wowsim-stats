@@ -56,19 +56,14 @@ var generateAPICmd = &cobra.Command{
 		}
 
 		if doLeaderboards {
-			regions := []string{}
-			if strings.TrimSpace(regionsCSV) != "" {
-				for _, r := range strings.Split(regionsCSV, ",") {
-					rr := strings.TrimSpace(r)
-					if rr != "" {
-						regions = append(regions, rr)
-					}
-				}
-			}
+			regions := parseRegions(regionsCSV)
 			if err := generator.GenerateLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 				return err
 			}
 			if err := generator.GeneratePlayerLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GenerateTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 				return err
 			}
 		}
@@ -142,6 +137,84 @@ var generateStatsCmd = &cobra.Command{
 	},
 }
 
+var generatePlayerLeaderboardsCmd = &cobra.Command{
+	Use:   "player-leaderboards",
+	Short: "Generate the per-season player leaderboard JSON (Overall Time, all scopes)",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outDir, _ := cmd.Flags().GetString("out")
+		pageSize, _ := cmd.Flags().GetInt("page-size")
+		regionsCSV, _ := cmd.Flags().GetString("regions")
+		workers, _ := cmd.Flags().GetInt("workers")
+
+		if strings.TrimSpace(outDir) == "" {
+			return errors.New("--out is required")
+		}
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to db: %w", err)
+		}
+		defer db.Close()
+
+		base := filepath.Join(outDir, "api", "leaderboard")
+		if err := os.MkdirAll(base, 0o755); err != nil {
+			return fmt.Errorf("mkdir base: %w", err)
+		}
+
+		regions := parseRegions(regionsCSV)
+		if err := generator.GeneratePlayerLeaderboards(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		fmt.Printf("\nPer-season player leaderboards generated at %s/season/<id>/players/...\n", base)
+		return nil
+	},
+}
+
+var generateTotalRunsLeaderboardCmd = &cobra.Command{
+	Use:   "total-runs-leaderboard",
+	Short: "Generate the cross-season Total Runs leaderboard JSON (all scopes)",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outDir, _ := cmd.Flags().GetString("out")
+		pageSize, _ := cmd.Flags().GetInt("page-size")
+		regionsCSV, _ := cmd.Flags().GetString("regions")
+		workers, _ := cmd.Flags().GetInt("workers")
+
+		if strings.TrimSpace(outDir) == "" {
+			return errors.New("--out is required")
+		}
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to db: %w", err)
+		}
+		defer db.Close()
+
+		base := filepath.Join(outDir, "api", "leaderboard")
+		if err := os.MkdirAll(base, 0o755); err != nil {
+			return fmt.Errorf("mkdir base: %w", err)
+		}
+
+		regions := parseRegions(regionsCSV)
+		if err := generator.GenerateTotalRunsLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		fmt.Printf("\nTotal Runs leaderboard generated at %s/players/total-runs/...\n", base)
+		return nil
+	},
+}
+
+func parseRegions(csv string) []string {
+	out := []string{}
+	if strings.TrimSpace(csv) == "" {
+		return out
+	}
+	for _, r := range strings.Split(csv, ",") {
+		rr := strings.TrimSpace(r)
+		if rr != "" {
+			out = append(out, rr)
+		}
+	}
+	return out
+}
+
 var generateGearCmd = &cobra.Command{
 	Use:   "gear",
 	Short: "Generate gear popularity JSON (per-spec top items per slot, validated by spec primary stat)",
@@ -189,4 +262,16 @@ func init() {
 
 	generateCmd.AddCommand(generateGearCmd)
 	generateGearCmd.Flags().String("out", "web/public", "Output directory (api/gear.json will be written under it)")
+
+	generateCmd.AddCommand(generatePlayerLeaderboardsCmd)
+	generatePlayerLeaderboardsCmd.Flags().String("out", "web/public", "Output directory (api/leaderboard/... will be written under it)")
+	generatePlayerLeaderboardsCmd.Flags().Int("page-size", 25, "Leaderboard page size")
+	generatePlayerLeaderboardsCmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional/realm/class leaderboards")
+	generatePlayerLeaderboardsCmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
+
+	generateCmd.AddCommand(generateTotalRunsLeaderboardCmd)
+	generateTotalRunsLeaderboardCmd.Flags().String("out", "web/public", "Output directory (api/leaderboard/players/total-runs/... will be written under it)")
+	generateTotalRunsLeaderboardCmd.Flags().Int("page-size", 25, "Leaderboard page size")
+	generateTotalRunsLeaderboardCmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional/realm/class leaderboards")
+	generateTotalRunsLeaderboardCmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
 }
