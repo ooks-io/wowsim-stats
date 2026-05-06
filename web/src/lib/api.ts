@@ -5,6 +5,7 @@ import {
   buildStaticLeaderboardPath,
   buildStaticPlayerLeaderboardPath,
   buildStaticPlayerProfilePath,
+  buildStaticTotalRunsLeaderboardPath,
 } from "./utils.js";
 
 // api base configuration (always use relative paths for Netlify/SSR)
@@ -87,6 +88,19 @@ export async function fetchPlayerLeaderboard(
 ): Promise<any> {
   const url = `${API_BASE}${buildStaticPlayerLeaderboardPath(scope, region, page, opts)}`;
   console.log("Fetching player leaderboard:", url);
+  return apiRequest(url, origin);
+}
+
+export async function fetchTotalRunsLeaderboard(
+  scope: "global" | "regional" | "realm" = "global",
+  region?: string,
+  page: number = 1,
+  pageSize: number = 25,
+  opts?: { realmSlug?: string; classKey?: string },
+  origin?: string,
+): Promise<any> {
+  const url = `${API_BASE}${buildStaticTotalRunsLeaderboardPath(scope, region, page, opts)}`;
+  console.log("Fetching total runs leaderboard:", url);
   return apiRequest(url, origin);
 }
 

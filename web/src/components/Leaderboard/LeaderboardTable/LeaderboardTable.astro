@@ -9,7 +9,7 @@ import { formatDurationMMSS } from "../../../lib/utils";
 import DungeonTime from "../../DungeonTime/DungeonTime.astro";
 import "./LeaderboardTable.scss";
 
-type LeaderboardType = "dungeon" | "player";
+type LeaderboardType = "dungeon" | "player" | "total-runs";
 
 interface Props {
   type: LeaderboardType;
@@ -34,6 +34,10 @@ const {
   dungeon = "",
 } = Astro.props;
 
+const isPlayerTable = type === "player" || type === "total-runs";
+const showTimeColumn = type === "player";
+const showRunsColumn = type === "total-runs";
+
 const formatDate = (timestamp: number) => {
   return new Date(timestamp).toLocaleDateString("en-US", {
     month: "short",
@@ -56,7 +60,7 @@ const formatTime = (ms: number) => {
 >
   <div class="leaderboard-content">
     {
-      type === "dungeon" ? (
+      !isPlayerTable ? (
         <Table mode="leaderboard">
           <div slot="header" class="table-header-cell">
             Rank
@@ -121,9 +125,16 @@ const formatTime = (ms: number) => {
           <div slot="header" class="table-header-cell">
             Realm
           </div>
-          <div slot="header" class="table-header-cell">
-            Combined Time
-          </div>
+          {showTimeColumn && (
+            <div slot="header" class="table-header-cell">
+              Combined Time
+            </div>
+          )}
+          {showRunsColumn && (
+            <div slot="header" class="table-header-cell">
+              Total Runs
+            </div>
+          )}
 
           {players.length > 0 ? (
             players.map((player, index) => {
@@ -131,6 +142,7 @@ const formatTime = (ms: number) => {
               const time = player.combined_best_time
                 ? formatTime(player.combined_best_time)
                 : "N/A";
+              const totalRuns = player.total_runs ?? 0;
               const bracketClass = player.ranking_percentile
                 ? `bracket-${player.ranking_percentile.toLowerCase()}`
                 : "";
@@ -151,7 +163,12 @@ const formatTime = (ms: number) => {
                     />
                   </TableCell>
                   <TableCell label="Realm">{player.realm_name}</TableCell>
-                  <TableCell label="Combined Time">{time}</TableCell>
+                  {showTimeColumn && (
+                    <TableCell label="Combined Time">{time}</TableCell>
+                  )}
+                  {showRunsColumn && (
+                    <TableCell label="Total Runs">{totalRuns}</TableCell>
+                  )}
                 </TableRow>
               );
             })

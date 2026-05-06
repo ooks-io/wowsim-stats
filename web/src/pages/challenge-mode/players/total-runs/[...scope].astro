@@ -1,0 +1,155 @@
+---
+// cross-season; scope tail matches the per-season players route
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import LeaderboardTable from "../../../../components/Leaderboard/LeaderboardTable/LeaderboardTable.astro";
+import Pagination from "../../../../components/Leaderboard/Pagination/Pagination.astro";
+import LeaderboardScopeFilter from "../../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
+import ClassFilterSelect from "../../../../components/PlayerProfile/ClassFilterSelect/ClassFilterSelect.astro";
+import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
+import { fetchTotalRunsLeaderboard } from "../../../../lib/api";
+import { CLASSES } from "../../../../lib/wow-constants";
+
+export const prerender = false;
+
+const scope = Astro.params.scope || "";
+const scopeParts = scope.split("/").filter(Boolean);
+
+let regionParam = "global";
+let realmParam = "";
+let classParam = "all";
+let apiScope: "global" | "regional" | "realm" = "global";
+
+if (scopeParts.length >= 1) {
+  regionParam = scopeParts[0];
+
+  if (regionParam === "global") {
+    apiScope = "global";
+    if (scopeParts.length >= 2) {
+      classParam = scopeParts[1];
+    }
+  } else {
+    if (scopeParts.length === 1) {
+      apiScope = "regional";
+    } else if (scopeParts.length === 2) {
+      const secondPart = scopeParts[1];
+      if (CLASSES.includes(secondPart as any)) {
+        apiScope = "regional";
+        classParam = secondPart;
+      } else {
+        apiScope = "realm";
+        realmParam = secondPart;
+      }
+    } else if (scopeParts.length >= 3) {
+      apiScope = "realm";
+      realmParam = scopeParts[1];
+      classParam = scopeParts[2];
+    }
+  }
+}
+
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+let scopeLabel: string;
+if (regionParam === "global") {
+  scopeLabel = "Global";
+} else if (realmParam && realmParam !== "all") {
+  scopeLabel = `${regionParam.toUpperCase()} - ${realmParam}`;
+} else {
+  scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
+}
+
+let data;
+try {
+  data = await fetchTotalRunsLeaderboard(
+    apiScope,
+    regionParam,
+    currentPage,
+    25,
+    {
+      realmSlug: realmParam || undefined,
+      classKey: classParam !== "all" ? classParam : undefined,
+    },
+    Astro.url.origin,
+  );
+} catch (error) {
+  console.error("[Total Runs Leaderboard] Error:", error);
+  throw error;
+}
+
+// only used to build the per-season tab URLs
+const navSeason = 2;
+
+const pageTitle = `Total Runs - ${scopeLabel}`;
+---
+
+<PageLayout title={pageTitle}>
+  <main class="leaderboard-page">
+    <h1 class="total-runs-header">Total Runs - {scopeLabel}</h1>
+
+    <PlayerSearch />
+    <LeaderboardTypeNav
+      currentTab="total-runs"
+      currentRegion={regionParam}
+      currentRealm={realmParam}
+      currentSeason={navSeason}
+      currentClass={classParam}
+    />
+
+    <div class="cm-filters">
+      <LeaderboardScopeFilter
+        currentRegion={regionParam}
+        currentRealm={realmParam}
+        currentSeason={navSeason}
+        leaderboardType="total-runs"
+        currentClass={classParam}
+      />
+      <ClassFilterSelect currentClass={classParam} />
+    </div>
+
+    <div id="leaderboard-content">
+      <LeaderboardTable
+        type="total-runs"
+        players={data.leaderboard}
+        currentPage={data.pagination.currentPage}
+        pageSize={data.pagination.pageSize}
+        region={regionParam}
+        realm={realmParam}
+      />
+    </div>
+
+    <Pagination
+      currentPage={data.pagination.currentPage}
+      totalPages={data.pagination.totalPages}
+      hasNextPage={data.pagination.hasNextPage}
+      hasPrevPage={data.pagination.hasPrevPage}
+      totalPlayers={data.pagination.totalPlayers}
+      baseUrl={Astro.url.pathname}
+    />
+  </main>
+</PageLayout>
+
+<style>
+  .leaderboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .total-runs-header {
+    margin: 8px 0 16px 0;
+    font-size: 2em;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-page {
+      padding: 15px;
+    }
+
+    .total-runs-header {
+      font-size: 1.5em;
+    }
+  }
+</style>

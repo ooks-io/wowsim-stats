@@ -35,6 +35,7 @@ interface Player {
   guild_name?: string;
   average_item_level?: number;
   equipped_item_level?: number;
+  all_time_total_runs?: number;
 }
 
 interface Props {
@@ -155,6 +156,8 @@ const avatarUrl = player.avatar_url
 
   <div class="ranking-column">
     <div class="stat-label">Total Runs</div>
-    <div class="stat-value">{seasonData.total_runs || 0}</div>
+    <div class="stat-value">
+      {player.all_time_total_runs ?? seasonData.total_runs ?? 0}
+    </div>
   </div>
 </div>

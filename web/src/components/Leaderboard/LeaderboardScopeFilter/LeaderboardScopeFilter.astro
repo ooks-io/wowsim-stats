@@ -7,7 +7,7 @@ interface Props {
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
-  leaderboardType?: "dungeon" | "player" | "stats";
+  leaderboardType?: "dungeon" | "player" | "total-runs" | "stats";
   currentDungeon?: string;
   currentClass?: string;
 }
@@ -21,13 +21,11 @@ const {
   currentClass = "all",
 } = Astro.props;
 
-// Stats only ships per-region data, not per-realm — hide the realm dropdown
-// and force the realm arg to "" when building stats URLs.
+// stats only ships per-region data, not per-realm
 const supportsRealm = leaderboardType !== "stats";
 
-// Fetch available seasons from API. Each option carries its URL slug because
-// the slug isn't always `season${id}` — stats also offers an "All Time" option
-// rendered as `all-time` in the URL.
+// option carries its slug because stats also offers "All Time" (id=0,
+// slug="all-time") which doesn't match the `season${id}` pattern
 let seasonOptions: { id: number; name: string; slug: string }[] = [];
 try {
   const response = await fetch(
@@ -45,7 +43,11 @@ try {
   console.error("Failed to fetch seasons:", error);
   // Fallback to current season if API fails
   seasonOptions = [
-    { id: currentSeason, name: `Season ${currentSeason}`, slug: `season${currentSeason}` },
+    {
+      id: currentSeason,
+      name: `Season ${currentSeason}`,
+      slug: `season${currentSeason}`,
+    },
   ];
 }
 
@@ -92,11 +94,26 @@ const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
   : "challenge-mode";
 const seasonSlug = `season${currentSeason}`;
 
-function buildUrl(region: string, realm: string = "", seasonSlugOverride?: string): string {
+function buildUrl(
+  region: string,
+  realm: string = "",
+  seasonSlugOverride?: string,
+): string {
   const slug = seasonSlugOverride ?? seasonSlug;
   if (leaderboardType === "stats") {
-    // Stats URL — region only, no realm.
+    // stats: region only, no realm
     return `/${basePath}/${slug}/stats/${region}`;
+  }
+  if (leaderboardType === "total-runs") {
+    // no season segment: cross-season
+    const totalRunsBase = `/${basePath}/players/total-runs`;
+    if (region === "global") {
+      return `${totalRunsBase}/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    } else if (realm && realm !== "all") {
+      return `${totalRunsBase}/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    } else {
+      return `${totalRunsBase}/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+    }
   }
   if (leaderboardType === "player") {
     // Player leaderboard URL
@@ -120,22 +137,24 @@ function buildUrl(region: string, realm: string = "", seasonSlugOverride?: strin
 ---
 
 <div class="leaderboard-scope-filter">
-  <div class="filter-group">
-    <label for="season-filter">Season</label>
-    <select id="season-filter" data-param="season">
-      {
-        seasonOptions.map((season) => (
-          <option
-            value={season.id}
-            selected={season.id === currentSeason}
-            data-url={buildUrl(currentRegion, currentRealm, season.slug)}
-          >
-            {season.name}
-          </option>
-        ))
-      }
-    </select>
-  </div>
+  {
+    leaderboardType !== "total-runs" && (
+      <div class="filter-group">
+        <label for="season-filter">Season</label>
+        <select id="season-filter" data-param="season">
+          {seasonOptions.map((season) => (
+            <option
+              value={season.id}
+              selected={season.id === currentSeason}
+              data-url={buildUrl(currentRegion, currentRealm, season.slug)}
+            >
+              {season.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    )
+  }
 
   <div class="filter-group">
     <label for="scope-filter">Region</label>

@@ -26,7 +26,7 @@ export function formatTimestamp(timestamp: number): string {
   });
 }
 
-// Compact "Mar 27" — for dense layouts where formatTimestamp's time-of-day eats space.
+// compact "Mar 27"; formatTimestamp's time-of-day eats space in dense layouts
 export function formatShortDate(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("en-US", {
     month: "short",
@@ -372,6 +372,38 @@ export function buildStaticPlayerLeaderboardPath(
   }
   // Fallback to global
   return `/api/leaderboard/season/${seasonId}/players/global/${page}.json`;
+}
+
+// cross-season tree; sits outside /season/N because the metric sums across seasons
+export function buildStaticTotalRunsLeaderboardPath(
+  scope: "global" | "regional" | "realm",
+  region?: string,
+  page: number = 1,
+  opts?: { realmSlug?: string; classKey?: string },
+): string {
+  const cls = (opts?.classKey || "").toLowerCase();
+  const realm = (opts?.realmSlug || "").toLowerCase();
+  if (cls) {
+    if (scope === "global") {
+      return `/api/leaderboard/players/total-runs/class/${cls}/global/${page}.json`;
+    }
+    if (scope === "regional" && region) {
+      return `/api/leaderboard/players/total-runs/class/${cls}/regional/${region}/${page}.json`;
+    }
+    if (scope === "realm" && region && realm) {
+      return `/api/leaderboard/players/total-runs/class/${cls}/realm/${region}/${realm}/${page}.json`;
+    }
+  }
+  if (scope === "global") {
+    return `/api/leaderboard/players/total-runs/global/${page}.json`;
+  }
+  if (scope === "regional" && region) {
+    return `/api/leaderboard/players/total-runs/regional/${region}/${page}.json`;
+  }
+  if (scope === "realm" && region && realm) {
+    return `/api/leaderboard/players/total-runs/realm/${region}/${realm}/${page}.json`;
+  }
+  return `/api/leaderboard/players/total-runs/global/${page}.json`;
 }
 
 export function buildStaticPlayerProfilePath(

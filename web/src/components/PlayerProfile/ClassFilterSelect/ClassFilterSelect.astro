@@ -58,40 +58,52 @@ const classes = [
       searchParams.delete("page"); // reset to page 1
       window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
     } else {
-      // Path-based mode for player leaderboards
+      // per-season:   /{base}/{seasonN}/players/...
+      // cross-season: /{base}/players/total-runs/...
       const pathParts = window.location.pathname.split("/").filter((p) => p);
 
-      // Detect base path
       const basePath =
         pathParts[0] === "test-challenge-mode"
           ? "test-challenge-mode"
           : "challenge-mode";
 
-      // Extract season
+      const playersIndex = pathParts.indexOf("players");
+      if (playersIndex === -1) return;
+
+      const isTotalRuns = pathParts[playersIndex + 1] === "total-runs";
+
       let seasonSlug = "season1";
       if (pathParts.length >= 2 && pathParts[1].startsWith("season")) {
         seasonSlug = pathParts[1];
       }
 
-      // Find the 'players' segment
-      const playersIndex = pathParts.indexOf("players");
-      if (playersIndex === -1) return;
+      const scopeParts = isTotalRuns
+        ? pathParts.slice(playersIndex + 2)
+        : pathParts.slice(playersIndex + 1);
+      const playersBase = isTotalRuns
+        ? `/${basePath}/players/total-runs`
+        : `/${basePath}/${seasonSlug}/players`;
 
-      // Parse current scope
-      let newPath: string;
-      const scopeParts = pathParts.slice(playersIndex + 1);
-
-      // Class slugs (must match wow-constants.ts CLASSES). Used to disambiguate
-      // `players/<region>/<class>` from `players/<region>/<realm>` — the previous
-      // `.includes("_")` heuristic only matched `death_knight`.
+      // disambiguates `players/<region>/<class>` vs `players/<region>/<realm>`
+      // (the previous `.includes("_")` heuristic only matched `death_knight`)
       const CLASS_SLUGS = [
-        "death_knight", "druid", "hunter", "mage", "monk", "paladin",
-        "priest", "rogue", "shaman", "warlock", "warrior",
+        "death_knight",
+        "druid",
+        "hunter",
+        "mage",
+        "monk",
+        "paladin",
+        "priest",
+        "rogue",
+        "shaman",
+        "warlock",
+        "warrior",
       ];
 
+      let newPath: string;
       if (scopeParts.length === 0 || scopeParts[0] === "global") {
         // Global scope
-        newPath = `/${basePath}/${seasonSlug}/players/global${selectedClass !== "all" ? "/" + selectedClass : ""}`;
+        newPath = `${playersBase}/global${selectedClass !== "all" ? "/" + selectedClass : ""}`;
       } else {
         const region = scopeParts[0];
 
@@ -101,11 +113,11 @@ const classes = [
           (scopeParts.length >= 2 && CLASS_SLUGS.includes(scopeParts[1]))
         ) {
           // Regional scope (region or region/class)
-          newPath = `/${basePath}/${seasonSlug}/players/${region}${selectedClass !== "all" ? "/" + selectedClass : ""}`;
+          newPath = `${playersBase}/${region}${selectedClass !== "all" ? "/" + selectedClass : ""}`;
         } else {
           // Realm scope (region/realm or region/realm/class)
           const realm = scopeParts[1];
-          newPath = `/${basePath}/${seasonSlug}/players/${region}/${realm}${selectedClass !== "all" ? "/" + selectedClass : ""}`;
+          newPath = `${playersBase}/${region}/${realm}${selectedClass !== "all" ? "/" + selectedClass : ""}`;
         }
       }
 
