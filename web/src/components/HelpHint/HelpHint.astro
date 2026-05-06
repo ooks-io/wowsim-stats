@@ -1,0 +1,36 @@
+---
+import "./HelpHint.scss";
+
+// "(?)" icon with a CSS-only tooltip; explanation goes in the slot
+
+interface Props {
+  title?: string;
+  glyph?: string;
+  align?: "left" | "right";
+  // default "below" since most usages live in bordered cards where above
+  // leaks outside the card boundary
+  placement?: "above" | "below";
+}
+
+const {
+  title,
+  glyph = "?",
+  align = "right",
+  placement = "below",
+} = Astro.props;
+---
+
+<span
+  class:list={["help-hint", `help-hint--${align}`, `help-hint--${placement}`]}
+>
+  <button
+    type="button"
+    class="help-hint__trigger"
+    aria-label={title ?? "More info"}
+    tabindex="0">{glyph}</button
+  >
+  <span class="help-hint__bubble" role="tooltip">
+    {title && <strong class="help-hint__title">{title}</strong>}
+    <span class="help-hint__body"><slot /></span>
+  </span>
+</span>

@@ -1,0 +1,118 @@
+@use "../../styles/core/tokens" as *;
+
+.help-hint {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  margin-left: 4px;
+
+  &__trigger {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-tertiary);
+    font-size: 11px;
+    font-weight: $font-weight-bold;
+    line-height: 1;
+    cursor: help;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      color 0.12s ease,
+      border-color 0.12s ease,
+      background 0.12s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text-primary);
+      border-color: var(--highlight-color);
+      background: var(--bg-primary);
+      outline: none;
+    }
+  }
+
+  &__bubble {
+    position: absolute;
+    z-index: 50;
+    width: max-content;
+    max-width: 320px;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-md;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    color: var(--text-primary);
+    // Use absolute pixel sizes so the bubble looks the same regardless of the
+    // parent's em-cascade. (Inside chart cards, the parent font-size is already
+    // small and a relative size compounded to ~10px, which read as unstyled.)
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: $font-weight-medium;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.1s ease,
+      transform 0.1s ease;
+    // Reset inherited typography. `.filter-group label` sets `white-space:
+    // nowrap` (and `text-transform: uppercase`); both inherit down to here
+    // and break body text inside chart-card hints. Lock to sensible defaults.
+    white-space: normal;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  // Vertical placement: above stacks the bubble over the trigger; below
+  // is the default and slides it under the trigger so it stays inside the
+  // surrounding card.
+  &--above &__bubble {
+    bottom: calc(100% + 8px);
+    transform: translateY(2px);
+  }
+  &--below &__bubble {
+    top: calc(100% + 8px);
+    transform: translateY(-2px);
+  }
+
+  // Horizontal alignment.
+  &--right &__bubble {
+    left: 0;
+  }
+  &--left &__bubble {
+    right: 0;
+  }
+
+  &__trigger:hover + &__bubble,
+  &__trigger:focus + &__bubble {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &__title {
+    display: block;
+    color: var(--highlight-color);
+    margin-bottom: 6px;
+    font-weight: $font-weight-bold;
+    font-size: 13px;
+  }
+
+  &__body {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 13px;
+
+    p {
+      margin: 0 0 8px;
+      &:last-child { margin-bottom: 0; }
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
