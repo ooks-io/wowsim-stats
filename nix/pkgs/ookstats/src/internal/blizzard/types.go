@@ -240,6 +240,15 @@ type CharacterStatusResponse struct {
 	Character CharacterReference `json:"character"`
 }
 
+// AchievementDetailResponse is the /data/wow/achievement/{id} payload; carries
+// the is_account_wide flag we can't get from the per-character endpoint.
+type AchievementDetailResponse struct {
+	ID             int    `json:"id"`
+	Name           string `json:"name"`
+	IsAccountWide  bool   `json:"is_account_wide"`
+	Description    string `json:"description,omitempty"`
+}
+
 // ItemEnchantment represents an enchantment, gem, or tinker
 type ItemEnchantment struct {
 	EnchantmentID   *int         `json:"enchantment_id,omitempty"`

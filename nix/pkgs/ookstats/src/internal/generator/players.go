@@ -10,29 +10,63 @@ import (
 	"ookstats/internal/writer"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 	"time"
 )
 
-// PlayerJSON represents the JSON structure for a player profile
 type PlayerJSON struct {
-	ID                int64                       `json:"id"`
-	Name              string                      `json:"name"`
-	RealmSlug         string                      `json:"realm_slug"`
-	RealmName         string                      `json:"realm_name"`
-	Region            string                      `json:"region"`
-	ClassName         string                      `json:"class_name,omitempty"`
-	ActiveSpecName    string                      `json:"active_spec_name,omitempty"`
-	AvatarURL         string                      `json:"avatar_url,omitempty"`
-	GuildName         string                      `json:"guild_name,omitempty"`
-	RaceName          string                      `json:"race_name,omitempty"`
-	AverageItemLevel  *int                        `json:"average_item_level,omitempty"`
-	EquippedItemLevel *int                        `json:"equipped_item_level,omitempty"`
-	AllTimeTotalRuns  int                         `json:"all_time_total_runs"`
-	Seasons           map[string]PlayerSeasonJSON `json:"seasons"`
+	ID                int64                        `json:"id"`
+	Name              string                       `json:"name"`
+	RealmSlug         string                       `json:"realm_slug"`
+	RealmName         string                       `json:"realm_name"`
+	Region            string                       `json:"region"`
+	ClassName         string                       `json:"class_name,omitempty"`
+	ActiveSpecName    string                       `json:"active_spec_name,omitempty"`
+	AvatarURL         string                       `json:"avatar_url,omitempty"`
+	GuildName         string                       `json:"guild_name,omitempty"`
+	RaceName          string                       `json:"race_name,omitempty"`
+	AverageItemLevel  *int                         `json:"average_item_level,omitempty"`
+	EquippedItemLevel *int                         `json:"equipped_item_level,omitempty"`
+	AllTimeTotalRuns  int                          `json:"all_time_total_runs"`
+	Seasons           map[string]PlayerSeasonJSON  `json:"seasons"`
+	Alts              []AccountCharJSON            `json:"alts,omitempty"`
+	Account           map[string]AccountSeasonJSON `json:"account,omitempty"`
+	// not season-scoped, matches the Total Runs leaderboard
+	AccountLifetimeTotalRuns int `json:"account_lifetime_total_runs,omitempty"`
 }
 
-// PlayerSeasonJSON represents a player's stats for a specific season
+type AccountSeasonJSON struct {
+	AccountID         int64  `json:"account_id"`
+	CombinedBestTime  *int64 `json:"combined_best_time,omitempty"`
+	DungeonsCompleted int    `json:"dungeons_completed"`
+	TotalRuns         int    `json:"total_runs"`
+	CharacterCount    int    `json:"character_count"`
+	HasFullCoverage   bool   `json:"has_full_coverage"`
+	GlobalRanking     *int   `json:"global_ranking,omitempty"`
+	RegionalRanking   *int   `json:"regional_ranking,omitempty"`
+	RealmRanking      *int   `json:"realm_ranking,omitempty"`
+	GlobalBracket     string `json:"global_ranking_bracket,omitempty"`
+	RegionalBracket   string `json:"regional_ranking_bracket,omitempty"`
+	RealmBracket      string `json:"realm_ranking_bracket,omitempty"`
+	Region            string `json:"region,omitempty"`
+	RealmSlug         string `json:"realm_slug,omitempty"`
+	RealmName         string `json:"realm_name,omitempty"`
+	MainPlayerID      int64  `json:"main_player_id,omitempty"`
+}
+
+// keep JSON tags in sync with AccountCharSummary on the frontend
+type AccountCharJSON struct {
+	PlayerID       int64  `json:"player_id"`
+	Name           string `json:"name"`
+	RealmSlug      string `json:"realm_slug"`
+	RealmName      string `json:"realm_name,omitempty"`
+	Region         string `json:"region"`
+	ClassName      string `json:"class_name,omitempty"`
+	ActiveSpecName string `json:"active_spec_name,omitempty"`
+	MainSpecID     *int   `json:"main_spec_id,omitempty"`
+}
+
 type PlayerSeasonJSON struct {
 	MainSpecID        *int                   `json:"main_spec_id,omitempty"`
 	DungeonsCompleted int                    `json:"dungeons_completed"`
@@ -48,7 +82,6 @@ type PlayerSeasonJSON struct {
 	BestRuns          map[string]BestRunJSON `json:"best_runs"`
 }
 
-// TeamMemberJSON represents a team member in a run
 type TeamMemberJSON struct {
 	Name      string `json:"name"`
 	SpecID    *int   `json:"spec_id,omitempty"`
@@ -56,14 +89,15 @@ type TeamMemberJSON struct {
 	RealmSlug string `json:"realm_slug"`
 }
 
-// BestRunJSON represents a player's best run for a dungeon
 type BestRunJSON struct {
-	DungeonID               int              `json:"dungeon_id"`
-	DungeonName             string           `json:"dungeon_name"`
-	DungeonSlug             string           `json:"dungeon_slug"`
-	RunID                   int64            `json:"run_id"`
-	Duration                int64            `json:"duration"`
-	CompletedTimestamp      int64            `json:"completed_timestamp"`
+	DungeonID          int    `json:"dungeon_id"`
+	DungeonName        string `json:"dungeon_name"`
+	DungeonSlug        string `json:"dungeon_slug"`
+	RunID              int64  `json:"run_id"`
+	Duration           int64  `json:"duration"`
+	CompletedTimestamp int64  `json:"completed_timestamp"`
+	// always populated; only meaningful to consumers in All Time view
+	SeasonID                int              `json:"season_id,omitempty"`
 	GlobalRankingFiltered   *int             `json:"global_ranking_filtered,omitempty"`
 	RegionalRankingFiltered *int             `json:"regional_ranking_filtered,omitempty"`
 	RealmRankingFiltered    *int             `json:"realm_ranking_filtered,omitempty"`
@@ -131,13 +165,62 @@ func GeneratePlayers(db *sql.DB, out string, version string) error {
 	}
 	fmt.Printf("[OK] Loaded equipment for %d players\n", len(equipmentMap))
 
+	fmt.Printf("Loading account alts...\n")
+	altsMap, err := loader.LoadAllAccountAlts(db)
+	if err != nil {
+		return fmt.Errorf("load account alts: %w", err)
+	}
+	fmt.Printf("[OK] Loaded alts for %d players\n", len(altsMap))
+
+	fmt.Printf("Loading account season rankings...\n")
+	regions := []string{"us", "eu", "kr", "tw"}
+	seasons, err := loadSeasons(db)
+	if err != nil {
+		return fmt.Errorf("load seasons for account rankings: %w", err)
+	}
+	accountSeasonStats := make(map[int]map[int64]*loader.AccountSeasonStats, len(seasons))
+	for _, season := range seasons {
+		stats, err := loader.LoadAccountSeasonStats(db, season.ID, regions)
+		if err != nil {
+			return fmt.Errorf("load account season %d stats: %w", season.ID, err)
+		}
+		accountSeasonStats[season.ID] = stats
+	}
+	fmt.Printf("[OK] Loaded account rankings across %d seasons\n", len(seasons))
+
+	fmt.Printf("Loading all-time account rankings...\n")
+	allTimeAccountStats, err := loader.LoadAllTimeAccountStats(db, regions)
+	if err != nil {
+		return fmt.Errorf("load all-time account stats: %w", err)
+	}
+	fmt.Printf("[OK] Loaded all-time account rankings (%d accounts)\n", len(allTimeAccountStats))
+
+	fmt.Printf("Loading all-time character rankings...\n")
+	allTimeCharRanks, err := loader.LoadAllTimeCharacterRanks(db, regions)
+	if err != nil {
+		return fmt.Errorf("load all-time char ranks: %w", err)
+	}
+	fmt.Printf("[OK] Loaded all-time character rankings (%d chars)\n", len(allTimeCharRanks))
+
+	accountLifetimeRuns := make(map[int64]int)
+	for _, byAccount := range accountSeasonStats {
+		for accountID, stats := range byAccount {
+			accountLifetimeRuns[accountID] += stats.TotalRuns
+		}
+	}
+
+	playerAccountIDs, err := loader.LoadPlayerAccountIDs(db)
+	if err != nil {
+		return fmt.Errorf("load player account ids: %w", err)
+	}
+
 	// Step 4: Process players concurrently
 	fmt.Printf("Generating JSON files concurrently...\n")
-	return GeneratePlayerJSONs(players, playerSeasonsMap, bestRunsMap, teamMembersMap, equipmentMap, enchantmentsMap, out, version)
+	return GeneratePlayerJSONs(players, playerSeasonsMap, bestRunsMap, teamMembersMap, equipmentMap, enchantmentsMap, altsMap, accountSeasonStats, accountLifetimeRuns, allTimeAccountStats, allTimeCharRanks, playerAccountIDs, out, version)
 }
 
 // GeneratePlayerJSONs generates JSON files for all players concurrently
-func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
+func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, altsMap map[int64][]loader.AltSummary, accountSeasonStats map[int]map[int64]*loader.AccountSeasonStats, accountLifetimeRuns map[int64]int, allTimeAccountStats map[int64]*loader.AccountSeasonStats, allTimeCharRanks map[int64]*loader.CharacterAllTimeRanks, playerAccountIDs map[int64]int64, out, version string) error {
 	startTime := time.Now()
 	const batchSize = 100
 	const numWorkers = 10
@@ -158,7 +241,7 @@ func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64
 		go func() {
 			defer wg.Done()
 			for item := range workChan {
-				if err := generateSinglePlayerJSON(item.player, playerSeasonsMap, bestRunsMap, teamMembersMap, equipmentMap, enchantmentsMap, out, version); err != nil {
+				if err := generateSinglePlayerJSON(item.player, playerSeasonsMap, bestRunsMap, teamMembersMap, equipmentMap, enchantmentsMap, altsMap, accountSeasonStats, accountLifetimeRuns, allTimeAccountStats, allTimeCharRanks, playerAccountIDs, out, version); err != nil {
 					errChan <- fmt.Errorf("player %s: %w", item.player.Name, err)
 					return
 				}
@@ -194,20 +277,24 @@ func GeneratePlayerJSONs(players []loader.PlayerData, playerSeasonsMap map[int64
 }
 
 // generateSinglePlayerJSON generates a JSON file for a single player
-func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, out, version string) error {
+func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int64][]loader.PlayerSeasonData, bestRunsMap map[int64][]loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData, equipmentMap map[int64][]loader.EquipmentData, enchantmentsMap map[int64][]loader.EnchantmentData, altsMap map[int64][]loader.AltSummary, accountSeasonStats map[int]map[int64]*loader.AccountSeasonStats, accountLifetimeRuns map[int64]int, allTimeAccountStats map[int64]*loader.AccountSeasonStats, allTimeCharRanks map[int64]*loader.CharacterAllTimeRanks, playerAccountIDs map[int64]int64, out, version string) error {
+	accountID := playerAccountIDs[player.ID]
 	// Build PlayerJSON with base info
 	pj := PlayerJSON{
-		ID:             player.ID,
-		Name:           player.Name,
-		RealmSlug:      player.RealmSlug,
-		RealmName:      player.RealmName,
-		Region:         player.Region,
-		ClassName:      player.ClassName.String,
-		ActiveSpecName: player.ActiveSpecName.String,
-		AvatarURL:      player.AvatarURL,
-		GuildName:      player.GuildName.String,
-		RaceName:       player.RaceName.String,
-		Seasons:        make(map[string]PlayerSeasonJSON),
+		ID:                       player.ID,
+		Name:                     player.Name,
+		RealmSlug:                player.RealmSlug,
+		RealmName:                player.RealmName,
+		Region:                   player.Region,
+		ClassName:                player.ClassName.String,
+		ActiveSpecName:           player.ActiveSpecName.String,
+		AvatarURL:                player.AvatarURL,
+		GuildName:                player.GuildName.String,
+		RaceName:                 player.RaceName.String,
+		Seasons:                  make(map[string]PlayerSeasonJSON),
+		Alts:                     projectAlts(altsMap[player.ID]),
+		Account:                  projectAccount(accountID, accountSeasonStats),
+		AccountLifetimeTotalRuns: accountLifetimeRuns[accountID],
 	}
 
 	if player.AverageItemLevel.Valid {
@@ -279,6 +366,7 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 			RunID:              run.RunID,
 			Duration:           run.Duration,
 			CompletedTimestamp: run.CompletedTimestamp,
+			SeasonID:           run.SeasonID,
 			GlobalBracket:      run.GlobalBracket,
 			RegionalBracket:    run.RegionalBracket,
 			RealmBracket:       run.RealmBracket,
@@ -316,6 +404,78 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 		if season, exists := pj.Seasons[seasonKey]; exists {
 			season.BestRuns[run.DungeonSlug] = br
 			pj.Seasons[seasonKey] = season
+		}
+	}
+
+	if rk, ok := allTimeCharRanks[player.ID]; ok {
+		allBest := buildAllTimeBestRuns(bestRunsMap[player.ID], teamMembersMap)
+		atSeason := PlayerSeasonJSON{
+			DungeonsCompleted: len(allBest),
+			TotalRuns:         pj.AllTimeTotalRuns,
+			BestRuns:          allBest,
+			GlobalBracket:     rk.GlobalBracket,
+			RegionalBracket:   rk.RegionalBracket,
+			RealmBracket:      rk.RealmBracket,
+		}
+		if rk.Stats != nil {
+			t := rk.Stats.CombinedBest
+			atSeason.CombinedBestTime = &t
+			if rk.Stats.MainSpecID.Valid {
+				v := int(rk.Stats.MainSpecID.Int64)
+				atSeason.MainSpecID = &v
+			}
+		}
+		if rk.GlobalRanking > 0 {
+			r := rk.GlobalRanking
+			atSeason.GlobalRanking = &r
+		}
+		if rk.RegionalRanking > 0 {
+			r := rk.RegionalRanking
+			atSeason.RegionalRanking = &r
+		}
+		if rk.RealmRanking > 0 {
+			r := rk.RealmRanking
+			atSeason.RealmRanking = &r
+		}
+		pj.Seasons["all-time"] = atSeason
+	}
+
+	if accountID := playerAccountIDs[player.ID]; accountID != 0 {
+		if s, ok := allTimeAccountStats[accountID]; ok {
+			entry := AccountSeasonJSON{
+				AccountID:         s.AccountID,
+				DungeonsCompleted: s.DungeonsCompleted,
+				TotalRuns:         s.TotalRuns,
+				CharacterCount:    s.CharacterCount,
+				HasFullCoverage:   s.HasFullCoverage,
+				GlobalBracket:     s.GlobalBracket,
+				RegionalBracket:   s.RegionalBracket,
+				RealmBracket:      s.RealmBracket,
+				Region:            s.Region,
+				RealmSlug:         s.RealmSlug,
+				RealmName:         s.RealmName,
+				MainPlayerID:      s.MainPlayerID,
+			}
+			if s.HasFullCoverage {
+				t := s.CombinedBestTime
+				entry.CombinedBestTime = &t
+			}
+			if s.GlobalRanking > 0 {
+				r := s.GlobalRanking
+				entry.GlobalRanking = &r
+			}
+			if s.RegionalRanking > 0 {
+				r := s.RegionalRanking
+				entry.RegionalRanking = &r
+			}
+			if s.RealmRanking > 0 {
+				r := s.RealmRanking
+				entry.RealmRanking = &r
+			}
+			if pj.Account == nil {
+				pj.Account = make(map[string]AccountSeasonJSON)
+			}
+			pj.Account["all-time"] = entry
 		}
 	}
 
@@ -407,4 +567,132 @@ func generateSinglePlayerJSON(player loader.PlayerData, playerSeasonsMap map[int
 	dir := filepath.Join(out, pj.Region, pj.RealmSlug)
 	fname := filepath.Join(dir, utils.SafeSlugName(pj.Name)+".json")
 	return writer.WriteJSONFileCompact(fname, page)
+}
+
+func buildAllTimeBestRuns(runs []loader.BestRunData, teamMembersMap map[int64][]loader.TeamMemberData) map[string]BestRunJSON {
+	winners := make(map[string]loader.BestRunData)
+	for _, r := range runs {
+		cur, ok := winners[r.DungeonSlug]
+		if !ok || r.Duration < cur.Duration {
+			winners[r.DungeonSlug] = r
+		}
+	}
+	out := make(map[string]BestRunJSON, len(winners))
+	for slug, r := range winners {
+		br := BestRunJSON{
+			DungeonID:          int(r.DungeonID),
+			DungeonName:        r.DungeonName,
+			DungeonSlug:        r.DungeonSlug,
+			RunID:              r.RunID,
+			Duration:           r.Duration,
+			CompletedTimestamp: r.CompletedTimestamp,
+			SeasonID:           r.SeasonID,
+			GlobalBracket:      r.GlobalBracket,
+			RegionalBracket:    r.RegionalBracket,
+			RealmBracket:       r.RealmBracket,
+		}
+		if r.GlobalRankingFiltered.Valid {
+			v := int(r.GlobalRankingFiltered.Int64)
+			br.GlobalRankingFiltered = &v
+		}
+		if r.RegionalRankingFiltered.Valid {
+			v := int(r.RegionalRankingFiltered.Int64)
+			br.RegionalRankingFiltered = &v
+		}
+		if r.RealmRankingFiltered.Valid {
+			v := int(r.RealmRankingFiltered.Int64)
+			br.RealmRankingFiltered = &v
+		}
+		for _, m := range teamMembersMap[r.RunID] {
+			tm := TeamMemberJSON{Name: m.Name, Region: m.Region, RealmSlug: m.RealmSlug}
+			if m.SpecID.Valid {
+				v := int(m.SpecID.Int64)
+				tm.SpecID = &v
+			}
+			br.TeamMembers = append(br.TeamMembers, tm)
+		}
+		out[slug] = br
+	}
+	return out
+}
+
+func projectAccount(accountID int64, accountSeasonStats map[int]map[int64]*loader.AccountSeasonStats) map[string]AccountSeasonJSON {
+	if accountID == 0 {
+		return nil
+	}
+	out := make(map[string]AccountSeasonJSON)
+	for seasonID, byAccount := range accountSeasonStats {
+		stats, ok := byAccount[accountID]
+		if !ok {
+			continue
+		}
+		entry := AccountSeasonJSON{
+			AccountID:         stats.AccountID,
+			DungeonsCompleted: stats.DungeonsCompleted,
+			TotalRuns:         stats.TotalRuns,
+			CharacterCount:    stats.CharacterCount,
+			HasFullCoverage:   stats.HasFullCoverage,
+			GlobalBracket:     stats.GlobalBracket,
+			RegionalBracket:   stats.RegionalBracket,
+			RealmBracket:      stats.RealmBracket,
+			Region:            stats.Region,
+			RealmSlug:         stats.RealmSlug,
+			RealmName:         stats.RealmName,
+			MainPlayerID:      stats.MainPlayerID,
+		}
+		if stats.HasFullCoverage {
+			t := stats.CombinedBestTime
+			entry.CombinedBestTime = &t
+		}
+		if stats.GlobalRanking > 0 {
+			r := stats.GlobalRanking
+			entry.GlobalRanking = &r
+		}
+		if stats.RegionalRanking > 0 {
+			r := stats.RegionalRanking
+			entry.RegionalRanking = &r
+		}
+		if stats.RealmRanking > 0 {
+			r := stats.RealmRanking
+			entry.RealmRanking = &r
+		}
+		out[fmt.Sprintf("%d", seasonID)] = entry
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+func projectAlts(alts []loader.AltSummary) []AccountCharJSON {
+	if len(alts) == 0 {
+		return nil
+	}
+	out := make([]AccountCharJSON, 0, len(alts))
+	for _, a := range alts {
+		row := AccountCharJSON{
+			PlayerID:       a.PlayerID,
+			Name:           a.Name,
+			RealmSlug:      a.RealmSlug,
+			RealmName:      a.RealmName,
+			Region:         a.Region,
+			ClassName:      a.ClassName.String,
+			ActiveSpecName: a.ActiveSpecName.String,
+		}
+		if a.MainSpecID.Valid {
+			v := int(a.MainSpecID.Int64)
+			row.MainSpecID = &v
+			if cls, spec, ok := wow.GetClassAndSpec(v); ok {
+				if row.ClassName == "" {
+					row.ClassName = cls
+				}
+				if row.ActiveSpecName == "" {
+					row.ActiveSpecName = spec
+				}
+			}
+		}
+		out = append(out, row)
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i].Name < out[j].Name })
+	return out
 }

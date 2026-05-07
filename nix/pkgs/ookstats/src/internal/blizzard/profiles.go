@@ -99,6 +99,17 @@ func (c *Client) FetchItem(itemID int, region string) (*ItemDetailResponse, erro
 	return fetchPlayerProfileAPI[ItemDetailResponse](c, url)
 }
 
+// FetchAchievement fetches an achievement definition (name + is_account_wide).
+func (c *Client) FetchAchievement(achievementID int, region string) (*AchievementDetailResponse, error) {
+	namespace := fmt.Sprintf("static-5.5.3_64530-classic-%s", region)
+	url := fmt.Sprintf(
+		"https://%s.api.blizzard.com/data/wow/achievement/%d?namespace=%s&locale=en_US",
+		region, achievementID, namespace,
+	)
+
+	return fetchPlayerProfileAPI[AchievementDetailResponse](c, url)
+}
+
 // fetchPlayerProfileAPI is a generic function for fetching player profile data
 func fetchPlayerProfileAPI[T any](c *Client, url string) (*T, error) {
 	const maxRetries = 3

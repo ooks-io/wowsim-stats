@@ -374,6 +374,154 @@ export function buildStaticPlayerLeaderboardPath(
   return `/api/leaderboard/season/${seasonId}/players/global/${page}.json`;
 }
 
+// Unified leaderboard URL builder for the merged Players/Characters page.
+// Picks the correct static JSON path for any (view, sort, season, scope)
+// combination. Existing trees are reused when possible; new combinations
+// (all-time time, per-season runs) hit the Phase 1 generators.
+//
+// Notes on URL drift between trees:
+//   * Per-char per-season time and per-account per-season time still live at
+//     /season/{N}/players/ and /season/{N}/accounts/ - the migration to
+//     /season{N}/{view}/by-{sort}/ happens in Phase 3.
+//   * Per-char and per-account all-time runs still live at
+//     /players/total-runs/ - same reason.
+type LeaderboardView = "player" | "character";
+type LeaderboardSort = "time" | "runs";
+
+export function buildUnifiedLeaderboardPath(
+  view: LeaderboardView,
+  sort: LeaderboardSort,
+  season: number | "all-time",
+  scope: "global" | "regional" | "realm" | "class",
+  opts?: {
+    region?: string;
+    realmSlug?: string;
+    classKey?: string;
+    page?: number;
+  },
+): string {
+  const page = opts?.page ?? 1;
+  const region = (opts?.region || "").toLowerCase();
+  const realm = (opts?.realmSlug || "").toLowerCase();
+  const cls = (opts?.classKey || "").toLowerCase();
+
+  // Build the scope segments common to most paths.
+  const scopeSegments = (() => {
+    if (scope === "global") return "global";
+    if (scope === "regional") return `regional/${region}`;
+    if (scope === "realm") return `realm/${region}/${realm}`;
+    if (scope === "class") {
+      // Class scope is followed by an inner geo (only valid for character view).
+      // Caller signals which geo via region/realm being set: realm > region > global.
+      const inner = realm
+        ? `realm/${region}/${realm}`
+        : region
+          ? `regional/${region}`
+          : "global";
+      return `class/${cls}/${inner}`;
+    }
+    return "global";
+  })();
+
+  // All-Time time → Phase 1 unified tree.
+  if (season === "all-time" && sort === "time") {
+    const v = view === "player" ? "players" : "characters";
+    return `/api/leaderboard/all-time/${v}/by-time/${scopeSegments}/${page}.json`;
+  }
+  // All-Time runs → existing cross-season Total Runs trees.
+  if (season === "all-time" && sort === "runs") {
+    if (view === "player") {
+      // Account total runs (no class scope - accounts span classes)
+      if (scope === "realm")
+        return `/api/leaderboard/players/total-runs/accounts/realm/${region}/${realm}/${page}.json`;
+      if (scope === "regional")
+        return `/api/leaderboard/players/total-runs/accounts/regional/${region}/${page}.json`;
+      return `/api/leaderboard/players/total-runs/accounts/global/${page}.json`;
+    }
+    // Per-char total runs
+    if (scope === "class")
+      return buildStaticTotalRunsLeaderboardPath(
+        realm ? "realm" : region ? "regional" : "global",
+        region,
+        page,
+        { realmSlug: realm || undefined, classKey: cls },
+      );
+    if (scope === "realm")
+      return `/api/leaderboard/players/total-runs/realm/${region}/${realm}/${page}.json`;
+    if (scope === "regional")
+      return `/api/leaderboard/players/total-runs/regional/${region}/${page}.json`;
+    return `/api/leaderboard/players/total-runs/global/${page}.json`;
+  }
+  // Per-season time + per-season runs.
+  // Note season=all-time doesn't reach here.
+  const seasonNum = season as number;
+  if (sort === "time") {
+    // Existing trees (Phase 3 will migrate them under /season{N}/.../by-time/).
+    if (view === "player") {
+      if (scope === "realm")
+        return `/api/leaderboard/season/${seasonNum}/accounts/realm/${region}/${realm}/${page}.json`;
+      if (scope === "regional")
+        return `/api/leaderboard/season/${seasonNum}/accounts/regional/${region}/${page}.json`;
+      return `/api/leaderboard/season/${seasonNum}/accounts/global/${page}.json`;
+    }
+    // character view, time, per-season → existing per-char per-season tree
+    return buildStaticPlayerLeaderboardPath(
+      scope === "global"
+        ? "global"
+        : scope === "regional"
+          ? "regional"
+          : scope === "realm"
+            ? "realm"
+            : "global",
+      region,
+      page,
+      {
+        realmSlug: realm || undefined,
+        classKey: cls || undefined,
+        seasonId: seasonNum,
+      },
+    );
+  }
+  // sort === "runs" + per-season → Phase 1 new tree.
+  const v = view === "player" ? "players" : "characters";
+  return `/api/leaderboard/season${seasonNum}/${v}/by-runs/${scopeSegments}/${page}.json`;
+}
+
+// Account-grouped cross-season Total Runs (counterpart to the per-character
+// total runs leaderboard, used by the Player toggle on /players/total-runs/).
+export function buildStaticAccountTotalRunsPath(
+  scope: "global" | "regional" | "realm",
+  region?: string,
+  page: number = 1,
+  opts?: { realmSlug?: string },
+): string {
+  const realm = (opts?.realmSlug || "").toLowerCase();
+  if (scope === "realm" && region && realm) {
+    return `/api/leaderboard/players/total-runs/accounts/realm/${region}/${realm}/${page}.json`;
+  }
+  if (scope === "regional" && region) {
+    return `/api/leaderboard/players/total-runs/accounts/regional/${region}/${page}.json`;
+  }
+  return `/api/leaderboard/players/total-runs/accounts/global/${page}.json`;
+}
+
+// account-grouped player leaderboard, per season
+export function buildStaticAccountLeaderboardPath(
+  scope: "global" | "regional" | "realm",
+  region?: string,
+  page: number = 1,
+  opts?: { seasonId?: number; realmSlug?: string },
+): string {
+  const seasonId = opts?.seasonId ?? 1;
+  if (scope === "realm" && region && opts?.realmSlug) {
+    return `/api/leaderboard/season/${seasonId}/accounts/realm/${region}/${opts.realmSlug}/${page}.json`;
+  }
+  if (scope === "regional" && region) {
+    return `/api/leaderboard/season/${seasonId}/accounts/regional/${region}/${page}.json`;
+  }
+  return `/api/leaderboard/season/${seasonId}/accounts/global/${page}.json`;
+}
+
 // cross-season tree; sits outside /season/N because the metric sums across seasons
 export function buildStaticTotalRunsLeaderboardPath(
   scope: "global" | "regional" | "realm",

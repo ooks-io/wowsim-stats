@@ -188,6 +188,12 @@ var buildCmd = &cobra.Command{
 			return err
 		}
 
+		// 8a) Group characters into accounts
+		log.Info("grouping characters into accounts", "stage", "account fingerprinting")
+		if err := processAccountsOnce(db, client); err != nil {
+			return err
+		}
+
 		// 9) Generate static API
 		log.Info("generating static API")
 		if err := generateAllAPI(db, normalizedOut, pageSize, shardSize, workers, regionsCSV); err != nil {
@@ -265,6 +271,28 @@ func fingerprintPlayersOnce(db *sql.DB, client *blizzard.Client) error {
 		"created", result.Created,
 		"merged", result.MarkedInvalid,
 		"duration", result.Duration)
+	return nil
+}
+
+// processAccountsOnce runs the account-grouping pass with default thresholds.
+// Backfills any missing account fingerprints, then connected-components.
+// Manual link overrides are read from the repo-root JSON so CI/prod builds
+// pick them up without an extra flag.
+func processAccountsOnce(db *sql.DB, client *blizzard.Client) error {
+	dbService := database.NewDatabaseService(db)
+	res, err := pipeline.ProcessAccounts(dbService, client, pipeline.AccountGroupingOptions{
+		ManualLinksPath: "account-manual-links.json",
+	})
+	if err != nil {
+		return fmt.Errorf("process accounts: %w", err)
+	}
+	log.Info("account grouping complete",
+		"backfilled", res.Backfilled,
+		"backfill_errors", res.BackfillErrors,
+		"characters", res.Characters,
+		"accounts", res.Accounts,
+		"multi_char", res.MultiCharAccounts,
+		"duration", res.Duration)
 	return nil
 }
 
@@ -374,6 +402,24 @@ func generateAllAPI(db *sql.DB, outParent string, pageSize, shardSize, workers i
 		return err
 	}
 	if err := generator.GenerateTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GenerateAccountTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GenerateAccountLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GenerateAllTimePlayerLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GenerateAllTimeAccountLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GeneratePlayerSeasonRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+		return err
+	}
+	if err := generator.GenerateAccountSeasonRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 		return err
 	}
 

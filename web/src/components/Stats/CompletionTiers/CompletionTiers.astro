@@ -24,8 +24,14 @@ const tiers = [
     tiers.map(({ key, label, data }) => (
       <article class={`completion-tiers__tier completion-tiers__tier--${key}`}>
         <header class="completion-tiers__header">
-          <span class={`completion-tiers__label completion-tiers__label--${key}`}>{label}</span>
-          <span class="completion-tiers__count">{data.count.toLocaleString("en-US")}</span>
+          <span
+            class={`completion-tiers__label completion-tiers__label--${key}`}
+          >
+            {label}
+          </span>
+          <span class="completion-tiers__count">
+            {data.count.toLocaleString("en-US")}
+          </span>
         </header>
         <dl class="completion-tiers__pcts">
           <div>

@@ -1,0 +1,264 @@
+---
+// Unified Characters leaderboard page. Counterpart to /players/ - same
+// 4 combinations (season1|season2|all-time × time|runs) but per-character
+// (not account-grouped). Class filter is only available here since accounts
+// span multiple classes.
+import PageLayout from "../../../../layouts/PageLayout.astro";
+import LeaderboardTable from "../../../../components/Leaderboard/LeaderboardTable/LeaderboardTable.astro";
+import Pagination from "../../../../components/Leaderboard/Pagination/Pagination.astro";
+import LeaderboardScopeFilter from "../../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
+import ClassFilterSelect from "../../../../components/PlayerProfile/ClassFilterSelect/ClassFilterSelect.astro";
+import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
+import LeaderboardHeader from "../../../../components/Leaderboard/LeaderboardHeader/LeaderboardHeader.astro";
+import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
+import { fetchUnifiedLeaderboard } from "../../../../lib/api";
+import { getEffectiveRealmSlug } from "../../../../lib/realms";
+import { CLASSES } from "../../../../lib/wow-constants";
+
+export const prerender = false;
+
+const seasonParam = Astro.params.season || "season2";
+const seasonMatch = seasonParam.match(/^season(\d+)$/);
+const isAllTime = seasonParam === "all-time";
+const currentSeason: number | "all-time" = isAllTime
+  ? "all-time"
+  : seasonMatch
+    ? parseInt(seasonMatch[1], 10)
+    : 2;
+
+const scope = Astro.params.scope || "";
+let scopeParts = scope.split("/").filter(Boolean);
+
+// Sort lives at the front of the scope catchall as `by-runs` (default
+// `by-time` is omitted).
+let sortParam: "time" | "runs" = "time";
+if (scopeParts[0] === "by-runs") {
+  sortParam = "runs";
+  scopeParts = scopeParts.slice(1);
+}
+
+let regionParam = "global";
+let realmParam = "";
+let classParam = "all";
+let apiScope: "global" | "regional" | "realm" | "class" = "global";
+
+if (scopeParts.length >= 1) {
+  regionParam = scopeParts[0];
+  if (regionParam === "global") {
+    apiScope = "global";
+    if (scopeParts.length >= 2) {
+      classParam = scopeParts[1];
+      apiScope = "class";
+    }
+  } else {
+    if (scopeParts.length === 1) {
+      apiScope = "regional";
+    } else if (scopeParts.length === 2) {
+      const secondPart = scopeParts[1];
+      if (CLASSES.includes(secondPart as any)) {
+        apiScope = "class";
+        classParam = secondPart;
+      } else {
+        apiScope = "realm";
+        realmParam = secondPart;
+      }
+    } else if (scopeParts.length >= 3) {
+      apiScope = "class";
+      realmParam = scopeParts[1];
+      classParam = scopeParts[2];
+    }
+  }
+}
+
+// Connected-realm rollup: child realm slugs don't have their own JSON.
+// 301 to the parent so URL matches the data served. Class scope tail is
+// preserved.
+if (apiScope === "realm" || apiScope === "class") {
+  if (realmParam) {
+    const parent = getEffectiveRealmSlug(regionParam, realmParam);
+    if (parent && parent !== realmParam) {
+      const newSegs = [regionParam, parent];
+      if (classParam !== "all") newSegs.push(classParam);
+      const newPath = `/challenge-mode/${seasonParam}/characters/${newSegs.join("/")}`;
+      const qs = Astro.url.searchParams.toString();
+      return Astro.redirect(qs ? `${newPath}?${qs}` : newPath, 301);
+    }
+  }
+}
+
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
+
+const seasonForNav: number = isAllTime ? 2 : (currentSeason as number);
+
+let scopeLabel: string;
+if (regionParam === "global") {
+  scopeLabel = "Global";
+} else if (realmParam && realmParam !== "all") {
+  scopeLabel = `${regionParam.toUpperCase()} - ${realmParam}`;
+} else {
+  scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
+}
+const seasonLabel = isAllTime ? "All Time" : `Season ${currentSeason}`;
+
+let data;
+try {
+  data = await fetchUnifiedLeaderboard(
+    "character",
+    sortParam,
+    currentSeason,
+    apiScope,
+    {
+      region: regionParam,
+      realmSlug: realmParam || undefined,
+      classKey: classParam !== "all" ? classParam : undefined,
+      page: currentPage,
+    },
+    Astro.url.origin,
+  );
+} catch (error) {
+  console.error("[Characters page] Error:", error);
+  throw error;
+}
+
+const pageTitle = `Character Rankings - ${scopeLabel} - ${seasonLabel}`;
+const dungeonName =
+  sortParam === "runs"
+    ? "Character Rankings - Total Runs"
+    : "Character Rankings";
+
+// Sort lives in the path (/by-runs segment). Toggling rebuilds the path.
+const characterScopeTail = scopeParts.length ? scopeParts.join("/") : "global";
+const otherParams = new URLSearchParams(Astro.url.searchParams);
+otherParams.delete("page");
+otherParams.delete("sort");
+const otherQS = otherParams.toString();
+const qsSuffix = otherQS ? `?${otherQS}` : "";
+
+function buildPath(view: "players" | "characters", sort: "time" | "runs") {
+  const sortSeg = sort === "runs" ? "/by-runs" : "";
+  if (view === "players") {
+    // Player view doesn't support class scope - strip the class slug if it's
+    // dangling at the end.
+    const segs = scopeParts.slice();
+    if (classParam !== "all" && segs[segs.length - 1] === classParam) {
+      segs.pop();
+    }
+    const tail = segs.length ? segs.join("/") : "global";
+    return `/challenge-mode/${seasonParam}/players${sortSeg}/${tail}`;
+  }
+  return `/challenge-mode/${seasonParam}/characters${sortSeg}/${characterScopeTail}`;
+}
+const sortByTimeUrl = buildPath("characters", "time") + qsSuffix;
+const sortByRunsUrl = buildPath("characters", "runs") + qsSuffix;
+const viewPlayerUrl = buildPath("players", sortParam) + qsSuffix;
+const viewCharacterUrl = buildPath("characters", sortParam) + qsSuffix;
+
+const tableType = sortParam === "runs" ? "total-runs" : "player";
+---
+
+<PageLayout title={pageTitle}>
+  <main class="leaderboard-page">
+    <LeaderboardHeader
+      season={seasonForNav}
+      dungeonName={dungeonName}
+      scopeLabel={`${seasonLabel} - ${scopeLabel}`}
+    />
+    <PlayerSearch />
+    <LeaderboardTypeNav
+      currentTab="player"
+      currentRegion={regionParam}
+      currentRealm={realmParam}
+      currentSeason={seasonForNav}
+      currentClass={classParam}
+    />
+
+    <div class="cm-filters">
+      <div class="filter-group">
+        <label for="view-filter">View</label>
+        <select id="view-filter">
+          <option value="player" data-url={viewPlayerUrl}>Player</option>
+          <option value="character" selected data-url={viewCharacterUrl}>
+            Character
+          </option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-filter">Sort</label>
+        <select id="sort-filter">
+          <option
+            value="time"
+            selected={sortParam === "time"}
+            data-url={sortByTimeUrl}
+          >
+            Time
+          </option>
+          <option
+            value="runs"
+            selected={sortParam === "runs"}
+            data-url={sortByRunsUrl}
+          >
+            Total Runs
+          </option>
+        </select>
+      </div>
+      <LeaderboardScopeFilter
+        currentRegion={regionParam}
+        currentRealm={realmParam}
+        currentSeason={isAllTime ? 0 : (currentSeason as number)}
+        leaderboardType="character"
+        currentClass={classParam}
+        currentSort={sortParam}
+      />
+      <ClassFilterSelect currentClass={classParam} />
+    </div>
+
+    <div id="leaderboard-content">
+      <LeaderboardTable
+        type={tableType}
+        players={data.leaderboard}
+        currentPage={data.pagination.currentPage}
+        pageSize={data.pagination.pageSize}
+        region={regionParam}
+        realm={realmParam}
+      />
+    </div>
+
+    <Pagination
+      currentPage={data.pagination.currentPage}
+      totalPages={data.pagination.totalPages}
+      hasNextPage={data.pagination.hasNextPage}
+      hasPrevPage={data.pagination.hasPrevPage}
+      totalPlayers={data.pagination.totalPlayers ??
+        data.pagination.totalRuns ??
+        0}
+      baseUrl={Astro.url.pathname}
+    />
+  </main>
+</PageLayout>
+
+<script>
+  for (const id of ["view-filter", "sort-filter"]) {
+    const el = document.getElementById(id) as HTMLSelectElement | null;
+    if (!el) continue;
+    el.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const url = target.options[target.selectedIndex].dataset.url;
+      if (url) window.location.href = url;
+    });
+  }
+</script>
+
+<style>
+  .leaderboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-page {
+      padding: 15px;
+    }
+  }
+</style>

@@ -55,25 +55,10 @@ func GeneratePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
 	// Pre-load realm slugs per region (only parent realms)
 	realmSlugs := make(map[string][]string)
 	for _, reg := range regions {
-		rrows, err := db.Query(`
-			SELECT slug
-			FROM realms
-			WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
-			ORDER BY slug
-		`, reg)
+		slugs, err := loadParentRealmSlugs(db, reg)
 		if err != nil {
-			return fmt.Errorf("load realm slugs: %w", err)
+			return err
 		}
-		var slugs []string
-		for rrows.Next() {
-			var s string
-			if err := rrows.Scan(&s); err != nil {
-				rrows.Close()
-				return err
-			}
-			slugs = append(slugs, s)
-		}
-		rrows.Close()
 		realmSlugs[reg] = slugs
 	}
 
@@ -367,26 +352,10 @@ func generateClassPlayerLeaderboards(db *sql.DB, out, classKey string, pageSize 
 		}
 
 		// Realm class leaderboards - only for parent/independent realms (skip child realms)
-		rrows, err := db.Query(`
-			SELECT slug
-			FROM realms
-			WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
-			ORDER BY slug
-		`, reg)
+		slugs, err := loadParentRealmSlugs(db, reg)
 		if err != nil {
-			return fmt.Errorf("players class realms list: %w", err)
+			return err
 		}
-
-		var slugs []string
-		for rrows.Next() {
-			var s string
-			if err := rrows.Scan(&s); err != nil {
-				rrows.Close()
-				return err
-			}
-			slugs = append(slugs, s)
-		}
-		rrows.Close()
 
 		for _, rslug := range slugs {
 			if err := generateClassScope(db, out, "realm", reg, rslug, classKey, pageSize, seasonID); err != nil {

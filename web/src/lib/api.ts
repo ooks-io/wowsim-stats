@@ -6,6 +6,9 @@ import {
   buildStaticPlayerLeaderboardPath,
   buildStaticPlayerProfilePath,
   buildStaticTotalRunsLeaderboardPath,
+  buildStaticAccountLeaderboardPath,
+  buildStaticAccountTotalRunsPath,
+  buildUnifiedLeaderboardPath,
 } from "./utils.js";
 
 // api base configuration (always use relative paths for Netlify/SSR)
@@ -101,6 +104,54 @@ export async function fetchTotalRunsLeaderboard(
 ): Promise<any> {
   const url = `${API_BASE}${buildStaticTotalRunsLeaderboardPath(scope, region, page, opts)}`;
   console.log("Fetching total runs leaderboard:", url);
+  return apiRequest(url, origin);
+}
+
+// Unified leaderboard fetcher for the merged Players page. Picks the right
+// JSON based on (view, sort, season, scope) and lets the caller render.
+export async function fetchUnifiedLeaderboard(
+  view: "player" | "character",
+  sort: "time" | "runs",
+  season: number | "all-time",
+  scope: "global" | "regional" | "realm" | "class",
+  opts?: {
+    region?: string;
+    realmSlug?: string;
+    classKey?: string;
+    page?: number;
+  },
+  origin?: string,
+): Promise<any> {
+  const url = `${API_BASE}${buildUnifiedLeaderboardPath(view, sort, season, scope, opts)}`;
+  console.log("Fetching unified leaderboard:", url);
+  return apiRequest(url, origin);
+}
+
+// account-grouped cross-season total runs (Player toggle on total-runs page)
+export async function fetchAccountTotalRunsLeaderboard(
+  scope: "global" | "regional" | "realm" = "global",
+  region?: string,
+  page: number = 1,
+  pageSize: number = 25,
+  opts?: { realmSlug?: string },
+  origin?: string,
+): Promise<any> {
+  const url = `${API_BASE}${buildStaticAccountTotalRunsPath(scope, region, page, opts)}`;
+  console.log("Fetching account total-runs leaderboard:", url);
+  return apiRequest(url, origin);
+}
+
+// account-grouped player leaderboard
+export async function fetchAccountLeaderboard(
+  scope: "global" | "regional" | "realm" = "global",
+  region?: string,
+  page: number = 1,
+  pageSize: number = 25,
+  opts?: { seasonId?: number; realmSlug?: string },
+  origin?: string,
+): Promise<any> {
+  const url = `${API_BASE}${buildStaticAccountLeaderboardPath(scope, region, page, opts)}`;
+  console.log("Fetching account leaderboard:", url);
   return apiRequest(url, origin);
 }
 

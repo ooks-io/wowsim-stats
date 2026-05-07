@@ -264,6 +264,25 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			season_id INTEGER,
 			PRIMARY KEY (period_id, season_id)
 		)`,
+
+		// Per-character: trusted (achievement_id, completed_ts) tuples extracted
+		// from the achievements API. Same-account characters have overlapping
+		// tuples; the connected-components pass groups them into accounts.
+		`CREATE TABLE IF NOT EXISTS player_account_fingerprint (
+			player_id   INTEGER PRIMARY KEY REFERENCES players(id),
+			region      TEXT NOT NULL,
+			tuples_json TEXT NOT NULL,
+			fetched_at  INTEGER NOT NULL
+		)`,
+
+		// One row per detected account. Re-derived from all tuples on each
+		// process accounts run; ids are not stable across runs.
+		`CREATE TABLE IF NOT EXISTS accounts (
+			id              INTEGER PRIMARY KEY AUTOINCREMENT,
+			region          TEXT NOT NULL,
+			character_count INTEGER NOT NULL,
+			computed_at     INTEGER NOT NULL
+		)`,
 	}
 
 	for _, table := range tables {
@@ -309,6 +328,11 @@ func EnsureCompleteSchema(db *sql.DB) error {
 		return err
 	}
 
+	// Add account_id column to players table
+	if err := migratePlayersAddAccountID(db); err != nil {
+		return err
+	}
+
 	// Create indexes
 	return ensureRecommendedIndexes(db)
 }
@@ -344,6 +368,9 @@ func ensureRecommendedIndexes(db *sql.DB) error {
 		// Player rankings indexes
 		"CREATE INDEX IF NOT EXISTS idx_player_rankings_scope ON player_rankings(ranking_type, ranking_scope)",
 		"CREATE INDEX IF NOT EXISTS idx_player_rankings_player ON player_rankings(player_id)",
+		// Account grouping
+		"CREATE INDEX IF NOT EXISTS idx_players_account_id ON players(account_id)",
+		"CREATE INDEX IF NOT EXISTS idx_player_account_fingerprint_region ON player_account_fingerprint(region)",
 	}
 	for _, s := range stmts {
 		if _, err := db.Exec(s); err != nil {

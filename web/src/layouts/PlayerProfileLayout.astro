@@ -15,6 +15,7 @@ export interface Props {
   realmSlug?: string;
   playerName?: string;
   playerData?: PlayerProfileData | null;
+  requestedSeason?: string | null;
   error?: string | null;
 }
 
@@ -23,6 +24,7 @@ const {
   realmSlug = "",
   playerName = "",
   playerData = null,
+  requestedSeason = null,
   error = null,
 } = Astro.props;
 
@@ -31,37 +33,55 @@ const pageTitle = `${playerName} - ${realmSlug} | Player Profile`;
 const player = playerData?.player;
 const equipment = playerData?.equipment || {};
 
-const requestedSeason =
-  typeof Astro.url?.searchParams?.get === "function"
-    ? Astro.url.searchParams.get("season")
-    : null;
-
 let currentSeasonId: string | null = null;
 let currentSeasonData = null;
-let seasonOptions: { id: string; label: string }[] = [];
+let seasonOptions: { id: string; label: string; href: string }[] = [];
 const seasonRunsMap: Record<string, Record<string, BestRun>> = {};
 
+// Build the page-level season selector URLs - default season has no segment
+// in the URL so /player/{r}/{realm}/{name} stays canonical for the latest.
+function seasonHref(seasonId: string, isDefault: boolean) {
+  const base = `/player/${region}/${realmSlug}/${playerName}`;
+  if (isDefault) return base;
+  if (seasonId === "all-time") return `${base}/all-time`;
+  return `${base}/season${seasonId}`;
+}
+
+function seasonLabel(id: string) {
+  return id === "all-time" ? "All Time" : `Season ${id}`;
+}
+
 if (player && player.seasons) {
-  const seasonIds = Object.keys(player.seasons).sort(
-    (a, b) => Number(b) - Number(a),
-  );
-  seasonOptions = seasonIds.map((id) => ({
+  // Numeric season ids first (highest -> lowest), then "all-time" at the end.
+  // Default = latest numeric season, NOT all-time.
+  const allKeys = Object.keys(player.seasons);
+  const numericIds = allKeys
+    .filter((k) => /^\d+$/.test(k))
+    .sort((a, b) => Number(b) - Number(a));
+  const hasAllTime = allKeys.includes("all-time");
+  const orderedIds = hasAllTime ? [...numericIds, "all-time"] : numericIds;
+  const defaultSeasonId = numericIds[0];
+
+  seasonOptions = orderedIds.map((id) => ({
     id,
-    label: `Season ${id}`,
+    label: seasonLabel(id),
+    href: seasonHref(id, id === defaultSeasonId),
   }));
 
-  if (seasonIds.length > 0) {
-    if (requestedSeason && seasonIds.includes(requestedSeason)) {
+  if (orderedIds.length > 0) {
+    if (requestedSeason && orderedIds.includes(requestedSeason)) {
       currentSeasonId = requestedSeason;
     } else {
-      currentSeasonId = seasonIds[0];
+      currentSeasonId = defaultSeasonId;
     }
     currentSeasonData = currentSeasonId
       ? player.seasons[currentSeasonId]
       : null;
   }
 
-  for (const seasonId of seasonIds) {
+  // Best Runs section gets all the keyed-by-season run maps, including
+  // "all-time" so its internal switcher (if ever used again) handles it.
+  for (const seasonId of orderedIds) {
     const data = player.seasons[seasonId];
     seasonRunsMap[seasonId] = data?.best_runs || {};
   }
@@ -105,7 +125,32 @@ const bestRuns = currentSeasonData?.best_runs || {};
         {
           player && currentSeasonData && (
             <>
-              <PlayerHeader player={player} seasonData={currentSeasonData} />
+              {seasonOptions.length > 1 && (
+                <div class="profile-season-bar">
+                  <label for="profile-season-select">Season</label>
+                  <select id="profile-season-select">
+                    {seasonOptions.map((opt) => (
+                      <option
+                        value={opt.id}
+                        selected={opt.id === currentSeasonId}
+                        data-url={opt.href}
+                      >
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <PlayerHeader
+                player={player}
+                seasonData={currentSeasonData}
+                seasonId={currentSeasonId}
+                accountSeasonData={
+                  currentSeasonId && player.account
+                    ? player.account[currentSeasonId]
+                    : undefined
+                }
+              />
               <PlayerEquipment equipment={equipment} />
               <PlayerBestRuns
                 bestRuns={bestRuns}
@@ -113,7 +158,7 @@ const bestRuns = currentSeasonData?.best_runs || {};
                 playerRegion={player.region}
                 playerRealmSlug={player.realm_slug}
                 seasonId={currentSeasonId}
-                seasonOptions={seasonOptions}
+                seasonOptions={[]}
                 seasonRuns={seasonRunsMap}
                 mode="full"
               />
@@ -122,5 +167,18 @@ const bestRuns = currentSeasonData?.best_runs || {};
         }
       </div>
     </div>
+
+    <script>
+      const sel = document.getElementById(
+        "profile-season-select",
+      ) as HTMLSelectElement | null;
+      if (sel) {
+        sel.addEventListener("change", (e) => {
+          const target = e.target as HTMLSelectElement;
+          const url = target.options[target.selectedIndex].dataset.url;
+          if (url) window.location.href = url;
+        });
+      }
+    </script>
   </body>
 </PageLayout>

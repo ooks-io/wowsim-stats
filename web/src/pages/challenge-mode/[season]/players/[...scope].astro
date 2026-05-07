@@ -1,134 +1,203 @@
 ---
+// Unified Players leaderboard page. Handles 4 combinations via URL/query:
+//   - Season: season1, season2, all-time
+//   - Sort:   ?sort=time (default) | ?sort=runs
+//   - View:   /players/... (this page)
+// The /characters/... route is the Character view counterpart and uses
+// almost the same logic (only the view + class scope differ).
 import PageLayout from "../../../../layouts/PageLayout.astro";
 import LeaderboardTable from "../../../../components/Leaderboard/LeaderboardTable/LeaderboardTable.astro";
 import Pagination from "../../../../components/Leaderboard/Pagination/Pagination.astro";
 import LeaderboardScopeFilter from "../../../../components/Leaderboard/LeaderboardScopeFilter/LeaderboardScopeFilter.astro";
-import ClassFilterSelect from "../../../../components/PlayerProfile/ClassFilterSelect/ClassFilterSelect.astro";
 import LeaderboardTypeNav from "../../../../components/Leaderboard/LeaderboardTypeNav/LeaderboardTypeNav.astro";
 import LeaderboardHeader from "../../../../components/Leaderboard/LeaderboardHeader/LeaderboardHeader.astro";
 import PlayerSearch from "../../../../components/PlayerSearch/PlayerSearch.astro";
-import { fetchPlayerLeaderboard } from "../../../../lib/api";
-import { CLASSES } from "../../../../lib/wow-constants";
+import { fetchUnifiedLeaderboard } from "../../../../lib/api";
+import { getEffectiveRealmSlug } from "../../../../lib/realms";
 
 export const prerender = false;
 
-// Parse season from path
-const seasonParam = Astro.params.season || "season1";
+const seasonParam = Astro.params.season || "season2";
 const seasonMatch = seasonParam.match(/^season(\d+)$/);
-const currentSeason = seasonMatch ? parseInt(seasonMatch[1], 10) : 1;
+const isAllTime = seasonParam === "all-time";
+const currentSeason: number | "all-time" = isAllTime
+  ? "all-time"
+  : seasonMatch
+    ? parseInt(seasonMatch[1], 10)
+    : 2;
 
-// Parse scope from path
 const scope = Astro.params.scope || "";
-const scopeParts = scope.split("/");
+let scopeParts = scope.split("/").filter(Boolean);
 
-// Defaults
+// Sort lives at the front of the scope catchall as `by-runs` (default
+// `by-time` is omitted).
+let sortParam: "time" | "runs" = "time";
+if (scopeParts[0] === "by-runs") {
+  sortParam = "runs";
+  scopeParts = scopeParts.slice(1);
+}
+
+// Old shape was /players/{sort}/... - strip and 301 to canonical.
+if (
+  scopeParts.length > 0 &&
+  (scopeParts[0] === "overall-time" || scopeParts[0] === "total-runs")
+) {
+  const tail = scopeParts.slice(1).join("/");
+  return Astro.redirect(
+    `/challenge-mode/${seasonParam}/players/${tail || "global"}`,
+    301,
+  );
+}
+
 let regionParam = "global";
 let realmParam = "";
-let classParam = "all";
 let apiScope: "global" | "regional" | "realm" = "global";
-
 if (scopeParts.length >= 1) {
   regionParam = scopeParts[0];
-
-  if (regionParam === "global") {
-    apiScope = "global";
-    if (scopeParts.length >= 2) {
-      classParam = scopeParts[1];
-    }
-  } else {
-    // region specified
-    if (scopeParts.length === 1) {
-      // just region - regional scope
-      apiScope = "regional";
-    } else if (scopeParts.length === 2) {
-      // could be region/class or region/realm
-      const secondPart = scopeParts[1];
-      if (CLASSES.includes(secondPart as any)) {
-        // It's a class filter
-        apiScope = "regional";
-        classParam = secondPart;
-      } else {
-        // It's a realm
-        apiScope = "realm";
-        realmParam = secondPart;
-      }
-    } else if (scopeParts.length >= 3) {
-      // region/realm/class
-      apiScope = "realm";
+  if (regionParam !== "global") {
+    apiScope = "regional";
+    if (scopeParts.length >= 2 && scopeParts[1] && scopeParts[1] !== "all") {
       realmParam = scopeParts[1];
-      classParam = scopeParts[2];
+      apiScope = "realm";
     }
   }
 }
 
-// check for page query param
+// Connected-realm rollup: only parent realms have JSON files. If the user
+// landed on a child realm slug (e.g. eu/garalon → child of mirage-raceway),
+// 301 to the parent so the URL matches the data we serve.
+if (apiScope === "realm") {
+  const parent = getEffectiveRealmSlug(regionParam, realmParam);
+  if (parent && parent !== realmParam) {
+    const tail = scopeParts.slice(2).join("/");
+    const newPath =
+      `/challenge-mode/${seasonParam}/players/${regionParam}/${parent}` +
+      (tail ? `/${tail}` : "");
+    const qs = Astro.url.searchParams.toString();
+    return Astro.redirect(qs ? `${newPath}?${qs}` : newPath, 301);
+  }
+}
+
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = pageParam ? parseInt(pageParam, 10) : 1;
 
-// build scope label
+const seasonForNav: number = isAllTime ? 2 : (currentSeason as number);
+
 let scopeLabel: string;
 if (regionParam === "global") {
   scopeLabel = "Global";
-} else if (realmParam && realmParam !== "all") {
+} else if (realmParam) {
   scopeLabel = `${regionParam.toUpperCase()} - ${realmParam}`;
 } else {
-  scopeLabel = `${regionParam.toUpperCase()} - All Realms`;
+  scopeLabel = regionParam.toUpperCase();
 }
+const seasonLabel = isAllTime ? "All Time" : `Season ${currentSeason}`;
 
-// fetch player leaderboard data
 let data;
 try {
-  data = await fetchPlayerLeaderboard(
+  data = await fetchUnifiedLeaderboard(
+    "player",
+    sortParam,
+    currentSeason,
     apiScope,
-    regionParam,
-    currentPage,
-    25,
     {
+      region: regionParam,
       realmSlug: realmParam || undefined,
-      classKey: classParam !== "all" ? classParam : undefined,
-      seasonId: currentSeason,
+      page: currentPage,
     },
     Astro.url.origin,
   );
 } catch (error) {
-  console.error("[Test Player Leaderboard] Error:", error);
+  console.error("[Players page] Error:", error);
   throw error;
 }
 
-const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
+const pageTitle = `Player Rankings - ${scopeLabel} - ${seasonLabel}`;
+const dungeonName =
+  sortParam === "runs" ? "Player Rankings - Total Runs" : "Player Rankings";
+
+// Build toggle URLs - sort lives in the path now (`by-runs` segment between
+// view and scope), so toggling rebuilds the path. Other query params (e.g.
+// from future filters) are preserved minus `page`.
+const scopeTail = scopeParts.length ? scopeParts.join("/") : "global";
+const otherParams = new URLSearchParams(Astro.url.searchParams);
+otherParams.delete("page");
+otherParams.delete("sort");
+const otherQS = otherParams.toString();
+const qsSuffix = otherQS ? `?${otherQS}` : "";
+
+function buildPath(view: "players" | "characters", sort: "time" | "runs") {
+  const sortSeg = sort === "runs" ? "/by-runs" : "";
+  return `/challenge-mode/${seasonParam}/${view}${sortSeg}/${scopeTail}`;
+}
+const sortByTimeUrl = buildPath("players", "time") + qsSuffix;
+const sortByRunsUrl = buildPath("players", "runs") + qsSuffix;
+const viewPlayerUrl = buildPath("players", sortParam) + qsSuffix;
+const viewCharacterUrl = buildPath("characters", sortParam) + qsSuffix;
+
+// Determine which LeaderboardTable type to render.
+const tableType = sortParam === "runs" ? "account-total-runs" : "account";
 ---
 
 <PageLayout title={pageTitle}>
   <main class="leaderboard-page">
     <LeaderboardHeader
-      season={currentSeason}
-      dungeonName="Player Rankings"
-      scopeLabel={scopeLabel}
+      season={seasonForNav}
+      dungeonName={dungeonName}
+      scopeLabel={`${seasonLabel} - ${scopeLabel}`}
     />
     <PlayerSearch />
     <LeaderboardTypeNav
-      currentType="player"
+      currentTab="player"
       currentRegion={regionParam}
       currentRealm={realmParam}
-      currentSeason={currentSeason}
-      currentClass={classParam}
+      currentSeason={seasonForNav}
     />
 
     <div class="cm-filters">
+      <div class="filter-group">
+        <label for="view-filter">View</label>
+        <select id="view-filter">
+          <option value="player" selected data-url={viewPlayerUrl}
+            >Player</option
+          >
+          <option value="character" data-url={viewCharacterUrl}
+            >Character</option
+          >
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-filter">Sort</label>
+        <select id="sort-filter">
+          <option
+            value="time"
+            selected={sortParam === "time"}
+            data-url={sortByTimeUrl}
+          >
+            Time
+          </option>
+          <option
+            value="runs"
+            selected={sortParam === "runs"}
+            data-url={sortByRunsUrl}
+          >
+            Total Runs
+          </option>
+        </select>
+      </div>
       <LeaderboardScopeFilter
         currentRegion={regionParam}
         currentRealm={realmParam}
-        currentSeason={currentSeason}
+        currentSeason={isAllTime ? 0 : (currentSeason as number)}
         leaderboardType="player"
-        currentClass={classParam}
+        currentSort={sortParam}
       />
-      <ClassFilterSelect currentClass={classParam} />
     </div>
 
     <div id="leaderboard-content">
       <LeaderboardTable
-        type="player"
-        players={data.leaderboard}
+        type={tableType}
+        accounts={data.leaderboard}
         currentPage={data.pagination.currentPage}
         pageSize={data.pagination.pageSize}
         region={regionParam}
@@ -141,11 +210,27 @@ const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
       totalPages={data.pagination.totalPages}
       hasNextPage={data.pagination.hasNextPage}
       hasPrevPage={data.pagination.hasPrevPage}
-      totalPlayers={data.pagination.totalPlayers}
+      totalPlayers={data.pagination.totalAccounts ??
+        data.pagination.totalPlayers ??
+        data.pagination.totalRuns ??
+        0}
       baseUrl={Astro.url.pathname}
     />
   </main>
 </PageLayout>
+
+<script>
+  // Same data-url navigation pattern the other filters use.
+  for (const id of ["view-filter", "sort-filter"]) {
+    const el = document.getElementById(id) as HTMLSelectElement | null;
+    if (!el) continue;
+    el.addEventListener("change", (e) => {
+      const target = e.target as HTMLSelectElement;
+      const url = target.options[target.selectedIndex].dataset.url;
+      if (url) window.location.href = url;
+    });
+  }
+</script>
 
 <style>
   .leaderboard-page {
@@ -154,17 +239,9 @@ const pageTitle = `Player Rankings - ${scopeLabel} - Season ${currentSeason}`;
     padding: 20px;
   }
 
-  .page-title {
-    margin: 8px 0 16px 0;
-  }
-
   @media (max-width: 768px) {
     .leaderboard-page {
       padding: 15px;
-    }
-
-    .page-title {
-      font-size: 1.5em;
     }
   }
 </style>

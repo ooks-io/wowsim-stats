@@ -7,9 +7,13 @@ interface Props {
   currentRegion?: string;
   currentRealm?: string;
   currentSeason?: number;
-  leaderboardType?: "dungeon" | "player" | "total-runs" | "stats";
+  leaderboardType?: "dungeon" | "player" | "character" | "total-runs" | "stats";
   currentDungeon?: string;
   currentClass?: string;
+  // Sort lives in the path for player/character leaderboards as a `/by-runs`
+  // segment between the view and the scope. When set to "runs" the URL
+  // builder injects that segment so filter changes preserve the sort view.
+  currentSort?: "time" | "runs";
 }
 
 const {
@@ -19,6 +23,7 @@ const {
   leaderboardType = "dungeon",
   currentDungeon = "temple-of-the-jade-serpent",
   currentClass = "all",
+  currentSort = "time",
 } = Astro.props;
 
 // stats only ships per-region data, not per-realm
@@ -51,8 +56,13 @@ try {
   ];
 }
 
-// Stats page also offers a cross-season "All Time" view (id=0, slug=all-time).
-if (leaderboardType === "stats") {
+// Stats page + the unified Players/Characters leaderboards offer an
+// "All Time" cross-season view in addition to the per-season options.
+if (
+  leaderboardType === "stats" ||
+  leaderboardType === "player" ||
+  leaderboardType === "character"
+) {
   seasonOptions = [
     ...seasonOptions,
     { id: 0, name: "All Time", slug: "all-time" },
@@ -92,7 +102,16 @@ if (currentRegion && currentRegion !== "global") {
 const basePath = Astro.url.pathname.startsWith("/test-challenge-mode")
   ? "test-challenge-mode"
   : "challenge-mode";
-const seasonSlug = `season${currentSeason}`;
+// currentSeason === 0 is the convention for the cross-season "All Time" view.
+// Without this, the slug would become "season0" and break the URL.
+const seasonSlug = currentSeason === 0 ? "all-time" : `season${currentSeason}`;
+
+// Preserve query string (e.g. ?sort=runs) across filter navigation, minus
+// the page param since paging doesn't carry meaning across scopes.
+const preservedParams = new URLSearchParams(Astro.url.searchParams);
+preservedParams.delete("page");
+const preservedQS = preservedParams.toString();
+const withQS = (url: string) => (preservedQS ? `${url}?${preservedQS}` : url);
 
 function buildUrl(
   region: string,
@@ -115,14 +134,28 @@ function buildUrl(
       return `${totalRunsBase}/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
     }
   }
+  // `/by-runs` lives between view and scope when sort=runs (default time
+  // omitted for cleaner URLs).
+  const sortSeg = currentSort === "runs" ? "/by-runs" : "";
   if (leaderboardType === "player") {
-    // Player leaderboard URL
+    // Account-grouped leaderboard supports realm scope (filtered by main
+    // character's home realm). No class scope - accounts span multiple chars.
     if (region === "global") {
-      return `/${basePath}/${slug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/players${sortSeg}/global`;
+    }
+    if (realm && realm !== "all") {
+      return `/${basePath}/${slug}/players${sortSeg}/${region}/${realm}`;
+    }
+    return `/${basePath}/${slug}/players${sortSeg}/${region}`;
+  }
+  if (leaderboardType === "character") {
+    // Per-character leaderboard URL
+    if (region === "global") {
+      return `/${basePath}/${slug}/characters${sortSeg}/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
     } else if (realm && realm !== "all") {
-      return `/${basePath}/${slug}/players/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/characters${sortSeg}/${region}/${realm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
     } else {
-      return `/${basePath}/${slug}/players/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+      return `/${basePath}/${slug}/characters${sortSeg}/${region}${currentClass !== "all" ? `/${currentClass}` : ""}`;
     }
   } else {
     // Dungeon leaderboard URL
@@ -146,7 +179,9 @@ function buildUrl(
             <option
               value={season.id}
               selected={season.id === currentSeason}
-              data-url={buildUrl(currentRegion, currentRealm, season.slug)}
+              data-url={withQS(
+                buildUrl(currentRegion, currentRealm, season.slug),
+              )}
             >
               {season.name}
             </option>
@@ -164,9 +199,8 @@ function buildUrl(
           <option
             value={option.value}
             selected={option.value === currentRegion}
-            data-url={buildUrl(
-              option.value,
-              option.value === "global" ? "" : "all",
+            data-url={withQS(
+              buildUrl(option.value, option.value === "global" ? "" : "all"),
             )}
           >
             {option.label}
@@ -185,7 +219,7 @@ function buildUrl(
             <option
               value={option.value}
               selected={option.value === currentRealm}
-              data-url={buildUrl(currentRegion, option.value)}
+              data-url={withQS(buildUrl(currentRegion, option.value))}
             >
               {option.label}
             </option>

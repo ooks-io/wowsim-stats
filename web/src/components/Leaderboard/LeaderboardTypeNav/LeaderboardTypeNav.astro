@@ -2,11 +2,12 @@
 import "./LeaderboardTypeNav.scss";
 
 interface Props {
-  currentType?: "dungeon" | "player" | "total-runs";
+  currentType?: "dungeon" | "player" | "character" | "total-runs";
   currentTab?:
     | "home"
     | "dungeon"
     | "player"
+    | "character"
     | "total-runs"
     | "stats"
     | "gear"
@@ -55,13 +56,25 @@ if (currentRegion === "global") {
   dungeonUrl = `/${basePath}/${navSeasonSlug}/${currentRegion}/all/${currentDungeon}`;
 }
 
+// Player tab points at the account-grouped leaderboard. Realm scope filters to
+// accounts whose main character lives on that realm.
 let playerUrl: string;
 if (currentRegion === "global") {
-  playerUrl = `/${basePath}/${navSeasonSlug}/players/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/global`;
 } else if (currentRealm && currentRealm !== "all") {
-  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}/${currentRealm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}/${currentRealm}`;
 } else {
-  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+  playerUrl = `/${basePath}/${navSeasonSlug}/players/${currentRegion}`;
+}
+
+// Character tab is the per-character leaderboard previously known as "Players".
+let characterUrl: string;
+if (currentRegion === "global") {
+  characterUrl = `/${basePath}/${navSeasonSlug}/characters/global${currentClass !== "all" ? `/${currentClass}` : ""}`;
+} else if (currentRealm && currentRealm !== "all") {
+  characterUrl = `/${basePath}/${navSeasonSlug}/characters/${currentRegion}/${currentRealm}${currentClass !== "all" ? `/${currentClass}` : ""}`;
+} else {
+  characterUrl = `/${basePath}/${navSeasonSlug}/characters/${currentRegion}${currentClass !== "all" ? `/${currentClass}` : ""}`;
 }
 
 // no season segment: cross-season
@@ -94,15 +107,17 @@ const gearUrl = `/${basePath}/${navSeasonSlug}/gear/${currentSpec}`;
   </a>
   <a
     href={playerUrl}
-    class:list={["nav-tab", { active: currentTab === "player" }]}
+    class:list={[
+      "nav-tab",
+      {
+        active:
+          currentTab === "player" ||
+          currentTab === "character" ||
+          currentTab === "total-runs",
+      },
+    ]}
   >
     Players
-  </a>
-  <a
-    href={totalRunsUrl}
-    class:list={["nav-tab", { active: currentTab === "total-runs" }]}
-  >
-    Total Runs
   </a>
   <a
     href={statsUrl}

@@ -36,13 +36,17 @@ const {
 const bracketClass = bracket ? `bracket-${bracket}` : "";
 const profileUrl = buildPlayerProfileURL(region, realmSlug, name);
 const specInfo = activeSpecId ? getSpecInfo(activeSpecId) : null;
-const specIconUrl = specInfo ? getSpecIcon(specInfo.class, specInfo.spec) : null;
+const specIconUrl = specInfo
+  ? getSpecIcon(specInfo.class, specInfo.spec)
+  : null;
 // Reuse the global .text-{class} utility (matches PlayerLink + WoWClassColors)
 const classColorClass = specInfo ? getClassTextClass(specInfo.class) : "";
 ---
 
 <a class="player-rank-row" href={profileUrl}>
-  <span class:list={["player-rank-row__rank", "ranking-number", bracketClass]}>{rank}</span>
+  <span class:list={["player-rank-row__rank", "ranking-number", bracketClass]}
+    >{rank}</span
+  >
 
   {
     avatarUrl ? (
@@ -77,5 +81,7 @@ const classColorClass = specInfo ? getClassTextClass(specInfo.class) : "";
     </span>
   </div>
 
-  <span class="player-rank-row__time">{formatDurationMMSS(combinedBestTimeMs)}</span>
+  <span class="player-rank-row__time"
+    >{formatDurationMMSS(combinedBestTimeMs)}</span
+  >
 </a>

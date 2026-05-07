@@ -430,3 +430,21 @@ func migrateItemsAddSpellDescription(db *sql.DB) error {
 	fmt.Printf("[OK] Added spell_description column to items table\n")
 	return nil
 }
+
+// migratePlayersAddAccountID adds account_id FK to players for the
+// account-grouping feature. Populated by the process accounts step.
+func migratePlayersAddAccountID(db *sql.DB) error {
+	has, err := columnExists(db, "players", "account_id")
+	if err != nil {
+		return nil
+	}
+	if has {
+		return nil
+	}
+	fmt.Printf("Adding account_id column to players table...\n")
+	if _, err := db.Exec(`ALTER TABLE players ADD COLUMN account_id INTEGER REFERENCES accounts(id)`); err != nil {
+		return fmt.Errorf("add account_id: %w", err)
+	}
+	fmt.Printf("[OK] Added account_id column to players table\n")
+	return nil
+}

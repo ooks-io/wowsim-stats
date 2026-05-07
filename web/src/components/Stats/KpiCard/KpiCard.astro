@@ -9,7 +9,8 @@ interface Props {
 
 const { label, value, sublabel } = Astro.props;
 
-const displayValue = typeof value === "number" ? value.toLocaleString("en-US") : value;
+const displayValue =
+  typeof value === "number" ? value.toLocaleString("en-US") : value;
 ---
 
 <article class="kpi-card">

@@ -1,6 +1,7 @@
 package pipeline
 
 import (
+	"encoding/json"
 	"fmt"
 	"sort"
 	"strings"
@@ -130,6 +131,15 @@ func BuildPlayerFingerprints(db *database.DatabaseService, client *blizzard.Clie
 				}
 				collisionMap[oc.fingerprint.FingerprintHash] = oc.fingerprint.PlayerID
 			}
+			if len(oc.accountTuples) > 0 {
+				tuplesJSON, err := json.Marshal(oc.accountTuples)
+				if err != nil {
+					return nil, fmt.Errorf("marshal account tuples for player %d: %w", oc.playerID, err)
+				}
+				if err := db.UpsertPlayerAccountFingerprint(oc.playerID, oc.accountTuplesRegion, string(tuplesJSON), nowMillis()); err != nil {
+					return nil, fmt.Errorf("upsert account fingerprint for player %d: %w", oc.playerID, err)
+				}
+			}
 			if oc.created {
 				result.Created++
 			}
@@ -216,6 +226,12 @@ type fingerprintOutcome struct {
 	skipped       bool
 	invalid       bool
 	err           error
+	// Trusted (id, ts) tuples extracted from the same achievements response
+	// used for the character fingerprint. Persisted to player_account_fingerprint
+	// alongside the fingerprint so a later `process accounts` pass can group
+	// characters into accounts without re-fetching.
+	accountTuples       []playerid.TrustedTuple
+	accountTuplesRegion string
 }
 
 func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.Client, cand database.PlayerFingerprintCandidate, collisionMap map[string]int64, logger *log.Logger) fingerprintOutcome {
@@ -400,6 +416,8 @@ func processFingerprintCandidate(db *database.DatabaseService, client *blizzard.
 		FirstRunTimestamp:       firstRun,
 		CreatedAt:               now,
 	}
+	out.accountTuples = playerid.ExtractTrustedTuples(resp)
+	out.accountTuplesRegion = cand.Region
 	out.created = true
 
 	logger.Info("fingerprint ready",

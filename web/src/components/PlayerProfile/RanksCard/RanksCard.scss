@@ -1,0 +1,76 @@
+@use "../../../styles/core/tokens" as *;
+
+.ranks-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1 1 360px;
+  min-width: 0;
+
+  &__header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  &__subtitle {
+    margin-top: 2px;
+    font-size: $font-size-xs;
+    color: var(--text-tertiary);
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  &__stat-label {
+    font-size: $font-size-xs;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__stat-value {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  @media (max-width: 720px) {
+    padding: 14px 16px;
+
+    &__stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    &__stat-value {
+      font-size: 1.1em;
+    }
+  }
+}

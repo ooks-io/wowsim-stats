@@ -1,0 +1,93 @@
+---
+// Reusable stats card. Same component renders both the per-character ranks
+// and the per-account ranks on the player profile - the props are the same
+// shape because both feeds were designed to mirror each other in players.go.
+import { formatDurationMMSS } from "../../../lib/utils";
+import { formatRankingWithBracket } from "../../../lib/ranking-utils";
+import "./RanksCard.scss";
+
+interface Props {
+  title: string;
+  // Subheading shown below the title - e.g. character class+spec, or "3 alts".
+  subtitle?: string;
+  combinedTime?: number;
+  combinedTimeBracket?: string;
+  globalRanking?: number;
+  globalBracket?: string;
+  regionalRanking?: number;
+  regionalBracket?: string;
+  regionLabel?: string; // e.g. "EU" - shown above the regional rank
+  realmRanking?: number;
+  realmBracket?: string;
+  realmLabel?: string; // e.g. "Garalon" - shown above the realm rank
+  totalRuns?: number;
+}
+
+const {
+  title,
+  subtitle,
+  combinedTime,
+  combinedTimeBracket,
+  globalRanking,
+  globalBracket,
+  regionalRanking,
+  regionalBracket,
+  regionLabel = "",
+  realmRanking,
+  realmBracket,
+  realmLabel = "Realm",
+  totalRuns,
+} = Astro.props;
+---
+
+<section class="ranks-card">
+  <header class="ranks-card__header">
+    <h2 class="ranks-card__title">{title}</h2>
+    {subtitle && <div class="ranks-card__subtitle">{subtitle}</div>}
+  </header>
+
+  <div class="ranks-card__stats">
+    <div class="ranks-card__stat">
+      <div class="ranks-card__stat-label">Time</div>
+      <div
+        class:list={[
+          "ranks-card__stat-value",
+          combinedTimeBracket && `bracket-${combinedTimeBracket}`,
+        ]}
+      >
+        {combinedTime ? formatDurationMMSS(combinedTime) : "-"}
+      </div>
+    </div>
+
+    <div class="ranks-card__stat">
+      <div class="ranks-card__stat-label">Global</div>
+      <div
+        class="ranks-card__stat-value"
+        set:html={formatRankingWithBracket(globalRanking, globalBracket)}
+      />
+    </div>
+
+    <div class="ranks-card__stat">
+      <div class="ranks-card__stat-label">{regionLabel || "Region"}</div>
+      <div
+        class="ranks-card__stat-value"
+        set:html={formatRankingWithBracket(regionalRanking, regionalBracket)}
+      />
+    </div>
+
+    <div class="ranks-card__stat">
+      <div class="ranks-card__stat-label">{realmLabel}</div>
+      <div
+        class="ranks-card__stat-value"
+        set:html={formatRankingWithBracket(realmRanking, realmBracket)}
+      />
+    </div>
+
+    <div class="ranks-card__stat">
+      <div class="ranks-card__stat-label">Runs</div>
+      <div class="ranks-card__stat-value">
+        {typeof totalRuns === "number" ? totalRuns.toLocaleString() : "-"}
+      </div>
+    </div>
+  </div>
+</section>

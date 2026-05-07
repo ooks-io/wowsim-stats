@@ -72,6 +72,14 @@
   }
 }
 
+.table-container[data-mode="accounts"] {
+  .table-header,
+  .table-row {
+    // rank | main player | realm | combined time | alts (count + dropdown)
+    grid-template-columns: 80px 2fr 1.5fr 140px 140px;
+  }
+}
+
 .table-container[data-mode="best-runs"] {
   .table-header,
   .table-row {
@@ -187,8 +195,10 @@
     }
   }
 
-  // Players-specific mobile layout
-  .table-container[data-mode="players"] {
+  // Players + Accounts share the same mobile card layout. The accounts mode
+  // adds a 5th cell (Alts) which we tuck onto row 1 next to the time.
+  .table-container[data-mode="players"],
+  .table-container[data-mode="accounts"] {
     .table-row {
       display: grid;
       grid-template-columns: auto 1fr auto;
@@ -241,6 +251,18 @@
       color: var(--text-secondary);
       padding: 0;
       margin-top: 4px;
+    }
+  }
+
+  // Accounts-only: 5th cell is the Alts dropdown. Spans the bottom row next
+  // to the realm so the trigger button stays inside the card.
+  .table-container[data-mode="accounts"] {
+    .table-cell:nth-child(5) {
+      grid-column: 3;
+      grid-row: 2;
+      padding: 0;
+      margin-top: 4px;
+      justify-self: end;
     }
   }
 }

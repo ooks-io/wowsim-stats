@@ -295,6 +295,30 @@ func loadRealmSlugs(db *sql.DB, region string) ([]string, error) {
 	return slugs, nil
 }
 
+// children collapse upward via parent_realm_slug
+func loadParentRealmSlugs(db *sql.DB, region string) ([]string, error) {
+	rows, err := db.Query(`
+		SELECT slug
+		FROM realms
+		WHERE region = ? AND (parent_realm_slug IS NULL OR parent_realm_slug = '')
+		ORDER BY slug
+	`, region)
+	if err != nil {
+		return nil, fmt.Errorf("parent realms list: %w", err)
+	}
+	defer rows.Close()
+
+	var slugs []string
+	for rows.Next() {
+		var s string
+		if err := rows.Scan(&s); err != nil {
+			return nil, err
+		}
+		slugs = append(slugs, s)
+	}
+	return slugs, nil
+}
+
 // generateGlobalLeaderboard generates global leaderboard pages for a dungeon
 func generateGlobalLeaderboard(db *sql.DB, out string, d dungeonInfo, seasonID, pageSize int) error {
 	dir := filepath.Join(out, "global", d.Slug)

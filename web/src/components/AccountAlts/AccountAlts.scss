@@ -1,0 +1,98 @@
+@use "../../styles/core/tokens" as *;
+
+.account-alts {
+  position: relative;
+  display: inline-block;
+
+  &__empty {
+    color: var(--text-tertiary);
+  }
+
+  &__trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: 4px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-sm;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+      background 0.12s,
+      border-color 0.12s,
+      color 0.12s;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--bg-tertiary, var(--bg-secondary));
+      border-color: var(--highlight-color);
+      color: var(--text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--highlight-color);
+      outline-offset: 2px;
+    }
+  }
+
+  &__chevron {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.15s ease;
+  }
+
+  &[data-open] &__chevron {
+    transform: rotate(180deg);
+  }
+
+  // Panel uses position: fixed so it escapes any `overflow: hidden` ancestor
+  // (the leaderboard's rounded table-container clips absolutely-positioned
+  // popovers to nothing). JS sets `--alts-top` / `--alts-left` on open.
+  &__panel {
+    position: fixed;
+    top: var(--alts-top, 0);
+    left: var(--alts-left, 0);
+    z-index: 1000;
+    min-width: 220px;
+    max-width: 320px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: $spacing-xs;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: $radius-sm;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    padding: 4px 6px;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+
+    &:hover {
+      background: var(--bg-secondary);
+    }
+  }
+
+  &__realm {
+    color: var(--text-tertiary);
+    font-size: $font-size-xs;
+    white-space: nowrap;
+  }
+}

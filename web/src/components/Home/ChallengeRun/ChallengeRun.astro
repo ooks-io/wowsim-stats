@@ -49,7 +49,11 @@ const bracketClass = bracket ? `bracket-${bracket}` : "";
 
   {
     rank && (
-      <span class:list={["challenge-run__rank", "ranking-number", bracketClass]}>{rank}</span>
+      <span
+        class:list={["challenge-run__rank", "ranking-number", bracketClass]}
+      >
+        {rank}
+      </span>
     )
   }
 

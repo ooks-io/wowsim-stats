@@ -63,8 +63,12 @@ const fullUrl = new URL(url, Astro.site || Astro.url.origin).toString();
          page and renders the official tooltip on hover. Loaded site-wide so
          any page can opt in just by emitting the data attribute. Visual style
          is overridden in core/wowhead-tooltip.scss to match the dark theme. -->
-    <script is:inline set:html={`var whTooltips = { colorLinks: false, iconizeLinks: false, renameLinks: false };`} />
-    <script is:inline async src="https://wow.zamimg.com/js/tooltips.js"></script>
+    <script
+      is:inline
+      set:html={`var whTooltips = { colorLinks: false, iconizeLinks: false, renameLinks: false };`}
+    />
+    <script is:inline async src="https://wow.zamimg.com/js/tooltips.js"
+    ></script>
   </head>
   <body class="site-body">
     <WoWClassColors />

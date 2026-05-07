@@ -42,11 +42,16 @@ const classes = [
     const select = e.target as HTMLSelectElement;
     const selectedClass = select.value;
 
-    // Check if we're using query params
+    // Path-based mode handles three trees:
+    //   per-season character leaderboard: /{base}/{seasonN}/characters/...
+    //   per-season player (account):      /{base}/{seasonN}/players/...
+    //   cross-season total runs:          /{base}/players/total-runs/...
     const searchParams = new URLSearchParams(window.location.search);
+    const path = window.location.pathname;
     const usesQueryParams =
       searchParams.toString().length > 0 &&
-      !window.location.pathname.includes("/players/");
+      !path.includes("/players/") &&
+      !path.includes("/characters/");
 
     if (usesQueryParams) {
       // Query param mode
@@ -58,8 +63,6 @@ const classes = [
       searchParams.delete("page"); // reset to page 1
       window.location.href = `${window.location.pathname}?${searchParams.toString()}`;
     } else {
-      // per-season:   /{base}/{seasonN}/players/...
-      // cross-season: /{base}/players/total-runs/...
       const pathParts = window.location.pathname.split("/").filter((p) => p);
 
       const basePath =
@@ -67,10 +70,18 @@ const classes = [
           ? "test-challenge-mode"
           : "challenge-mode";
 
-      const playersIndex = pathParts.indexOf("players");
-      if (playersIndex === -1) return;
+      // Find which leaderboard segment we're on. Prefer characters since
+      // class filter doesn't apply to the account-grouped /players page.
+      let segmentIndex = pathParts.indexOf("characters");
+      let segment = "characters";
+      if (segmentIndex === -1) {
+        segmentIndex = pathParts.indexOf("players");
+        segment = "players";
+      }
+      if (segmentIndex === -1) return;
 
-      const isTotalRuns = pathParts[playersIndex + 1] === "total-runs";
+      const isTotalRuns =
+        segment === "players" && pathParts[segmentIndex + 1] === "total-runs";
 
       let seasonSlug = "season1";
       if (pathParts.length >= 2 && pathParts[1].startsWith("season")) {
@@ -78,11 +89,11 @@ const classes = [
       }
 
       const scopeParts = isTotalRuns
-        ? pathParts.slice(playersIndex + 2)
-        : pathParts.slice(playersIndex + 1);
+        ? pathParts.slice(segmentIndex + 2)
+        : pathParts.slice(segmentIndex + 1);
       const playersBase = isTotalRuns
         ? `/${basePath}/players/total-runs`
-        : `/${basePath}/${seasonSlug}/players`;
+        : `/${basePath}/${seasonSlug}/${segment}`;
 
       // disambiguates `players/<region>/<class>` vs `players/<region>/<realm>`
       // (the previous `.includes("_")` heuristic only matched `death_knight`)

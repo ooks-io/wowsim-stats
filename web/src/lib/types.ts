@@ -128,6 +128,60 @@ export interface PlayerLeaderboardData {
   };
 }
 
+// Per-account row from /api/leaderboard/season/{N}/accounts/...
+// Used by both the per-season combined-time account leaderboard and the
+// cross-season account total-runs leaderboard. Combined-time-specific fields
+// (bracket, account_combined_best_time, dungeons_completed, per_dungeon_best)
+// are optional so the type covers both feeds.
+export interface AccountLeaderboardEntry {
+  rank: number;
+  bracket?: string; // artifact | excellent | legendary | epic | rare | uncommon | common
+  account_id: number;
+  region: string;
+  account_combined_best_time?: number;
+  dungeons_completed?: number;
+  total_runs: number;
+  character_count?: number;
+  main: AccountCharSummary;
+  alts: AccountCharSummary[];
+  // dungeon_id (string) -> per-dungeon best inside this account
+  per_dungeon_best?: Record<string, AccountPerDungeonBest>;
+}
+
+export interface AccountCharSummary {
+  player_id: number;
+  name: string;
+  realm_slug: string;
+  realm_name?: string;
+  region: string;
+  class_name?: string;
+  active_spec_name?: string;
+  main_spec_id?: number;
+  combined_best_time?: number;
+  total_runs?: number;
+  has_full_coverage?: boolean;
+}
+
+export interface AccountPerDungeonBest {
+  duration_ms: number;
+  by_character: string;
+  by_character_realm: string;
+}
+
+export interface AccountLeaderboardData {
+  leaderboard: AccountLeaderboardEntry[];
+  title?: string;
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+    totalAccounts: number;
+    totalRuns: number; // legacy compat for shared Pagination component
+  };
+}
+
 export interface PlayerSeasonData {
   main_spec_id?: number;
   dungeons_completed: number;
@@ -143,6 +197,28 @@ export interface PlayerSeasonData {
   best_runs: Record<string, BestRun>;
 }
 
+// Per-season account totals + rankings. Mirrors PlayerSeasonData stats but
+// for the whole account (sum across all alts, ranked among other accounts).
+// Keep in sync with `AccountSeasonJSON` in nix/.../generator/players.go.
+export interface AccountSeasonData {
+  account_id: number;
+  combined_best_time?: number;
+  dungeons_completed: number;
+  total_runs: number;
+  character_count: number;
+  has_full_coverage: boolean;
+  global_ranking?: number;
+  regional_ranking?: number;
+  realm_ranking?: number;
+  global_ranking_bracket?: string;
+  regional_ranking_bracket?: string;
+  realm_ranking_bracket?: string;
+  region?: string;
+  realm_slug?: string; // main char's parent realm
+  realm_name?: string;
+  main_player_id?: number;
+}
+
 export interface PlayerWithSeasons {
   id: number;
   name: string;
@@ -156,7 +232,14 @@ export interface PlayerWithSeasons {
   guild_name?: string;
   average_item_level?: number;
   equipped_item_level?: number;
+  all_time_total_runs?: number;
   seasons: Record<string, PlayerSeasonData>;
+  alts?: AccountCharSummary[];
+  account?: Record<string, AccountSeasonData>;
+  // Cross-season sum of total_runs across every alt on the account. Same on
+  // every alt's profile and matches the value the Total Runs leaderboard
+  // ranks accounts by.
+  account_lifetime_total_runs?: number;
 }
 
 export interface PlayerProfileData {

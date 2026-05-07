@@ -6,11 +6,18 @@ import type { PlayerProfileData } from "../../lib/types";
 export const prerender = false;
 
 const slug = Astro.params.slug || "";
-const slugParts = slug.split("/");
+const slugParts = slug.split("/").filter(Boolean);
 
 const region = slugParts[0] || "";
 const realmSlug = slugParts[1] || "";
 const playerName = slugParts[2] || "";
+// Season is the optional 4th segment: "season{N}" or "all-time". When absent
+// the layout defaults to the latest season the player has data for.
+const seasonSlug = slugParts[3] || "";
+let requestedSeason: string | null = null;
+const seasonMatch = seasonSlug.match(/^season(\d+)$/);
+if (seasonMatch) requestedSeason = seasonMatch[1];
+else if (seasonSlug === "all-time") requestedSeason = "all-time";
 
 let playerData: PlayerProfileData | null = null;
 let error: string | null = null;
@@ -36,5 +43,6 @@ if (region && realmSlug && playerName) {
   realmSlug={realmSlug}
   playerName={playerName}
   playerData={playerData}
+  requestedSeason={requestedSeason}
   error={error}
 />

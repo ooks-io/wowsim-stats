@@ -1,0 +1,193 @@
+---
+// Click-to-open popover listing an account's alts. Used in both the account
+// leaderboard cell and the player profile header. Self-contained: vanilla JS
+// controller toggles `data-open`, listens for outside-click and Escape.
+//
+// Anchored absolutely to the trigger via a `position: relative` wrapper, so
+// the popover doesn't push surrounding rows around (the gripe with the old
+// <details> implementation).
+import type { AccountCharSummary } from "../../lib/types";
+import PlayerLink from "../Leaderboard/PlayerLink/PlayerLink.astro";
+import "./AccountAlts.scss";
+
+interface Props {
+  alts: AccountCharSummary[];
+  // "right" anchors the popover to the right edge of the trigger (table cells).
+  // "left" anchors to the left (header context).
+  align?: "left" | "right";
+  // Override the trigger label - defaults to "N alt(s)".
+  label?: string;
+  // Optional empty-state markup. If omitted, renders nothing when alts is empty.
+  emptyLabel?: string;
+}
+
+const { alts, align = "right", label, emptyLabel } = Astro.props;
+
+const count = alts?.length ?? 0;
+const triggerLabel = label ?? `${count} alt${count === 1 ? "" : "s"}`;
+---
+
+{
+  count === 0 ? (
+    emptyLabel ? (
+      <span class="account-alts__empty">{emptyLabel}</span>
+    ) : null
+  ) : (
+    <div class="account-alts" data-align={align}>
+      <button
+        type="button"
+        class="account-alts__trigger"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <span class="account-alts__trigger-label">{triggerLabel}</span>
+        <svg
+          class="account-alts__chevron"
+          viewBox="0 0 12 12"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M2 4l4 4 4-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+      <div
+        class="account-alts__panel"
+        role="dialog"
+        aria-label="Alt characters"
+        hidden
+      >
+        <ul class="account-alts__list">
+          {alts.map((alt) => (
+            <li class="account-alts__item">
+              <PlayerLink
+                name={alt.name}
+                specId={alt.main_spec_id || 0}
+                region={alt.region}
+                realmSlug={alt.realm_slug}
+              />
+              <span class="account-alts__realm">
+                {alt.realm_name ?? alt.realm_slug}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  // Single delegated controller - cheaper than per-instance listeners on a
+  // page with 25+ leaderboard rows. Behaviour: click trigger toggles, click
+  // anywhere outside an open popover closes it, Escape closes the active one.
+  //
+  // The panel uses position:fixed so it escapes `overflow:hidden` ancestors
+  // (the leaderboard table clips absolutely-positioned popovers). We compute
+  // top/left from the trigger's bounding rect on open, and reposition while
+  // open if the page scrolls or the viewport resizes.
+  function initAccountAlts() {
+    if ((window as any).__accountAltsInit) return;
+    (window as any).__accountAltsInit = true;
+
+    let openRoot: HTMLElement | null = null;
+
+    function position(root: HTMLElement) {
+      const trigger = root.querySelector<HTMLButtonElement>(
+        ".account-alts__trigger",
+      );
+      const panel = root.querySelector<HTMLElement>(".account-alts__panel");
+      if (!trigger || !panel) return;
+      const rect = trigger.getBoundingClientRect();
+      const align = root.dataset.align || "right";
+      // Panel min-width matches the SCSS so we can pre-compute alignment
+      // before the panel is on-screen and avoid a flash of mis-position.
+      const panelWidth = Math.max(panel.offsetWidth, 220);
+      const top = rect.bottom + 4;
+      const left = align === "right" ? rect.right - panelWidth : rect.left;
+      // Keep on-screen: clamp left so the panel doesn't run off either edge.
+      const clamped = Math.max(
+        4,
+        Math.min(left, window.innerWidth - panelWidth - 4),
+      );
+      panel.style.setProperty("--alts-top", `${top}px`);
+      panel.style.setProperty("--alts-left", `${clamped}px`);
+    }
+
+    function onReposition() {
+      if (openRoot) position(openRoot);
+    }
+
+    function close(root: HTMLElement | null) {
+      if (!root) return;
+      const trigger = root.querySelector<HTMLButtonElement>(
+        ".account-alts__trigger",
+      );
+      const panel = root.querySelector<HTMLElement>(".account-alts__panel");
+      root.removeAttribute("data-open");
+      trigger?.setAttribute("aria-expanded", "false");
+      if (panel) panel.hidden = true;
+      if (openRoot === root) {
+        openRoot = null;
+        window.removeEventListener("scroll", onReposition, true);
+        window.removeEventListener("resize", onReposition);
+      }
+    }
+
+    function open(root: HTMLElement) {
+      if (openRoot && openRoot !== root) close(openRoot);
+      const trigger = root.querySelector<HTMLButtonElement>(
+        ".account-alts__trigger",
+      );
+      const panel = root.querySelector<HTMLElement>(".account-alts__panel");
+      root.setAttribute("data-open", "");
+      trigger?.setAttribute("aria-expanded", "true");
+      if (panel) panel.hidden = false;
+      openRoot = root;
+      // Position AFTER unhiding so offsetWidth/Height are real.
+      position(root);
+      window.addEventListener("scroll", onReposition, true);
+      window.addEventListener("resize", onReposition);
+    }
+
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      const triggerEl = target.closest<HTMLElement>(".account-alts__trigger");
+      if (triggerEl) {
+        const root = triggerEl.closest<HTMLElement>(".account-alts");
+        if (!root) return;
+        if (root.hasAttribute("data-open")) {
+          close(root);
+        } else {
+          open(root);
+        }
+        e.stopPropagation();
+        return;
+      }
+      // Click outside any open popover closes it.
+      if (openRoot && !target.closest(".account-alts__panel")) {
+        close(openRoot);
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && openRoot) {
+        const trigger = openRoot.querySelector<HTMLButtonElement>(
+          ".account-alts__trigger",
+        );
+        close(openRoot);
+        trigger?.focus();
+      }
+    });
+  }
+
+  initAccountAlts();
+  // Re-init on Astro view transitions (no-op if already initialised).
+  document.addEventListener("astro:page-load", initAccountAlts);
+</script>

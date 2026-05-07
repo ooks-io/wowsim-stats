@@ -1,11 +1,11 @@
 ---
-import { formatDurationMMSS } from "../../../lib/utils";
-import { formatRankingWithBracket } from "../../../lib/ranking-utils";
+// Three-card profile header: Identity / Character ranks / Account ranks.
+// Cards 2 and 3 share the same `RanksCard` component so the per-character
+// and per-account stats stay visually aligned and styled from one place.
 import { getClassTextClass } from "../../../lib/wow-constants";
-import {
-  getEffectiveRealmSlug,
-  getRealmDisplayName,
-} from "../../../lib/realms";
+import AccountAlts from "../../AccountAlts/AccountAlts.astro";
+import RanksCard from "../RanksCard/RanksCard.astro";
+import type { AccountCharSummary, AccountSeasonData } from "../../../lib/types";
 import "./PlayerHeader.scss";
 
 interface SeasonData {
@@ -36,21 +36,22 @@ interface Player {
   average_item_level?: number;
   equipped_item_level?: number;
   all_time_total_runs?: number;
+  account_lifetime_total_runs?: number;
+  alts?: AccountCharSummary[];
 }
 
 interface Props {
   player: Player;
   seasonData: SeasonData;
+  seasonId?: string | null;
+  accountSeasonData?: AccountSeasonData;
 }
 
-const { player, seasonData } = Astro.props;
+const { player, seasonData, seasonId, accountSeasonData } = Astro.props;
+const seasonLabel =
+  seasonId === "all-time" ? "All Time" : seasonId ? `Season ${seasonId}` : "";
 
-const leaderboardRealmSlug =
-  getEffectiveRealmSlug(player.region, player.realm_slug) || player.realm_slug;
-const leaderboardRealmLabel = getRealmDisplayName(
-  player.region,
-  leaderboardRealmSlug,
-);
+const regionLabel = (player.region || "").toUpperCase();
 
 function getRaceId(raceName: string): number {
   const raceIds: Record<string, number> = {
@@ -76,88 +77,99 @@ const fallbackUrl = `/wow/static/images/2d/avatar/${raceId}-${genderId}.jpg`;
 const avatarUrl = player.avatar_url
   ? `${player.avatar_url}?alt=${fallbackUrl}`
   : fallbackUrl;
+
+const characterSubtitle = [
+  player.race_name,
+  player.active_spec_name,
+  player.class_name,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const accountSubtitle = accountSeasonData
+  ? `${accountSeasonData.character_count} character${accountSeasonData.character_count === 1 ? "" : "s"}`
+  : undefined;
 ---
 
-<div class="player-header-horizontal">
-  <div class="player-avatar">
-    <img src={avatarUrl} alt={`${player.name} avatar`} class="avatar-image" />
-  </div>
-
-  <div class="player-info-column">
-    <h1
-      class={`player-name ${getClassTextClass(player.class_name || "common")}`}
-    >
-      {player.name}
-    </h1>
-    {
-      player.guild_name && (
-        <div class="guild-name">&lt;{player.guild_name}&gt;</div>
-      )
-    }
-    <div class="character-details">
-      {player.race_name}
-      {player.active_spec_name}
-      {player.class_name}
+<div class="player-header-cards">
+  <section class="player-card player-card--identity">
+    <div class="player-identity">
+      <img
+        src={avatarUrl}
+        alt={`${player.name} avatar`}
+        class="player-identity__avatar"
+      />
+      <div class="player-identity__body">
+        <div class="player-identity__name-row">
+          <h1
+            class:list={[
+              "player-identity__name",
+              getClassTextClass(player.class_name || "common"),
+            ]}
+          >
+            {player.name}
+          </h1>
+          {
+            player.alts && player.alts.length > 0 && (
+              <AccountAlts alts={player.alts} align="left" />
+            )
+          }
+        </div>
+        {
+          player.guild_name && (
+            <div class="player-identity__guild">
+              &lt;{player.guild_name}&gt;
+            </div>
+          )
+        }
+        <div class="player-identity__details">{characterSubtitle}</div>
+        <div class="player-identity__ilvl">
+          ilvl {player.equipped_item_level || "-"} equipped / {
+            player.average_item_level || "-"
+          } avg
+        </div>
+      </div>
     </div>
-    <div class="item-level">
-      Item Level: {player.equipped_item_level || "-"} equipped / {
-        player.average_item_level || "-"
-      } average
-    </div>
-  </div>
+  </section>
 
-  <div class="combined-time-column">
-    <div class="stat-label">Combined Time</div>
-    <div
-      class={`stat-value combined-time-value ${seasonData.global_ranking_bracket ? `bracket-${seasonData.global_ranking_bracket}` : ""}`}
-    >
-      {
-        seasonData.combined_best_time
-          ? formatDurationMMSS(seasonData.combined_best_time)
-          : "-"
-      }
-    </div>
-  </div>
+  <RanksCard
+    title="Character"
+    subtitle={seasonLabel}
+    combinedTime={seasonData.combined_best_time}
+    combinedTimeBracket={seasonData.global_ranking_bracket}
+    globalRanking={seasonData.global_ranking}
+    globalBracket={seasonData.global_ranking_bracket}
+    regionalRanking={seasonData.regional_ranking}
+    regionalBracket={seasonData.regional_ranking_bracket}
+    regionLabel={regionLabel}
+    realmRanking={seasonData.realm_ranking}
+    realmBracket={seasonData.realm_ranking_bracket}
+    totalRuns={seasonData.total_runs}
+  />
 
-  <div class="ranking-column">
-    <div class="stat-label">Global Rank</div>
-    <div
-      class="stat-value"
-      set:html={formatRankingWithBracket(
-        seasonData.global_ranking,
-        seasonData.global_ranking_bracket,
-      )}
-    />
-  </div>
-
-  <div class="ranking-column">
-    <div class="stat-label">{player.region?.toUpperCase()} Rank</div>
-    <div
-      class="stat-value"
-      set:html={formatRankingWithBracket(
-        seasonData.regional_ranking,
-        seasonData.regional_ranking_bracket,
-      )}
-    />
-  </div>
-
-  <div class="ranking-column">
-    <div class="stat-label">
-      {leaderboardRealmLabel || player.realm_name || player.realm_slug} Rank
-    </div>
-    <div
-      class="stat-value"
-      set:html={formatRankingWithBracket(
-        seasonData.realm_ranking,
-        seasonData.realm_ranking_bracket,
-      )}
-    />
-  </div>
-
-  <div class="ranking-column">
-    <div class="stat-label">Total Runs</div>
-    <div class="stat-value">
-      {player.all_time_total_runs ?? seasonData.total_runs ?? 0}
-    </div>
-  </div>
+  {
+    accountSeasonData ? (
+      <RanksCard
+        title="Account"
+        subtitle={[seasonLabel, accountSubtitle].filter(Boolean).join(" · ")}
+        combinedTime={accountSeasonData.combined_best_time}
+        combinedTimeBracket={accountSeasonData.global_ranking_bracket}
+        globalRanking={accountSeasonData.global_ranking}
+        globalBracket={accountSeasonData.global_ranking_bracket}
+        regionalRanking={accountSeasonData.regional_ranking}
+        regionalBracket={accountSeasonData.regional_ranking_bracket}
+        regionLabel={regionLabel}
+        realmRanking={accountSeasonData.realm_ranking}
+        realmBracket={accountSeasonData.realm_ranking_bracket}
+        totalRuns={accountSeasonData.total_runs}
+      />
+    ) : (
+      <section class="player-card player-card--account-empty">
+        <div class="player-card__placeholder">
+          <h2 class="player-card__placeholder-title">Account</h2>
+          <p>This character isn't grouped to an account yet.</p>
+        </div>
+      </section>
+    )
+  }
 </div>

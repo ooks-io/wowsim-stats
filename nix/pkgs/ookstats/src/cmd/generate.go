@@ -66,6 +66,24 @@ var generateAPICmd = &cobra.Command{
 			if err := generator.GenerateTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
 				return err
 			}
+			if err := generator.GenerateAccountTotalRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GenerateAccountLeaderboards(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GenerateAllTimePlayerLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GenerateAllTimeAccountLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GeneratePlayerSeasonRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
+			if err := generator.GenerateAccountSeasonRunsLeaderboard(db, filepath.Join(base, "leaderboard"), pageSize, regions, workers); err != nil {
+				return err
+			}
 		}
 
 		if doSearch {
@@ -164,7 +182,10 @@ var generatePlayerLeaderboardsCmd = &cobra.Command{
 		if err := generator.GeneratePlayerLeaderboards(db, base, pageSize, regions, workers); err != nil {
 			return err
 		}
-		fmt.Printf("\nPer-season player leaderboards generated at %s/season/<id>/players/...\n", base)
+		if err := generator.GenerateAllTimePlayerLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		fmt.Printf("\nPlayer leaderboards generated at %s/season/<id>/players/... and %s/all-time/characters/by-time/...\n", base, base)
 		return nil
 	},
 }
@@ -196,7 +217,51 @@ var generateTotalRunsLeaderboardCmd = &cobra.Command{
 		if err := generator.GenerateTotalRunsLeaderboard(db, base, pageSize, regions, workers); err != nil {
 			return err
 		}
-		fmt.Printf("\nTotal Runs leaderboard generated at %s/players/total-runs/...\n", base)
+		if err := generator.GenerateAccountTotalRunsLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		if err := generator.GeneratePlayerSeasonRunsLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		if err := generator.GenerateAccountSeasonRunsLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		fmt.Printf("\nTotal Runs leaderboards generated at %s/players/total-runs/... and %s/season{N}/{characters,players}/by-runs/...\n", base, base)
+		return nil
+	},
+}
+
+var generateAccountLeaderboardsCmd = &cobra.Command{
+	Use:   "account-leaderboards",
+	Short: "Generate the per-season account-grouped leaderboard JSON",
+	RunE: func(cmd *cobra.Command, args []string) error {
+		outDir, _ := cmd.Flags().GetString("out")
+		pageSize, _ := cmd.Flags().GetInt("page-size")
+		regionsCSV, _ := cmd.Flags().GetString("regions")
+		workers, _ := cmd.Flags().GetInt("workers")
+
+		if strings.TrimSpace(outDir) == "" {
+			return errors.New("--out is required")
+		}
+		db, err := database.Connect()
+		if err != nil {
+			return fmt.Errorf("failed to connect to db: %w", err)
+		}
+		defer db.Close()
+
+		base := filepath.Join(outDir, "api", "leaderboard")
+		if err := os.MkdirAll(base, 0o755); err != nil {
+			return fmt.Errorf("mkdir base: %w", err)
+		}
+
+		regions := parseRegions(regionsCSV)
+		if err := generator.GenerateAccountLeaderboards(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		if err := generator.GenerateAllTimeAccountLeaderboard(db, base, pageSize, regions, workers); err != nil {
+			return err
+		}
+		fmt.Printf("\nAccount leaderboards generated at %s/season/<id>/accounts/... and %s/all-time/players/by-time/...\n", base, base)
 		return nil
 	},
 }
@@ -274,4 +339,10 @@ func init() {
 	generateTotalRunsLeaderboardCmd.Flags().Int("page-size", 25, "Leaderboard page size")
 	generateTotalRunsLeaderboardCmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional/realm/class leaderboards")
 	generateTotalRunsLeaderboardCmd.Flags().Int("workers", 10, "Number of parallel workers for leaderboard generation")
+
+	generateCmd.AddCommand(generateAccountLeaderboardsCmd)
+	generateAccountLeaderboardsCmd.Flags().String("out", "web/public", "Output directory (api/leaderboard/season/<id>/accounts/... will be written under it)")
+	generateAccountLeaderboardsCmd.Flags().Int("page-size", 25, "Leaderboard page size")
+	generateAccountLeaderboardsCmd.Flags().String("regions", "us,eu,kr,tw", "Regions to include for regional account leaderboards")
+	generateAccountLeaderboardsCmd.Flags().Int("workers", 4, "Number of parallel workers for account leaderboard generation")
 }

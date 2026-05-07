@@ -1,20 +1,36 @@
 ---
-import type { ChallengeRun, Player } from "../../../lib/types";
+import type {
+  AccountLeaderboardEntry,
+  ChallengeRun,
+  Player,
+} from "../../../lib/types";
 import Table from "../../Table/Table.astro";
 import TableRow from "../../Table/TableRow.astro";
 import TableCell from "../../Table/TableCell.astro";
 import TeamComposition from "../TeamComposition/TeamComposition.astro";
 import PlayerLink from "../PlayerLink/PlayerLink.astro";
+import AccountAlts from "../../AccountAlts/AccountAlts.astro";
 import { formatDurationMMSS } from "../../../lib/utils";
 import DungeonTime from "../../DungeonTime/DungeonTime.astro";
 import "./LeaderboardTable.scss";
 
-type LeaderboardType = "dungeon" | "player" | "total-runs";
+// "account" reuses the player layout + adds an Alts column. Keeping it here
+// (rather than a parallel AccountLeaderboardTable) means rank/realm/time
+// styling, mobile responsive rules, and the bracket coloring are all shared.
+// "account-total-runs" is the same row shape as "account" but shows Runs
+// instead of Time (cross-season total runs sum).
+type LeaderboardType =
+  | "dungeon"
+  | "player"
+  | "account"
+  | "total-runs"
+  | "account-total-runs";
 
 interface Props {
   type: LeaderboardType;
   runs?: ChallengeRun[];
   players?: Player[];
+  accounts?: AccountLeaderboardEntry[];
   currentPage?: number;
   pageSize?: number;
   // data attributes for client-side hydration
@@ -27,6 +43,7 @@ const {
   type,
   runs = [],
   players = [],
+  accounts = [],
   currentPage = 1,
   pageSize = 25,
   region = "",
@@ -34,9 +51,44 @@ const {
   dungeon = "",
 } = Astro.props;
 
-const isPlayerTable = type === "player" || type === "total-runs";
-const showTimeColumn = type === "player";
-const showRunsColumn = type === "total-runs";
+const isAccountCombined = type === "account";
+const isAccountRuns = type === "account-total-runs";
+const isAccountMode = isAccountCombined || isAccountRuns;
+const isPlayerLikeTable =
+  type === "player" || type === "total-runs" || isAccountMode;
+const showTimeColumn = type === "player" || isAccountCombined;
+const showRunsColumn = type === "total-runs" || isAccountRuns;
+const showAltsColumn = isAccountMode;
+// Wider grid + Alts column when in account mode; otherwise the standard player grid.
+const tableMode = isAccountMode ? "accounts" : "players";
+
+// Normalise account rows into the same player-shaped tuple the row template
+// already knows how to render. Keeps a single iteration loop instead of
+// branching on type per cell.
+type Row = {
+  name: string;
+  realm_slug: string;
+  realm_name?: string;
+  region: string;
+  main_spec_id?: number;
+  combined_best_time?: number;
+  total_runs?: number;
+  ranking_percentile?: string;
+  alts?: AccountLeaderboardEntry["alts"];
+};
+const rows: Row[] = isAccountMode
+  ? accounts.map((a) => ({
+      name: a.main.name,
+      realm_slug: a.main.realm_slug,
+      realm_name: a.main.realm_name ?? a.main.realm_slug,
+      region: a.main.region,
+      main_spec_id: a.main.main_spec_id,
+      combined_best_time: a.account_combined_best_time,
+      total_runs: a.total_runs,
+      ranking_percentile: a.bracket,
+      alts: a.alts,
+    }))
+  : (players as Row[]);
 
 const formatDate = (timestamp: number) => {
   return new Date(timestamp).toLocaleDateString("en-US", {
@@ -60,7 +112,7 @@ const formatTime = (ms: number) => {
 >
   <div class="leaderboard-content">
     {
-      !isPlayerTable ? (
+      !isPlayerLikeTable ? (
         <Table mode="leaderboard">
           <div slot="header" class="table-header-cell">
             Rank
@@ -115,7 +167,7 @@ const formatTime = (ms: number) => {
           )}
         </Table>
       ) : (
-        <Table mode="players">
+        <Table mode={tableMode}>
           <div slot="header" class="table-header-cell">
             Rank
           </div>
@@ -135,16 +187,21 @@ const formatTime = (ms: number) => {
               Total Runs
             </div>
           )}
+          {showAltsColumn && (
+            <div slot="header" class="table-header-cell">
+              Alts
+            </div>
+          )}
 
-          {players.length > 0 ? (
-            players.map((player, index) => {
+          {rows.length > 0 ? (
+            rows.map((row, index) => {
               const rank = (currentPage - 1) * pageSize + index + 1;
-              const time = player.combined_best_time
-                ? formatTime(player.combined_best_time)
+              const time = row.combined_best_time
+                ? formatTime(row.combined_best_time)
                 : "N/A";
-              const totalRuns = player.total_runs ?? 0;
-              const bracketClass = player.ranking_percentile
-                ? `bracket-${player.ranking_percentile.toLowerCase()}`
+              const totalRuns = row.total_runs ?? 0;
+              const bracketClass = row.ranking_percentile
+                ? `bracket-${row.ranking_percentile.toLowerCase()}`
                 : "";
 
               return (
@@ -156,25 +213,37 @@ const formatTime = (ms: number) => {
                   </TableCell>
                   <TableCell label="Player">
                     <PlayerLink
-                      name={player.name}
-                      specId={player.main_spec_id || 0}
-                      region={player.region}
-                      realmSlug={player.realm_slug}
+                      name={row.name}
+                      specId={row.main_spec_id || 0}
+                      region={row.region}
+                      realmSlug={row.realm_slug}
                     />
                   </TableCell>
-                  <TableCell label="Realm">{player.realm_name}</TableCell>
+                  <TableCell label="Realm">{row.realm_name}</TableCell>
                   {showTimeColumn && (
                     <TableCell label="Combined Time">{time}</TableCell>
                   )}
                   {showRunsColumn && (
                     <TableCell label="Total Runs">{totalRuns}</TableCell>
                   )}
+                  {showAltsColumn && (
+                    <TableCell label="Alts">
+                      <AccountAlts
+                        alts={row.alts ?? []}
+                        align="right"
+                        emptyLabel=""
+                      />
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })
           ) : (
             <div class="table-empty">
-              <p>No players found for this leaderboard.</p>
+              <p>
+                No {isAccountMode ? "accounts" : "players"} found for this
+                leaderboard.
+              </p>
             </div>
           )}
         </Table>
