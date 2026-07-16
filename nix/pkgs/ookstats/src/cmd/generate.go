@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	_ "github.com/tursodatabase/go-libsql"
 	"ookstats/internal/database"
 	"ookstats/internal/generator"
 	"ookstats/internal/generator/indexes"

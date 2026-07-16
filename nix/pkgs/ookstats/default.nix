@@ -2,40 +2,21 @@
   buildGoModule,
   lib,
   gcc,
-  pkgs,
-  go-libsql-src,
   installShellFiles,
   makeWrapper,
   wowsims-db,
   ...
-}: let
-  # map nix platform to go-libsql's platform string
-  libsqlArch =
-    if pkgs.stdenv.hostPlatform.system == "x86_64-linux"
-    then "linux_amd64"
-    else if pkgs.stdenv.hostPlatform.system == "aarch64-linux"
-    then "linux_arm64"
-    else if pkgs.stdenv.hostPlatform.system == "aarch64-darwin"
-    then "darwin_arm64"
-    else throw "Unsupported platform for go-libsql pre-compiled library";
-in
+}:
   buildGoModule {
     pname = "ookstats";
     version = "0.2.0";
     src = ./src;
 
-    vendorHash = "sha256-DHj4DTsXkFQZUimMrnqYc6RVTfsbukBmUcYt/dRwKUo=";
+    vendorHash = "sha256-QJxCINaMiJ6OjRJaOnHMW4gSfXLkXOYQU8xfbKdgQuQ=";
 
     nativeBuildInputs = [gcc installShellFiles makeWrapper];
 
-    env = {
-      CGO_ENABLED = "1";
-      # see:
-      # https://github.com/tursodatabase/go-libsql/issues/21
-      # https://github.com/tursodatabase/go-libsql/issues/57
-      CGO_CFLAGS = "-I${go-libsql-src}/lib/include";
-      CGO_LDFLAGS = "-L${go-libsql-src}/lib/${libsqlArch} -lsql_experimental";
-    };
+    env.CGO_ENABLED = "1";
 
     # Generate shell completions
     postInstall = ''

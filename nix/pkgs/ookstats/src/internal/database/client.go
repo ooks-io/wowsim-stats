@@ -6,10 +6,19 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/tursodatabase/go-libsql"
+	sqlite3 "github.com/mattn/go-sqlite3"
 )
 
-// connect creates a local libSQL database connection
+func init() {
+	sql.Register("sqlite3_ookstats", &sqlite3.SQLiteDriver{
+		ConnectHook: func(conn *sqlite3.SQLiteConn) error {
+			// cache_size has no DSN param in mattn/go-sqlite3; apply per connection
+			_, err := conn.Exec("PRAGMA cache_size = -64000", nil)
+			return err
+		},
+	})
+}
+
 var dbPathOverride string
 
 // SetDBPath allows callers (CLI) to override the local SQLite filename
@@ -17,7 +26,7 @@ func SetDBPath(path string) {
 	dbPathOverride = path
 }
 
-// DBConnString returns the libsql connection string for the local SQLite file
+// DBConnString returns the DSN for the local SQLite file
 func DBConnString() string {
 	// Priority: explicit override -> env vars -> default
 	if dbPathOverride != "" {
@@ -48,11 +57,7 @@ func ensureDSNParams(base string) string {
 	if strings.Contains(base, "?") {
 		return base
 	}
-	return base + "?" +
-		"_pragma=journal_mode(WAL)&" +
-		"_pragma=synchronous=NORMAL&" +
-		"_pragma=busy_timeout=5000&" +
-		"_pragma=cache_size=-64000"
+	return base + "?_journal_mode=WAL&_synchronous=NORMAL&_busy_timeout=5000"
 }
 
 // DBFilePath returns the plain filesystem path for the local DB (without file: prefix)
@@ -69,7 +74,7 @@ func Connect() (*sql.DB, error) {
 	fmt.Printf("Using local SQLite database: %s\n", dsn)
 	fmt.Printf("Opening database connection...\n")
 
-	db, err := sql.Open("libsql", dsn)
+	db, err := sql.Open("sqlite3_ookstats", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}

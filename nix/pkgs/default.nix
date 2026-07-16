@@ -23,14 +23,7 @@
     racePackages = lib.mapAttrs (_name: sim: sim.script) (simulation.generateRaceComparisons pkgs);
     trinketPackages = lib.mapAttrs (_name: sim: sim.script) (simulation.generateTrinketComparisons pkgs);
 
-    go-libsql-src = pkgs.fetchFromGitHub {
-      owner = "tursodatabase";
-      repo = "go-libsql";
-      rev = "60e59c7150f4";
-      hash = "sha256-TuD/7AWkC13lQct2QguO31dP1th+nD0ZTPqD+RUfnu8=";
-    };
-
-    ookstats = callPackage ./ookstats {inherit go-libsql-src wowsims-db;};
+    ookstats = callPackage ./ookstats {inherit wowsims-db;};
     ookstats-deploy = callPackage ./ookstats-deploy {inherit ookstats;};
   in {
     packages =
