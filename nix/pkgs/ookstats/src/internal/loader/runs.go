@@ -197,9 +197,8 @@ type LeaderboardRow struct {
 	Members            []LeaderboardMember
 }
 
-// LoadCanonicalRuns returns one canonical run per team_signature, ordered, with members
-func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug string, seasonID, limit, offset int) ([]LeaderboardRow, error) {
-	// Use window function to rank runs per team_signature, picking best per team
+// one canonical run per team_signature, ordered, with members; caller paginates in memory
+func LoadAllCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug string, seasonID int) ([]LeaderboardRow, error) {
 	where := "WHERE cr.dungeon_id = ?"
 	args := []any{dungeonID}
 	if region != "" {
@@ -210,7 +209,6 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
 		where += " AND r.slug = ?"
 		args = append(args, realmSlug)
 	}
-	// Filter by season
 	where += " AND cr.season_id = ?"
 	args = append(args, seasonID)
 
@@ -224,8 +222,7 @@ func LoadCanonicalRuns(db *sql.DB, dungeonID int, region string, realmSlug strin
       )
       SELECT id FROM ranked WHERE rn = 1
       ORDER BY duration ASC, completed_timestamp ASC, id ASC
-      LIMIT %d OFFSET %d
-    `, where, limit, offset)
+    `, where)
 
 	idRows, err := db.Query(q, args...)
 	if err != nil {

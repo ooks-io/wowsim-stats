@@ -165,40 +165,17 @@ func generateTotalRunsGlobal(db *sql.DB, root string, pageSize int) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*) FROM (
-			SELECT 1
-			FROM players p
-			JOIN player_profiles pp ON p.id = pp.player_id
-			GROUP BY p.id
-			HAVING MAX(pp.has_complete_coverage) = 1 AND SUM(pp.total_runs) > 0
-		)
-	`).Scan(&total); err != nil {
-		return fmt.Errorf("total-runs count (global): %w", err)
+	rows, err := db.Query(totalRunsBaseSelect() + totalRunsHaving + `
+		ORDER BY all_time_runs DESC, p.name ASC
+	`)
+	if err != nil {
+		return fmt.Errorf("total-runs query (global): %w", err)
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(totalRunsBaseSelect()+totalRunsHaving+`
-			ORDER BY all_time_runs DESC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, pageSize, offset)
-		if err != nil {
-			return err
-		}
-		list, err := scanTotalRunsRows(rows)
-		if err != nil {
-			return err
-		}
-		page := buildTotalRunsPage(list, "Global Total Runs", total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
+	all, err := scanTotalRunsRows(rows)
+	if err != nil {
+		return err
 	}
-	return nil
+	return writeTotalRunsPages(dir, all, "Global Total Runs", pageSize)
 }
 
 func generateTotalRunsRegional(db *sql.DB, root, region string, pageSize int) error {
@@ -206,87 +183,53 @@ func generateTotalRunsRegional(db *sql.DB, root, region string, pageSize int) er
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*) FROM (
-			SELECT 1
-			FROM players p
-			JOIN realms r ON p.realm_id = r.id
-			JOIN player_profiles pp ON p.id = pp.player_id
-			WHERE r.region = ?
-			GROUP BY p.id
-			HAVING MAX(pp.has_complete_coverage) = 1 AND SUM(pp.total_runs) > 0
-		)
-	`, region).Scan(&total); err != nil {
-		return fmt.Errorf("total-runs count (regional %s): %w", region, err)
+	rows, err := db.Query(totalRunsBaseSelect()+`
+		WHERE r.region = ?
+	`+totalRunsHaving+`
+		ORDER BY all_time_runs DESC, p.name ASC
+	`, region)
+	if err != nil {
+		return fmt.Errorf("total-runs query (regional %s): %w", region, err)
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(totalRunsBaseSelect()+`
-			WHERE r.region = ?
-		`+totalRunsHaving+`
-			ORDER BY all_time_runs DESC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, region, pageSize, offset)
-		if err != nil {
-			return err
-		}
-		list, err := scanTotalRunsRows(rows)
-		if err != nil {
-			return err
-		}
-		title := strings.ToUpper(region) + " Total Runs"
-		page := buildTotalRunsPage(list, title, total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
+	all, err := scanTotalRunsRows(rows)
+	if err != nil {
+		return err
 	}
-	return nil
+	return writeTotalRunsPages(dir, all, strings.ToUpper(region)+" Total Runs", pageSize)
 }
 
+// pool = parent + child realms (matches per-season realm leaderboard)
 func generateTotalRunsRealm(db *sql.DB, root, region, rslug string, pageSize int) error {
 	dir := filepath.Join(root, "realm", region, rslug)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	// pool = parent + child realms (matches per-season realm leaderboard)
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*) FROM (
-			SELECT 1
-			FROM players p
-			JOIN realms r ON p.realm_id = r.id
-			JOIN player_profiles pp ON p.id = pp.player_id
-			WHERE r.region = ? AND (r.slug = ? OR r.parent_realm_slug = ?)
-			GROUP BY p.id
-			HAVING MAX(pp.has_complete_coverage) = 1 AND SUM(pp.total_runs) > 0
-		)
-	`, region, rslug, rslug).Scan(&total); err != nil {
-		return fmt.Errorf("total-runs count (realm %s/%s): %w", region, rslug, err)
+	rows, err := db.Query(totalRunsBaseSelect()+`
+		WHERE r.region = ? AND (r.slug = ? OR r.parent_realm_slug = ?)
+	`+totalRunsHaving+`
+		ORDER BY all_time_runs DESC, p.name ASC
+	`, region, rslug, rslug)
+	if err != nil {
+		return fmt.Errorf("total-runs query (realm %s/%s): %w", region, rslug, err)
 	}
+	all, err := scanTotalRunsRows(rows)
+	if err != nil {
+		return err
+	}
+	title := strings.ToUpper(region) + "/" + rslug + " Total Runs"
+	return writeTotalRunsPages(dir, all, title, pageSize)
+}
 
+func writeTotalRunsPages(dir string, all []map[string]any, title string, pageSize int) error {
+	total := len(all)
 	pages := (total + pageSize - 1) / pageSize
 	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(totalRunsBaseSelect()+`
-			WHERE r.region = ? AND (r.slug = ? OR r.parent_realm_slug = ?)
-		`+totalRunsHaving+`
-			ORDER BY all_time_runs DESC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, region, rslug, rslug, pageSize, offset)
-		if err != nil {
-			return err
+		start := (p - 1) * pageSize
+		end := start + pageSize
+		if end > total {
+			end = total
 		}
-		list, err := scanTotalRunsRows(rows)
-		if err != nil {
-			return err
-		}
-		title := strings.ToUpper(region) + "/" + rslug + " Total Runs"
-		page := buildTotalRunsPage(list, title, total, pages, p, pageSize)
+		page := buildTotalRunsPage(all[start:end], title, total, pages, p, pageSize)
 		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}

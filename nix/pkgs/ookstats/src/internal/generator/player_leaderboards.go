@@ -180,157 +180,102 @@ func GeneratePlayerLeaderboards(db *sql.DB, out string, pageSize int, regions []
 	return nil
 }
 
-// generateGlobalPlayerLeaderboard generates global player rankings for a season
 func generateGlobalPlayerLeaderboard(db *sql.DB, out string, pageSize int, seasonID int) error {
 	dir := filepath.Join(out, "players", "global")
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*)
-		FROM player_profiles
-		WHERE season_id = ? AND has_complete_coverage = 1 AND combined_best_time IS NOT NULL
-	`, seasonID).Scan(&total); err != nil {
-		return fmt.Errorf("players total (global, season %d): %w", seasonID, err)
+	rows, err := db.Query(`
+		SELECT p.id, p.name, r.slug, r.name, r.region,
+			   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+			   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+			   COALESCE(pp.global_ranking_bracket, '')
+		FROM players p
+		JOIN realms r ON p.realm_id = r.id
+		JOIN player_profiles pp ON p.id = pp.player_id
+		LEFT JOIN player_details pd ON p.id = pd.player_id
+		WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+		ORDER BY pp.combined_best_time ASC, p.name ASC
+	`, seasonID)
+	if err != nil {
+		return fmt.Errorf("players query (global, season %d): %w", seasonID, err)
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(`
-			SELECT p.id, p.name, r.slug, r.name, r.region,
-				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.global_ranking_bracket, '')
-			FROM players p
-			JOIN realms r ON p.realm_id = r.id
-			JOIN player_profiles pp ON p.id = pp.player_id
-			LEFT JOIN player_details pd ON p.id = pd.player_id
-			WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, seasonID, pageSize, offset)
-		if err != nil {
-			return err
-		}
-
-		list, err := scanPlayerRows(rows)
-		if err != nil {
-			return err
-		}
-
-		page := buildPlayerLeaderboardPage(list, "Global Player Rankings", total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
+	all, err := scanPlayerRows(rows)
+	if err != nil {
+		return err
 	}
-	return nil
+	return writePlayerLeaderboardPages(dir, all, "Global Player Rankings", pageSize)
 }
 
-// generateRegionalPlayerLeaderboard generates regional player rankings
 func generateRegionalPlayerLeaderboard(db *sql.DB, out, region string, pageSize int, seasonID int) error {
 	dir := filepath.Join(out, "players", "regional", region)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*)
-		FROM player_profiles pp
-		JOIN players p ON pp.player_id = p.id
+	rows, err := db.Query(`
+		SELECT p.id, p.name, r.slug, r.name, r.region,
+			   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+			   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+			   COALESCE(pp.regional_ranking_bracket, '')
+		FROM players p
 		JOIN realms r ON p.realm_id = r.id
-		WHERE pp.season_id = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL AND r.region = ?
-	`, seasonID, region).Scan(&total); err != nil {
-		return fmt.Errorf("players total (regional, season %d): %w", seasonID, err)
+		JOIN player_profiles pp ON p.id = pp.player_id
+		LEFT JOIN player_details pd ON p.id = pd.player_id
+		WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
+		ORDER BY pp.combined_best_time ASC, p.name ASC
+	`, seasonID, region)
+	if err != nil {
+		return fmt.Errorf("players query (regional, season %d): %w", seasonID, err)
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(`
-			SELECT p.id, p.name, r.slug, r.name, r.region,
-				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.regional_ranking_bracket, '')
-			FROM players p
-			JOIN realms r ON p.realm_id = r.id
-			JOIN player_profiles pp ON p.id = pp.player_id
-			LEFT JOIN player_details pd ON p.id = pd.player_id
-			WHERE pp.season_id = ? AND r.region = ? AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, seasonID, region, pageSize, offset)
-		if err != nil {
-			return err
-		}
-
-		list, err := scanPlayerRows(rows)
-		if err != nil {
-			return err
-		}
-
-		title := strings.ToUpper(region) + " Player Rankings"
-		page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
+	all, err := scanPlayerRows(rows)
+	if err != nil {
+		return err
 	}
-	return nil
+	title := strings.ToUpper(region) + " Player Rankings"
+	return writePlayerLeaderboardPages(dir, all, title, pageSize)
 }
 
-// generateSingleRealmPlayerLeaderboard generates player rankings for a single realm
+// pool = parent + child realms (matches per-season realm leaderboard)
 func generateSingleRealmPlayerLeaderboard(db *sql.DB, out, region, rslug string, pageSize int, seasonID int) error {
 	dir := filepath.Join(out, "players", "realm", region, rslug)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	// Include players from entire pool (parent + all children)
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*)
+	rows, err := db.Query(`
+		SELECT p.id, p.name, r.slug, r.name, r.region,
+			   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
+			   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
+			   COALESCE(pp.realm_ranking_bracket, '')
 		FROM players p
 		JOIN realms r ON p.realm_id = r.id
 		JOIN player_profiles pp ON p.id = pp.player_id
+		LEFT JOIN player_details pd ON p.id = pd.player_id
 		WHERE pp.season_id = ? AND r.region = ?
 			AND (r.slug = ? OR r.parent_realm_slug = ?)
 			AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-	`, seasonID, region, rslug, rslug).Scan(&total); err != nil {
-		return fmt.Errorf("players total (realm, season %d): %w", seasonID, err)
+		ORDER BY pp.combined_best_time ASC, p.name ASC
+	`, seasonID, region, rslug, rslug)
+	if err != nil {
+		return fmt.Errorf("players query (realm, season %d): %w", seasonID, err)
 	}
+	all, err := scanPlayerRows(rows)
+	if err != nil {
+		return err
+	}
+	title := strings.ToUpper(region) + "/" + rslug + " Player Rankings"
+	return writePlayerLeaderboardPages(dir, all, title, pageSize)
+}
 
+func writePlayerLeaderboardPages(dir string, all []map[string]any, title string, pageSize int) error {
+	total := len(all)
 	pages := (total + pageSize - 1) / pageSize
 	for p := 1; p <= pages; p++ {
-		offset := (p - 1) * pageSize
-		rows, err := db.Query(`
-			SELECT p.id, p.name, r.slug, r.name, r.region,
-				   COALESCE(pd.class_name,''), COALESCE(pd.active_spec_name,''), pp.main_spec_id,
-				   pp.combined_best_time, pp.dungeons_completed, pp.total_runs,
-				   COALESCE(pp.realm_ranking_bracket, '')
-			FROM players p
-			JOIN realms r ON p.realm_id = r.id
-			JOIN player_profiles pp ON p.id = pp.player_id
-			LEFT JOIN player_details pd ON p.id = pd.player_id
-			WHERE pp.season_id = ? AND r.region = ?
-				AND (r.slug = ? OR r.parent_realm_slug = ?)
-				AND pp.has_complete_coverage = 1 AND pp.combined_best_time IS NOT NULL
-			ORDER BY pp.combined_best_time ASC, p.name ASC
-			LIMIT ? OFFSET ?
-		`, seasonID, region, rslug, rslug, pageSize, offset)
-		if err != nil {
-			return err
+		start := (p - 1) * pageSize
+		end := start + pageSize
+		if end > total {
+			end = total
 		}
-
-		list, err := scanPlayerRows(rows)
-		if err != nil {
-			return err
-		}
-
-		title := strings.ToUpper(region) + "/" + rslug + " Player Rankings"
-		page := buildPlayerLeaderboardPage(list, title, total, pages, p, pageSize)
+		page := buildPlayerLeaderboardPage(all[start:end], title, total, pages, p, pageSize)
 		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}

@@ -319,112 +319,56 @@ func loadParentRealmSlugs(db *sql.DB, region string) ([]string, error) {
 	return slugs, nil
 }
 
-// generateGlobalLeaderboard generates global leaderboard pages for a dungeon
 func generateGlobalLeaderboard(db *sql.DB, out string, d dungeonInfo, seasonID, pageSize int) error {
 	dir := filepath.Join(out, "global", d.Slug)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	// Count distinct teams for this season
-	var total int
-	err := db.QueryRow(`
-		SELECT COUNT(DISTINCT team_signature)
-		FROM challenge_runs cr
-		
-		WHERE cr.dungeon_id = ? AND cr.season_id = ?
-	`, d.ID, seasonID).Scan(&total)
+	all, err := loader.LoadAllCanonicalRuns(db, d.ID, "", "", seasonID)
 	if err != nil {
-		return fmt.Errorf("global count: %w", err)
+		return err
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		rows, err := loader.LoadCanonicalRuns(db, d.ID, "", "", seasonID, pageSize, (p-1)*pageSize)
-		if err != nil {
-			return err
-		}
-
-		page := buildLeaderboardPage(rows, d.Name, "", total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
-	}
-	return nil
+	return writeLeaderboardPages(dir, all, d.Name, "", pageSize)
 }
 
-// generateRegionalLeaderboard generates regional leaderboard pages for a dungeon
 func generateRegionalLeaderboard(db *sql.DB, out, region string, d dungeonInfo, seasonID, pageSize int) error {
 	dir := filepath.Join(out, region, "all", d.Slug)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	var total int
-	err := db.QueryRow(`
-		SELECT COUNT(*) FROM (
-			SELECT team_signature
-			FROM challenge_runs cr
-			JOIN realms r ON cr.realm_id = r.id
-			
-			WHERE cr.dungeon_id = ? AND r.region = ? AND cr.season_id = ?
-			GROUP BY team_signature
-		) x
-	`, d.ID, region, seasonID).Scan(&total)
+	all, err := loader.LoadAllCanonicalRuns(db, d.ID, region, "", seasonID)
 	if err != nil {
-		return fmt.Errorf("regional count: %w", err)
+		return err
 	}
-
-	pages := (total + pageSize - 1) / pageSize
-	for p := 1; p <= pages; p++ {
-		rows, err := loader.LoadCanonicalRuns(db, d.ID, region, "", seasonID, pageSize, (p-1)*pageSize)
-		if err != nil {
-			return err
-		}
-
-		page := buildLeaderboardPage(rows, d.Name, "", total, pages, p, pageSize)
-		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
-			return err
-		}
-	}
-	return nil
+	return writeLeaderboardPages(dir, all, d.Name, "", pageSize)
 }
 
-// generateRealmLeaderboard generates realm leaderboard pages for a dungeon
 func generateRealmLeaderboard(db *sql.DB, out, region, realmSlug string, d dungeonInfo, seasonID, pageSize int) error {
 	dir := filepath.Join(out, region, realmSlug, d.Slug)
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-
-	// realm display name for payload shape compatibility
 	var realmName string
 	if err := db.QueryRow(`SELECT name FROM realms WHERE region = ? AND slug = ?`, region, realmSlug).Scan(&realmName); err != nil {
 		realmName = realmSlug
 	}
-
-	var total int
-	if err := db.QueryRow(`
-		SELECT COUNT(*) FROM (
-			SELECT team_signature
-			FROM challenge_runs cr
-			JOIN realms rr ON cr.realm_id = rr.id
-			
-			WHERE cr.dungeon_id = ? AND rr.region = ? AND rr.slug = ? AND cr.season_id = ?
-			GROUP BY team_signature
-		) x
-	`, d.ID, region, realmSlug, seasonID).Scan(&total); err != nil {
-		return fmt.Errorf("realm count: %w", err)
+	all, err := loader.LoadAllCanonicalRuns(db, d.ID, region, realmSlug, seasonID)
+	if err != nil {
+		return err
 	}
+	return writeLeaderboardPages(dir, all, d.Name, realmName, pageSize)
+}
 
+func writeLeaderboardPages(dir string, all []loader.LeaderboardRow, dungeonName, realmName string, pageSize int) error {
+	total := len(all)
 	pages := (total + pageSize - 1) / pageSize
 	for p := 1; p <= pages; p++ {
-		rows, err := loader.LoadCanonicalRuns(db, d.ID, region, realmSlug, seasonID, pageSize, (p-1)*pageSize)
-		if err != nil {
-			return err
+		start := (p - 1) * pageSize
+		end := start + pageSize
+		if end > total {
+			end = total
 		}
-
-		page := buildLeaderboardPage(rows, d.Name, realmName, total, pages, p, pageSize)
+		page := buildLeaderboardPage(all[start:end], dungeonName, realmName, total, pages, p, pageSize)
 		if err := writer.WriteJSONFileCompact(filepath.Join(dir, fmt.Sprintf("%d.json", p)), page); err != nil {
 			return err
 		}
