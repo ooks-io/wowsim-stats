@@ -280,12 +280,14 @@ writeShellApplication {
 
         export OOKSTATS_DB="$LOCAL_DB"
 
+        # closed periods are frozen; only the newest 2 per region can yield new runs
         ookstats build \
           --out "$API_OUT" \
           --regions "$REGIONS" \
           --page-size "$PAGE_SIZE" \
           --shard-size "$SHARD_SIZE" \
-          --concurrency "$CONCURRENCY"
+          --concurrency "$CONCURRENCY" \
+          --latest-periods
 
         log info "Build" "Build completed successfully"
       }
