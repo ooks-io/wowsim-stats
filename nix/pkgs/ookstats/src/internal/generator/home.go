@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
+	"ookstats/internal/loader"
 	"ookstats/internal/wow"
 	"ookstats/internal/writer"
 )
@@ -91,14 +93,16 @@ type HomePlayerEntry struct {
 	AvatarURL              string `json:"avatar_url,omitempty"`
 }
 
-// Seasons we surface on the home page. Mirrors run_rankings.season_id values.
-var homeSeasons = []int{1, 2}
-
 // regions for the regional top-player lists
 var homeRegions = []string{"us", "eu", "kr", "tw"}
 
 // GenerateHome writes outDir/api/home.json with the home page payload.
 func GenerateHome(db *sql.DB, outDir string) error {
+	homeSeasons, err := loadHomeSeasons(db)
+	if err != nil {
+		return fmt.Errorf("load home seasons: %w", err)
+	}
+
 	home := HomeJSON{
 		GeneratedAt: time.Now().UnixMilli(),
 		Seasons:     make(map[string]HomeSeasonJSON),
@@ -139,6 +143,23 @@ func GenerateHome(db *sql.DB, outDir string) error {
 		return fmt.Errorf("write home.json: %w", err)
 	}
 	return nil
+}
+
+func loadHomeSeasons(db *sql.DB) ([]int, error) {
+	rows, err := db.Query(`SELECT DISTINCT season_number FROM seasons ORDER BY season_number ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []int
+	for rows.Next() {
+		var n int
+		if err := rows.Scan(&n); err != nil {
+			return nil, err
+		}
+		out = append(out, n)
+	}
+	return out, rows.Err()
 }
 
 // loadTopRunsPerDungeon returns up to topN team-filtered global runs per dungeon for the season,
@@ -308,19 +329,95 @@ func loadTeamMembersForRuns(db *sql.DB, runIDs []int64) (map[int64][]HomeRunMemb
 	return out, rows.Err()
 }
 
-// loadTopPlayers returns the global top-N plus per-region top-N player lists for the season.
+// loadTopPlayers returns the global top-N plus per-region top-N lists for the season,
+// ranked over accounts like the players leaderboard pages, shown via each account's main.
 func loadTopPlayers(db *sql.DB, seasonID, topN int) (HomePlayerLists, error) {
 	var lists HomePlayerLists
-	global, err := loadTopGlobalPlayers(db, seasonID, topN)
+	aggs, err := loader.LoadAccountAggregates(db, seasonID)
 	if err != nil {
-		return lists, fmt.Errorf("global: %w", err)
+		return lists, err
 	}
-	lists.Global = global
+
+	type accountRow struct {
+		accountID int64
+		combined  int64
+		main      *loader.AccountChar
+		region    string
+	}
+	eligible := make([]accountRow, 0, len(aggs))
+	for _, agg := range aggs {
+		if len(agg.BestPerDungeon) < loader.DungeonsForFullCoverage {
+			continue
+		}
+		main := loader.PickMainCharacter(agg)
+		if main == nil {
+			continue
+		}
+		var sum int64
+		for _, br := range agg.BestPerDungeon {
+			sum += br.Duration
+		}
+		eligible = append(eligible, accountRow{accountID: agg.AccountID, combined: sum, main: main, region: agg.Region})
+	}
+	sort.Slice(eligible, func(i, j int) bool {
+		if eligible[i].combined != eligible[j].combined {
+			return eligible[i].combined < eligible[j].combined
+		}
+		return eligible[i].accountID < eligible[j].accountID
+	})
+
+	toEntry := func(row accountRow, rank, total int, regional bool) HomePlayerEntry {
+		e := HomePlayerEntry{
+			Rank:               rank,
+			PlayerID:           row.main.PlayerID,
+			Name:               row.main.Name,
+			RealmSlug:          row.main.RealmSlug,
+			RealmName:          row.main.RealmName,
+			Region:             row.main.Region,
+			ClassName:          row.main.ClassName,
+			CombinedBestTimeMs: row.combined,
+		}
+		if row.main.MainSpecID.Valid {
+			specID := int(row.main.MainSpecID.Int64)
+			e.ActiveSpecID = specID
+			e.ClassName, e.ActiveSpecName = wow.FallbackClassAndSpec(row.main.ClassName, row.main.ActiveSpecName, &specID)
+		}
+		bracket := loader.PercentileBracket(rank, total)
+		if regional {
+			e.RegionalRanking = rank
+			e.RegionalRankingBracket = bracket
+		} else {
+			e.GlobalRanking = rank
+			e.GlobalRankingBracket = bracket
+		}
+		return e
+	}
+
+	total := len(eligible)
+	for i, row := range eligible {
+		if i >= topN {
+			break
+		}
+		lists.Global = append(lists.Global, toEntry(row, i+1, total, false))
+	}
 
 	for _, region := range homeRegions {
-		regional, err := loadTopRegionalPlayers(db, seasonID, region, topN)
-		if err != nil {
-			return lists, fmt.Errorf("region %s: %w", region, err)
+		regionTotal := 0
+		for _, row := range eligible {
+			if strings.EqualFold(row.region, region) {
+				regionTotal++
+			}
+		}
+		var regional []HomePlayerEntry
+		for _, row := range eligible {
+			if !strings.EqualFold(row.region, region) {
+				continue
+			}
+			rank := len(regional) + 1
+			if rank > topN {
+				break
+			}
+			regional = append(regional, toEntry(row, rank, regionTotal, true))
 		}
 		switch region {
 		case "us":
@@ -333,133 +430,59 @@ func loadTopPlayers(db *sql.DB, seasonID, topN int) (HomePlayerLists, error) {
 			lists.TW = regional
 		}
 	}
+
+	if err := fillAvatars(db, &lists); err != nil {
+		return lists, err
+	}
 	return lists, nil
 }
 
-func loadTopGlobalPlayers(db *sql.DB, seasonID, topN int) ([]HomePlayerEntry, error) {
-	return queryTopPlayers(db, `
-		SELECT
-			pp.player_id, pp.name, pp.class_name, pp.main_spec_id,
-			pp.global_ranking, pp.global_ranking_bracket,
-			pp.regional_ranking, pp.regional_ranking_bracket,
-			pp.combined_best_time,
-			r.slug, r.name, r.region,
-			pd.avatar_url
-		FROM player_profiles pp
-		JOIN realms r ON pp.realm_id = r.id
-		LEFT JOIN player_details pd ON pp.player_id = pd.player_id
-		WHERE pp.season_id = ?
-		  AND pp.has_complete_coverage = 1
-		  AND pp.global_ranking IS NOT NULL
-		  AND pp.global_ranking <= ?
-		ORDER BY pp.global_ranking
-	`, seasonID, topN)
-}
-
-func loadTopRegionalPlayers(db *sql.DB, seasonID int, region string, topN int) ([]HomePlayerEntry, error) {
-	return queryTopPlayers(db, `
-		SELECT
-			pp.player_id, pp.name, pp.class_name, pp.main_spec_id,
-			pp.global_ranking, pp.global_ranking_bracket,
-			pp.regional_ranking, pp.regional_ranking_bracket,
-			pp.combined_best_time,
-			r.slug, r.name, r.region,
-			pd.avatar_url
-		FROM player_profiles pp
-		JOIN realms r ON pp.realm_id = r.id
-		LEFT JOIN player_details pd ON pp.player_id = pd.player_id
-		WHERE pp.season_id = ?
-		  AND pp.has_complete_coverage = 1
-		  AND r.region = ?
-		  AND pp.regional_ranking IS NOT NULL
-		  AND pp.regional_ranking <= ?
-		ORDER BY pp.regional_ranking
-	`, seasonID, region, topN)
-}
-
-// queryTopPlayers executes a player-list query whose columns match the SELECT list above
-// and returns enriched HomePlayerEntry rows. Last positional arg is interpreted as the rank
-// to populate Rank from (global_ranking for the global list, regional_ranking for regional).
-func queryTopPlayers(db *sql.DB, q string, args ...any) ([]HomePlayerEntry, error) {
-	rows, err := db.Query(q, args...)
+// account aggregates carry no avatar; look up the handful of displayed mains
+func fillAvatars(db *sql.DB, lists *HomePlayerLists) error {
+	all := [][]HomePlayerEntry{lists.Global, lists.US, lists.EU, lists.KR, lists.TW}
+	idSet := map[int64]struct{}{}
+	for _, l := range all {
+		for _, e := range l {
+			idSet[e.PlayerID] = struct{}{}
+		}
+	}
+	if len(idSet) == 0 {
+		return nil
+	}
+	ids := make([]any, 0, len(idSet))
+	ph := make([]string, 0, len(idSet))
+	for id := range idSet {
+		ids = append(ids, id)
+		ph = append(ph, "?")
+	}
+	rows, err := db.Query(`
+		SELECT player_id, avatar_url
+		FROM player_details
+		WHERE player_id IN (`+strings.Join(ph, ",")+`)
+		  AND avatar_url IS NOT NULL
+	`, ids...)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer rows.Close()
-
-	var out []HomePlayerEntry
+	avatars := map[int64]string{}
 	for rows.Next() {
-		var (
-			e               HomePlayerEntry
-			className       sql.NullString
-			mainSpecID      sql.NullInt64
-			globalRank      sql.NullInt64
-			globalBracket   sql.NullString
-			regionalRank    sql.NullInt64
-			regionalBracket sql.NullString
-			combinedBest    sql.NullInt64
-			realmName       sql.NullString
-			avatarURL       sql.NullString
-		)
-		if err := rows.Scan(
-			&e.PlayerID, &e.Name, &className, &mainSpecID,
-			&globalRank, &globalBracket,
-			&regionalRank, &regionalBracket,
-			&combinedBest,
-			&e.RealmSlug, &realmName, &e.Region,
-			&avatarURL,
-		); err != nil {
-			return nil, err
+		var id int64
+		var url string
+		if err := rows.Scan(&id, &url); err != nil {
+			return err
 		}
-		if className.Valid {
-			e.ClassName = className.String
-		}
-		if mainSpecID.Valid {
-			e.ActiveSpecID = int(mainSpecID.Int64)
-		}
-		if globalRank.Valid {
-			e.GlobalRanking = int(globalRank.Int64)
-		}
-		if globalBracket.Valid {
-			e.GlobalRankingBracket = globalBracket.String
-		}
-		if regionalRank.Valid {
-			e.RegionalRanking = int(regionalRank.Int64)
-		}
-		if regionalBracket.Valid {
-			e.RegionalRankingBracket = regionalBracket.String
-		}
-		if combinedBest.Valid {
-			e.CombinedBestTimeMs = combinedBest.Int64
-		}
-		if realmName.Valid {
-			e.RealmName = realmName.String
-		}
-		if avatarURL.Valid {
-			e.AvatarURL = avatarURL.String
-		}
-		// Resolve spec name; class_name comes from player_profiles directly
-		if e.ActiveSpecID > 0 {
-			specPtr := e.ActiveSpecID
-			cls, spec := wow.FallbackClassAndSpec(e.ClassName, "", &specPtr)
-			e.ClassName, e.ActiveSpecName = cls, spec
-		}
-		// Rank for the entry: regional ranking takes precedence (the per-region lists
-		// query for it); the global list will populate from GlobalRanking via the
-		// fallback below.
-		if e.RegionalRanking > 0 && isRegionalQuery(q) {
-			e.Rank = e.RegionalRanking
-		} else {
-			e.Rank = e.GlobalRanking
-		}
-		out = append(out, e)
+		avatars[id] = url
 	}
-	return out, rows.Err()
-}
-
-// heuristic on ORDER text so queryTopPlayers can pick global vs regional rank
-func isRegionalQuery(q string) bool {
-	return strings.Contains(q, "ORDER BY pp.regional_ranking")
+	if err := rows.Err(); err != nil {
+		return err
+	}
+	for _, l := range all {
+		for i := range l {
+			l[i].AvatarURL = avatars[l[i].PlayerID]
+		}
+	}
+	return nil
 }
 
 // loadSeasonName picks a representative season_name for the season number.

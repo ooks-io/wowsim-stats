@@ -5,12 +5,13 @@ import type { HomePlayerEntry } from "../../../lib/types";
 
 interface Props {
   title: string;
-  players: HomePlayerEntry[];
+  players: HomePlayerEntry[] | null | undefined;
   scope: "global" | "regional";
   viewAllHref?: string;
 }
 
-const { title, players, scope, viewAllHref } = Astro.props;
+const { title, players: rawPlayers, scope, viewAllHref } = Astro.props;
+const players: HomePlayerEntry[] = rawPlayers ?? [];
 
 // match badge color to the list's scope
 function bracketFor(p: HomePlayerEntry): string | undefined {
