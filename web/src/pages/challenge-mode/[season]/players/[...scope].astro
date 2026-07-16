@@ -17,14 +17,14 @@ import { getEffectiveRealmSlug } from "../../../../lib/realms";
 
 export const prerender = false;
 
-const seasonParam = Astro.params.season || "season2";
+const seasonParam = Astro.params.season || "season3";
 const seasonMatch = seasonParam.match(/^season(\d+)$/);
 const isAllTime = seasonParam === "all-time";
 const currentSeason: number | "all-time" = isAllTime
   ? "all-time"
   : seasonMatch
     ? parseInt(seasonMatch[1], 10)
-    : 2;
+    : 3;
 
 const scope = Astro.params.scope || "";
 let scopeParts = scope.split("/").filter(Boolean);

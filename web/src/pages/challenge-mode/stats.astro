@@ -2,5 +2,28 @@
 // legacy entry point: redirect to the canonical /season{N}/stats/{region}
 export const prerender = false;
 
-return Astro.redirect("/challenge-mode/season2/stats/global", 301);
+let currentSeasonId = 1;
+try {
+  const response = await fetch(
+    `${Astro.url.origin}/api/leaderboard/season/index.json`,
+  );
+  if (response.ok) {
+    const data = await response.json();
+    const currentSeasons = data.data.filter((s: any) => s.is_current);
+    const currentSeason =
+      currentSeasons.length > 0
+        ? currentSeasons[currentSeasons.length - 1]
+        : data.data[data.data.length - 1];
+    if (currentSeason) {
+      currentSeasonId = currentSeason.id;
+    }
+  }
+} catch (error) {
+  console.error("Failed to fetch current season:", error);
+}
+
+return Astro.redirect(
+  `/challenge-mode/season${currentSeasonId}/stats/global`,
+  301,
+);
 ---

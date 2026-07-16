@@ -13,7 +13,7 @@ import type { StatsJSON, StatsScope } from "../../../../lib/types";
 export const prerender = false;
 
 // Parse URL params: /challenge-mode/(season{N}|all-time)/stats/{region}
-const seasonParam = (Astro.params.season || "season2").toLowerCase();
+const seasonParam = (Astro.params.season || "season3").toLowerCase();
 let seasonNumber: number;
 let seasonKey: string;
 if (seasonParam === "all-time") {
@@ -21,7 +21,7 @@ if (seasonParam === "all-time") {
   seasonKey = "all_time";
 } else {
   const seasonMatch = seasonParam.match(/^season(\d+)$/);
-  seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 2;
+  seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 3;
   seasonKey = `season_${seasonNumber}`;
 }
 
@@ -54,11 +54,20 @@ const REGION_LABELS: Record<string, string> = {
   kr: "KR",
   tw: "TW",
 };
-const SEASON_LABELS: Record<string, string> = {
-  all_time: "All Time",
-  season_1: "Season 1",
-  season_2: "Season 2",
-};
+// labels come from the data so new seasons need no frontend change
+const SEASON_LABELS: Record<string, string> = { all_time: "All Time" };
+if (stats) {
+  for (const regionScope of Object.values(stats.scopes)) {
+    for (const key of Object.keys(regionScope)) {
+      if (!(key in SEASON_LABELS)) {
+        const match = key.match(/^season_(\d+)$/);
+        if (match) {
+          SEASON_LABELS[key] = `Season ${match[1]}`;
+        }
+      }
+    }
+  }
+}
 
 const generatedAt = stats?.generated_at ? new Date(stats.generated_at) : null;
 const scopeLabel = `${REGION_LABELS[region] ?? region.toUpperCase()} - ${SEASON_LABELS[seasonKey] ?? seasonKey}`;

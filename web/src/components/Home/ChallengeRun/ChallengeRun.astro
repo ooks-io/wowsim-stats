@@ -16,6 +16,7 @@ interface Props {
   showDungeonName?: boolean;
   rank?: number;
   bracket?: string;
+  seasonId?: number;
 }
 
 const {
@@ -28,6 +29,7 @@ const {
   showDungeonName = true,
   rank,
   bracket,
+  seasonId = 3,
 } = Astro.props;
 
 const dungeonIcon = getDungeonIconUrl(dungeonSlug, dungeonName);
@@ -39,7 +41,7 @@ const bracketClass = bracket ? `bracket-${bracket}` : "";
     showDungeonIcon && dungeonIcon && (
       <a
         class="challenge-run__dungeon"
-        href={`/challenge-mode/season2/global/${dungeonSlug}`}
+        href={`/challenge-mode/season${seasonId}/global/${dungeonSlug}`}
         title={dungeonName}
       >
         <img src={dungeonIcon} alt={dungeonName} loading="lazy" />

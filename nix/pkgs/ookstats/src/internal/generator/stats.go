@@ -113,17 +113,16 @@ type statsScopeDef struct {
 	SeasonNum int // 0 = all-time
 }
 
-var statsScopes = []statsScopeDef{
-	{Key: "all_time", SeasonNum: 0},
-	{Key: "season_1", SeasonNum: 1},
-	{Key: "season_2", SeasonNum: 2},
-}
-
 // statsRegions are the region scopes emitted; "global" means no region filter.
 var statsRegions = []string{"global", "us", "eu", "kr", "tw"}
 
 // GenerateStats writes outDir/api/stats.json with aggregated stats per (region, season) scope.
 func GenerateStats(db *sql.DB, outDir string) error {
+	statsScopes, err := loadStatsScopes(db)
+	if err != nil {
+		return fmt.Errorf("load stats scopes: %w", err)
+	}
+
 	out := StatsJSON{
 		GeneratedAt: time.Now().UnixMilli(),
 		Scopes:      make(map[string]map[string]StatsScope, len(statsRegions)),
@@ -152,6 +151,24 @@ func GenerateStats(db *sql.DB, outDir string) error {
 		return fmt.Errorf("write stats.json: %w", err)
 	}
 	return nil
+}
+
+// loadStatsScopes returns all-time plus one scope per season in the DB
+func loadStatsScopes(db *sql.DB) ([]statsScopeDef, error) {
+	rows, err := db.Query(`SELECT DISTINCT season_number FROM seasons ORDER BY season_number ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	scopes := []statsScopeDef{{Key: "all_time", SeasonNum: 0}}
+	for rows.Next() {
+		var n int
+		if err := rows.Scan(&n); err != nil {
+			return nil, err
+		}
+		scopes = append(scopes, statsScopeDef{Key: fmt.Sprintf("season_%d", n), SeasonNum: n})
+	}
+	return scopes, rows.Err()
 }
 
 // buildStatsScope assembles a single StatsScope.

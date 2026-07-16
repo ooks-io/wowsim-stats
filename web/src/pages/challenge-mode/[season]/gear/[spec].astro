@@ -11,9 +11,9 @@ import type { GearJSON, GearSpecBucket } from "../../../../lib/types";
 
 export const prerender = false;
 
-const seasonParam = (Astro.params.season || "season2").toLowerCase();
+const seasonParam = (Astro.params.season || "season3").toLowerCase();
 const seasonMatch = seasonParam.match(/^season(\d+)$/);
-const seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 2;
+const seasonNumber = seasonMatch ? parseInt(seasonMatch[1], 10) : 3;
 const seasonKey = `season_${seasonNumber}`;
 
 const specSlug = (Astro.params.spec || "monk-mistweaver").toLowerCase();

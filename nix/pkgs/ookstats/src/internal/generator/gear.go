@@ -92,7 +92,12 @@ func GenerateGear(db *sql.DB, outDir string) error {
 		return fmt.Errorf("load item profiles: %w", err)
 	}
 
-	for _, season := range []int{1, 2} {
+	seasons, err := loadGearSeasons(db)
+	if err != nil {
+		return fmt.Errorf("load gear seasons: %w", err)
+	}
+
+	for _, season := range seasons {
 		seasonKey := fmt.Sprintf("season_%d", season)
 		bySpec := make(map[string]GearSpecBucket)
 
@@ -122,6 +127,23 @@ func GenerateGear(db *sql.DB, outDir string) error {
 
 // gatherSpecIDs returns every spec id we have a primary-stat mapping for. Using
 // a yield-style helper keeps the caller readable without exporting the map.
+func loadGearSeasons(db *sql.DB) ([]int, error) {
+	rows, err := db.Query(`SELECT DISTINCT season_number FROM seasons ORDER BY season_number ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []int
+	for rows.Next() {
+		var n int
+		if err := rows.Scan(&n); err != nil {
+			return nil, err
+		}
+		out = append(out, n)
+	}
+	return out, rows.Err()
+}
+
 func gatherSpecIDs() map[int]struct{} {
 	out := make(map[int]struct{}, 33)
 	for _, sid := range []int{
