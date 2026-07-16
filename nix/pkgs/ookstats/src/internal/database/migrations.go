@@ -172,6 +172,16 @@ func migratePlayersIdentityColumns(db *sql.DB) error {
 			return fmt.Errorf("add status_checked_at: %w", err)
 		}
 	}
+
+	hasFpAttempted, err := columnExists(db, "players", "account_fp_attempted_at")
+	if err != nil {
+		return err
+	}
+	if !hasFpAttempted {
+		if _, err := db.Exec(`ALTER TABLE players ADD COLUMN account_fp_attempted_at INTEGER`); err != nil {
+			return fmt.Errorf("add account_fp_attempted_at: %w", err)
+		}
+	}
 	return nil
 }
 

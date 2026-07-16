@@ -93,8 +93,12 @@ func ProcessAccounts(db *database.DatabaseService, client *blizzard.Client, opts
 	return res, nil
 }
 
+// deleted or private characters fail every fetch; wait out a cooldown instead of retrying each build
+const accountBackfillRetryAfter = 7 * 24 * time.Hour
+
 func backfillAccountFingerprints(db *database.DatabaseService, client *blizzard.Client, opts AccountGroupingOptions, logger *log.Logger) (int, int, error) {
-	candidates, err := db.PlayersMissingAccountFingerprint()
+	retryBefore := time.Now().Add(-accountBackfillRetryAfter).UnixMilli()
+	candidates, err := db.PlayersMissingAccountFingerprint(retryBefore)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -132,7 +136,7 @@ func backfillAccountFingerprints(db *database.DatabaseService, client *blizzard.
 				}
 				tuples := playerid.ExtractTrustedTuples(resp)
 				if len(tuples) == 0 {
-					// skip rather than insert empty so next pass can retry
+					// skip rather than insert empty; the attempt stamp defers retry to the next cooldown
 					continue
 				}
 				j, err := json.Marshal(tuples)
@@ -159,6 +163,15 @@ func backfillAccountFingerprints(db *database.DatabaseService, client *blizzard.
 	}
 	close(jobs)
 	wg.Wait()
+
+	ids := make([]int64, len(candidates))
+	for i, c := range candidates {
+		ids[i] = c.PlayerID
+	}
+	if err := db.MarkAccountFingerprintAttempts(ids, time.Now().UnixMilli()); err != nil {
+		logger.Error("mark backfill attempts", "error", err)
+	}
+
 	logger.Info("backfill complete", "success", success, "errors", fail)
 	return success, fail, nil
 }

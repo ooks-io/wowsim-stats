@@ -51,7 +51,8 @@ func EnsureCompleteSchema(db *sql.DB) error {
 			name_lower TEXT,
 			realm_id INTEGER,
 			is_valid INTEGER DEFAULT 1,
-			status_checked_at INTEGER
+			status_checked_at INTEGER,
+			account_fp_attempted_at INTEGER
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS run_members (

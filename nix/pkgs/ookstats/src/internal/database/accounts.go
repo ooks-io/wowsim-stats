@@ -56,7 +56,7 @@ type AccountBackfillCandidate struct {
 	Region    string
 }
 
-func (ds *DatabaseService) PlayersMissingAccountFingerprint() ([]AccountBackfillCandidate, error) {
+func (ds *DatabaseService) PlayersMissingAccountFingerprint(retryBefore int64) ([]AccountBackfillCandidate, error) {
 	rows, err := ds.db.Query(`
 		SELECT pf.player_id, p.name, r.slug, r.region
 		FROM player_fingerprints pf
@@ -65,7 +65,8 @@ func (ds *DatabaseService) PlayersMissingAccountFingerprint() ([]AccountBackfill
 		LEFT JOIN player_account_fingerprint paf ON paf.player_id = pf.player_id
 		WHERE paf.player_id IS NULL
 		  AND p.is_valid = 1
-	`)
+		  AND (p.account_fp_attempted_at IS NULL OR p.account_fp_attempted_at < ?)
+	`, retryBefore)
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +137,31 @@ func (ds *DatabaseService) RebuildAccounts(groups []AccountGroup, computedAt int
 		return 0, err
 	}
 	return totalChars, nil
+}
+
+// MarkAccountFingerprintAttempts stamps candidates so failed fetches wait out the retry cooldown
+func (ds *DatabaseService) MarkAccountFingerprintAttempts(playerIDs []int64, ts int64) error {
+	if len(playerIDs) == 0 {
+		return nil
+	}
+	return retryOnBusy(func() error {
+		tx, err := ds.db.Begin()
+		if err != nil {
+			return err
+		}
+		defer tx.Rollback()
+		stmt, err := tx.Prepare(`UPDATE players SET account_fp_attempted_at = ? WHERE id = ?`)
+		if err != nil {
+			return err
+		}
+		defer stmt.Close()
+		for _, id := range playerIDs {
+			if _, err := stmt.Exec(ts, id); err != nil {
+				return err
+			}
+		}
+		return tx.Commit()
+	})
 }
 
 func (ds *DatabaseService) CountPlayerAccountFingerprints() (int, error) {
