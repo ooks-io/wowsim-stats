@@ -334,13 +334,20 @@ writeShellApplication {
           log info "Upload" "Uploading database..."
           s3 cp "$LOCAL_DB" "s3://$AWS_BUCKET/$DB_PATH"
 
+          # aws s3 cp has exited 0 on a stalled multipart upload, leaving the
+          # previous object in place - re-download and compare hashes to prove
+          # the object was actually replaced before publishing the new hash
+          log info "Upload" "Verifying uploaded database..."
+          s3 cp "s3://$AWS_BUCKET/$DB_PATH" "$LOCAL_DB.verify"
+          remote_hash=$(sha256sum "$LOCAL_DB.verify" | cut -d' ' -f1)
+          local_hash=$(cut -d' ' -f1 < "$LOCAL_DB.sha256")
+          rm -f "$LOCAL_DB.verify"
+          if [ "$remote_hash" != "$local_hash" ]; then
+            log abort "Upload" "Uploaded database does not match local (remote: $remote_hash, local: $local_hash) - hash file left untouched"
+          fi
+
           log info "Upload" "Uploading hash..."
           s3 cp "$LOCAL_DB.sha256" "s3://$AWS_BUCKET/$HASH_PATH"
-
-          # verify upload
-          if ! s3 ls "s3://$AWS_BUCKET/$DB_PATH" >/dev/null 2>&1; then
-            log abort "Upload" "Database upload verification failed"
-          fi
 
           log info "Upload" "Database uploaded successfully"
         else
